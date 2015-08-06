@@ -1,4 +1,4 @@
-package com.example.xuhaolin.seatchooseapplication;
+package com.example.xuhaolin.seatchoose;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
