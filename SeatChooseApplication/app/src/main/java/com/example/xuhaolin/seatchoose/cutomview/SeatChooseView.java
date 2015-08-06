@@ -17,45 +17,53 @@ import android.view.View;
  */
 public class SeatChooseView extends View {
     /**
-     * 默认颜色值:黑
+     * 默认文字颜色值
      */
-    private static final int DEFAULT_COLOR = Color.BLACK;
+    private static final int DEFAULT_COLOR_TEXT = Color.BLACK;
     /**
-     * 默认文字大小:35
+     * 默认座位颜色值
      */
-    private static final float DEFAULT_TEXT_SIZE = 35f;
+    private static final int DEFAULT_COLOR_SEAT = Color.GRAY;
     /**
-     * 默认座位宽度:50
+     * 默认文字大小
      */
-    private static final float DEFAULT_SEAT_WIDTH = 50f;
+    private static final float DEFAULT_TEXT_SIZE = 25f;
     /**
-     * 默认主座位高度:35
+     * 默认座位宽度
      */
-    private static final float DEFAULT_SEAT_MAIN_HEIGHT = 35f;
+    private static final float DEFAULT_SEAT_WIDTH = 35f;
     /**
-     * 默认次座位高度:10
+     * 默认主座位高度
      */
-    private static final float DEFAULT_SEAT_MINOR_HEIGHT = 10f;
+    private static final float DEFAULT_SEAT_MAIN_HEIGHT = 25f;
     /**
-     * 默认主次座位间隔高度:3
+     * 默认次座位高度
+     */
+    private static final float DEFAULT_SEAT_MINOR_HEIGHT = 8f;
+    /**
+     * 默认主次座位间隔高度
      */
     private static final float DEFAULT_SEAT_HEIGHT_INTERVAL = 3f;
     /**
-     * 默认座位圆角度:8
+     * 默认座位圆角度
      */
     private static final float DEFAULT_SEAT_RADIUS = 8f;
     /**
-     * 默认舞台宽度:300
+     * 默认舞台宽度
      */
-    private static final float DEFAULT_STAGE_WIDTH = 300f;
+    private static final float DEFAULT_STAGE_WIDTH = 350f;
     /**
-     * 默认舞台高度:50
+     * 默认舞台高度
      */
-    private static final float DEFAULT_STAGE_HEIGHT = 60f;
+    private static final float DEFAULT_STAGE_HEIGHT = 50f;
     /**
-     * 默认舞台圆角度:20
+     * 默认舞台圆角度
      */
-    private static final float DEFAULT_STAGE_RADIUS = 20f;
+    private static final float DEFAULT_STAGE_RADIUS = 10f;
+    /**
+     * 默认舞台与顶端间距
+     */
+    private static final float DEFAULT_STAGE_MARGIN_TOP = 15f;
     /**
      * 默认整数值:-1
      */
@@ -86,7 +94,7 @@ public class SeatChooseView extends View {
 
     private float mStageWidth = DEFAULT_STAGE_WIDTH;
     private float mStageHeight = DEFAULT_STAGE_HEIGHT;
-    private float mStageMarginTop = 20f;
+    private float mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
     private float mStageRadius = DEFAULT_STAGE_RADIUS;
     private float mBeginDrawHeight = 0f;
 
@@ -94,11 +102,12 @@ public class SeatChooseView extends View {
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
     private float mMinorSeatHeight = DEFAULT_SEAT_MINOR_HEIGHT;
     private float mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
+    private float mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
     private float mSeatRadius = DEFAULT_SEAT_RADIUS;
 
-    private int mStageColor = DEFAULT_COLOR;
-    private int mSeatColor = DEFAULT_COLOR;
-    private int mTextColor = DEFAULT_COLOR;
+    private int mStageColor = DEFAULT_COLOR_SEAT;
+    private int mSeatColor = DEFAULT_COLOR_SEAT;
+    private int mTextColor = DEFAULT_COLOR_TEXT;
     private float mTextSize = DEFAULT_TEXT_SIZE;
 
     public SeatChooseView(Context context) {
@@ -130,13 +139,13 @@ public class SeatChooseView extends View {
      */
     public void setSeatAndTextParams(int seatColor, int textColor, float textSize) {
         if (seatColor == DEFAULT_INT) {
-            mSeatColor = DEFAULT_COLOR;
+            mSeatColor = DEFAULT_COLOR_SEAT;
         } else {
             mSeatColor = seatColor;
         }
 
         if (textColor == DEFAULT_INT) {
-            mTextColor = DEFAULT_COLOR;
+            mTextColor = DEFAULT_COLOR_TEXT;
         } else {
             mTextColor = textColor;
         }
@@ -170,13 +179,13 @@ public class SeatChooseView extends View {
         }
 
         if (stageMarginTop == DEFAULT_FLOAT) {
-            mStageMarginTop = 20f;
+            mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
         } else {
             mStageMarginTop = stageMarginTop;
         }
 
         if (stageColor == DEFAULT_INT) {
-            mStageColor = DEFAULT_COLOR;
+            mStageColor = DEFAULT_COLOR_SEAT;
         } else {
             mStageColor = stageColor;
         }
@@ -223,10 +232,12 @@ public class SeatChooseView extends View {
         }
 
         if (seatColor == DEFAULT_INT) {
-            mSeatColor = DEFAULT_COLOR;
+            mSeatColor = DEFAULT_COLOR_SEAT;
         } else {
             mSeatColor = seatColor;
         }
+
+        mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
     }
 
     /**
@@ -405,7 +416,19 @@ public class SeatChooseView extends View {
     }
 
     private void drawSellSeats(int[][] seatMap, float drawPositionX, float drawPositionY) {
+        if (seatMap == null) {
+            return;
+        }
+        int columnLength = seatMap[0].length;
+        int rowLength = seatMap.length;
+        int middleColumnNum = 0;
 
+        if ((columnLength & 0x1) == 0) {
+            //偶数列
+
+        } else {
+            //奇数列
+        }
     }
 
     @Override
@@ -420,16 +443,15 @@ public class SeatChooseView extends View {
         float drawX = 0f;
         float drawY = 0f;
 
+        this.setStageParams(DEFAULT_FLOAT, DEFAULT_FLOAT, DEFAULT_FLOAT, Color.GREEN);
         drawX = viewCenterX;
         drawY = mStageMarginTop + mStageHeight / 2;
-        this.setStageParams(DEFAULT_FLOAT, DEFAULT_FLOAT, DEFAULT_FLOAT, Color.GREEN);
         drawStage(canvas, mPaint, drawX, drawY, "舞台");
+        mBeginDrawHeight = mStageMarginTop + mStageHeight;
 
-        mBeginDrawHeight = mStageMarginTop + mStageHeight + 20;
-
-        drawY = mBeginDrawHeight + (mMainSeatHeight + mMinorSeatHeight) / 2;
+        drawY = mBeginDrawHeight + (mMainSeatHeight + mMinorSeatHeight) / 2 + 20;
         drawX = viewCenterX;
-        this.setSeatAndTextParams(DEFAULT_INT, DEFAULT_INT, DEFAULT_FLOAT);
+        this.setSeatAndTextParams(Color.BLACK, DEFAULT_INT, DEFAULT_FLOAT);
         drawSeatWithNearText(canvas, mPaint, drawX, drawY, "锁定", 10f, false);
 
         this.setSeatAndTextParams(Color.RED, DEFAULT_INT, DEFAULT_FLOAT);
@@ -439,5 +461,8 @@ public class SeatChooseView extends View {
         this.setSeatAndTextParams(Color.YELLOW, DEFAULT_INT, DEFAULT_FLOAT);
         drawX = viewCenterX + viewCenterX / 2;
         drawSeatWithNearText(canvas, mPaint, drawX, drawY, "已选", 10f, false);
+
+        mBeginDrawHeight = mBeginDrawHeight + 20 + mSeatTotalHeight;
+        this.setSeatAndTextParams(DEFAULT_INT, DEFAULT_INT, DEFAULT_FLOAT);
     }
 }
