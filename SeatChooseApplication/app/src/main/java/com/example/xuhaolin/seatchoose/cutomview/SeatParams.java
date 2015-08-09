@@ -61,6 +61,22 @@ public class SeatParams {
      * 座位类型,已售
      */
     public static final int SEAT_TYPE_SOLD = 3;
+    /**
+     * 座位类型，不绘制
+     */
+    public static final int SEAT_TYPE_NOT_DRAW = 0;
+    /**
+     * 座位类型描述，可选座位，{@link #SEAT_TYPE_UNSELETED}
+     */
+    public static final String SEAT_UNSELETED_DESC = "可选";
+    /**
+     * 座位类型描述，已选座位，{@link #SEAT_TYPE_SELETED}
+     */
+    public static final String SEAT_SELETED_DESC = "已选";
+    /**
+     * 座位类型描述，已售座位，{@link #SEAT_TYPE_SOLD}
+     */
+    public static final String SEAT_SOLD_DESC = "已售";
 
     private float mSeatWidth = DEFAULT_SEAT_WIDTH;
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
@@ -72,13 +88,23 @@ public class SeatParams {
     private float mSeatHorizontalInterval = DEFAULT_SEAT_HORIZONTAL_INTERVAL;
     private float mSeatVerticalInterval = DEFAULT_SEAT_VERTICAL_INTERVAL;
 
+    private boolean mIsDrawSeat = true;
     private int mSeatColor = DEFAULT_SEAT_COLOR;
     private int[] mSeatTypeArrary = null;
     private int[] mSeatColorArrary = null;
+    private String[] mSeatTypeDescription = null;
 
 
     public SeatParams() {
         resetSeatTypeWithColor();
+        mSeatTypeDescription = new String[3];
+        mSeatTypeDescription[0] = SEAT_UNSELETED_DESC;
+        mSeatTypeDescription[1] = SEAT_SELETED_DESC;
+        mSeatTypeDescription[2] = SEAT_SOLD_DESC;
+    }
+
+    public boolean getIsDrawSeat() {
+        return mIsDrawSeat;
     }
 
     public float getSeatWidth() {
@@ -123,6 +149,10 @@ public class SeatParams {
 
     public int[] getSeatColorArrary() {
         return mSeatColorArrary;
+    }
+
+    public String[] getSeatTypeDescription() {
+        return mSeatTypeDescription;
     }
 
     public void setSeatWidth(float mSeatWidth) {
@@ -184,6 +214,29 @@ public class SeatParams {
         }
     }
 
+    public void setIsDrawSeat(boolean mIsDrawSeat) {
+        this.mIsDrawSeat = mIsDrawSeat;
+    }
+
+    /**
+     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_TYPE_NOT_DRAW}时，不绘制该座位
+     *
+     * @param seatType 座位类型
+     */
+    public void setIsDrawSeat(int seatType) {
+        if (seatType == SEAT_TYPE_NOT_DRAW) {
+            this.mIsDrawSeat = false;
+        } else {
+            this.mIsDrawSeat = true;
+        }
+    }
+
+    /**
+     * 设置绘制时使用的座位颜色，<font color="yellow"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font>
+     * <p><font color="yellow"><b>在任何一次绘制座位之前都必须考虑是否需要调用此方法，否则绘制使用的颜色将是上一次绘制使用的颜色</b></font></p>
+     *
+     * @param mSeatColor
+     */
     public void setSeatColor(int mSeatColor) {
         if (mSeatColor == DEFAULT_INT) {
             this.mSeatColor = DEFAULT_SEAT_COLOR;
@@ -193,27 +246,45 @@ public class SeatParams {
     }
 
     /**
-     * 设置座位默认类型对应的颜色
+     * 设置默认座位类型对应的颜色
      *
      * @param unSelectedSeatColor 可选座位,{@link #SEAT_TYPE_UNSELETED}
      * @param seletedSeatColor    已选座位,{@link #SEAT_TYPE_SELETED}
      * @param soldSeatColor       已售座位,{@link #SEAT_TYPE_SOLD}
      */
     public void setSeatColorArrary(int unSelectedSeatColor, int seletedSeatColor, int soldSeatColor) {
-        if (mSeatColorArrary != null) {
-            mSeatColorArrary[0] = unSelectedSeatColor;
-            mSeatColorArrary[1] = seletedSeatColor;
-            mSeatColorArrary[2] = soldSeatColor;
-        }
+        //确保座位类型回到默认状态
+        resetSeatTypeWithColor();
+        mSeatColorArrary[0] = unSelectedSeatColor;
+        mSeatColorArrary[1] = seletedSeatColor;
+        mSeatColorArrary[2] = soldSeatColor;
     }
 
     /**
-     * 设置/添加额外的座位类型及颜色,<font color="yellow"><b>该方法保留了默认的座位类型及颜色参数,只是在其基础上添加了其它的类型与参数</b></font>
+     * 设置默认座位类型的描述
      *
-     * @param seatExtraTypeArr 新增的座位类型
-     * @param colorExtraArr    新增的座位类型对应的颜色
+     * @param unSelectedSeatDesc 可选座位描述,{@link #SEAT_TYPE_UNSELETED}
+     * @param seletedSeatDesc    已选座位描述,{@link #SEAT_TYPE_SELETED}
+     * @param soldSeatDesc       已售座位描述,{@link #SEAT_TYPE_SOLD}
      */
-    public void setExtraSeatTypeWithColor(int[] seatExtraTypeArr, int[] colorExtraArr) {
+    public void setSeatTypeDescription(String unSelectedSeatDesc, String seletedSeatDesc, String soldSeatDesc) {
+        //确保座位类型回来默认状态
+        resetSeatTypeWithColor();
+        mSeatTypeDescription = new String[3];
+        mSeatTypeDescription[0] = unSelectedSeatDesc;
+        mSeatTypeDescription[1] = seletedSeatDesc;
+        mSeatTypeDescription[2] = soldSeatDesc;
+    }
+
+    /**
+     * 设置/添加额外的座位类型、颜色及其类型对应的描述
+     * <p><font color="yellow"><b>该方法保留了默认的座位类型及颜色参数,只是在其基础上添加了其它的类型与参数</b></font></p>
+     *
+     * @param seatExtraTypeArr  新增的座位类型，不可为null
+     * @param colorExtraArr     新增的座位类型对应的颜色，不可为null
+     * @param seatTypeExtraDesc 新增的座位类型对应的描述，可为null
+     */
+    public void setExtraSeatTypeWithColor(int[] seatExtraTypeArr, int[] colorExtraArr, String[] seatTypeExtraDesc) {
         if (seatExtraTypeArr != null && colorExtraArr != null && seatExtraTypeArr.length == colorExtraArr.length) {
             //创建新数组
             int[] newSeatTypeArr = new int[3 + seatExtraTypeArr.length];
@@ -234,23 +305,45 @@ public class SeatParams {
 
             mSeatTypeArrary = newSeatTypeArr;
             mSeatColorArrary = newSeatColorArr;
+
+            if (seatTypeExtraDesc != null && seatTypeExtraDesc.length == seatExtraTypeArr.length) {
+                mSeatTypeDescription = new String[3 + seatTypeExtraDesc.length];
+                mSeatTypeDescription[0] = SEAT_UNSELETED_DESC;
+                mSeatTypeDescription[1] = SEAT_SELETED_DESC;
+                mSeatTypeDescription[2] = SEAT_SOLD_DESC;
+
+                for (int i = 3; i < mSeatTypeDescription.length; i++) {
+                    mSeatTypeDescription[i] = seatTypeExtraDesc[i - 3];
+                }
+            } else if (seatTypeExtraDesc == null) {
+                mSeatTypeDescription = null;
+            } else {
+                throw new RuntimeException("设置额外的座位类型描述length应与额外的座位类型length一致");
+            }
         } else {
-            throw new RuntimeException("设置额外座位类型及颜色失败,请确认所有参数不可为null且参数值的length必须相同");
+            throw new RuntimeException("设置额外座位类型及颜色失败,请确认前两个参数不可为null且参数值的length必须相同");
         }
     }
 
     /**
-     * 设置所有座位的类型及颜色,<font color="yellow"><b>该方法会替换所有的座位默认类型及颜色参数</b></font>
+     * 设置所有座位的类型，颜色及其描述,<font color="yellow"><b>该方法会替换所有的座位对应的默认参数</b></font>
      *
-     * @param seatTypeArr 新的座位类型
-     * @param colorArr    新的座位类型对应的颜色
+     * @param seatTypeArr  新的座位类型
+     * @param colorArr     新的座位类型对应的颜色
+     * @param seatTypeDesc 新的座位类型对应的描述
      */
-    public void setAllSeatTypeWithColor(int[] seatTypeArr, int[] colorArr) {
+    public void setAllSeatTypeWithColor(int[] seatTypeArr, int[] colorArr, String[] seatTypeDesc) {
         if (seatTypeArr != null && colorArr != null && seatTypeArr.length == colorArr.length) {
             mSeatTypeArrary = seatTypeArr;
             mSeatColorArrary = colorArr;
+
+            if ((seatTypeDesc != null && seatTypeDesc.length == seatTypeArr.length) || seatTypeDesc == null) {
+                mSeatTypeDescription = seatTypeDesc;
+            } else {
+                throw new RuntimeException("设置座位类型描述length应与座位类型length一致");
+            }
         } else {
-            throw new RuntimeException("设置新座位类型及颜色失败,请确认所有参数不可为null且参数值的length必须相同");
+            throw new RuntimeException("设置新座位类型及颜色失败,请确认前两个参数不可为null且参数值的length必须相同");
         }
     }
 

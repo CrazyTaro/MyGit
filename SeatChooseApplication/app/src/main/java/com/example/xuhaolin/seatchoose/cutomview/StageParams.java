@@ -28,6 +28,10 @@ public class StageParams {
      */
     public static final float DEFAULT_STAGE_MARGIN_TOP = 15f;
     /**
+     * 默认舞台下方空白高度（与座位的间隔）
+     */
+    public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 20f;
+    /**
      * 默认整数值:-1
      */
     public static final int DEFAULT_INT = -1;
@@ -39,6 +43,7 @@ public class StageParams {
     private float mStageWidth = DEFAULT_STAGE_WIDTH;
     private float mStageHeight = DEFAULT_STAGE_HEIGHT;
     private float mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
+    private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
     private float mStageRadius = DEFAULT_STAGE_RADIUS;
     private int mStageColor = DEFAULT_STAGE_COLOR;
 
@@ -70,6 +75,11 @@ public class StageParams {
         return mStageMarginTop;
     }
 
+    /**
+     * 设置舞台上方顶端的高度，使用默认值请用{@link #DEFAULT_FLOAT}
+     *
+     * @param mStageMarginTop
+     */
     public void setStageMarginTop(float mStageMarginTop) {
         if (mStageMarginTop == DEFAULT_FLOAT) {
             this.mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
@@ -78,10 +88,32 @@ public class StageParams {
         }
     }
 
+    public float getStageMarginBottom() {
+        return mStageMarginBottom;
+    }
+
+    /**
+     * 设置舞台与下方（座位）间隔的高度，，使用默认值请用{@link #DEFAULT_FLOAT}
+     *
+     * @param mStageMarginBottom
+     */
+    public void setStageMarginBottom(float mStageMarginBottom) {
+        if (mStageMarginBottom == DEFAULT_FLOAT) {
+            this.mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
+        } else {
+            this.mStageMarginBottom = mStageMarginBottom;
+        }
+    }
+
     public float getStageRadius() {
         return mStageRadius;
     }
 
+    /**
+     * 设置舞台的圆角弧度，此处并不是以度数计算的，使用默认值请用{@link #DEFAULT_FLOAT}
+     *
+     * @param mStageRadius 圆角弧度
+     */
     public void setStageRadius(float mStageRadius) {
         if (mStageRadius == DEFAULT_FLOAT) {
             this.mStageRadius = DEFAULT_STAGE_RADIUS;
@@ -102,5 +134,21 @@ public class StageParams {
         }
     }
 
+    /**
+     * 获取舞台占用的高度，包括舞台距顶端的高度+舞台实际高度+舞台与下方（座位）间隔高度
+     *
+     * @return 返回舞台占用的高度
+     */
+    public float getStageTotalHeight() {
+        return mStageHeight + mStageMarginBottom + mStageMarginTop;
+    }
+
+    public void autoCalculateParams(float widthPrecent, float viewWidth) {
+        if (widthPrecent == DEFAULT_FLOAT || widthPrecent < 0 || widthPrecent > 1) {
+            widthPrecent = 0.3f;
+        }
+        mStageWidth = viewWidth * widthPrecent;
+        mStageHeight = mStageColor * 1 / 5;
+    }
 
 }

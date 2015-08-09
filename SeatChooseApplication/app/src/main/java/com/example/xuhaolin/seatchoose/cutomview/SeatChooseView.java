@@ -11,6 +11,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import org.w3c.dom.Text;
+
 /**
  * Author:
  * Description:
@@ -54,12 +56,12 @@ public class SeatChooseView extends View {
     private float mAfterDrawPositionX = 0f;
 
     private int[][] mSeatMap = {
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 2, 1, 1, 1, 3, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 2, 1, 1, 1, 1, 3, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2}
+            {1, 2, 3, 1, 2, 3, 1, 0, 2, 1, 3, 1, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 0, 3, 1, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 0, 2, 1, 1, 1, 3, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 0, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 2, 0, 1, 1, 1, 3, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 0, 2, 1, 3, 1, 1, 1, 2, 2, 2}
     };
 
     public SeatChooseView(Context context) {
@@ -125,7 +127,7 @@ public class SeatChooseView extends View {
     }
 
     /**
-     * 设置舞台绘制自定义参数
+     * 设置舞台绘制使用的参数
      *
      * @param params 自定义舞台绘制的参数
      */
@@ -206,8 +208,12 @@ public class SeatChooseView extends View {
         float textBeginDrawY = 0f;
 
         //计算绘制文字的长度
-        paint.setTextSize(mTextSize);
-        textLength = paint.measureText(text);
+        if (text == null) {
+            textLength = 0;
+        } else {
+            paint.setTextSize(mTextSize);
+            textLength = paint.measureText(text);
+        }
 
         if (isDrawTextOfLeft) {
             //将文字绘制在座位的左边
@@ -224,16 +230,19 @@ public class SeatChooseView extends View {
         textBeginDrawY = drawYPosition + mTextSize / 3;
         seatCenterY = drawYPosition;
 
-        //绘制文字
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(mTextColor);
-        canvas.drawText(text, textBeginDrawX, textBeginDrawY, paint);
+        if (text != null) {
+            //绘制文字
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(mTextColor);
+            canvas.drawText(text, textBeginDrawX, textBeginDrawY, paint);
+        }
         //绘制座位
         drawSeat(canvas, paint, seatCenterX, seatCenterY);
     }
 
     /**
      * 绘制座位
+     * <p><font color="yellow"><b>该方法绘制座位时会根据seatParams确定是否需要对该座位进行绘制，请注意</b></font></p>
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -241,6 +250,9 @@ public class SeatChooseView extends View {
      * @param drawPositionY 座位绘制的中心Y轴坐标
      */
     private void drawSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+        if (!mSeatParams.getIsDrawSeat()) {
+            return;
+        }
         //座位的占拒的总高度(两部分座位)
         float totalSeatHeight = 0f;
         //计算座位占用的总高度
@@ -300,16 +312,18 @@ public class SeatChooseView extends View {
             canvas.drawRoundRect(stageRectf, mStageParams.getStageRadius(), mStageParams.getStageRadius(), paint);
         }
 
-        paint.setTextSize(textSize);
-        paint.setColor(mTextColor);
-        paint.setStyle(Paint.Style.STROKE);
+        if (stageText != null) {
+            paint.setTextSize(textSize);
+            paint.setColor(mTextColor);
+            paint.setStyle(Paint.Style.STROKE);
 
-        textLength = paint.measureText(stageText);
-        textBeginDrawX = stageRectf.centerX() - textLength / 2;
-        textBeginDrawY = stageRectf.centerY() + textSize / 3;
-        //文字绘制不做限制
-        //文字本身绘制范围小,另外需要重新计算两个参数才能进行判断
-        canvas.drawText(stageText, textBeginDrawX, textBeginDrawY, paint);
+            textLength = paint.measureText(stageText);
+            textBeginDrawX = stageRectf.centerX() - textLength / 2;
+            textBeginDrawY = stageRectf.centerY() + textSize / 3;
+            //文字绘制不做限制
+            //文字本身绘制范围小,另外需要重新计算两个参数才能进行判断
+            canvas.drawText(stageText, textBeginDrawX, textBeginDrawY, paint);
+        }
     }
 
     /**
@@ -405,6 +419,8 @@ public class SeatChooseView extends View {
                     seatColor = mSeatParams.getSeatColorByType(seatType);
                     //设置绘制座位的颜色
                     mSeatParams.setSeatColor(seatColor);
+                    //设置座位是否需要被绘制
+                    mSeatParams.setIsDrawSeat(seatType);
                     //绘制单个座位
                     drawSeat(canvas, paint, beginDrawX, drawPositionY);
                     //计算下一个绘制座位的X轴位置
@@ -416,6 +432,31 @@ public class SeatChooseView extends View {
             } catch (ArrayIndexOutOfBoundsException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    public void drawExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, float seatTextInterval, SeatParams partSeatTypeParams) {
+        if (partSeatTypeParams == null) {
+            return;
+        }
+        int seatTypeCount = partSeatTypeParams.getSeatTypeArrary().length;
+        float viewWidth = this.getWidth();
+        float eachSeatTypeDrawWidth = viewWidth / seatTypeCount;
+        float drawPositionX = eachSeatTypeDrawWidth / 2;
+        String[] seatTypeDesc = partSeatTypeParams.getSeatTypeDescription();
+        String text = null;
+        for (int i = 0; i < seatTypeCount; i++) {
+            int seatType = partSeatTypeParams.getSeatTypeArrary()[i];
+            int seatColor = mSeatParams.getSeatColorByType(seatType);
+            mSeatParams.setIsDrawSeat(seatType);
+            mSeatParams.setSeatColor(seatColor);
+            if (seatTypeDesc != null) {
+                text = partSeatTypeParams.getSeatTypeDescription()[i];
+            } else {
+                text = null;
+            }
+            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, text, seatTextInterval, false);
+            drawPositionX += eachSeatTypeDrawWidth;
         }
     }
 
@@ -436,18 +477,22 @@ public class SeatChooseView extends View {
         drawStage(canvas, mPaint, drawX, drawY, "舞台");
 
 
-        drawY = drawY + mStageParams.getStageHeight() / 2 + mSeatParams.getSeatTotalHeight() / 2 + 20;
-        drawX = mBeginDrawPositionX + viewCenterX;
-        mSeatParams.setSeatColor(Color.BLACK);
-        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "锁定", 10f, false);
+        drawY = drawY + mStageParams.getStageHeight() / 2 + mSeatParams.getSeatTotalHeight() / 2 + mStageParams.getStageMarginBottom();
+        drawExampleSeatType(canvas, mPaint, drawY, 10f, mSeatParams);
 
-        mSeatParams.setSeatColor(Color.RED);
-        drawX = mBeginDrawPositionX + viewCenterX - viewCenterX / 2;
-        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "可选", 10f, false);
-
-        mSeatParams.setSeatColor(Color.YELLOW);
-        drawX = mBeginDrawPositionX + viewCenterX + viewCenterX / 2;
-        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "已选", 10f, false);
+        drawY = drawY + mSeatParams.getSeatTotalHeight() + 30f;
+        drawExampleSeatType(canvas, mPaint, drawY, 10f, mSeatParams);
+//        drawX = mBeginDrawPositionX + viewCenterX;
+//        mSeatParams.setSeatColor(Color.BLACK);
+//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "锁定", 10f, false);
+//
+//        mSeatParams.setSeatColor(Color.RED);
+//        drawX = mBeginDrawPositionX + viewCenterX - viewCenterX / 2;
+//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "可选", 10f, false);
+//
+//        mSeatParams.setSeatColor(Color.YELLOW);
+//        drawX = mBeginDrawPositionX + viewCenterX + viewCenterX / 2;
+//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "已选", 10f, false);
 
         drawX = mBeginDrawPositionX + viewCenterX;
         drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + 30;
