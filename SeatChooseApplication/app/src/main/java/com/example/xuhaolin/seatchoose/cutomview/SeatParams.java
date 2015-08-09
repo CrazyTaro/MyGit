@@ -5,8 +5,8 @@ package com.example.xuhaolin.seatchoose.cutomview;/**
 import android.graphics.Color;
 
 /**
- * Author:
- * Description:
+ * Created by xuhaolin on 2015/8/9.
+ * <p>座位参数，包括座位绘制需要的各种参数</p>
  */
 public class SeatParams {
     /**

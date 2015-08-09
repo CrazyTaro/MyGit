@@ -25,26 +25,6 @@ public class SeatChooseView extends View {
      */
     public static final float DEFAULT_TEXT_SIZE = 25f;
     /**
-     * 默认座位圆角度
-     */
-    public static final float DEFAULT_SEAT_RADIUS = 8f;
-    /**
-     * 默认舞台宽度
-     */
-    public static final float DEFAULT_STAGE_WIDTH = 350f;
-    /**
-     * 默认舞台高度
-     */
-    public static final float DEFAULT_STAGE_HEIGHT = 50f;
-    /**
-     * 默认舞台圆角度
-     */
-    public static final float DEFAULT_STAGE_RADIUS = 10f;
-    /**
-     * 默认舞台与顶端间距
-     */
-    public static final float DEFAULT_STAGE_MARGIN_TOP = 15f;
-    /**
      * 默认整数值:-1
      */
     public static final int DEFAULT_INT = -1;
@@ -53,7 +33,10 @@ public class SeatChooseView extends View {
      */
     public static final float DEFAULT_FLOAT = -1;
 
+    //座位参数
     private SeatParams mSeatParams = null;
+    //舞台参数
+    private StageParams mStageParams = null;
 
     private Paint mPaint = null;
     private PointF mWHPoint = null;
@@ -62,12 +45,6 @@ public class SeatChooseView extends View {
     //次座位,两者结合让座位看起来比较好看而已...
     private RectF mMinorSeatRectf = null;
 
-    private float mStageWidth = DEFAULT_STAGE_WIDTH;
-    private float mStageHeight = DEFAULT_STAGE_HEIGHT;
-    private float mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
-    private float mStageRadius = DEFAULT_STAGE_RADIUS;
-
-    private int mStageColor = Color.GREEN;
     private int mTextColor = DEFAULT_COLOR_TEXT;
     private float mTextSize = DEFAULT_TEXT_SIZE;
 
@@ -77,12 +54,12 @@ public class SeatChooseView extends View {
     private float mAfterDrawPositionX = 0f;
 
     private int[][] mSeatMap = {
-            {1, 2, 3, 1, 2, 3, 1, 1, 1, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 1, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 1, 1, 3, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 3, 1, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 1, 1, 1, 3, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 1, 3, 1, 1, 1, 2, 2, 2}
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 2, 1, 1, 1, 3, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 1, 1, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 2, 1, 1, 1, 1, 3, 1, 2, 2, 2},
+            {1, 2, 3, 1, 2, 3, 1, 1, 2, 1, 3, 1, 1, 1, 2, 2, 2}
     };
 
     public SeatChooseView(Context context) {
@@ -105,6 +82,7 @@ public class SeatChooseView extends View {
         mMinorSeatRectf = new RectF();
 
         resetSeatParams();
+        mStageParams = new StageParams();
     }
 
     /**
@@ -147,37 +125,21 @@ public class SeatChooseView extends View {
     }
 
     /**
-     * 设置舞台通用参数,<font color="yellow"><b>所有参数使用默认值请传入{@link #DEFAULT_INT}/{@link #DEFAULT_FLOAT}</b></font>
+     * 设置舞台绘制自定义参数
      *
-     * @param stageWidth     舞台宽度
-     * @param stageHeight    舞台高度
-     * @param stageMarginTop 舞台与最顶端距离
-     * @param stageColor     舞台颜色
+     * @param params 自定义舞台绘制的参数
      */
-    public void setStageParams(float stageWidth, float stageHeight, float stageMarginTop, int stageColor) {
-        if (stageWidth == DEFAULT_FLOAT) {
-            mStageWidth = DEFAULT_STAGE_WIDTH;
-        } else {
-            mStageWidth = stageWidth;
+    public void setStageParams(StageParams params) {
+        if (params != null) {
+            mStageParams = params;
         }
+    }
 
-        if (stageHeight == DEFAULT_FLOAT) {
-            mStageHeight = DEFAULT_STAGE_HEIGHT;
-        } else {
-            mStageHeight = stageHeight;
-        }
-
-        if (stageMarginTop == DEFAULT_FLOAT) {
-            mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
-        } else {
-            mStageMarginTop = stageMarginTop;
-        }
-
-        if (stageColor == DEFAULT_INT) {
-            mStageColor = Color.GREEN;
-        } else {
-            mStageColor = stageColor;
-        }
+    /**
+     * 重置舞台参数
+     */
+    public void resetStageParams() {
+        mStageParams = new StageParams();
     }
 
     /**
@@ -323,19 +285,19 @@ public class SeatChooseView extends View {
         float textBeginDrawY = 0f;
         float textLength = 0f;
         //设置文字大小为舞台高度小一点(保证文字可以显示在舞台范围内)
-        float textSize = mStageHeight - 10;
+        float textSize = mStageParams.getStageHeight() - 10;
 
-        stageRectf.left = drawPositionX - mStageWidth / 2;
-        stageRectf.right = stageRectf.left + mStageWidth;
-        stageRectf.top = drawPositionY - mStageHeight / 2;
-        stageRectf.bottom = stageRectf.top + mStageHeight;
+        stageRectf.left = drawPositionX - mStageParams.getStageWidth() / 2;
+        stageRectf.right = stageRectf.left + mStageParams.getStageWidth();
+        stageRectf.top = drawPositionY - mStageParams.getStageHeight() / 2;
+        stageRectf.bottom = stageRectf.top + mStageParams.getStageHeight();
 
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(mStageColor);
+        paint.setColor(mStageParams.getStageColor());
         //当该绘制图像有显示在画布上的部分时才进行绘制
         //所有的坐标都不在画布的有效显示范围则不进行绘制
         if (stageRectf.left > 0 || stageRectf.right > 0 || stageRectf.top > 0 || stageRectf.bottom > 0) {
-            canvas.drawRoundRect(stageRectf, mStageRadius, mStageRadius, paint);
+            canvas.drawRoundRect(stageRectf, mStageParams.getStageRadius(), mStageParams.getStageRadius(), paint);
         }
 
         paint.setTextSize(textSize);
@@ -367,7 +329,8 @@ public class SeatChooseView extends View {
         int columnLength = seatMap[0].length;
         //行数
         int rowLength = seatMap.length;
-        int middleColumnNum = 0;
+        int leftBeginColumn = 0;
+        int rightBeginColumn = 0;
         float beginDrawLeftX = 0f;
         float beginDrawRightX = 0f;
         float beginDrawY = 0f;
@@ -378,21 +341,38 @@ public class SeatChooseView extends View {
             beginDrawLeftX = drawPositionX - mSeatParams.getSeatHorizontalInterval() / 2 - mSeatParams.getSeatWidth() / 2;
             //向右边绘制X轴开始点
             beginDrawRightX = drawPositionX + mSeatParams.getSeatHorizontalInterval() / 2 + mSeatParams.getSeatWidth() / 2;
-            beginDrawY = drawPositionY;
-            middleColumnNum = columnLength / 2;
-            for (int[] seatList : seatMap) {
-                //画左边的座位
-                //绘制的时候由start位置到end位置
-                //从start到end每一个位置都会绘制,所以要保证start/end位置的数据在数组中
-                //即数组不可越界
-                drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatList, middleColumnNum - 1, 0 - 1);
-                //画右边的座位
-                drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatList, middleColumnNum + 1, seatList.length);
-                //增加Y轴的绘制高度
-                beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight() / 2;
-            }
+            //此处从中心位置的列数开始计算
+            //向左开始绘制列数，当前指定索引列将被绘制
+            //因此索引数为列数-1
+            leftBeginColumn = columnLength / 2 - 1;
+            //向右开始绘制列数，当前指定索引列将被绘制
+            rightBeginColumn = leftBeginColumn + 1;
         } else {
             //奇数列
+            //向左边绘制X轴开始点
+            //包含绘制中心的座位
+            beginDrawLeftX = drawPositionX;
+            //向右边绘制X轴开始点
+            //不包含绘制中心的座位（否则中心位置的座位将被重绘）
+            beginDrawRightX = drawPositionX + mSeatParams.getSeatHorizontalInterval() + mSeatParams.getSeatWidth();
+            //此处从中心位置的列数开始计算
+            //向左开始绘制列数，当前指定索引列将被绘制
+            //奇数列，中心位置的列由向左绘制完成，因此不需要索引值-1
+            leftBeginColumn = columnLength / 2;
+            //向右开始绘制列数，当前指定索引列将被绘制
+            rightBeginColumn = leftBeginColumn + 1;
+        }
+        beginDrawY = drawPositionY;
+        for (int[] seatList : seatMap) {
+            //画左边的座位
+            //绘制的时候由start位置到end位置
+            //从start到end每一个位置都会绘制,所以要保证start/end位置的数据在数组中
+            //即数组不可越界
+            drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatList, leftBeginColumn, 0 - 1);
+            //画右边的座位
+            drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatList, rightBeginColumn, seatList.length);
+            //增加Y轴的绘制高度
+            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight() / 2;
         }
     }
 
@@ -451,13 +431,12 @@ public class SeatChooseView extends View {
         float drawX = 0f;
         float drawY = 0f;
 
-        this.setStageParams(DEFAULT_FLOAT, DEFAULT_FLOAT, DEFAULT_FLOAT, Color.GREEN);
-        drawY = mBeginDrawPositionY + mStageMarginTop + mStageHeight / 2;
+        drawY = mBeginDrawPositionY + mStageParams.getStageMarginTop() + mStageParams.getStageHeight() / 2;
         drawX = mBeginDrawPositionX + viewCenterX;
         drawStage(canvas, mPaint, drawX, drawY, "舞台");
 
 
-        drawY = drawY + mStageHeight / 2 + mSeatParams.getSeatTotalHeight() / 2 + 20;
+        drawY = drawY + mStageParams.getStageHeight() / 2 + mSeatParams.getSeatTotalHeight() / 2 + 20;
         drawX = mBeginDrawPositionX + viewCenterX;
         mSeatParams.setSeatColor(Color.BLACK);
         drawSeatWithNearText(canvas, mPaint, drawX, drawY, "锁定", 10f, false);
