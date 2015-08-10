@@ -9,15 +9,14 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
-
-import org.w3c.dom.Text;
 
 /**
  * Author:
  * Description:
  */
-public class SeatChooseView extends View {
+public class SeatChooseView extends View implements View.OnTouchListener {
     /**
      * 默认文字颜色值
      */
@@ -51,9 +50,12 @@ public class SeatChooseView extends View {
     private float mTextSize = DEFAULT_TEXT_SIZE;
 
     private float mBeginDrawPositionY = 0f;
-    private float mAfterDrawPositionY = 0f;
     private float mBeginDrawPositionX = 0f;
-    private float mAfterDrawPositionX = 0f;
+
+    private float mDownX = 0f;
+    private float mDownY = 0f;
+    private float mUpX = 0f;
+    private float mUpY = 0f;
 
     private int[][] mSeatMap = {
             {1, 2, 3, 1, 2, 3, 1, 0, 2, 1, 3, 1, 1, 1, 2, 2, 2},
@@ -85,6 +87,8 @@ public class SeatChooseView extends View {
 
         resetSeatParams();
         mStageParams = new StageParams();
+
+        this.setOnTouchListener(this);
     }
 
     /**
@@ -182,6 +186,14 @@ public class SeatChooseView extends View {
         textDrawPointf.x = xPosition - textLength / 2;
         textDrawPointf.y = yPosition + textSize / 3;
         return textDrawPointf;
+    }
+
+    private float getTextLength(float textSize, String drawText) {
+        if (drawText == null) {
+            return 0;
+        }
+        mPaint.setTextSize(textSize);
+        return mPaint.measureText(drawText);
     }
 
     /**
@@ -435,12 +447,13 @@ public class SeatChooseView extends View {
         }
     }
 
-    public void drawExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, float seatTextInterval, SeatParams partSeatTypeParams) {
+    public void drawAutoExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, SeatParams partSeatTypeParams) {
         if (partSeatTypeParams == null) {
             return;
         }
         int seatTypeCount = partSeatTypeParams.getSeatTypeArrary().length;
         float viewWidth = this.getWidth();
+        float seatTextInterval = partSeatTypeParams.getSeatTextInterval();
         float eachSeatTypeDrawWidth = viewWidth / seatTypeCount;
         float drawPositionX = eachSeatTypeDrawWidth / 2;
         String[] seatTypeDesc = partSeatTypeParams.getSeatTypeDescription();
@@ -457,6 +470,98 @@ public class SeatChooseView extends View {
             }
             drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, text, seatTextInterval, false);
             drawPositionX += eachSeatTypeDrawWidth;
+        }
+    }
+
+    /**
+     * 绘制座位类型及其描述文字
+     * <p><font color="yellow"><b>此方法绘制时以参数设置固定的座位类型间的间隔为基准进行绘制,不保证绘制结果会完全适应屏幕</b></font></p>
+     *
+     * @param canvas             画板
+     * @param paint              画笔
+     * @param drawPositionY      座位绘制的中心Y轴位置
+     * @param partSeatTypeParams {@link SeatParams},座位绘制参数
+     */
+    public void drawExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, SeatParams partSeatTypeParams) {
+        if (partSeatTypeParams == null) {
+            //若座位参数为null,则不作任何绘制
+            return;
+        }
+        //座位类型的个数
+        int seatTypeCount = partSeatTypeParams.getSeatTypeArrary().length;
+        //当前view的宽度
+        float viewWidth = this.getWidth();
+        //座位的宽度
+        float seatWidth = partSeatTypeParams.getSeatWidth();
+        //座位与邻近文字的距离
+        float seatTextInterval = partSeatTypeParams.getSeatTextInterval();
+        //座位类型之前的距离,每个座位(此处包含文字)绘制之间的距离
+        float seatTypeInterval = partSeatTypeParams.getSeatTypeInterval();
+        //开始绘制的位置
+        //此处的开始绘制是指第一个座位类型在当前行中绘制的中心位置
+        float drawPositionX = 0f;
+        //所有绘制座位的文字总长度
+        //用于后面计算开始绘制的位置
+        float totalTextLength = 0f;
+        //所有座位类型的总长度
+        //此处的座位包含了其邻近的文字
+        float allSeatTypeWidth = 0f;
+        //座位类型对应的描述文字数组
+        String[] seatTypeDesc = partSeatTypeParams.getSeatTypeDescription();
+
+
+        if (seatTypeDesc != null) {
+            for (String text : seatTypeDesc) {
+                //计算所有文字长度
+                totalTextLength += this.getTextLength(mTextSize, text);
+            }
+        } else {
+            totalTextLength = 0f;
+        }
+        //计算所有座位(包含文字及座位之前的间隔)长度
+        allSeatTypeWidth = totalTextLength + (partSeatTypeParams.getSeatWidth()
+                + partSeatTypeParams.getSeatTextInterval()) * seatTypeCount
+                + partSeatTypeParams.getSeatTypeInterval() * (seatTypeCount - 1);
+        String firstText = seatTypeDesc == null ? null : seatTypeDesc[0];
+        //计算开始绘制的X轴位置
+        drawPositionX = mBeginDrawPositionX + viewWidth / 2
+                - allSeatTypeWidth / 2
+                + (seatWidth + seatTypeInterval + this.getTextLength(mTextSize, firstText)) / 2;
+
+
+        String drawText = null;
+        //当前绘制文字的长度
+        float textLength = 0f;
+        //下一个可能绘制文字的长度
+        float nextTextLength = 0f;
+        for (int i = 0; i < seatTypeCount; i++) {
+            //设置座位类型及颜色
+            int seatType = partSeatTypeParams.getSeatTypeArrary()[i];
+            int seatColor = mSeatParams.getSeatColorByType(seatType);
+            mSeatParams.setIsDrawSeat(seatType);
+            mSeatParams.setSeatColor(seatColor);
+            //加载座位类型描述文字及计算其长度
+            if (seatTypeDesc != null) {
+                drawText = partSeatTypeParams.getSeatTypeDescription()[i];
+                textLength = this.getTextLength(mTextSize, drawText);
+            } else {
+                drawText = null;
+                textLength = 0f;
+            }
+            //绘制座位及文字
+            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, drawText, seatTextInterval, false);
+
+            //获取并计算下一个绘制文字的长度
+            //用于计算下一个绘制座位的X轴中心位置
+            int nextTextIndex = i + 1;
+            if (nextTextIndex < seatTypeCount && seatTypeDesc != null) {
+                nextTextLength = this.getTextLength(mTextSize, seatTypeDesc[nextTextIndex]);
+            } else {
+                nextTextLength = 0;
+            }
+            //计算下一个绘制座位的X轴中心位置
+            drawPositionX += (seatWidth + seatTypeInterval + textLength) / 2
+                    + (seatWidth + seatTypeInterval + nextTextLength) / 2;
         }
     }
 
@@ -478,25 +583,69 @@ public class SeatChooseView extends View {
 
 
         drawY = drawY + mStageParams.getStageHeight() / 2 + mSeatParams.getSeatTotalHeight() / 2 + mStageParams.getStageMarginBottom();
-        drawExampleSeatType(canvas, mPaint, drawY, 10f, mSeatParams);
+        drawExampleSeatType(canvas, mPaint, drawY, mSeatParams);
 
-        drawY = drawY + mSeatParams.getSeatTotalHeight() + 30f;
-        drawExampleSeatType(canvas, mPaint, drawY, 10f, mSeatParams);
-//        drawX = mBeginDrawPositionX + viewCenterX;
-//        mSeatParams.setSeatColor(Color.BLACK);
-//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "锁定", 10f, false);
-//
-//        mSeatParams.setSeatColor(Color.RED);
-//        drawX = mBeginDrawPositionX + viewCenterX - viewCenterX / 2;
-//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "可选", 10f, false);
-//
-//        mSeatParams.setSeatColor(Color.YELLOW);
-//        drawX = mBeginDrawPositionX + viewCenterX + viewCenterX / 2;
-//        drawSeatWithNearText(canvas, mPaint, drawX, drawY, "已选", 10f, false);
+//        int[] extraSeatType = {4, 5, 6};
+//        int[] extraSeatColor = {Color.BLUE, Color.GRAY, Color.CYAN};
+//        mSeatParams.setExtraSeatTypeWithColor(extraSeatType, extraSeatColor, null);
+//        drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + mSeatParams.getSeatVerticalInterval();
+//        drawExampleSeatType(canvas, mPaint, drawY, mSeatParams);
 
         drawX = mBeginDrawPositionX + viewCenterX;
-        drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + 30;
+        drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + mSeatParams.getSeatVerticalInterval();
         drawSellSeats(canvas, mPaint, mSeatMap, drawX, drawY);
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int action = event.getAction();
+        float moveDistanceX = 0f;
+        float moveDistanceY = 0f;
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mDownX = event.getX();
+                mDownY = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mUpX = event.getX();
+                mUpY = event.getY();
+                moveDistanceX = mUpX - mDownX;
+                moveDistanceY = mUpY - mDownY;
+                //此处做大于5的判断是为了避免在检测单击事件时
+                //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
+                if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
+                    mBeginDrawPositionX += moveDistanceX;
+                    mBeginDrawPositionY += moveDistanceY;
+                    invalidate();
+                }
+                //移动操作完把数据还原初始状态,以防出现不必要的错误
+                mDownX = event.getX();
+                mDownY = event.getY();
+                mUpX = 0f;
+                mUpY = 0f;
+                break;
+            case MotionEvent.ACTION_UP:
+                mUpX = event.getX();
+                mUpY = event.getY();
+                moveDistanceX = mUpX - mDownX;
+                moveDistanceY = mUpY - mDownY;
+                //此处做大于5的判断是为了避免在检测单击事件时
+                //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
+                if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
+                    //此处处理的为移动效果
+                    mBeginDrawPositionX += moveDistanceX;
+                    mBeginDrawPositionY += moveDistanceY;
+                    invalidate();
+                } else {
+                    //否则处理单击效果
+                }
+                //移动操作完把数据还原初始状态,以防出现不必要的错误
+                mDownX = 0f;
+                mDownY = 0f;
+                mUpX = 0f;
+                mUpY = 0f;
+                break;
+        }
+        return true;
+    }
 }
