@@ -105,12 +105,25 @@ public class SeatParams {
     private String[] mSeatTypeDescription = null;
 
 
-    public SeatParams() {
+    private static SeatParams mInstance = null;
+
+    private SeatParams() {
         resetSeatTypeWithColor();
         mSeatTypeDescription = new String[3];
         mSeatTypeDescription[0] = DEFAULT_SEAT_UNSELETED_DESC;
         mSeatTypeDescription[1] = DEFAULT_SEAT_SELETED_DESC;
         mSeatTypeDescription[2] = DEFAULT_SEAT_SOLD_DESC;
+    }
+
+    public static synchronized SeatParams getInstance() {
+        if (mInstance == null) {
+            mInstance = new SeatParams();
+        }
+        return mInstance;
+    }
+
+    public void resetSeatParams() {
+        mInstance = new SeatParams();
     }
 
     public boolean getIsDrawSeat() {
@@ -424,5 +437,19 @@ public class SeatParams {
         } else {
             throw new RuntimeException("获取座位类型对应的颜色值失败!查询不到对应的座位类型或不存在该座位类型");
         }
+    }
+
+    /**
+     * 座位操作接口(或部分参数需求)
+     */
+    interface ISeatOperation {
+        /**
+         * 获取出售座位开始绘制的第一行座位的Y轴坐标
+         * <p><font color="yellow"><b><p>此处必须注意的地方是,这里的Y轴坐标是指top,而不是绘制位置的中心centerY</b></font></p>
+         * <p><font color="yellow">此外,这里的Y轴坐标是原始绘制界面的坐标,而不是移动后的坐标(即在第一次绘制时把该坐标记录返回即可)</font></p>
+         *
+         * @return
+         */
+        public float getSellSeatsBeginDrawY();
     }
 }

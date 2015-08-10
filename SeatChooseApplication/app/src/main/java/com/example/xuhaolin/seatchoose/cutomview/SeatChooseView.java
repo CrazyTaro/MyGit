@@ -6,17 +6,21 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.example.xuhaolin.seatchoose.cutomview.SeatParams.ISeatOperation;
 
 /**
- * Author:
- * Description:
+ * Created by xuhaolin in 2015-08-07
+ * 座位选择控件
  */
-public class SeatChooseView extends View implements View.OnTouchListener {
+public class SeatChooseView extends View implements View.OnTouchListener, ISeatOperation {
     /**
      * 默认文字颜色值
      */
@@ -56,14 +60,15 @@ public class SeatChooseView extends View implements View.OnTouchListener {
     private float mDownY = 0f;
     private float mUpX = 0f;
     private float mUpY = 0f;
+    private boolean mIsMoved = false;
 
     private int[][] mSeatMap = {
-            {1, 2, 3, 1, 2, 3, 1, 0, 2, 1, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 0, 3, 1, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 0, 2, 1, 1, 1, 3, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 1, 2, 3, 1, 0, 1, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 2, 0, 1, 1, 1, 3, 1, 2, 2, 2},
-            {1, 2, 3, 1, 2, 3, 1, 0, 2, 1, 3, 1, 1, 1, 2, 2, 2}
+            {3, 1, 0, 2, 1,},
+            {3, 1, 1, 2, 0,},
+            {3, 0, 2, 1, 1,},
+            {2, 3, 1, 1, 2,},
+            {2, 3, 1, 2, 0,},
+            {3, 1, 0, 2, 1,}
     };
 
     public SeatChooseView(Context context) {
@@ -85,8 +90,8 @@ public class SeatChooseView extends View implements View.OnTouchListener {
         mMainSeatRectf = new RectF();
         mMinorSeatRectf = new RectF();
 
-        resetSeatParams();
-        mStageParams = new StageParams();
+        mSeatParams = SeatParams.getInstance();
+        mStageParams = StageParams.getInstance();
 
         this.setOnTouchListener(this);
     }
@@ -116,7 +121,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
      * 重置座位绘制使用的参数(使用默认值)
      */
     public void resetSeatParams() {
-        mSeatParams = new SeatParams();
+        mSeatParams.resetSeatParams();
     }
 
     /**
@@ -145,7 +150,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
      * 重置舞台参数
      */
     public void resetStageParams() {
-        mStageParams = new StageParams();
+        mStageParams.resetStageParams();
     }
 
     /**
@@ -301,9 +306,8 @@ public class SeatChooseView extends View implements View.OnTouchListener {
      * @param paint         画笔
      * @param drawPositionX 舞台绘制位置的中心X轴
      * @param drawPositionY 舞台绘制位置的中心Y轴
-     * @param stageText     舞台绘制的文字
      */
-    private void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, String stageText) {
+    private void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
         RectF stageRectf = new RectF();
         float textBeginDrawX = 0f;
         float textBeginDrawY = 0f;
@@ -324,6 +328,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
             canvas.drawRoundRect(stageRectf, mStageParams.getStageRadius(), mStageParams.getStageRadius(), paint);
         }
 
+        String stageText = mStageParams.getStageText();
         if (stageText != null) {
             paint.setTextSize(textSize);
             paint.setColor(mTextColor);
@@ -398,7 +403,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
             //画右边的座位
             drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatList, rightBeginColumn, seatList.length);
             //增加Y轴的绘制高度
-            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight() / 2;
+            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight();
         }
     }
 
@@ -447,24 +452,32 @@ public class SeatChooseView extends View implements View.OnTouchListener {
         }
     }
 
-    public void drawAutoExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, SeatParams partSeatTypeParams) {
-        if (partSeatTypeParams == null) {
+    /**
+     * 自动计算并绘制座位类型及其邻近文字的方法,该方法不适用于可移动界面
+     * <p><font color="yellow">由于是自动计算,所以移动界面后座位类型位置还是不变,所以不推荐使用(特别需要情况下可用),但绘制的结果是保证适应屏幕界面的</font></p>
+     *
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param drawPositionY 开始绘制的座位类型中心Y轴位置,centerY
+     */
+    public void drawAutoExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
+        if (mSeatParams == null) {
             return;
         }
-        int seatTypeCount = partSeatTypeParams.getSeatTypeArrary().length;
+        int seatTypeCount = mSeatParams.getSeatTypeArrary().length;
         float viewWidth = this.getWidth();
-        float seatTextInterval = partSeatTypeParams.getSeatTextInterval();
+        float seatTextInterval = mSeatParams.getSeatTextInterval();
         float eachSeatTypeDrawWidth = viewWidth / seatTypeCount;
         float drawPositionX = eachSeatTypeDrawWidth / 2;
-        String[] seatTypeDesc = partSeatTypeParams.getSeatTypeDescription();
+        String[] seatTypeDesc = mSeatParams.getSeatTypeDescription();
         String text = null;
         for (int i = 0; i < seatTypeCount; i++) {
-            int seatType = partSeatTypeParams.getSeatTypeArrary()[i];
+            int seatType = mSeatParams.getSeatTypeArrary()[i];
             int seatColor = mSeatParams.getSeatColorByType(seatType);
             mSeatParams.setIsDrawSeat(seatType);
             mSeatParams.setSeatColor(seatColor);
             if (seatTypeDesc != null) {
-                text = partSeatTypeParams.getSeatTypeDescription()[i];
+                text = mSeatParams.getSeatTypeDescription()[i];
             } else {
                 text = null;
             }
@@ -477,26 +490,25 @@ public class SeatChooseView extends View implements View.OnTouchListener {
      * 绘制座位类型及其描述文字
      * <p><font color="yellow"><b>此方法绘制时以参数设置固定的座位类型间的间隔为基准进行绘制,不保证绘制结果会完全适应屏幕</b></font></p>
      *
-     * @param canvas             画板
-     * @param paint              画笔
-     * @param drawPositionY      座位绘制的中心Y轴位置
-     * @param partSeatTypeParams {@link SeatParams},座位绘制参数
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param drawPositionY 座位绘制的中心Y轴位置
      */
-    public void drawExampleSeatType(Canvas canvas, Paint paint, float drawPositionY, SeatParams partSeatTypeParams) {
-        if (partSeatTypeParams == null) {
+    public void drawExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
+        if (mSeatParams == null) {
             //若座位参数为null,则不作任何绘制
             return;
         }
         //座位类型的个数
-        int seatTypeCount = partSeatTypeParams.getSeatTypeArrary().length;
+        int seatTypeCount = mSeatParams.getSeatTypeArrary().length;
         //当前view的宽度
         float viewWidth = this.getWidth();
         //座位的宽度
-        float seatWidth = partSeatTypeParams.getSeatWidth();
+        float seatWidth = mSeatParams.getSeatWidth();
         //座位与邻近文字的距离
-        float seatTextInterval = partSeatTypeParams.getSeatTextInterval();
+        float seatTextInterval = mSeatParams.getSeatTextInterval();
         //座位类型之前的距离,每个座位(此处包含文字)绘制之间的距离
-        float seatTypeInterval = partSeatTypeParams.getSeatTypeInterval();
+        float seatTypeInterval = mSeatParams.getSeatTypeInterval();
         //开始绘制的位置
         //此处的开始绘制是指第一个座位类型在当前行中绘制的中心位置
         float drawPositionX = 0f;
@@ -507,7 +519,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
         //此处的座位包含了其邻近的文字
         float allSeatTypeWidth = 0f;
         //座位类型对应的描述文字数组
-        String[] seatTypeDesc = partSeatTypeParams.getSeatTypeDescription();
+        String[] seatTypeDesc = mSeatParams.getSeatTypeDescription();
 
 
         if (seatTypeDesc != null) {
@@ -519,9 +531,9 @@ public class SeatChooseView extends View implements View.OnTouchListener {
             totalTextLength = 0f;
         }
         //计算所有座位(包含文字及座位之前的间隔)长度
-        allSeatTypeWidth = totalTextLength + (partSeatTypeParams.getSeatWidth()
-                + partSeatTypeParams.getSeatTextInterval()) * seatTypeCount
-                + partSeatTypeParams.getSeatTypeInterval() * (seatTypeCount - 1);
+        allSeatTypeWidth = totalTextLength + (mSeatParams.getSeatWidth()
+                + mSeatParams.getSeatTextInterval()) * seatTypeCount
+                + mSeatParams.getSeatTypeInterval() * (seatTypeCount - 1);
         String firstText = seatTypeDesc == null ? null : seatTypeDesc[0];
         //计算开始绘制的X轴位置
         drawPositionX = mBeginDrawPositionX + viewWidth / 2
@@ -536,13 +548,13 @@ public class SeatChooseView extends View implements View.OnTouchListener {
         float nextTextLength = 0f;
         for (int i = 0; i < seatTypeCount; i++) {
             //设置座位类型及颜色
-            int seatType = partSeatTypeParams.getSeatTypeArrary()[i];
+            int seatType = mSeatParams.getSeatTypeArrary()[i];
             int seatColor = mSeatParams.getSeatColorByType(seatType);
             mSeatParams.setIsDrawSeat(seatType);
             mSeatParams.setSeatColor(seatColor);
             //加载座位类型描述文字及计算其长度
             if (seatTypeDesc != null) {
-                drawText = partSeatTypeParams.getSeatTypeDescription()[i];
+                drawText = mSeatParams.getSeatTypeDescription()[i];
                 textLength = this.getTextLength(mTextSize, drawText);
             } else {
                 drawText = null;
@@ -579,26 +591,231 @@ public class SeatChooseView extends View implements View.OnTouchListener {
 
         drawY = mBeginDrawPositionY + mStageParams.getStageMarginTop() + mStageParams.getStageHeight() / 2;
         drawX = mBeginDrawPositionX + viewCenterX;
-        drawStage(canvas, mPaint, drawX, drawY, "舞台");
+        drawStage(canvas, mPaint, drawX, drawY);
 
 
-        drawY = drawY + mStageParams.getStageHeight() / 2 + mSeatParams.getSeatTotalHeight() / 2 + mStageParams.getStageMarginBottom();
-        drawExampleSeatType(canvas, mPaint, drawY, mSeatParams);
-
-//        int[] extraSeatType = {4, 5, 6};
-//        int[] extraSeatColor = {Color.BLUE, Color.GRAY, Color.CYAN};
-//        mSeatParams.setExtraSeatTypeWithColor(extraSeatType, extraSeatColor, null);
-//        drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + mSeatParams.getSeatVerticalInterval();
-//        drawExampleSeatType(canvas, mPaint, drawY, mSeatParams);
+        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() / 2;
+        drawExampleSeatType(canvas, mPaint, drawY);
 
         drawX = mBeginDrawPositionX + viewCenterX;
-        drawY = drawY + mSeatParams.getSeatTotalHeight() / 2 + mSeatParams.getSeatVerticalInterval();
+        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() + mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight() / 2;
+
         drawSellSeats(canvas, mPaint, mSeatMap, drawX, drawY);
+    }
+
+    /**
+     * 获取单击位置的座位索引值
+     *
+     * @param clickPositionX     单击位置的相对X轴位置,<font color="yellow"><b>此处的相对是指通过计算后得到的与未进行任何界面移动操作前的默认绘制布局相等同的座标</b></font>
+     * @param clickPositionY     单击位置的相对Y轴位置,<font color="yellow"><b>原理同上</b></font>
+     * @param beginDrawPositionY 出售座位开始绘制的坐标,<font color="yellow"><b>此处的坐标是指第一行开始绘制的出售座位的Y轴坐标,即top而不是centerY</b></font>
+     *                           <p>在实际中应该是除去舞台的高度(包括其间隔占用的高度)及座位类型(同理包括其间隔占用的高度)的高度</p>
+     * @param seatColumnCount    座位列数,<font color="yellow"><b>列数,在二维表中应该是table[0].length</b></font>
+     * @param seatRowCount       座位行数,<font color="yellow"><b>行数,在二维表中应该是table.length</b></font>
+     * @return {@link Point},返回座位在表中对应的行列索引值,若单击点不在有效区域则返回null
+     */
+    private Point getClickSeatByPosition(float clickPositionX, float clickPositionY, float beginDrawPositionY, int seatColumnCount, int seatRowCount) {
+        //返回的座位对应的索引值点
+        Point clickSeatIndex = new Point();
+        //计算列的索引
+        int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
+        //计算行的索引
+        int clickRow = calculateRowIndex(clickPositionY, beginDrawPositionY, seatRowCount);
+        //座位有效则进行处理
+        if (clickColumn != -1 && clickRow != -1) {
+            clickSeatIndex.x = clickRow;
+            clickSeatIndex.y = clickColumn;
+            return clickSeatIndex;
+        } else {
+            //否则返回null
+            return null;
+        }
+    }
+
+    /**
+     * 计算行索引(从高度计算)
+     *
+     * @param clickPositionY     单击位置相对的Y轴坐标
+     * @param beginDrawPositionY 实际出售座位开始绘制的高度
+     * @param seatRowCount       座位表中行数
+     * @return 返回计算得到的行索引值, 当不存在时返回-1
+     */
+    private int calculateRowIndex(float clickPositionY, float beginDrawPositionY, int seatRowCount) {
+        //计算当前单击位置与开始绘制位置的距离
+        //用于后面计算在哪一行
+        float clickYInterval = clickPositionY - beginDrawPositionY;
+        //上一次计算距离结果
+        float lastYInterval = clickYInterval;
+        //当前计算距离结果
+        float currentYInterval = clickYInterval;
+        //当前模拟单击到的行索引
+        int clickRow = 0;
+        //增量
+        //由于计算从第一行开始,所以行肯定只向下面的方向进行搜索
+        //所以增量不存在两种情况,此处选择负值作为处理
+        int increament = -1;
+        //计算出的初始距离小于0,说明当前单击位置在第一行座位的上方,不可能会选中有效区域,直接返回不存在
+        if (clickYInterval < 0) {
+            return -1;
+        }
+
+
+        //重复计算
+        for (; ; ) {
+            //当前行值已经超过座位表行总数或不在合理范围内,直接返回不存在
+            if (clickRow < 0 || clickRow >= seatRowCount) {
+                return -1;
+            }
+            //计算当前的距离
+            //此处使用的间隔区域是座位的有效高度(有效区域)
+            currentYInterval += increament * mSeatParams.getSeatTotalHeight();
+            //对单击位置进行判断是否在当前的距离范围内
+            if (isClickedInPosition(clickYInterval, lastYInterval, currentYInterval)) {
+                //在该座位区域内返回有效值
+                return clickRow;
+            } else {
+                //不在该区域内则尝试继续计算
+                lastYInterval = currentYInterval;
+            }
+            //再次计算当前的距离
+            //此处使用的间隔区域是座位之间的间隔高度(无效区域)
+            currentYInterval += increament * mSeatParams.getSeatVerticalInterval();
+            if (isClickedInPosition(clickYInterval, lastYInterval, currentYInterval)) {
+                //此处与上面不一样的原因是因为
+                //在座位绘制过程中分两个部分,一个是座位的绘制(座位有效高度)
+                //一个是座位之间的间隔(无效高度)
+                //当单击的位置在当前的无效间隔中时,虽然该单击是有效的,但是并没有选中任何有效的区域(即座位)
+                //因此返回不存在
+                //此时已经查询到单击的位置,所以不需要再查询计算下去,直接返回不存在
+                return -1;
+            } else {
+                //不在该区域内则继续计算
+                lastYInterval = currentYInterval;
+            }
+            //一轮计算结束,行数增1
+            //一轮计算以一个座位的高度及其邻近一个间隔距离为单位
+            clickRow++;
+        }
+    }
+
+    /**
+     * 计算列索引(从宽度计算)
+     *
+     * @param clickPositionX  单击位置相对的X轴坐标
+     * @param seatColumnCount 座位表中列数
+     * @return 返回计算得到的列索引值, 当不存在时返回-1
+     */
+    private int calculateColumnIndex(float clickPositionX, int seatColumnCount) {
+        //计算控件的中心X轴位置
+        float centerX = getWidth() / 2;
+        //计算单击位置X轴与中心X轴位置
+        float centerXInterval = clickPositionX - centerX;
+        //上一次距离
+        float lastXInterval = centerXInterval;
+        //当前距离
+        float currentXInterval = centerXInterval;
+        //模拟当前被单击的列索引
+        int clickColumn = 0;
+        //增量
+        //增量由单击位置的X坐标与中心位置的X坐标的距离关系决定
+        //当单击位置在中心X轴的左边时,增量为正
+        //反之,增量为负
+        int increament = centerXInterval > 0 ? -1 : 1;
+        //判断列数奇偶进行必要的处理
+        if ((seatColumnCount & 0x1) == 0) {
+            //偶数列
+            if (centerXInterval > 0) {
+                //当前单击位置在中心位置的右边
+                //从中心位置的右边的位置开始计算
+                clickColumn = seatColumnCount / 2;
+            } else {
+                //当前单击位置在中心位置的左边
+                //从中心位置的左边的位置开始计算
+                clickColumn = seatColumnCount / 2 - 1;
+            }
+            //去除中心位置两个座位的间隔的一半
+            //到达中座位单击位置方向的第一个座位开始的位置
+            currentXInterval += increament * mSeatParams.getSeatHorizontalInterval() / 2;
+            //判断是否在区域间隔内(此部分为无效区域)
+            //由于偶数列中心位置并不存在座位,所以单击点在此处则该部分为无效区域
+            //直接返回不存在
+            if (isClickedInPosition(centerXInterval, lastXInterval, currentXInterval)) {
+                return -1;
+            } else {
+                lastXInterval = currentXInterval;
+            }
+            //计算当前距离
+            currentXInterval += increament * (mSeatParams.getSeatWidth());
+        } else {
+            //奇数列
+            //取中间的列数索引
+            clickColumn = seatColumnCount / 2;
+            //计算去除中心位置的座位的宽度的一半
+            lastXInterval = centerXInterval;
+            currentXInterval += increament * mSeatParams.getSeatWidth() / 2;
+        }
+
+        //重复计算
+        for (; ; ) {
+            //当前列索引不合理,直接返回不存在
+            if (clickColumn >= seatColumnCount || clickColumn < 0) {
+                return -1;
+            }
+            //判断单击点所在的区域
+            //同行计算原理,见方法 calculateRowIndex
+            if (isClickedInPosition(centerXInterval, lastXInterval, currentXInterval)) {
+                return clickColumn;
+            } else {
+                lastXInterval = currentXInterval;
+            }
+            currentXInterval += increament * mSeatParams.getSeatHorizontalInterval();
+            if (isClickedInPosition(centerXInterval, lastXInterval, currentXInterval)) {
+                return -1;
+            } else {
+                lastXInterval = currentXInterval;
+            }
+            currentXInterval += increament * mSeatParams.getSeatWidth();
+            //根据增量计算新的列索引
+            clickColumn += increament * -1;
+        }
+    }
+
+    /**
+     * 判断单击点是否在当前的指定的区域间隔内
+     *
+     * @param originalInterval 原始的单击点与默认点的距离,此参数仅使用其正负值做一个处理标志，数值本身并没有实际作用
+     * @param lastInterval     上一次检测过的区域间隔
+     * @param currentInterval  当前需要被检测的区域间隔
+     * @return 单击点在当前的区域内返回true, 否则返回false;
+     */
+    private boolean isClickedInPosition(float originalInterval, float lastInterval, float currentInterval) {
+        //单击点在默认点的右方或者下方
+        if (originalInterval > 0) {
+            //上一次指定点与单击点的区域间隔为正(单击点还在上一个指定点的右边)
+            //当前指定点与单击点的区域间隔为负(单击点在当前指定点的左边)
+            //因此当前指定点与上一次指定点之间的间隔区域(即currentInterval)包含了单击点
+            //返回true
+            if (lastInterval >= 0 && currentInterval <= 0) {
+                return true;
+            } else {
+                //其它任何情况都不足以说明单击点在当前指定的区域内,返回false
+                return false;
+            }
+        } else {
+            //单击点在默认点的左方或者上方
+            //同理见上说明
+            if (lastInterval < 0 && currentInterval > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
+        //用于记录此处事件中新界面与旧界面之间的相对移动距离
         float moveDistanceX = 0f;
         float moveDistanceY = 0f;
         switch (action) {
@@ -617,6 +834,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
                     mBeginDrawPositionX += moveDistanceX;
                     mBeginDrawPositionY += moveDistanceY;
                     invalidate();
+                    mIsMoved = true;
                 }
                 //移动操作完把数据还原初始状态,以防出现不必要的错误
                 mDownX = event.getX();
@@ -636,16 +854,38 @@ public class SeatChooseView extends View implements View.OnTouchListener {
                     mBeginDrawPositionX += moveDistanceX;
                     mBeginDrawPositionY += moveDistanceY;
                     invalidate();
-                } else {
-                    //否则处理单击效果
+                    mIsMoved = true;
+                }
+                if (!mIsMoved) {
+                    //界面没有被移动过,则处理为单击事件
+                    //由当前的界面位置计算出相对原来(完全没有被移动过的界面)当前单击点在原始界面的坐标位置
+                    float clickPositionX = event.getX() - mBeginDrawPositionX;
+                    float clickPositionY = event.getY() - mBeginDrawPositionY;
+                    //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
+                    float beginDrawPositionY = getSellSeatsBeginDrawY();
+                    if (mSeatMap != null) {
+                        //计算单击位置的座位索引值
+                        Point clickSeatPoint = getClickSeatByPosition(clickPositionX, clickPositionY, beginDrawPositionY, mSeatMap[0].length, mSeatMap.length);
+                        if (clickSeatPoint != null) {
+                            Toast.makeText(getContext(), "clickRow = " + clickSeatPoint.x + " / clickColumn = " + clickSeatPoint.y, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(), "没有选中座位!", Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
                 //移动操作完把数据还原初始状态,以防出现不必要的错误
                 mDownX = 0f;
                 mDownY = 0f;
                 mUpX = 0f;
                 mUpY = 0f;
+                mIsMoved = false;
                 break;
         }
         return true;
+    }
+
+    @Override
+    public float getSellSeatsBeginDrawY() {
+        return mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() + mSeatParams.getSeatVerticalInterval();
     }
 }

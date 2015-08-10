@@ -18,7 +18,7 @@ public class StageParams {
     /**
      * 默认舞台高度
      */
-    public static final float DEFAULT_STAGE_HEIGHT = 50f;
+    public static final float DEFAULT_STAGE_HEIGHT = 55f;
     /**
      * 默认舞台圆角度
      */
@@ -26,11 +26,15 @@ public class StageParams {
     /**
      * 默认舞台与顶端间距
      */
-    public static final float DEFAULT_STAGE_MARGIN_TOP = 15f;
+    public static final float DEFAULT_STAGE_MARGIN_TOP = 30f;
     /**
      * 默认舞台下方空白高度（与座位的间隔）
      */
-    public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 20f;
+    public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 30f;
+    /**
+     * 默认舞台文字
+     */
+    public static final String DEFAULT_STAGE_TEXT = "舞台";
     /**
      * 默认整数值:-1
      */
@@ -46,6 +50,31 @@ public class StageParams {
     private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
     private float mStageRadius = DEFAULT_STAGE_RADIUS;
     private int mStageColor = DEFAULT_STAGE_COLOR;
+    private String mStageText = DEFAULT_STAGE_TEXT;
+
+    private static StageParams mInstance = null;
+
+    private StageParams() {
+    }
+
+    public void resetStageParams() {
+        mInstance = new StageParams();
+    }
+
+    public static synchronized StageParams getInstance() {
+        if (mInstance == null) {
+            mInstance = new StageParams();
+        }
+        return mInstance;
+    }
+
+    public String getStageText() {
+        return mStageText;
+    }
+
+    public void setStageText(String text) {
+        this.mStageText = text;
+    }
 
     public float getStageWidth() {
         return mStageWidth;
