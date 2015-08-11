@@ -3,6 +3,8 @@ package com.example.xuhaolin.seatchoose.cutomview;/**
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.xuhaolin.seatchoose.R;
 import com.example.xuhaolin.seatchoose.cutomview.SeatParams.ISeatOperation;
 
 /**
@@ -21,23 +24,6 @@ import com.example.xuhaolin.seatchoose.cutomview.SeatParams.ISeatOperation;
  * 座位选择控件
  */
 public class SeatChooseView extends View implements View.OnTouchListener, ISeatOperation {
-    /**
-     * 默认文字颜色值
-     */
-    public static final int DEFAULT_COLOR_TEXT = Color.BLACK;
-    /**
-     * 默认文字大小
-     */
-    public static final float DEFAULT_TEXT_SIZE = 25f;
-    /**
-     * 默认整数值:-1
-     */
-    public static final int DEFAULT_INT = -1;
-    /**
-     * 默认浮点值:-1
-     */
-    public static final float DEFAULT_FLOAT = -1;
-
     //座位参数
     private SeatParams mSeatParams = null;
     //舞台参数
@@ -49,12 +35,12 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
     private RectF mMainSeatRectf = null;
     //次座位,两者结合让座位看起来比较好看而已...
     private RectF mMinorSeatRectf = null;
-
-    private int mTextColor = DEFAULT_COLOR_TEXT;
-    private float mTextSize = DEFAULT_TEXT_SIZE;
+    private ISeatInformation mISeatInformation = null;
 
     private float mBeginDrawPositionY = 0f;
     private float mBeginDrawPositionX = 0f;
+    private float mLargeOffsetX = 0f;
+    private float mLargeOffsetY = 0f;
 
     private float mDownX = 0f;
     private float mDownY = 0f;
@@ -63,13 +49,13 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
     private boolean mIsMoved = false;
 
     private int[][] mSeatMap = {
-            {3, 1, 0, 2, 1,},
-            {3, 1, 1, 2, 0,},
-            {3, 0, 2, 1, 1,},
-            {2, 3, 1, 1, 2,},
-            {2, 3, 1, 2, 0,},
-            {3, 1, 0, 2, 1,}
+            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 2, 0, 3, 2, 1, 3, 0, 2,},
+            {3, 1, 1, 2, 0, 3, 0, 2, 1, 1, 3, 0, 2, 2, 1, 3, 0, 2,},
+            {3, 0, 2, 1, 1, 3, 1, 0, 2, 1, 2, 2, 1, 3, 0, 2, 0, 3,},
+            {2, 3, 1, 2, 0, 3, 0, 2, 1, 1, 2, 0, 2, 1, 3, 0, 2, 3,},
+            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 3, 2, 1, 3, 0, 2, 0, 2,}
     };
+    private Bitmap mSeatImage = null;
 
     public SeatChooseView(Context context) {
         super(context);
@@ -92,29 +78,13 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
 
         mSeatParams = SeatParams.getInstance();
         mStageParams = StageParams.getInstance();
+        mSeatImage = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.icon_logo_main);
 
         this.setOnTouchListener(this);
     }
 
-    /**
-     * 设置文字通用参数,<font color="yellow"><b>所有参数使用默认值请传入{@link #DEFAULT_INT}</b></font>
-     *
-     * @param textColor 文字颜色
-     * @param textSize  文字大小
-     */
-    public void setTextParams(int textColor, float textSize) {
-
-        if (textColor == DEFAULT_INT) {
-            mTextColor = DEFAULT_COLOR_TEXT;
-        } else {
-            mTextColor = textColor;
-        }
-
-        if (textSize == DEFAULT_FLOAT) {
-            mTextSize = DEFAULT_TEXT_SIZE;
-        } else {
-            mTextSize = textSize;
-        }
+    public void setSeatInformationInterface(ISeatInformation mInterface) {
+        mISeatInformation = mInterface;
     }
 
     /**
@@ -228,7 +198,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         if (text == null) {
             textLength = 0;
         } else {
-            paint.setTextSize(mTextSize);
+            paint.setTextSize(mSeatParams.getSeatTextSize());
             textLength = paint.measureText(text);
         }
 
@@ -244,17 +214,28 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             textBeginDrawX = drawXPosition + interval / 2;
         }
         //计算文字的Y轴位置(由于文字只考虑绘制在左边和右边,所以文字的绘制高度是不会受影响的)
-        textBeginDrawY = drawYPosition + mTextSize / 3;
+        textBeginDrawY = drawYPosition + mSeatParams.getSeatTextSize() / 3;
         seatCenterY = drawYPosition;
 
         if (text != null) {
             //绘制文字
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(mTextColor);
+            paint.setColor(mSeatParams.getSeatTextColor());
             canvas.drawText(text, textBeginDrawX, textBeginDrawY, paint);
         }
         //绘制座位
         drawSeat(canvas, paint, seatCenterX, seatCenterY);
+    }
+
+    private void drawImageSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+        RectF imageRectf = new RectF();
+        float imageEdge = mSeatParams.getSeatWidth();
+        imageRectf.left = drawPositionX - imageEdge / 2;
+        imageRectf.right = imageRectf.left + imageEdge;
+        imageRectf.top = drawPositionY - imageEdge / 2;
+        imageRectf.bottom = imageRectf.top + imageEdge;
+
+        canvas.drawBitmap(mSeatImage, null, imageRectf, paint);
     }
 
     /**
@@ -273,7 +254,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         //座位的占拒的总高度(两部分座位)
         float totalSeatHeight = 0f;
         //计算座位占用的总高度
-        totalSeatHeight = mSeatParams.getSeatHeightInterval() + mSeatParams.getMainSeatHeight() + mSeatParams.getMinorSeatHeight();
+        totalSeatHeight = mSeatParams.getSeatTotalHeight();
         mMainSeatRectf.left = drawPositionX - mSeatParams.getSeatWidth() / 2;
         mMainSeatRectf.right = mMainSeatRectf.left + mSeatParams.getSeatWidth();
         mMinorSeatRectf.left = mMainSeatRectf.left;
@@ -331,7 +312,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         String stageText = mStageParams.getStageText();
         if (stageText != null) {
             paint.setTextSize(textSize);
-            paint.setColor(mTextColor);
+            paint.setColor(Color.BLACK);
             paint.setStyle(Paint.Style.STROKE);
 
             textLength = paint.measureText(stageText);
@@ -394,31 +375,36 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             rightBeginColumn = leftBeginColumn + 1;
         }
         beginDrawY = drawPositionY;
-        for (int[] seatList : seatMap) {
+        for (int i = 0; i < seatMap.length; i++) {
             //画左边的座位
             //绘制的时候由start位置到end位置
-            //从start到end每一个位置都会绘制,所以要保证start/end位置的数据在数组中
+            //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
             //即数组不可越界
-            drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatList, leftBeginColumn, 0 - 1);
+            drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatMap[i], leftBeginColumn, 0 - 1, i);
             //画右边的座位
-            drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatList, rightBeginColumn, seatList.length);
+            drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatMap[i], rightBeginColumn, seatMap[i].length, i);
             //增加Y轴的绘制高度
-            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight();
+            beginDrawY += mSeatParams.getSeatVerticalInterval() + this.getSeatDrawHeight();
         }
+    }
+
+    private void drawTitleColumn(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int columnCount) {
+
     }
 
     /**
      * 绘制一行水平的座位表,<font color="yellow"><b>向一个固定的方向绘制</b></font>
      *
-     * @param canvas        画板
-     * @param paint         画笔
-     * @param drawPositionX 该行座位开始绘制的第一个座位中心X轴位置
-     * @param drawPositionY 该行座位开始绘制的第一个座位中心Y轴位置
-     * @param seatList      单行座位列表
-     * @param start         座位列表中开始绘制的索引,<font color="yellow"><b>此索引位置的座位将被绘制</b></font>
-     * @param end           座位列表中最后绘制的索引,<font color="yellow"><b>此索引位置的座位将被绘制</b></font>
+     * @param canvas          画板
+     * @param paint           画笔
+     * @param drawPositionX   该行座位开始绘制的第一个座位中心X轴位置
+     * @param drawPositionY   该行座位开始绘制的第一个座位中心Y轴位置
+     * @param seatList        单行座位列表
+     * @param start           座位列表中开始绘制的索引,<font color="yellow"><b>此索引位置的座位将被绘制</b></font>
+     * @param end             座位列表中最后绘制的索引,<font color="yellow"><b>此索引位置的座位不被绘制</b></font>
+     * @param currentRowIndex 当前绘制座位的行索引,用于绘制对应的行数,<font color="yellow"><b>不需要绘制行数请使用负值</b></font>
      */
-    private void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end) {
+    private void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end, int currentRowIndex) {
         float beginDrawX = drawPositionX;
         //从大到小则为向左绘制,增量为负值-1
         //从小到大则为向右绘制,增量为正值+1
@@ -439,13 +425,32 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
                     //设置座位是否需要被绘制
                     mSeatParams.setIsDrawSeat(seatType);
                     //绘制单个座位
-                    drawSeat(canvas, paint, beginDrawX, drawPositionY);
+//                    drawSeat(canvas, paint, beginDrawX, drawPositionY);
+                    drawImageSeat(canvas, paint, beginDrawX, drawPositionY);
                     //计算下一个绘制座位的X轴位置
                     //由于此处绘制的座位是同一行的,所以仅X轴位置改变,Y轴位置不会改变
                     beginDrawX += increment * (mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval());
                     //通过增量改变下一个绘制座位的索引
                     i += increment;
                 } while (i != end);
+                //当前行数有效且绘制的方向为从右向左绘制时(即绘制到最开始的座位)
+                //尝试绘制当前的行数
+                if (currentRowIndex >= 0 && increment < 0) {
+                    //增大行数与座位之间的间隔
+                    beginDrawX += increment * mSeatParams.getSeatHorizontalInterval();
+                    paint.setTextSize((float) (this.getSeatDrawHeight() * 0.8));
+                    paint.setColor(mSeatParams.getSeatTextColor());
+                    //调整文字显示的Y轴坐标
+                    float drawTextY = drawPositionY + mSeatParams.getSeatTextSize() / 3;
+                    canvas.drawText(String.valueOf((currentRowIndex + 1)), beginDrawX, drawTextY, paint);
+
+                    //记录最大偏移量
+                    //该值可能会改变的,此处由多个地方决定
+                    if (mBeginDrawPositionX == 0) {
+                        //附加的部分是用于增大间隔
+                        mLargeOffsetX = Math.abs(beginDrawX) + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
+                    }
+                }
             } catch (ArrayIndexOutOfBoundsException ex) {
                 ex.printStackTrace();
             }
@@ -483,6 +488,13 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             }
             drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, text, seatTextInterval, false);
             drawPositionX += eachSeatTypeDrawWidth;
+        }
+
+        //记录最大偏移量
+        //该值可能会改变的,此处由多个地方决定
+        if (mBeginDrawPositionX == 0) {
+            //附加的部分是用于增大间隔
+            mLargeOffsetX = Math.abs(drawPositionX) + mSeatParams.getSeatHorizontalInterval();
         }
     }
 
@@ -525,7 +537,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         if (seatTypeDesc != null) {
             for (String text : seatTypeDesc) {
                 //计算所有文字长度
-                totalTextLength += this.getTextLength(mTextSize, text);
+                totalTextLength += this.getTextLength(mSeatParams.getSeatTextSize(), text);
             }
         } else {
             totalTextLength = 0f;
@@ -538,8 +550,14 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         //计算开始绘制的X轴位置
         drawPositionX = mBeginDrawPositionX + viewWidth / 2
                 - allSeatTypeWidth / 2
-                + (seatWidth + seatTypeInterval + this.getTextLength(mTextSize, firstText)) / 2;
+                + (seatWidth + seatTypeInterval + this.getTextLength(mSeatParams.getSeatTextSize(), firstText)) / 2;
 
+        //记录最大偏移量
+        //该值可能会改变的,此处由多个地方决定
+        if (mBeginDrawPositionX == 0) {
+            //附加的部分是用于增大间隔
+            mLargeOffsetX = Math.abs(drawPositionX) + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
+        }
 
         String drawText = null;
         //当前绘制文字的长度
@@ -555,7 +573,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             //加载座位类型描述文字及计算其长度
             if (seatTypeDesc != null) {
                 drawText = mSeatParams.getSeatTypeDescription()[i];
-                textLength = this.getTextLength(mTextSize, drawText);
+                textLength = this.getTextLength(mSeatParams.getSeatTextSize(), drawText);
             } else {
                 drawText = null;
                 textLength = 0f;
@@ -567,7 +585,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             //用于计算下一个绘制座位的X轴中心位置
             int nextTextIndex = i + 1;
             if (nextTextIndex < seatTypeCount && seatTypeDesc != null) {
-                nextTextLength = this.getTextLength(mTextSize, seatTypeDesc[nextTextIndex]);
+                nextTextLength = this.getTextLength(mSeatParams.getSeatTextSize(), seatTypeDesc[nextTextIndex]);
             } else {
                 nextTextLength = 0;
             }
@@ -594,11 +612,11 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         drawStage(canvas, mPaint, drawX, drawY);
 
 
-        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() / 2;
+        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + this.getSeatDrawHeight() / 2;
         drawExampleSeatType(canvas, mPaint, drawY);
 
         drawX = mBeginDrawPositionX + viewCenterX;
-        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() + mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatTotalHeight() / 2;
+        drawY = mBeginDrawPositionY + mStageParams.getStageTotalHeight() + this.getSeatDrawHeight() + mSeatParams.getSeatVerticalInterval() + this.getSeatDrawHeight() / 2;
 
         drawSellSeats(canvas, mPaint, mSeatMap, drawX, drawY);
     }
@@ -668,7 +686,7 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
             }
             //计算当前的距离
             //此处使用的间隔区域是座位的有效高度(有效区域)
-            currentYInterval += increament * mSeatParams.getSeatTotalHeight();
+            currentYInterval += increament * this.getSeatDrawHeight();
             //对单击位置进行判断是否在当前的距离范围内
             if (isClickedInPosition(clickYInterval, lastYInterval, currentYInterval)) {
                 //在该座位区域内返回有效值
@@ -812,6 +830,36 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
         }
     }
 
+    /**
+     * 根据移动的距离计算是否重新绘制
+     *
+     * @param moveDistanceX X轴方向的移动距离(可负值)
+     * @param moveDistanceY Y轴方向的移动距离(可负值)
+     */
+    private void invalidateAgain(float moveDistanceX, float moveDistanceY) {
+        if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
+            float newDrawPositionX = mBeginDrawPositionX + moveDistanceX;
+            float newDrawPositionY = mBeginDrawPositionY + moveDistanceY;
+            //判断是否超过指定最大的可左右移动的距离
+            //若不作限制则用户可以无限距离地移动界面
+            if (Math.abs(newDrawPositionX) > getLargeOffsetX()) {
+                newDrawPositionX = getLargeOffsetX() * (mBeginDrawPositionX < 0 ? -1 : 1);
+                mBeginDrawPositionX = newDrawPositionX;
+            }
+            //当距离确实有效地改变了再进行重绘制,否则原界面不变,减少重绘的次数
+            if (newDrawPositionX != mBeginDrawPositionX || newDrawPositionY != mBeginDrawPositionY) {
+                mBeginDrawPositionX = newDrawPositionX;
+                mBeginDrawPositionY = newDrawPositionY;
+                invalidate();
+                //一旦重绘了则进行重绘标志,并通知处理事件
+                mIsMoved = true;
+                if (mISeatInformation != null) {
+                    mISeatInformation.viewStatus(ISeatInformation.STATUS_MOVE);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int action = event.getAction();
@@ -830,13 +878,21 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
                 moveDistanceY = mUpY - mDownY;
                 //此处做大于5的判断是为了避免在检测单击事件时
                 //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
-                if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
-                    mBeginDrawPositionX += moveDistanceX;
-                    mBeginDrawPositionY += moveDistanceY;
-                    invalidate();
-                    mIsMoved = true;
-                }
-                //移动操作完把数据还原初始状态,以防出现不必要的错误
+//                if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
+//                    mBeginDrawPositionX += moveDistanceX;
+//                    mBeginDrawPositionY += moveDistanceY;
+//                    if (Math.abs(mBeginDrawPositionX) > getLargeOffsetX()) {
+//                        mBeginDrawPositionX = getLargeOffsetX() * (mBeginDrawPositionX < 0 ? -1 : 1);
+//                    }
+//                    invalidate();
+//                    mIsMoved = true;
+//                    if (mISeatInformation != null) {
+//                        mISeatInformation.viewStatus(ISeatInformation.STATUS_MOVE);
+//                    }
+//                }
+
+                invalidateAgain(moveDistanceX, moveDistanceY);
+                // 移动操作完把数据还原初始状态,以防出现不必要的错误
                 mDownX = event.getX();
                 mDownY = event.getY();
                 mUpX = 0f;
@@ -849,14 +905,11 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
                 moveDistanceY = mUpY - mDownY;
                 //此处做大于5的判断是为了避免在检测单击事件时
                 //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
-                if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
-                    //此处处理的为移动效果
-                    mBeginDrawPositionX += moveDistanceX;
-                    mBeginDrawPositionY += moveDistanceY;
-                    invalidate();
-                    mIsMoved = true;
-                }
+                invalidateAgain(moveDistanceX, moveDistanceY);
                 if (!mIsMoved) {
+                    if (mISeatInformation != null) {
+                        mISeatInformation.viewStatus(ISeatInformation.STATUS_CLICK);
+                    }
                     //界面没有被移动过,则处理为单击事件
                     //由当前的界面位置计算出相对原来(完全没有被移动过的界面)当前单击点在原始界面的坐标位置
                     float clickPositionX = event.getX() - mBeginDrawPositionX;
@@ -867,8 +920,16 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
                         //计算单击位置的座位索引值
                         Point clickSeatPoint = getClickSeatByPosition(clickPositionX, clickPositionY, beginDrawPositionY, mSeatMap[0].length, mSeatMap.length);
                         if (clickSeatPoint != null) {
+                            if (mISeatInformation != null) {
+                                mISeatInformation.viewStatus(ISeatInformation.STATUS_CHOOSE_SEAT);
+                                mISeatInformation.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y);
+                            }
                             Toast.makeText(getContext(), "clickRow = " + clickSeatPoint.x + " / clickColumn = " + clickSeatPoint.y, Toast.LENGTH_LONG).show();
                         } else {
+                            if (mISeatInformation != null) {
+                                mISeatInformation.viewStatus(ISeatInformation.STATUS_CHOOSE_NOTHING);
+                                mISeatInformation.chosseSeatFail();
+                            }
                             Toast.makeText(getContext(), "没有选中座位!", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -886,6 +947,40 @@ public class SeatChooseView extends View implements View.OnTouchListener, ISeatO
 
     @Override
     public float getSellSeatsBeginDrawY() {
-        return mStageParams.getStageTotalHeight() + mSeatParams.getSeatTotalHeight() + mSeatParams.getSeatVerticalInterval();
+        return mStageParams.getStageTotalHeight() + this.getSeatDrawHeight() + mSeatParams.getSeatVerticalInterval();
+    }
+
+    @Override
+    public float getSeatDrawHeight() {
+        if (mSeatParams != null) {
+            return mSeatParams.getSeatWidth();
+        } else {
+            return 0;
+        }
+    }
+
+    public float getLargeOffsetX() {
+        return mLargeOffsetX;
+    }
+
+    public float getLargeOffsetY() {
+        return mLargeOffsetY;
+    }
+
+    interface ISeatInformation {
+        public static final int STATUS_MOVE = 1;
+        public static final int STATUS_CLICK = 2;
+        public static final int STATUS_CHOOSE_SEAT = 3;
+        public static final int STATUS_CHOOSE_NOTHING = 4;
+
+        public void beforMoveView(float originX, float originY);
+
+        public void afterMoveView(float currentX, float currentY);
+
+        public void viewStatus(int status);
+
+        public void chooseSeatSuccess(int rowIndex, int columnIndex);
+
+        public void chosseSeatFail();
     }
 }
