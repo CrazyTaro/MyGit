@@ -539,8 +539,8 @@ public class SeatChooseView extends View implements View.OnTouchListener {
             //否则是多行绘制
             //按每行处理的座位数量创建新的数据,座位类型/座位颜色/座位描述/座位图片ID/座位图片Bitmap
             int[] newSeatTypeArr = new int[eachRowSeatTypeCount];
-            int[] newSeatTypeColorArr = new int[eachRowSeatTypeCount];
             String[] newSeatTypeDescArr = new String[eachRowSeatTypeCount];
+            int[] newSeatTypeColorArr = new int[eachRowSeatTypeCount];
             int[] newSeatImageIdArr = new int[eachRowSeatTypeCount];
             Bitmap[] newSeatImageBitmapArr = new Bitmap[eachRowSeatTypeCount];
 
@@ -581,7 +581,7 @@ public class SeatChooseView extends View implements View.OnTouchListener {
                     //非最后一行
                     for (int j = 0; j < newSeatTypeArr.length; j++) {
                         //同理处理通用的数据
-                        newSeatTypeDescArr[j] = originSeatTypeDesc[eachRowSeatTypeCount * i + j];
+                        newSeatTypeArr[j] = originSeatTypeArr[eachRowSeatTypeCount * i + j];
                         newSeatTypeDescArr[j] = originSeatTypeDesc[eachRowSeatTypeCount * i + j];
                     }
                     //分类处理特殊的数据
@@ -597,9 +597,12 @@ public class SeatChooseView extends View implements View.OnTouchListener {
                     }
                 }
                 //将新数据填充到原座位参数中
-                mSeatParams.setAllSeatTypeWithColor(newSeatTypeArr, newSeatTypeColorArr, newSeatTypeDescArr);
-                mSeatParams.setImageSeat(newSeatImageBitmapArr);
-                mSeatParams.setImageSeat(newSeatImageIdArr);
+                if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
+                    mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageIdArr);
+                    mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageBitmapArr);
+                } else {
+                    mSeatParams.setAllSeatTypeWithColor(newSeatTypeArr, newSeatTypeColorArr, newSeatTypeDescArr);
+                }
                 //绘制当前行的座位参数
                 drawSingleRowExampleSeatType(canvas, paint, drawPositionY);
                 //Y轴坐标移动增量,用于下一行的绘制
@@ -607,10 +610,12 @@ public class SeatChooseView extends View implements View.OnTouchListener {
             }
         }
         //绘制完毕将原始数据填充回座位参数中
-        mSeatParams.setAllSeatTypeWithColor(originSeatTypeArr, originSeatTypeColorArr, originSeatTypeDesc);
-        mSeatParams.setImageSeat(originSeatImageBimapArr);
-        mSeatParams.setImageSeat(originSeatImageIDArr);
-
+        if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
+            mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageIDArr);
+            mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageBimapArr);
+        } else {
+            mSeatParams.setAllSeatTypeWithColor(originSeatTypeArr, originSeatTypeColorArr, originSeatTypeDesc);
+        }
         return drawPositionY;
     }
 

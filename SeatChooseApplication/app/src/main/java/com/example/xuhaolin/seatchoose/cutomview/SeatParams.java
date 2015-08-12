@@ -522,6 +522,44 @@ public class SeatParams {
     }
 
     /**
+     * 设置座位类型及其图片
+     *
+     * @param seatTypeArr
+     * @param imageID
+     */
+    public void setSeatTypeWithImage(int[] seatTypeArr, int[] imageID) {
+        if (seatTypeArr != null && imageID != null && seatTypeArr.length == imageID.length) {
+            mSeatTypeArrary = new int[seatTypeArr.length];
+            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
+            mSeatImageID = new int[imageID.length];
+            System.arraycopy(imageID, 0, mSeatImageID, 0, imageID.length);
+
+            mSeatDrawType = SEAT_DRAW_TYPE_IMAGE;
+        } else {
+            throw new RuntimeException("设置新座位类型及图片ID失败,请确认参数不可为null");
+        }
+    }
+
+    /**
+     * 设置座位类型及其图片
+     *
+     * @param seatTypeArr
+     * @param imageBitmap
+     */
+    public void setSeatTypeWithImage(int[] seatTypeArr, Bitmap[] imageBitmap) {
+        if (seatTypeArr != null && imageBitmap != null && seatTypeArr.length == imageBitmap.length) {
+            mSeatTypeArrary = new int[seatTypeArr.length];
+            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
+            mSeatImageBitmaps = new Bitmap[imageBitmap.length];
+            System.arraycopy(imageBitmap, 0, mSeatImageBitmaps, 0, imageBitmap.length);
+
+            mSeatDrawType = SEAT_DRAW_TYPE_IMAGE;
+        } else {
+            throw new RuntimeException("设置新座位类型及图片ID失败,请确认参数不可为null");
+        }
+    }
+
+    /**
      * 设置所有座位的类型，颜色及其描述,<font color="yellow"><b>该方法会替换所有的座位对应的默认参数</b></font>
      *
      * @param seatTypeArr  新的座位类型
@@ -541,6 +579,8 @@ public class SeatParams {
             } else {
                 throw new RuntimeException("座位类型描述不可为null,设置座位类型描述length应与座位类型length一致");
             }
+
+            mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
         } else {
             throw new RuntimeException("设置新座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
         }
@@ -581,13 +621,19 @@ public class SeatParams {
 
     public void loadSeatImage(Context context, boolean isReload) {
         if (mSeatImageID != null) {
-            if (isReload) {
-                mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
-            } else if (mSeatImageBitmaps != null) {
-                return;
-            } else {
-                mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
+            if (!isReload && mSeatImageBitmaps != null) {
+                boolean isNullObjeact = false;
+                for (Bitmap bitmap : mSeatImageBitmaps) {
+                    if (bitmap == null) {
+                        isNullObjeact = true;
+                        break;
+                    }
+                }
+                if (!isNullObjeact) {
+                    return;
+                }
             }
+            mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
 
             for (int i = 0; i < mSeatImageID.length; i++) {
                 Bitmap bitmap = getScaleBitmap(context, mSeatImageID[i], (int) this.getSeatWidth(), (int) this.getSeatHeight());
