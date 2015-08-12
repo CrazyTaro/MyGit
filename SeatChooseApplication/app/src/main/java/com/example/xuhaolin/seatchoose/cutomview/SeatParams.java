@@ -2,8 +2,12 @@ package com.example.xuhaolin.seatchoose.cutomview;/**
  * Created by xuhaolin on 15/8/7.
  */
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+
+import java.io.InputStream;
 
 /**
  * Created by xuhaolin on 2015/8/9.
@@ -26,6 +30,10 @@ public class SeatParams {
      * 默认座位宽度
      */
     public static final float DEFAULT_SEAT_WIDTH = 35f;
+    /**
+     * 默认座位高度
+     */
+    public static final float DEFAULT_SEAT_HEIGHT = 35f;
     /**
      * 默认主座位高度
      */
@@ -66,18 +74,6 @@ public class SeatParams {
      * 默认浮点值:-1
      */
     public static final float DEFAULT_FLOAT = -1;
-//    /**
-//     * 座位类型,可选的
-//     */
-//    public static final int DEFAULT_SEAT_TYPE_UNSELETED = 1;
-//    /**
-//     * 座位类型,已选的
-//     */
-//    public static final int DEFAULT_SEAT_TYPE_SELETED = 2;
-//    /**
-//     * 座位类型,已售
-//     */
-//    public static final int DEFAULT_SEAT_TYPE_SOLD = 3;
     /**
      * 默认座位类型,分别为<font color="yellow"><b>可选,已选,已售</b></font>
      */
@@ -92,27 +88,25 @@ public class SeatParams {
      */
     public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.BLACK, Color.RED, Color.YELLOW};
     /**
-     * 座位类型，不绘制
-     */
-    public static final int DEFAULT_SEAT_TYPE_NOT_DRAW = 0;
-    /**
      * 默认座位类型描述,"可选,已选,已售"
      */
     public static String[] DEFAULT_SEAT_TYPE_DESC = {"可选", "已选", "已售"};
-//    /**
-//     * 座位类型描述，可选座位，{@link #DEFAULT_SEAT_TYPE_UNSELETED}
-//     */
-//    public static final String DEFAULT_SEAT_UNSELETED_DESC = "可选";
-//    /**
-//     * 座位类型描述，已选座位，{@link #DEFAULT_SEAT_TYPE_SELETED}
-//     */
-//    public static final String DEFAULT_SEAT_SELETED_DESC = "已选";
-//    /**
-//     * 座位类型描述，已售座位，{@link #DEFAULT_SEAT_TYPE_SOLD}
-//     */
-//    public static final String DEFAULT_SEAT_SOLD_DESC = "已售";
+    /**
+     * 座位的绘制类型,不绘制
+     */
+    public static final int SEAT_DRAW_TYPE_NO = 0;
+    /**
+     * 座位的绘制类型,默认绘制
+     */
+    public static final int SEAT_DRAW_TYPE_DEFAULT = 1;
+    /**
+     * 座位的绘制类型,座位绘制为图片
+     */
+    public static final int SEAT_DRAW_TYPE_IMAGE = 2;
+
 
     private float mSeatWidth = DEFAULT_SEAT_WIDTH;
+    private float mSeatHeight = DEFAULT_SEAT_HEIGHT;
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
     private float mMinorSeatHeight = DEFAULT_SEAT_MINOR_HEIGHT;
     private float mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
@@ -124,14 +118,15 @@ public class SeatParams {
     private float mSeatTextInterval = DEFAULT_SEAT_TEXT_INTERVAL;
     private float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
-    private boolean mIsImageSeat = false;
+
     private boolean mIsDrawSeat = true;
+    private int mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
     private int mSeatColor = DEFAULT_SEAT_COLOR;
     private int[] mSeatTypeArrary = null;
     private int[] mSeatColorArrary = null;
+    private String[] mSeatTypeDescription = null;
     private int[] mSeatImageID = null;
     private Bitmap[] mSeatImageBitmaps = null;
-    private String[] mSeatTypeDescription = null;
 
     private float mSeatTextSize = DEFAULT_SEAT_TEXT_SIZE;
     private int mSeatTextColor = DEFAULT_SEAT_TEXT_COLOR;
@@ -160,6 +155,10 @@ public class SeatParams {
 
     public float getSeatWidth() {
         return mSeatWidth;
+    }
+
+    public float getSeatHeight() {
+        return mSeatHeight;
     }
 
     public float getMainSeatHeight() {
@@ -203,15 +202,36 @@ public class SeatParams {
     }
 
     public int[] getSeatTypeArrary() {
-        return mSeatTypeArrary;
+        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
+        if (mSeatTypeArrary != null) {
+            int[] newArr = new int[mSeatTypeArrary.length];
+            System.arraycopy(mSeatTypeArrary, 0, newArr, 0, mSeatTypeArrary.length);
+            return newArr;
+        } else {
+            return null;
+        }
     }
 
     public int[] getSeatColorArrary() {
-        return mSeatColorArrary;
+        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
+        if (mSeatColorArrary != null) {
+            int[] newArr = new int[mSeatColorArrary.length];
+            System.arraycopy(mSeatColorArrary, 0, newArr, 0, mSeatColorArrary.length);
+            return newArr;
+        } else {
+            return null;
+        }
     }
 
     public String[] getSeatTypeDescription() {
-        return mSeatTypeDescription;
+        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
+        if (mSeatTypeDescription != null) {
+            String[] newArr = new String[mSeatTypeDescription.length];
+            System.arraycopy(mSeatTypeDescription, 0, newArr, 0, mSeatTypeDescription.length);
+            return newArr;
+        } else {
+            return null;
+        }
     }
 
     public int getSeatTextColor() {
@@ -220,6 +240,69 @@ public class SeatParams {
 
     public float getSeatTextSize() {
         return mSeatTextSize;
+    }
+
+    public int getSeatDrawType() {
+        return mSeatDrawType;
+    }
+
+    public int[] getSeatImageIDByCopy() {
+        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
+        if (mSeatImageID != null) {
+            int[] newArr = new int[mSeatImageID.length];
+            System.arraycopy(mSeatImageID, 0, newArr, 0, mSeatImageID.length);
+            return newArr;
+        } else {
+            return null;
+        }
+    }
+
+    public Bitmap[] getSeatImageBitmapByCopy() {
+        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
+        if (mSeatImageBitmaps != null) {
+            Bitmap[] newArr = new Bitmap[mSeatImageBitmaps.length];
+            System.arraycopy(mSeatImageBitmaps, 0, newArr, 0, mSeatImageBitmaps.length);
+            return newArr;
+        } else {
+            return null;
+        }
+    }
+
+    public void setSeatDrawType(int drawType) {
+        if (drawType == DEFAULT_INT) {
+            this.mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
+        } else {
+            this.mSeatDrawType = drawType;
+        }
+    }
+
+    public void setImageSeat(int[] imageID) {
+        if (imageID != null && imageID.length != mSeatTypeArrary.length) {
+            throw new RuntimeException("设置座位图片length与座位类型length不符合");
+        }
+        mSeatDrawType = SEAT_DRAW_TYPE_IMAGE;
+        //通过拷贝保存引用对象数据,而不是直接保存引用
+        if (imageID != null) {
+            mSeatImageID = new int[imageID.length];
+            System.arraycopy(imageID, 0, mSeatImageID, 0, imageID.length);
+        } else {
+            mSeatImageID = null;
+        }
+    }
+
+    public void setImageSeat(Bitmap[] imageBitmap) {
+        if (imageBitmap != null && imageBitmap.length != mSeatTypeArrary.length) {
+            throw new RuntimeException("设置座位图片length与座位类型length不符合");
+        }
+        mSeatDrawType = SEAT_DRAW_TYPE_IMAGE;
+        //通过拷贝保存引用对象数据,而不是直接保存引用
+        if (imageBitmap != null) {
+            mSeatImageBitmaps = new Bitmap[imageBitmap.length];
+            System.arraycopy(imageBitmap, 0, mSeatImageBitmaps, 0, imageBitmap.length);
+        } else {
+            mSeatImageBitmaps = null;
+        }
+//        mSeatImageID = null;
     }
 
     public void setSeatTextColor(int mSeatTextColor) {
@@ -318,12 +401,12 @@ public class SeatParams {
     }
 
     /**
-     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #DEFAULT_SEAT_TYPE_NOT_DRAW}时，不绘制该座位
+     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_DRAW_TYPE_NO}时，不绘制该座位
      *
      * @param seatType 座位类型
      */
     public void setIsDrawSeat(int seatType) {
-        if (seatType == DEFAULT_SEAT_TYPE_NOT_DRAW) {
+        if (seatType == SEAT_DRAW_TYPE_NO) {
             this.mIsDrawSeat = false;
         } else {
             this.mIsDrawSeat = true;
@@ -425,8 +508,8 @@ public class SeatParams {
                 for (int i = 3; i < newSeatTypeDescription.length; i++) {
                     newSeatTypeDescription[i] = seatTypeExtraDesc[i - 3];
                 }
-            } else if (seatTypeExtraDesc != null && seatTypeExtraDesc.length != seatExtraTypeArr.length) {
-                throw new RuntimeException("设置额外的座位类型描述length应与额外的座位类型length一致");
+            } else {
+                throw new RuntimeException("座位类型描述不可为null,设置额外的座位类型描述length应与额外的座位类型length一致");
             }
 
 
@@ -434,7 +517,7 @@ public class SeatParams {
             mSeatColorArrary = newSeatColorArr;
             mSeatTypeDescription = newSeatTypeDescription;
         } else {
-            throw new RuntimeException("设置额外座位类型及颜色失败,请确认前两个参数不可为null且参数值的length必须相同");
+            throw new RuntimeException("设置额外座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
         }
     }
 
@@ -447,21 +530,24 @@ public class SeatParams {
      */
     public void setAllSeatTypeWithColor(int[] seatTypeArr, int[] colorArr, String[] seatTypeDesc) {
         if (seatTypeArr != null && colorArr != null && seatTypeArr.length == colorArr.length) {
-            mSeatTypeArrary = seatTypeArr;
-            mSeatColorArrary = colorArr;
+            mSeatTypeArrary = new int[seatTypeArr.length];
+            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
+            mSeatColorArrary = new int[colorArr.length];
+            System.arraycopy(colorArr, 0, mSeatColorArrary, 0, colorArr.length);
 
-            if ((seatTypeDesc != null && seatTypeDesc.length == seatTypeArr.length) || seatTypeDesc == null) {
-                mSeatTypeDescription = seatTypeDesc;
+            if ((seatTypeDesc != null && seatTypeDesc.length == seatTypeArr.length)) {
+                mSeatTypeDescription = new String[seatTypeDesc.length];
+                System.arraycopy(seatTypeDesc, 0, mSeatTypeDescription, 0, seatTypeDesc.length);
             } else {
-                throw new RuntimeException("设置座位类型描述length应与座位类型length一致");
+                throw new RuntimeException("座位类型描述不可为null,设置座位类型描述length应与座位类型length一致");
             }
         } else {
-            throw new RuntimeException("设置新座位类型及颜色失败,请确认前两个参数不可为null且参数值的length必须相同");
+            throw new RuntimeException("设置新座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
         }
     }
 
     /**
-     * 重置所有的座位类型与参数,回到默认状态(三个座位类型及颜色参数)
+     * 重置所有的座位类型与参数,回到默认状态(三个座位类型及颜色参数),座位的绘制类型也重置为默认绘制方式
      * <p>
      * <li>可选座位</li>
      * <li>已选座位</li>
@@ -474,6 +560,44 @@ public class SeatParams {
         mSeatColorArrary = new int[DEFAULT_SEAT_TYPE_COLOR.length];
         System.arraycopy(DEFAULT_SEAT_TYPE, 0, mSeatTypeArrary, 0, DEFAULT_SEAT_TYPE.length);
         System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, mSeatColorArrary, 0, DEFAULT_SEAT_TYPE_COLOR.length);
+
+        mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
+    }
+
+    public static Bitmap getScaleBitmap(Context context, int imageID, int targetWidth, int targetHeight) {
+        try {
+            InputStream in = context.getResources().openRawResource(imageID);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = false;
+            options.outWidth = targetWidth;
+            options.outHeight = targetHeight;
+            return BitmapFactory.decodeStream(in, null, options);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex.getMessage());
+        }
+    }
+
+
+    public void loadSeatImage(Context context, boolean isReload) {
+        if (mSeatImageID != null) {
+            if (isReload) {
+                mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
+            } else if (mSeatImageBitmaps != null) {
+                return;
+            } else {
+                mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
+            }
+
+            for (int i = 0; i < mSeatImageID.length; i++) {
+                Bitmap bitmap = getScaleBitmap(context, mSeatImageID[i], (int) this.getSeatWidth(), (int) this.getSeatHeight());
+                mSeatImageBitmaps[i] = bitmap;
+            }
+        } else if (mSeatImageBitmaps != null) {
+            return;
+        } else {
+            throw new RuntimeException("不存在可加载的图片资源或者已经加载的图片资源!");
+        }
     }
 
     /**
@@ -501,6 +625,43 @@ public class SeatParams {
     }
 
     /**
+     * 根据座位类型获取座位绘制的图片
+     *
+     * @param context  上下文对象,用于加载图片
+     * @param seatType 座位类型
+     * @return 返回座位类型对应的图片, 可能为null
+     */
+    public Bitmap getSeatBitmapByType(Context context, int seatType) {
+        loadSeatImage(context, false);
+        if (mSeatTypeArrary != null) {
+            for (int i = 0; i < mSeatTypeArrary.length; i++) {
+                if (seatType == mSeatTypeArrary[i]) {
+                    return mSeatImageBitmaps[i];
+                }
+            }
+            return null;
+        } else {
+            throw new RuntimeException("获取座位类型对应的图片失败!查询不到对应的座位类型或不存在该座位类型");
+        }
+    }
+
+
+    /**
+     * 获取座位绘制的实际高度
+     *
+     * @return
+     */
+    public float getSeatDrawHeight() {
+        if (mSeatDrawType == SEAT_DRAW_TYPE_DEFAULT) {
+            return this.getSeatTotalHeight();
+        } else if (mSeatDrawType == SEAT_DRAW_TYPE_IMAGE) {
+            return this.getSeatHeight();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * 座位操作接口(或部分参数需求)
      */
     interface ISeatOperation {
@@ -512,12 +673,5 @@ public class SeatParams {
          * @return
          */
         public float getSellSeatsBeginDrawY();
-
-        /**
-         * 获取座位绘制的实际高度
-         *
-         * @return
-         */
-        public float getSeatDrawHeight();
     }
 }
