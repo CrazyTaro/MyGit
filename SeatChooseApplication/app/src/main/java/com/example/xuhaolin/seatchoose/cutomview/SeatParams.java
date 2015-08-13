@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.RectF;
 
 import java.io.InputStream;
 
@@ -145,6 +146,17 @@ public class SeatParams {
         return mInstance;
     }
 
+    public void setScaleRate(float scaleRate) {
+        this.mSeatWidth *= scaleRate;
+        this.mSeatHeight *= scaleRate;
+        this.mSeatHeightInterval *= scaleRate;
+        this.mSeatVerticalInterval *= scaleRate;
+        this.mSeatTextInterval *= scaleRate;
+        this.mSeatTypeInterval *= scaleRate;
+        this.mSeatTextSize *= scaleRate;
+        this.autoCalculateSeatShapeHeight(this.mSeatHeight);
+    }
+
     public void resetSeatParams() {
         mInstance = new SeatParams();
     }
@@ -161,19 +173,19 @@ public class SeatParams {
         return mSeatHeight;
     }
 
-    public float getMainSeatHeight() {
+    private float getMainSeatHeight() {
         return mMainSeatHeight;
     }
 
-    public float getMinorSeatHeight() {
+    private float getMinorSeatHeight() {
         return mMinorSeatHeight;
     }
 
-    public float getSeatHeightInterval() {
+    private float getSeatHeightInterval() {
         return mSeatHeightInterval;
     }
 
-    public float getSeatTotalHeight() {
+    private float getSeatTotalHeight() {
         return mSeatTotalHeight;
     }
 
@@ -329,32 +341,41 @@ public class SeatParams {
         }
     }
 
-    public void setMainSeatHeight(float mMainSeatHeight) {
-        if (mMainSeatHeight == DEFAULT_FLOAT) {
-            this.mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
+    public void setSeatHeight(float mSeatHeight) {
+        if (mSeatHeight == DEFAULT_FLOAT) {
+            this.mSeatHeight = DEFAULT_SEAT_HEIGHT;
         } else {
-            this.mMainSeatHeight = mMainSeatHeight;
+            this.mSeatHeight = mSeatHeight;
         }
-        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+        this.autoCalculateSeatShapeHeight(this.mSeatHeight);
     }
 
-    public void setMinorSeatHeight(float mMinorSeatHeight) {
-        if (mMinorSeatHeight == DEFAULT_FLOAT) {
-            this.mMinorSeatHeight = mMinorSeatHeight;
-        } else {
-            this.mMinorSeatHeight = mMinorSeatHeight;
-        }
-        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
-    }
+//    public void setMainSeatHeight(float mMainSeatHeight) {
+//        if (mMainSeatHeight == DEFAULT_FLOAT) {
+//            this.mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
+//        } else {
+//            this.mMainSeatHeight = mMainSeatHeight;
+//        }
+//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+//    }
 
-    public void setSeatHeightInterval(float mSeatHeightInterval) {
-        if (mSeatHeightInterval == DEFAULT_FLOAT) {
-            this.mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
-        } else {
-            this.mSeatHeightInterval = mSeatHeightInterval;
-        }
-        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
-    }
+//    public void setMinorSeatHeight(float mMinorSeatHeight) {
+//        if (mMinorSeatHeight == DEFAULT_FLOAT) {
+//            this.mMinorSeatHeight = mMinorSeatHeight;
+//        } else {
+//            this.mMinorSeatHeight = mMinorSeatHeight;
+//        }
+//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+//    }
+
+//    public void setSeatHeightInterval(float mSeatHeightInterval) {
+//        if (mSeatHeightInterval == DEFAULT_FLOAT) {
+//            this.mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
+//        } else {
+//            this.mSeatHeightInterval = mSeatHeightInterval;
+//        }
+//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+//    }
 
     public void setSeatRadius(float mSeatRadius) {
         if (mSeatRadius == DEFAULT_FLOAT) {
@@ -604,13 +625,27 @@ public class SeatParams {
         mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
     }
 
+    /**
+     * 按指定宽高比例加载资源ID指定的图片到内存中
+     *
+     * @param context      上下文对象,用于获取资源对象
+     * @param imageID      资源ID
+     * @param targetWidth  目标图片的宽度(此处一般为座位宽度)
+     * @param targetHeight 目标图片的高度(此处一般为座位的高度)
+     * @return
+     */
     public static Bitmap getScaleBitmap(Context context, int imageID, int targetWidth, int targetHeight) {
         try {
+            //以流的形式加载比直接使用ID加载到消耗内存会少一些,并且可以指定宽高进行加载
+            //加载资源文件到流
             InputStream in = context.getResources().openRawResource(imageID);
+            //设置加载选项
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = false;
+            //设置目标宽高
             options.outWidth = targetWidth;
             options.outHeight = targetHeight;
+            //加载图片
             return BitmapFactory.decodeStream(in, null, options);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -619,10 +654,22 @@ public class SeatParams {
     }
 
 
+    /**
+     * 加载座位图片
+     *
+     * @param context  上下文对象,用于加载图片
+     * @param isReload 是否重新加载,若为true则以imageID为准,重新加载所有的bitmap,若为false则根据bitmap是否存在,若不存在则加载imageID的图片,存在则直接使用bitmap
+     */
     public void loadSeatImage(Context context, boolean isReload) {
+        if (mSeatImageID == null && isReload) {
+            throw new RuntimeException("资源ID不存在,无法重新加载图片资源");
+        }
+        //检测imageID是否存在
         if (mSeatImageID != null) {
+            //不需要重新加载且bitmap不为null
             if (!isReload && mSeatImageBitmaps != null) {
                 boolean isNullObjeact = false;
+                //检测是否bitmap数组为空数组
                 for (Bitmap bitmap : mSeatImageBitmaps) {
                     if (bitmap == null) {
                         isNullObjeact = true;
@@ -630,18 +677,29 @@ public class SeatParams {
                     }
                 }
                 if (!isNullObjeact) {
+                    //不存在空元素直直接使用该bitmap
                     return;
                 }
             }
+            //存在空元素,尝试回收无用的图片,重新加载数据
+            for (Bitmap bitmap : mSeatImageBitmaps) {
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
+            }
+            //存在空元素则重新加载数据
             mSeatImageBitmaps = new Bitmap[mSeatImageID.length];
 
             for (int i = 0; i < mSeatImageID.length; i++) {
+                //按预期宽度比例加载图片
+                //用于防止原图片太大加载的内存过大
                 Bitmap bitmap = getScaleBitmap(context, mSeatImageID[i], (int) this.getSeatWidth(), (int) this.getSeatHeight());
                 mSeatImageBitmaps[i] = bitmap;
             }
         } else if (mSeatImageBitmaps != null) {
             return;
         } else {
+            //即不存在资源ID,也不存在图片文件
             throw new RuntimeException("不存在可加载的图片资源或者已经加载的图片资源!");
         }
     }
@@ -691,20 +749,43 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 根据座位高度自动计算座位绘制的主座位与次座位高度
+     *
+     * @param seatHeight
+     */
+    private void autoCalculateSeatShapeHeight(float seatHeight) {
+        this.mMainSeatHeight = seatHeight * 0.75f;
+        this.mMinorSeatHeight = seatHeight * 0.2f;
+        this.mSeatHeightInterval = seatHeight * 0.05f;
+        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+    }
 
     /**
-     * 获取座位绘制的实际高度
+     * 获取主座位绘制矩形或者次座位绘制矩形
      *
+     * @param seatRectf     座位绘制矩形对象
+     * @param drawPositionX 绘制座位的中心X轴位置
+     * @param drawPositionY 绘制座位的中心Y轴位置
+     * @param isMainSeat    true为获取主座位,false为获取次座位
      * @return
      */
-    public float getSeatDrawHeight() {
-        if (mSeatDrawType == SEAT_DRAW_TYPE_DEFAULT) {
-            return this.getSeatTotalHeight();
-        } else if (mSeatDrawType == SEAT_DRAW_TYPE_IMAGE) {
-            return this.getSeatHeight();
-        } else {
-            return 0;
+    public RectF getSeatDrawRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
+        if (seatRectf == null) {
+            seatRectf = new RectF();
         }
+        seatRectf.left = drawPositionX - this.mSeatWidth / 2;
+        seatRectf.right = seatRectf.left + this.mSeatWidth;
+
+        seatRectf.top = drawPositionY - this.mSeatTotalHeight / 2;
+        seatRectf.bottom = seatRectf.top + this.mMainSeatHeight;
+
+        if (!isMainSeat) {
+            seatRectf.top = seatRectf.bottom + this.mSeatHeightInterval + this.mMinorSeatHeight / 2;
+            seatRectf.bottom = seatRectf.top + this.mMinorSeatHeight;
+        }
+
+        return seatRectf;
     }
 
     /**

@@ -57,6 +57,13 @@ public class StageParams {
     private StageParams() {
     }
 
+    public void setScaleRate(float scaleRate) {
+        this.mStageWidth *= scaleRate;
+        this.mStageHeight *= scaleRate;
+        this.mStageMarginTop *= scaleRate;
+        this.mStageMarginBottom *= scaleRate;
+    }
+
     public void resetStageParams() {
         mInstance = new StageParams();
     }
