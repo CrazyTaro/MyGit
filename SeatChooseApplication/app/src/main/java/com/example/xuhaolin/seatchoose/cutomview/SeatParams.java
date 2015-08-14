@@ -153,7 +153,14 @@ public class SeatParams {
         Log.i("seatParams", msg);
     }
 
-    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
+    /**
+     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     *
+     * @param scaleRate      新的缩放比
+     * @param isTrueSetValue 是否将此次缩放结果记录为永久结果
+     * @retrun 缩放成功返回true, 否则返回false;
+     */
+    public boolean setScaleRate(float scaleRate, boolean isTrueSetValue) {
         //创建缓存数据对象
         if (valueHolder == null) {
             valueHolder = new float[7];
@@ -170,6 +177,13 @@ public class SeatParams {
             valueHolder[5] = this.mSeatTypeInterval;
             valueHolder[6] = this.mSeatTextSize;
             mIsValueHold = true;
+        }
+        float newHeight = valueHolder[1] * scaleRate;
+        //由于座位的宽度是决定座位对应的文字
+        //文字大小不允许超过800
+        //超过800的都取消缩放
+        if (newHeight > 800) {
+            return false;
         }
         //每一次变化都处理为相对原始数据的变化
         this.mSeatWidth = valueHolder[0] * scaleRate;
@@ -195,6 +209,8 @@ public class SeatParams {
             //重置记录标志
             mIsValueHold = false;
         }
+
+        return true;
     }
 
     public void resetSeatParams() {
@@ -424,11 +440,7 @@ public class SeatParams {
     }
 
     public void setSeatTextColor(int mSeatTextColor) {
-        if (mSeatTextColor == DEFAULT_INT) {
-            this.mSeatTextColor = DEFAULT_SEAT_TEXT_COLOR;
-        } else {
-            this.mSeatTextColor = mSeatTextColor;
-        }
+        this.mSeatTextColor = mSeatTextColor;
     }
 
     public void setSeatTextSize(float mSeatTextSize) {
@@ -582,11 +594,7 @@ public class SeatParams {
      * @param mSeatColor
      */
     public void setSeatColor(int mSeatColor) {
-        if (mSeatColor == DEFAULT_INT) {
-            this.mSeatColor = DEFAULT_SEAT_COLOR;
-        } else {
-            this.mSeatColor = mSeatColor;
-        }
+        this.mSeatColor = mSeatColor;
     }
 
     /**
@@ -822,10 +830,12 @@ public class SeatParams {
                     return;
                 }
             }
-            //存在空元素,尝试回收无用的图片,重新加载数据
-            for (Bitmap bitmap : mSeatImageBitmaps) {
-                if (bitmap != null) {
-                    bitmap.recycle();
+            if (mSeatImageBitmaps != null) {
+                //存在空元素,尝试回收无用的图片,重新加载数据
+                for (Bitmap bitmap : mSeatImageBitmaps) {
+                    if (bitmap != null) {
+                        bitmap.recycle();
+                    }
                 }
             }
             //存在空元素则重新加载数据
@@ -834,7 +844,7 @@ public class SeatParams {
             for (int i = 0; i < mSeatImageID.length; i++) {
                 //按预期宽度比例加载图片
                 //用于防止原图片太大加载的内存过大
-                Bitmap bitmap = getScaleBitmap(context, mSeatImageID[i], (int) this.getSeatWidth(), (int) this.getSeatHeight());
+                Bitmap bitmap = getScaleBitmap(context, mSeatImageID[i], (int) mSeatWidth, (int) mSeatHeight);
                 mSeatImageBitmaps[i] = bitmap;
             }
         } else if (mSeatImageBitmaps != null) {

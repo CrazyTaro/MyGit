@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -22,7 +21,7 @@ import com.example.xuhaolin.seatchoose.R;
  * Created by xuhaolin in 2015-08-07
  * 座位选择控件
  */
-public class SeatDrawUtils implements View.OnTouchListener {
+public class SeatDrawUtils extends AbsTouchEvent {
     private static final int MOTION_EVENT_NOTHING = -1;
 
     //座位参数
@@ -280,9 +279,10 @@ public class SeatDrawUtils implements View.OnTouchListener {
      * @param drawYPosition    座位与文字绘制位置的<font color="yellow"><b>Y轴中心(仅提供需要绘制到的Y轴中心坐标即可)</b></font>
      * @param text             需要绘制的文字
      * @param interval         文字与座位之前的间隔
+     * @param seatType         座位类型
      * @param isDrawTextOfLeft 是否将文字绘制在座位的左边,<font color="yellow"><b>true为文字绘制在座位左边,false为文字绘制在座位右边</b></font>
      */
-    private void drawSeatWithNearText(Canvas canvas, Paint paint, float drawXPosition, float drawYPosition, String text, float interval, boolean isDrawTextOfLeft) {
+    private void drawSeatWithNearText(Canvas canvas, Paint paint, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
         //座位绘制的中心X轴
         float seatCenterX = 0f;
         //座位绘制的中心Y轴
@@ -323,8 +323,13 @@ public class SeatDrawUtils implements View.OnTouchListener {
             paint.setColor(mSeatParams.getSeatTextColor());
             canvas.drawText(text, textBeginDrawX, textBeginDrawY, paint);
         }
-        //绘制座位
-        drawSeat(canvas, paint, seatCenterX, seatCenterY);
+        if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
+            //绘制图片座位
+            drawImageSeat(canvas, paint, seatCenterX, seatCenterY, seatType);
+        } else {
+            //绘制普通座位
+            drawSeat(canvas, paint, seatCenterX, seatCenterY);
+        }
     }
 
     /**
@@ -417,18 +422,25 @@ public class SeatDrawUtils implements View.OnTouchListener {
         stageRectf.top = drawPositionY - mStageParams.getStageHeight() / 2;
         stageRectf.bottom = stageRectf.top + mStageParams.getStageHeight();
 
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(mStageParams.getStageColor());
-        //当该绘制图像有显示在画布上的部分时才进行绘制
-        //所有的坐标都不在画布的有效显示范围则不进行绘制
-        if (stageRectf.left > 0 || stageRectf.right > 0 || stageRectf.top > 0 || stageRectf.bottom > 0) {
-            canvas.drawRoundRect(stageRectf, mStageParams.getStageRadius(), mStageParams.getStageRadius(), paint);
+        if (mStageParams.getDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
+            //绘制图片舞台
+            mStageParams.loadStageImage(mContext, false);
+            canvas.drawBitmap(mStageParams.getStageImage(), null, stageRectf, paint);
+        } else {
+            //绘制默认舞台
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(mStageParams.getStageColor());
+            //当该绘制图像有显示在画布上的部分时才进行绘制
+            //所有的坐标都不在画布的有效显示范围则不进行绘制
+            if (stageRectf.left > 0 || stageRectf.right > 0 || stageRectf.top > 0 || stageRectf.bottom > 0) {
+                canvas.drawRoundRect(stageRectf, mStageParams.getStageRadius(), mStageParams.getStageRadius(), paint);
+            }
         }
 
         String stageText = mStageParams.getStageText();
         if (stageText != null) {
             paint.setTextSize(textSize);
-            paint.setColor(Color.BLACK);
+            paint.setColor(mStageParams.getStageTextColor());
             paint.setStyle(Paint.Style.STROKE);
 
             textLength = paint.measureText(stageText);
@@ -606,7 +618,7 @@ public class SeatDrawUtils implements View.OnTouchListener {
             } else {
                 text = null;
             }
-            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, text, seatTextInterval, false);
+            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, text, seatTextInterval, seatType, false);
             drawPositionX += eachSeatTypeDrawWidth;
         }
 
@@ -654,9 +666,18 @@ public class SeatDrawUtils implements View.OnTouchListener {
             //按每行处理的座位数量创建新的数据,座位类型/座位颜色/座位描述/座位图片ID/座位图片Bitmap
             int[] newSeatTypeArr = new int[eachRowSeatTypeCount];
             String[] newSeatTypeDescArr = new String[eachRowSeatTypeCount];
-            int[] newSeatTypeColorArr = new int[eachRowSeatTypeCount];
-            int[] newSeatImageIdArr = new int[eachRowSeatTypeCount];
-            Bitmap[] newSeatImageBitmapArr = new Bitmap[eachRowSeatTypeCount];
+            int[] newSeatTypeColorArr = null;
+            int[] newSeatImageIdArr = null;
+            Bitmap[] newSeatImageBitmapArr = null;
+            if (originSeatTypeColorArr != null) {
+                newSeatTypeColorArr = new int[eachRowSeatTypeCount];
+            }
+            if (originSeatImageIDArr != null) {
+                newSeatImageIdArr = new int[eachRowSeatTypeCount];
+            }
+            if (originSeatImageBimapArr != null) {
+                newSeatImageBitmapArr = new Bitmap[eachRowSeatTypeCount];
+            }
 
             //绘制每一行
             for (int i = 0; i < rowCount; i++) {
@@ -668,52 +689,43 @@ public class SeatDrawUtils implements View.OnTouchListener {
                     //创建新的数据容器(原本的数据容器可能数据量不同)
                     newSeatTypeArr = new int[totalSeatTypeCount - eachRowSeatTypeCount * i];
                     newSeatTypeDescArr = new String[totalSeatTypeCount - eachRowSeatTypeCount * i];
-                    //记录通用的类型与描述(此两部分为不论哪种绘制方式都是需要的)
-                    for (int j = 0; j < newSeatTypeArr.length; j++) {
-                        newSeatTypeArr[j] = originSeatTypeArr[eachRowSeatTypeCount * i + j];
-                        newSeatTypeDescArr[j] = originSeatTypeDesc[eachRowSeatTypeCount * i + j];
-                    }
+                }
 
-                    //若绘制方式为绘制座位图片
-                    if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
-                        //只处理图片数据
-                        newSeatImageIdArr = new int[totalSeatTypeCount - eachRowSeatTypeCount * i];
-                        newSeatImageBitmapArr = new Bitmap[totalSeatTypeCount - eachRowSeatTypeCount * i];
-                        for (int j = 0; j < newSeatTypeArr.length; j++) {
+                //正常情况下处理每一行绘制的数量及情况
+                //记录通用的类型与描述(此两部分为不论哪种绘制方式都是需要的)
+                for (int j = 0; j < newSeatTypeArr.length; j++) {
+                    //同理处理通用的数据
+                    newSeatTypeArr[j] = originSeatTypeArr[eachRowSeatTypeCount * i + j];
+                    newSeatTypeDescArr[j] = originSeatTypeDesc[eachRowSeatTypeCount * i + j];
+                }
+                //分类处理特殊的数据
+                if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
+                    for (int j = 0; j < eachRowSeatTypeCount; j++) {
+                        //加载图片资源ID
+                        if (originSeatImageIDArr != null) {
                             newSeatImageIdArr[j] = originSeatImageIDArr[eachRowSeatTypeCount * i + j];
-                            newSeatImageBitmapArr[j] = originSeatImageBimapArr[eachRowSeatTypeCount * i + j];
                         }
-                    } else {
-                        //若绘制方式为其它(默认绘制),则处理座位颜色
-                        newSeatTypeColorArr = new int[totalSeatTypeCount - eachRowSeatTypeCount * i];
-                        for (int j = 0; j < newSeatTypeArr.length; j++) {
-                            newSeatTypeColorArr[j] = originSeatTypeColorArr[eachRowSeatTypeCount * i + j];
+                        //加载图片资源
+                        if (originSeatImageBimapArr != null) {
+                            newSeatImageBitmapArr[j] = originSeatImageBimapArr[eachRowSeatTypeCount * i + j];
                         }
                     }
                 } else {
-                    //正常情况下处理每一行绘制的数量及情况
-                    //非最后一行
-                    for (int j = 0; j < newSeatTypeArr.length; j++) {
-                        //同理处理通用的数据
-                        newSeatTypeArr[j] = originSeatTypeArr[eachRowSeatTypeCount * i + j];
-                        newSeatTypeDescArr[j] = originSeatTypeDesc[eachRowSeatTypeCount * i + j];
-                    }
-                    //分类处理特殊的数据
-                    if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
-                        for (int j = 0; j < eachRowSeatTypeCount; j++) {
-                            newSeatImageIdArr[j] = originSeatImageIDArr[eachRowSeatTypeCount * i + j];
-                            newSeatImageBitmapArr[j] = originSeatImageBimapArr[eachRowSeatTypeCount * i + j];
-                        }
-                    } else {
-                        for (int j = 0; j < eachRowSeatTypeCount; j++) {
+                    ///加载座位类型颜色
+                    if (newSeatTypeColorArr != null) {
+                        for (int j = 0; j < newSeatTypeArr.length; j++) {
                             newSeatTypeColorArr[j] = originSeatTypeColorArr[eachRowSeatTypeCount * i + j];
                         }
                     }
                 }
                 //将新数据填充到原座位参数中
                 if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
-                    mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageIdArr);
-                    mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageBitmapArr);
+                    if (newSeatImageIdArr != null) {
+                        mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageIdArr);
+                    }
+                    if (newSeatImageBitmapArr != null) {
+                        mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageBitmapArr);
+                    }
                 } else {
                     mSeatParams.setAllSeatTypeWithColor(newSeatTypeArr, newSeatTypeColorArr, newSeatTypeDescArr);
                 }
@@ -725,8 +737,12 @@ public class SeatDrawUtils implements View.OnTouchListener {
         }
         //绘制完毕将原始数据填充回座位参数中
         if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
-            mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageIDArr);
-            mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageBimapArr);
+            if (originSeatImageIDArr != null) {
+                mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageIDArr);
+            }
+            if (originSeatImageBimapArr != null) {
+                mSeatParams.setSeatTypeWithImage(originSeatTypeArr, originSeatImageBimapArr);
+            }
         } else {
             mSeatParams.setAllSeatTypeWithColor(originSeatTypeArr, originSeatTypeColorArr, originSeatTypeDesc);
         }
@@ -814,7 +830,7 @@ public class SeatDrawUtils implements View.OnTouchListener {
                 textLength = 0f;
             }
             //绘制座位及文字
-            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, drawText, seatTextInterval, false);
+            drawSeatWithNearText(canvas, paint, drawPositionX, drawPositionY, drawText, seatTextInterval, seatType, false);
 
             //获取并计算下一个绘制文字的长度
             //用于计算下一个绘制座位的X轴中心位置
@@ -1120,18 +1136,25 @@ public class SeatDrawUtils implements View.OnTouchListener {
         }
     }
 
+    /**
+     * 多点触摸的重绘,是否重绘由实际xpytr
+     *
+     * @param newScaleRate
+     * @param isTrueSetValue
+     */
     private void invalidateInMultiPoint(float newScaleRate, boolean isTrueSetValue) {
-        //当前后的缩放比改变超过0.3才进行重绘,否则不进行重绘,防止反复多次地重绘..
-//        if (newScaleRate != 1) {
-//            showMsg("new rate = " + newScaleRate);
-//        }
-        if (newScaleRate == 1) {
+        //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
+        if (newScaleRate == mScaleRate) {
             return;
         }
-        mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
-//        mStageParams.setScaleRate(newScaleRate);
-        mIsScaleRedraw = true;
-        mDrawView.invalidate();
+        boolean isSeatScaleSucceed = mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
+        boolean isStageScaleSucceed = mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
+        if (isSeatScaleSucceed && isStageScaleSucceed) {
+            mIsScaleRedraw = true;
+            mDrawView.invalidate();
+        } else {
+            showMsg("已接近最大缩放值,无法再进行缩放!");
+        }
     }
 
     /**
@@ -1171,134 +1194,7 @@ public class SeatDrawUtils implements View.OnTouchListener {
     }
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                //进入单点单击处理
-                singlePointerHandle(event, MOTION_EVENT_NOTHING);
-                showMsg("单击 down ");
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                //若在确认进入多点单击之前没有任何移动操作
-                //则认为是触发多点单击事件
-                if (!mIsInMotionMove) {
-                    //开始多点单击事件
-                    mIsMultiPoint = true;
-                    showMsg("多点触控 down");
-                    multiPointerHandle(event, MOTION_EVENT_NOTHING);
-                }
-                mIsMultiDown = true;
-                break;
-            case MotionEvent.ACTION_UP:
-                //不行进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
-                //这种情况是为了避免有可能有用户单击移动之后再进行多点触控,这种情况无法处理为用户需要移动还是需要缩放
-                
-                //在处理单击事件up中,任何时候只要在结束up之前产生任何的多点触控,都不将此次的事件处理为单击up
-                //因为这时候单击事件已经不完整了,混合了其它的事件,也无法分辨是否需要处理单击或者多点触控
-                if (!mIsMultiPoint && !mIsMultiDown) {
-                    if (mIsSingleMove) {
-                        showMsg("单击 up");
-                        singlePointerHandle(event, MOTION_EVENT_NOTHING);
-                    } else {
-                        showMsg("单击 up 不处理");
-                    }
-                }
-                //取消移动状态的记录
-                mIsInMotionMove = false;
-                //多点单击的标志必须在此处才可以被重置
-                //因为多点单击的抬起事件优先处理于单击的抬起事件
-                //如果在多点单击的抬起事件时重置该变量则会导致上面的判断百分百是成立的
-                mIsMultiPoint = false;
-                mIsMultiDown = false;
-                mIsSingleMove = false;
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                //当确认进入多点单击状态,则执行多点单击抬起事件
-                if (mIsMultiPoint) {
-                    showMsg("多点触控 up");
-                    multiPointerHandle(event, MOTION_EVENT_NOTHING);
-                }
-                //此处不重置mIsMultiDown变量是因为后面检测单击事件的up与多点触控的up需要
-                //而且此处不重置并不会对其它的部分造成影响
-                break;
-            case MotionEvent.ACTION_MOVE:
-                //进入移动状态
-                mIsInMotionMove = true;
-                //当前不是多点单击状态,则进行移动操作
-                //不行进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
-                //这种情况是为了避免有可能有用户单击移动之后再进行多点触控,这种情况无法处理为用户需要移动还是需要缩放
-                if (!mIsMultiPoint && !mIsMultiDown) {
-                    showMsg("单击 move");
-                    singlePointerHandle(event, MOTION_EVENT_NOTHING);
-                    mIsSingleMove = true;
-                } else if (mIsSingleMove && mIsMultiDown) {
-                    //当前用户已经移动了界面并且又增加了触控点
-                    //此时按当前的位置处理移动完的界面(即设为在此时结束移动操作),且不进行后续任何操作
-                    showMsg("单击 move 结束");
-                    singlePointerHandle(event, MotionEvent.ACTION_UP);
-                    mIsSingleMove = false;
-                } else if (mIsMultiPoint && mIsMultiDown) {
-                    showMsg("多点触控 move");
-                    multiPointerHandle(event, MOTION_EVENT_NOTHING);
-                }
-                break;
-        }
-        return true;
-    }
-
-    private void multiPointerHandle(MotionEvent event, int useMotionEvent) {
-        try {
-            int action = event.getAction();
-            if (useMotionEvent != MOTION_EVENT_NOTHING) {
-                action = useMotionEvent;
-            }
-            double newScaleRate = 0f;
-            switch (action & MotionEvent.ACTION_MASK) {
-
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    mScaleFirstDownX = event.getX(0);
-                    mScaleFirstDownY = event.getY(0);
-                    mScaleSecondDownX = event.getX(1);
-                    mScaleSecondDownY = event.getY(1);
-
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    mScaleFirstUpX = event.getX(0);
-                    mScaleFirstUpY = event.getY(0);
-                    mScaleSecondUpX = event.getX(1);
-                    mScaleSecondUpY = event.getY(1);
-
-                    newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
-                            mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
-                    invalidateInMultiPoint((float) newScaleRate, false);
-                    break;
-                case MotionEvent.ACTION_POINTER_UP:
-                    mScaleFirstUpX = event.getX(0);
-                    mScaleFirstUpY = event.getY(0);
-                    mScaleSecondUpX = event.getX(1);
-                    mScaleSecondUpY = event.getY(1);
-
-                    newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
-                            mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
-                    invalidateInMultiPoint((float) newScaleRate, true);
-
-                    mScaleFirstDownX = 0;
-                    mScaleFirstDownY = 0;
-                    mScaleSecondDownX = 0;
-                    mScaleSecondDownY = 0;
-                    mScaleFirstUpX = 0;
-                    mScaleFirstUpY = 0;
-                    mScaleSecondUpX = 0;
-                    mScaleSecondUpY = 0;
-                    break;
-            }
-        } catch (IllegalArgumentException e) {
-//            e.printStackTrace();
-        }
-    }
-
-
-    private void singlePointerHandle(MotionEvent event, int extraMotionEvent) {
+    public void singleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //单点触控
         int action = event.getAction();
         //用于记录此处事件中新界面与旧界面之间的相对移动距离
@@ -1310,6 +1206,10 @@ public class SeatDrawUtils implements View.OnTouchListener {
                 mDownY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                //特别处理额外的事件
+                //此处处理的事件是在单击事件并移动中用户进行了多点触摸
+                //此时尝试结束进行移动界面,并将当前移动的结果固定下来作为新的界面(效果与直接抬起结束触摸相同)
+                //并不作任何操作(因为在单击后再进行多点触摸无法分辨需要进行处理的事件是什么)
                 if (extraMotionEvent == MotionEvent.ACTION_UP) {
                     mDownX = 0f;
                     mDownY = 0f;
@@ -1384,20 +1284,90 @@ public class SeatDrawUtils implements View.OnTouchListener {
                 mIsMoved = false;
                 break;
         }
-
     }
 
+    @Override
+    public void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
+        try {
+            int action = event.getAction();
+            double newScaleRate = 0f;
+            switch (action & MotionEvent.ACTION_MASK) {
+
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    mScaleFirstDownX = event.getX(0);
+                    mScaleFirstDownY = event.getY(0);
+                    mScaleSecondDownX = event.getX(1);
+                    mScaleSecondDownY = event.getY(1);
+
+                    double downDistance = Math.pow(Math.abs((mScaleFirstDownX - mScaleSecondDownX)), 2) + Math.pow(Math.abs(mScaleFirstDownY - mScaleSecondDownY), 2);
+                    showMsg(String.format("origin distance = %1$.2f", downDistance));
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    mScaleFirstUpX = event.getX(0);
+                    mScaleFirstUpY = event.getY(0);
+                    mScaleSecondUpX = event.getX(1);
+                    mScaleSecondUpY = event.getY(1);
+
+                    newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
+                            mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
+                    invalidateInMultiPoint((float) newScaleRate, false);
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    mScaleFirstUpX = event.getX(0);
+                    mScaleFirstUpY = event.getY(0);
+                    mScaleSecondUpX = event.getX(1);
+                    mScaleSecondUpY = event.getY(1);
+
+                    showMsg("last rate  = " + mScaleRate);
+                    newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
+                            mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
+                    showMsg("up rate  = " + newScaleRate);
+                    invalidateInMultiPoint((float) newScaleRate, true);
+
+                    double upDistance = Math.pow(Math.abs((mScaleFirstUpX - mScaleSecondUpX)), 2) + Math.pow(Math.abs(mScaleFirstUpY - mScaleSecondUpY), 2);
+                    showMsg(String.format("new distance = %1$.2f", upDistance));
+                    mScaleFirstDownX = 0;
+                    mScaleFirstDownY = 0;
+                    mScaleSecondDownX = 0;
+                    mScaleSecondDownY = 0;
+                    mScaleFirstUpX = 0;
+                    mScaleFirstUpY = 0;
+                    mScaleSecondUpX = 0;
+                    mScaleSecondUpY = 0;
+                    break;
+            }
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    /**
+     * 根据坐标值计算需要缩放的比例,<font color="yellow"><b>返回值为移动距离与按下距离的商,move/down</b></font>
+     *
+     * @param firstDownX  多点触摸按下的pointer_1_x
+     * @param firstDownY  多点触摸按下的pointer_1_y
+     * @param secondDownX 多点触摸按下的pointer_2_x
+     * @param secondDownY 多点触摸按下的pointer_2_y
+     * @param firstUpX    多点触摸抬起或移动的pointer_1_x
+     * @param firstUpY    多点触摸抬起或移动的pointer_1_y
+     * @param secondUpX   多点触摸抬起或移动的pointer_2_x
+     * @param secondUpY   多点触摸抬起或移动的pointer_2_y
+     * @return
+     */
     private double getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
                                 float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
+        //计算平方和
         double downDistance = Math.pow(Math.abs((firstDownX - secondDownX)), 2) + Math.pow(Math.abs(firstDownY - secondDownY), 2);
         double upDistance = Math.pow(Math.abs((firstUpX - secondUpX)), 2) + Math.pow(Math.abs(firstUpY - secondUpY), 2);
-        double newRate = upDistance / downDistance;
+        //计算比例
+        double newRate = Math.sqrt(upDistance) / Math.sqrt(downDistance);
+        //计算与上一个比例的差
         double rateDistance = Math.abs(newRate - mScaleRate);
-        if (rateDistance > 0.3 && rateDistance < 2) {
+        //差值超过阀值则使用该比例,否则返回原比例
+        if (newRate > 0.02 && newRate < 10) {
             mScaleRate = newRate;
             return newRate;
         } else {
-            return 1;
+            return mScaleRate;
         }
     }
 
