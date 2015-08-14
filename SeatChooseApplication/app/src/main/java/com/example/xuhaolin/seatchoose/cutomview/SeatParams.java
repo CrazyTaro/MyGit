@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.util.Log;
 
 import java.io.InputStream;
 
@@ -132,6 +133,8 @@ public class SeatParams {
     private float mSeatTextSize = DEFAULT_SEAT_TEXT_SIZE;
     private int mSeatTextColor = DEFAULT_SEAT_TEXT_COLOR;
 
+    private float[] valueHolder = null;
+    private boolean mIsValueHold = false;
     private static SeatParams mInstance = null;
 
     private SeatParams() {
@@ -146,15 +149,52 @@ public class SeatParams {
         return mInstance;
     }
 
-    public void setScaleRate(float scaleRate) {
-        this.mSeatWidth *= scaleRate;
-        this.mSeatHeight *= scaleRate;
-        this.mSeatHeightInterval *= scaleRate;
-        this.mSeatVerticalInterval *= scaleRate;
-        this.mSeatTextInterval *= scaleRate;
-        this.mSeatTypeInterval *= scaleRate;
-        this.mSeatTextSize *= scaleRate;
+    private void showMsg(String msg) {
+        Log.i("seatParams", msg);
+    }
+
+    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
+        //创建缓存数据对象
+        if (valueHolder == null) {
+            valueHolder = new float[7];
+        }
+        if (!mIsValueHold) {
+            showMsg("开始记录第一次数据");
+            showMsg("new rate = " + scaleRate);
+            //第一次更新数据记录下最原始的数据
+            valueHolder[0] = this.mSeatWidth;
+            valueHolder[1] = this.mSeatHeight;
+            valueHolder[2] = this.mSeatHeightInterval;
+            valueHolder[3] = this.mSeatVerticalInterval;
+            valueHolder[4] = this.mSeatTextInterval;
+            valueHolder[5] = this.mSeatTypeInterval;
+            valueHolder[6] = this.mSeatTextSize;
+            mIsValueHold = true;
+        }
+        //每一次变化都处理为相对原始数据的变化
+        this.mSeatWidth = valueHolder[0] * scaleRate;
+        this.mSeatHeight = valueHolder[1] * scaleRate;
+        this.mSeatHeightInterval = valueHolder[2] * scaleRate;
+        this.mSeatVerticalInterval = valueHolder[3] * scaleRate;
+        this.mSeatTextInterval = valueHolder[4] * scaleRate;
+        this.mSeatTypeInterval = valueHolder[5] * scaleRate;
+        this.mSeatTextSize = valueHolder[6] * scaleRate;
+        //自动计算主次座位高度
         this.autoCalculateSeatShapeHeight(this.mSeatHeight);
+        //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
+        if (isTrueSetValue) {
+            showMsg("记录最后一次数据");
+            showMsg("new rate = " + scaleRate);
+            valueHolder[0] = this.mSeatWidth;
+            valueHolder[1] = this.mSeatHeight;
+            valueHolder[2] = this.mSeatHeightInterval;
+            valueHolder[3] = this.mSeatVerticalInterval;
+            valueHolder[4] = this.mSeatTextInterval;
+            valueHolder[5] = this.mSeatTypeInterval;
+            valueHolder[6] = this.mSeatTextSize;
+            //重置记录标志
+            mIsValueHold = false;
+        }
     }
 
     public void resetSeatParams() {
@@ -213,6 +253,11 @@ public class SeatParams {
         return mSeatColor;
     }
 
+    /**
+     * 获取座位参数类型对应的数据表示,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     *
+     * @return
+     */
     public int[] getSeatTypeArrary() {
         //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
         if (mSeatTypeArrary != null) {
@@ -224,6 +269,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 获取座位类型对应的颜色数据,,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     *
+     * @return
+     */
     public int[] getSeatColorArrary() {
         //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
         if (mSeatColorArrary != null) {
@@ -235,6 +285,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 获取座位类型对应的描述文字,,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     *
+     * @return
+     */
     public String[] getSeatTypeDescription() {
         //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
         if (mSeatTypeDescription != null) {
@@ -254,10 +309,38 @@ public class SeatParams {
         return mSeatTextSize;
     }
 
+    /**
+     * 返回座位类型的长度
+     *
+     * @return
+     */
+    public int getSeatTypeLength() {
+        if (mSeatTypeArrary != null) {
+            return mSeatTypeArrary.length;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 获取当前座位绘制的方式
+     * <p>
+     * <li>{@link #SEAT_DRAW_TYPE_DEFAULT}默认绘制方式,座位分主次座位部分绘制,纯图形绘制</li>
+     * <li>{@link #SEAT_DRAW_TYPE_IMAGE}图片绘制方式,使用座位类型对应的图片填充座位区域</li>
+     * <li>{@link #SEAT_DRAW_TYPE_NO}不进行绘制</li>
+     * </p>
+     *
+     * @return
+     */
     public int getSeatDrawType() {
         return mSeatDrawType;
     }
 
+    /**
+     * 获取设置的座位对应的图像资源ID,可能返回null
+     *
+     * @return
+     */
     public int[] getSeatImageIDByCopy() {
         //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
         if (mSeatImageID != null) {
@@ -269,6 +352,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 获取设置的座位对应的图像资源bitmap,可能返回null
+     *
+     * @return
+     */
     public Bitmap[] getSeatImageBitmapByCopy() {
         //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
         if (mSeatImageBitmaps != null) {
@@ -280,15 +368,28 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置绘制类型,<font color="yellow"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>
+     *
+     * @param drawType
+     */
     public void setSeatDrawType(int drawType) {
         if (drawType == DEFAULT_INT) {
             this.mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
+        } else if (drawType == SEAT_DRAW_TYPE_IMAGE && (mSeatImageID == null || mSeatImageBitmaps == null)) {
+            throw new RuntimeException("设置绘制方式为图像类型时,必须存在图片资源或者图像资源!");
         } else {
             this.mSeatDrawType = drawType;
         }
     }
 
-    public void setImageSeat(int[] imageID) {
+    /**
+     * 设置图片资源ID,<font color="yellow"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setSeatDrawType(int)})
+     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
+     *
+     * @param imageID
+     */
+    public void setSeatImage(int[] imageID) {
         if (imageID != null && imageID.length != mSeatTypeArrary.length) {
             throw new RuntimeException("设置座位图片length与座位类型length不符合");
         }
@@ -302,7 +403,13 @@ public class SeatParams {
         }
     }
 
-    public void setImageSeat(Bitmap[] imageBitmap) {
+    /**
+     * 设置图片资源,<font color="yellow"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setSeatDrawType(int)})
+     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setSeatImage(int[])})</b></font></p>
+     *
+     * @param imageBitmap
+     */
+    public void setSeatImage(Bitmap[] imageBitmap) {
         if (imageBitmap != null && imageBitmap.length != mSeatTypeArrary.length) {
             throw new RuntimeException("设置座位图片length与座位类型length不符合");
         }
@@ -314,7 +421,6 @@ public class SeatParams {
         } else {
             mSeatImageBitmaps = null;
         }
-//        mSeatImageID = null;
     }
 
     public void setSeatTextColor(int mSeatTextColor) {
@@ -341,6 +447,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置座位的高度,此方法的高度直接用于绘制图片座位的高度;且该方法会自动计算默认绘制方式的主次座位部分的高度
+     *
+     * @param mSeatHeight
+     */
     public void setSeatHeight(float mSeatHeight) {
         if (mSeatHeight == DEFAULT_FLOAT) {
             this.mSeatHeight = DEFAULT_SEAT_HEIGHT;
@@ -377,6 +488,11 @@ public class SeatParams {
 //        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
 //    }
 
+    /**
+     * 设置默认座位主次部分的圆角度,使用图片绘制方式时可以忽略此参数
+     *
+     * @param mSeatRadius
+     */
     public void setSeatRadius(float mSeatRadius) {
         if (mSeatRadius == DEFAULT_FLOAT) {
             this.mSeatRadius = DEFAULT_SEAT_RADIUS;
@@ -385,6 +501,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置每个座位与邻近座位之间的水平间隔距离
+     *
+     * @param mSeatHorizontalInterval
+     */
     public void setSeatHorizontalInterval(float mSeatHorizontalInterval) {
         if (mSeatHorizontalInterval == DEFAULT_FLOAT) {
             this.mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
@@ -393,6 +514,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置每个座位与邻近座位之间的垂直间隔距离
+     *
+     * @param mSeatVerticalInterval
+     */
     public void setSeatVerticalInterval(float mSeatVerticalInterval) {
         if (mSeatVerticalInterval == DEFAULT_FLOAT) {
             this.mSeatVerticalInterval = DEFAULT_SEAT_VERTICAL_INTERVAL;
@@ -401,6 +527,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置座位与邻近文字之间的间隔,<font color="yellow"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
+     *
+     * @param mSeatTextInterval
+     */
     public void setSeatTextInterval(float mSeatTextInterval) {
         if (mSeatTextInterval == DEFAULT_FLOAT) {
             this.mSeatTextInterval = DEFAULT_SEAT_TEXT_INTERVAL;
@@ -409,6 +540,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置座位类型之间的间隔,<font color="yellow"><b>此参数仅在绘制座位类型及其描述的时候有效,在绘制普通座位时无效</b></font>,设置普通座位之间的间隔请用{@link #setSeatHorizontalInterval(float)}
+     *
+     * @param mSeatTypeInterval
+     */
     public void setSeatTypeInterval(float mSeatTypeInterval) {
         if (mSeatTypeInterval == DEFAULT_FLOAT) {
             this.mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
@@ -417,6 +553,11 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置是否绘制当前的座位
+     *
+     * @param mIsDrawSeat
+     */
     public void setIsDrawSeat(boolean mIsDrawSeat) {
         this.mIsDrawSeat = mIsDrawSeat;
     }
