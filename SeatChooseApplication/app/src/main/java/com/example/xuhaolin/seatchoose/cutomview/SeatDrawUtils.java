@@ -4,7 +4,6 @@ package com.example.xuhaolin.seatchoose.cutomview;/**
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -15,14 +14,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.xuhaolin.seatchoose.R;
-
 /**
  * Created by xuhaolin in 2015-08-07
- * 座位选择控件
+ * 座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件
  */
 public class SeatDrawUtils extends AbsTouchEvent {
-    private static final int MOTION_EVENT_NOTHING = -1;
 
     //座位参数
     private SeatParams mSeatParams = null;
@@ -67,10 +63,6 @@ public class SeatDrawUtils extends AbsTouchEvent {
     //抬起事件的坐标
     private float mUpX = 0f;
     private float mUpY = 0f;
-    private boolean mIsMultiDown = false;
-    private boolean mIsMultiPoint = false;
-    private boolean mIsSingleMove = false;
-    private boolean mIsInMotionMove = false;
     //是否已经移动过(满足移动条件)
     private boolean mIsMoved = false;
     //默认座位类型被绘制的行数
@@ -81,14 +73,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
     private View mDrawView = null;
     //绘制方法
     private static SeatDrawUtils mInstance = null;
-    private int[][] mSeatMap = {
-            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 2, 0, 3, 2, 1, 3, 0, 2,},
-            {3, 1, 1, 2, 0, 3, 0, 2, 1, 1, 3, 0, 2, 2, 1, 3, 0, 2,},
-            {3, 0, 2, 1, 1, 3, 1, 0, 2, 1, 2, 2, 1, 3, 0, 2, 0, 3,},
-            {2, 3, 1, 2, 0, 3, 0, 2, 1, 1, 2, 0, 2, 1, 3, 0, 2, 3,},
-            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 3, 2, 1, 3, 0, 2, 0, 2,}
-    };
-    private Bitmap mSeatImage = null;
+    //座位列表
+    private int[][] mSeatMap = null;
 
     /**
      * 获取单一的实例,只有第一次初始化需要两个参数,其它时候获取该对象参数值可为null
@@ -134,8 +120,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
 
         mSeatParams = SeatParams.getInstance();
         mStageParams = StageParams.getInstance();
-        mSeatImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.icon_logo_main);
 
+        //设置监听事件,实际事件分配来自于抽象父类
         mDrawView.setOnTouchListener(this);
     }
 
@@ -368,18 +354,6 @@ public class SeatDrawUtils extends AbsTouchEvent {
         if (!mSeatParams.getIsDrawSeat()) {
             return;
         }
-//        float totalSeatHeight = 0f;
-        //计算座位占用的总高度
-//        totalSeatHeight = mSeatParams.getSeatTotalHeight();
-//        mMainSeatRectf.left = drawPositionX - mSeatParams.getSeatWidth() / 2;
-//        mMainSeatRectf.right = mMainSeatRectf.left + mSeatParams.getSeatWidth();
-//        mMinorSeatRectf.left = mMainSeatRectf.left;
-//        mMinorSeatRectf.right = mMainSeatRectf.right;
-//
-//        mMainSeatRectf.top = drawPositionY - totalSeatHeight / 2;
-//        mMainSeatRectf.bottom = mMainSeatRectf.top + mSeatParams.getMainSeatHeight();
-//        mMinorSeatRectf.top = mMainSeatRectf.bottom + mSeatParams.getSeatHeightInterval();
-//        mMinorSeatRectf.bottom = mMinorSeatRectf.top + mSeatParams.getMinorSeatHeight();
         //座位的占拒的总高度(两部分座位)
         mMainSeatRectf = mSeatParams.getSeatDrawRectf(mMainSeatRectf, drawPositionX, drawPositionY, true);
         mMinorSeatRectf = mSeatParams.getSeatDrawRectf(mMinorSeatRectf, drawPositionX, drawPositionY, false);
@@ -402,20 +376,25 @@ public class SeatDrawUtils extends AbsTouchEvent {
     }
 
     /**
-     * 绘制舞台及其文字,<font color="yellow"><b>此方法中舞台文字的大小为自动计算,设置文字大小无法起作用</b></font>
+     * 绘制舞台及其文字,<font color="yellow"><b>此方法中舞台文字的大小为自动计算,文字大小由舞台高度决定</b></font>,若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)
      *
      * @param canvas        画板
      * @param paint         画笔
      * @param drawPositionX 舞台绘制位置的中心X轴
      * @param drawPositionY 舞台绘制位置的中心Y轴
+     * @return 返回绘制后下一个元素开始绘制的Y轴中心坐标, <font color="yellow"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
      */
-    private void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+    private float drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+        if (mStageParams == null || mStageParams.getDrawType() == StageParams.STAGE_DRAW_TYPE_NO) {
+            return drawPositionY;
+        }
         RectF stageRectf = new RectF();
+        boolean isDrawImageStage = false;
         float textBeginDrawX = 0f;
         float textBeginDrawY = 0f;
         float textLength = 0f;
         //设置文字大小为舞台高度小一点(保证文字可以显示在舞台范围内)
-        float textSize = mStageParams.getStageHeight() - 10;
+        float textSize = mStageParams.getStageHeight() * 0.8f;
 
         stageRectf.left = drawPositionX - mStageParams.getStageWidth() / 2;
         stageRectf.right = stageRectf.left + mStageParams.getStageWidth();
@@ -425,8 +404,15 @@ public class SeatDrawUtils extends AbsTouchEvent {
         if (mStageParams.getDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
             //绘制图片舞台
             mStageParams.loadStageImage(mContext, false);
-            canvas.drawBitmap(mStageParams.getStageImage(), null, stageRectf, paint);
-        } else {
+            Bitmap bitmap = mStageParams.getStageImage();
+            if (bitmap != null) {
+                canvas.drawBitmap(mStageParams.getStageImage(), null, stageRectf, paint);
+                //绘制成功
+                isDrawImageStage = true;
+            }
+        }
+        //没有绘制过图片舞台,尝试默认绘制方式
+        if (!isDrawImageStage) {
             //绘制默认舞台
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(mStageParams.getStageColor());
@@ -450,6 +436,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
             //文字本身绘制范围小,另外需要重新计算两个参数才能进行判断
             canvas.drawText(stageText, textBeginDrawX, textBeginDrawY, paint);
         }
+
+        return this.getSeatTypeBeginDrawCenterY();
     }
 
     /**
@@ -640,7 +628,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @return 返回绘制后的Y轴坐标位置, <font color="yellow"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
      */
     public float drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
-        if (mSeatParams == null || rowCount <= 0) {
+        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.getIsDrawType()) {
             return drawPositionY;
         }
         //保证原始的数据,座位类型/座位颜色/座位描述/座位图片ID/座位图片Bitmap
@@ -649,6 +637,10 @@ public class SeatDrawUtils extends AbsTouchEvent {
         String[] originSeatTypeDesc = mSeatParams.getSeatTypeDescription();
         int[] originSeatImageIDArr = mSeatParams.getSeatImageIDByCopy();
         Bitmap[] originSeatImageBimapArr = mSeatParams.getSeatImageBitmapByCopy();
+        //不存在座位类型,则直接返回,不进行绘制
+        if (originSeatTypeArr == null || originSeatTypeArr.length <= 0) {
+            return drawPositionY;
+        }
         //获取所有的座位类型总数
         int totalSeatTypeCount = originSeatTypeArr.length;
         //计算每一行需要绘制的座位数量
@@ -912,18 +904,16 @@ public class SeatDrawUtils extends AbsTouchEvent {
         }
         float drawX = 0f;
         float drawY = 0f;
-
+        //开始绘制舞台
         drawY = this.getStageBeginDrawCenterY();
         drawX = this.getDrawCenterX(mWHPoint.x);
-        drawStage(canvas, mPaint, drawX, drawY);
-
-
-        drawY = this.getSeatTypeBeginDrawCenterY();
+        drawY = drawStage(canvas, mPaint, drawX, drawY);
+        //开始绘制座位类型
         drawY = drawSeatTypeByAuto(canvas, mPaint, drawY, 1);
-
+        //开始绘制普通出售座位
         drawX = this.getDrawCenterX(mWHPoint.x);
         drawSellSeats(canvas, mPaint, mSeatMap, drawX, drawY);
-
+        //全局性将缩放时的记录标志重置
         mIsScaleRedraw = false;
     }
 
@@ -1137,19 +1127,21 @@ public class SeatDrawUtils extends AbsTouchEvent {
     }
 
     /**
-     * 多点触摸的重绘,是否重绘由实际xpytr
+     * 多点触摸的重绘,是否重绘由实际缩放的比例决定
      *
-     * @param newScaleRate
-     * @param isTrueSetValue
+     * @param newScaleRate   新的缩放比例,该比例可能为上一次缩放的比例
+     * @param isTrueSetValue 是否将此次缩放结果永久性记录为新的原始数据
      */
     private void invalidateInMultiPoint(float newScaleRate, boolean isTrueSetValue) {
         //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
         if (newScaleRate == mScaleRate) {
             return;
         }
-        boolean isSeatScaleSucceed = mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
-        boolean isStageScaleSucceed = mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
-        if (isSeatScaleSucceed && isStageScaleSucceed) {
+        //是否缩放成功
+        //任何一个缩放不成功都不可以进行重绘
+        if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
+            mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
+            mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
             mIsScaleRedraw = true;
             mDrawView.invalidate();
         } else {
@@ -1288,6 +1280,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
 
     @Override
     public void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
+        //使用try是为了防止获取系统的触摸点坐标失败
+        //该部分可能为系统的问题
         try {
             int action = event.getAction();
             double newScaleRate = 0f;
@@ -1299,8 +1293,6 @@ public class SeatDrawUtils extends AbsTouchEvent {
                     mScaleSecondDownX = event.getX(1);
                     mScaleSecondDownY = event.getY(1);
 
-                    double downDistance = Math.pow(Math.abs((mScaleFirstDownX - mScaleSecondDownX)), 2) + Math.pow(Math.abs(mScaleFirstDownY - mScaleSecondDownY), 2);
-                    showMsg(String.format("origin distance = %1$.2f", downDistance));
                     break;
                 case MotionEvent.ACTION_MOVE:
                     mScaleFirstUpX = event.getX(0);
@@ -1318,14 +1310,10 @@ public class SeatDrawUtils extends AbsTouchEvent {
                     mScaleSecondUpX = event.getX(1);
                     mScaleSecondUpY = event.getY(1);
 
-                    showMsg("last rate  = " + mScaleRate);
                     newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
-                    showMsg("up rate  = " + newScaleRate);
                     invalidateInMultiPoint((float) newScaleRate, true);
 
-                    double upDistance = Math.pow(Math.abs((mScaleFirstUpX - mScaleSecondUpX)), 2) + Math.pow(Math.abs(mScaleFirstUpY - mScaleSecondUpY), 2);
-                    showMsg(String.format("new distance = %1$.2f", upDistance));
                     mScaleFirstDownX = 0;
                     mScaleFirstDownY = 0;
                     mScaleSecondDownX = 0;
@@ -1361,7 +1349,6 @@ public class SeatDrawUtils extends AbsTouchEvent {
         //计算比例
         double newRate = Math.sqrt(upDistance) / Math.sqrt(downDistance);
         //计算与上一个比例的差
-        double rateDistance = Math.abs(newRate - mScaleRate);
         //差值超过阀值则使用该比例,否则返回原比例
         if (newRate > 0.02 && newRate < 10) {
             mScaleRate = newRate;

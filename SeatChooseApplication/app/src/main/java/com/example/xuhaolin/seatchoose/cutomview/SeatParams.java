@@ -122,6 +122,7 @@ public class SeatParams {
 
 
     private boolean mIsDrawSeat = true;
+    private boolean mIsDrawSeatType = true;
     private int mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
     private int mSeatColor = DEFAULT_SEAT_COLOR;
     private int[] mSeatTypeArrary = null;
@@ -153,14 +154,39 @@ public class SeatParams {
         Log.i("seatParams", msg);
     }
 
+    public void setIsDrawSeatType(boolean isDrawSeatType) {
+        this.mIsDrawSeatType = isDrawSeatType;
+    }
+
+    public boolean getIsDrawType() {
+        return mIsDrawSeatType;
+    }
+
+    /**
+     * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     *
+     * @param scaleRate 新的缩放比例
+     * @return 可以缩放返回true, 否则返回false
+     */
+    public boolean isCanScale(float scaleRate) {
+        float newHeight = this.mSeatHeight * scaleRate;
+        //由于座位的宽度是决定座位对应的文字
+        //文字大小不允许超过800
+        //超过800的都取消缩放
+        if (newHeight > 800) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate      新的缩放比
      * @param isTrueSetValue 是否将此次缩放结果记录为永久结果
-     * @retrun 缩放成功返回true, 否则返回false;
      */
-    public boolean setScaleRate(float scaleRate, boolean isTrueSetValue) {
+    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
         //创建缓存数据对象
         if (valueHolder == null) {
             valueHolder = new float[7];
@@ -177,13 +203,6 @@ public class SeatParams {
             valueHolder[5] = this.mSeatTypeInterval;
             valueHolder[6] = this.mSeatTextSize;
             mIsValueHold = true;
-        }
-        float newHeight = valueHolder[1] * scaleRate;
-        //由于座位的宽度是决定座位对应的文字
-        //文字大小不允许超过800
-        //超过800的都取消缩放
-        if (newHeight > 800) {
-            return false;
         }
         //每一次变化都处理为相对原始数据的变化
         this.mSeatWidth = valueHolder[0] * scaleRate;
@@ -209,8 +228,6 @@ public class SeatParams {
             //重置记录标志
             mIsValueHold = false;
         }
-
-        return true;
     }
 
     public void resetSeatParams() {
@@ -472,33 +489,6 @@ public class SeatParams {
         }
         this.autoCalculateSeatShapeHeight(this.mSeatHeight);
     }
-
-//    public void setMainSeatHeight(float mMainSeatHeight) {
-//        if (mMainSeatHeight == DEFAULT_FLOAT) {
-//            this.mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
-//        } else {
-//            this.mMainSeatHeight = mMainSeatHeight;
-//        }
-//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
-//    }
-
-//    public void setMinorSeatHeight(float mMinorSeatHeight) {
-//        if (mMinorSeatHeight == DEFAULT_FLOAT) {
-//            this.mMinorSeatHeight = mMinorSeatHeight;
-//        } else {
-//            this.mMinorSeatHeight = mMinorSeatHeight;
-//        }
-//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
-//    }
-
-//    public void setSeatHeightInterval(float mSeatHeightInterval) {
-//        if (mSeatHeightInterval == DEFAULT_FLOAT) {
-//            this.mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
-//        } else {
-//            this.mSeatHeightInterval = mSeatHeightInterval;
-//        }
-//        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
-//    }
 
     /**
      * 设置默认座位主次部分的圆角度,使用图片绘制方式时可以忽略此参数
@@ -939,17 +929,4 @@ public class SeatParams {
         return seatRectf;
     }
 
-    /**
-     * 座位操作接口(或部分参数需求)
-     */
-    interface ISeatOperation {
-        /**
-         * 获取出售座位开始绘制的第一行座位的Y轴坐标
-         * <p><font color="yellow"><b><p>此处必须注意的地方是,这里的Y轴坐标是指top,而不是绘制位置的中心centerY</b></font></p>
-         * <p><font color="yellow">此外,这里的Y轴坐标是原始绘制界面的坐标,而不是移动后的坐标(即在第一次绘制时把该坐标记录返回即可)</font></p>
-         *
-         * @return
-         */
-        public float getSellSeatsBeginDrawY();
-    }
 }

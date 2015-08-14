@@ -90,6 +90,16 @@ public class StageParams {
         return this.mStageTextColor;
     }
 
+    /**
+     * 设置舞台绘制方式
+     *
+     * @param drawType 舞台绘制方式
+     *                 <p>
+     *                 <li>{@link #STAGE_DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制</li>
+     *                 <li>{@link #STAGE_DRAW_TYPE_IMAGE},图片绘制方式</li>
+     *                 <li>{@link #STAGE_DRAW_TYPE_NO},不绘制</li>
+     *                 </p>
+     */
     public void setStageDrawType(int drawType) {
         if (drawType == DEFAULT_INT) {
             this.mStageDrawType = STAGE_DRAW_TYPE_DEFAULT;
@@ -102,11 +112,21 @@ public class StageParams {
         return mStageDrawType;
     }
 
+    /**
+     * 设置图片资源ID,该该法会默认将绘制方式设置为图片绘制方式,并且不检测资源ID的可用性,请尽可能保证ID可用
+     *
+     * @param imageID
+     */
     public void setStageImage(int imageID) {
         this.mStageImageID = imageID;
         this.mStageDrawType = STAGE_DRAW_TYPE_IMAGE;
     }
 
+    /**
+     * 设置图片资源,该方法会默认将绘制方式设置为图片绘制方式,参数可为null
+     *
+     * @param imageBitmap
+     */
     public void setStageImage(Bitmap imageBitmap) {
         if (imageBitmap != null) {
             this.mStageImageBitmap = imageBitmap;
@@ -171,13 +191,30 @@ public class StageParams {
     }
 
     /**
+     * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     *
+     * @param scaleRate 新的缩放比例
+     * @return 可以缩放返回true, 否则返回false
+     */
+    public boolean isCanScale(float scaleRate) {
+        float newHeight = this.mStageHeight * scaleRate;
+        //由于舞台的宽度是决定座位对应的文字
+        //文字大小不允许超过800
+        //超过800的都取消缩放
+        if (newHeight > 800) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate 新的缩放比
      * @param isTrueSet 是否将此次缩放结果记录为永久结果
-     * @return 缩放成功返回true, 否则返回false
      */
-    public boolean setScaleRate(float scaleRate, boolean isTrueSet) {
+    public void setScaleRate(float scaleRate, boolean isTrueSet) {
         if (mValueHolder == null) {
             mValueHolder = new float[4];
         }
@@ -187,13 +224,6 @@ public class StageParams {
             mValueHolder[2] = this.mStageMarginTop;
             mValueHolder[3] = this.mStageMarginBottom;
             mIsValueHold = true;
-        }
-        float newHeight = mValueHolder[1] * scaleRate;
-        //由于舞台的宽度是决定座位对应的文字
-        //文字大小不允许超过800
-        //超过800的都取消缩放
-        if (newHeight > 800) {
-            return false;
         }
         this.mStageWidth = mValueHolder[0] * scaleRate;
         this.mStageHeight = mValueHolder[1] * scaleRate;
@@ -206,7 +236,6 @@ public class StageParams {
             mValueHolder[3] = this.mStageMarginBottom;
             mIsValueHold = false;
         }
-        return true;
     }
 
     public void resetStageParams() {

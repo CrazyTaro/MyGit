@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
+ * Created by xuhaolin in 2015-08-14
  * 抽像类,处理触摸事件,区分单击及多点触摸事件
  */
 public abstract class AbsTouchEvent implements View.OnTouchListener {

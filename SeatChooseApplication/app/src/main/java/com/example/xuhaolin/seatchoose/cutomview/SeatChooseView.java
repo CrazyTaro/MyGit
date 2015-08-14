@@ -16,6 +16,13 @@ import com.example.xuhaolin.seatchoose.R;
  */
 public class SeatChooseView extends View {
     private SeatDrawUtils mSeatDrawUtils = null;
+    private int[][] mSeatMap = {
+            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 2, 0, 3, 2, 1, 3, 0, 2,},
+            {3, 1, 1, 2, 0, 3, 0, 2, 1, 1, 3, 0, 2, 2, 1, 3, 0, 2,},
+            {3, 0, 2, 1, 1, 3, 1, 0, 2, 1, 2, 2, 1, 3, 0, 2, 0, 3,},
+            {2, 3, 1, 2, 0, 3, 0, 2, 1, 1, 2, 0, 2, 1, 3, 0, 2, 3,},
+            {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 3, 2, 1, 3, 0, 2, 0, 2,}
+    };
 
     public SeatChooseView(Context context) {
         super(context);
@@ -32,13 +39,18 @@ public class SeatChooseView extends View {
         StageParams stage = StageParams.getInstance();
         stage.setStageImage(R.drawable.icon_bg);
         stage.setStageTextColor(Color.WHITE);
+//        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_NO);
         mSeatDrawUtils.setStageParams(stage);
 
         SeatParams seat = SeatParams.getInstance();
         seat.setSeatHeight(50f);
         seat.setSeatWidth(50f);
+//        seat.setIsDrawSeatType(false);
         seat.setSeatImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
         mSeatDrawUtils.setSeatParams(seat);
+
+        mSeatDrawUtils.setSeatDrawMap(mSeatMap);
+        mSeatDrawUtils.setIsShowLog(true);
     }
 
     @Override
