@@ -10,7 +10,7 @@ import android.view.View;
  * Created by xuhaolin in 2015-08-14
  * 抽像类,处理触摸事件,区分单击及多点触摸事件
  */
-public abstract class AbsTouchEvent implements View.OnTouchListener {
+public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     /**
      * 额外分配的触摸事件,用于建议优先处理的触摸事件
      */
@@ -52,7 +52,11 @@ public abstract class AbsTouchEvent implements View.OnTouchListener {
                 //在处理单击事件up中,任何时候只要在结束up之前产生任何的多点触控,都不将此次的事件处理为单击up
                 //因为这时候单击事件已经不完整了,混合了其它的事件,也无法分辨是否需要处理单击或者多点触控
                 if (!mIsMultiPoint && !mIsMultiDown) {
-                    if (mIsSingleMove) {
+                    //此处分为两种情况
+                    //一种是未进行任何多点触摸状态的,那么必定为单点触摸,事件必须响应
+                    //一种是进行了多点触摸,且在多点触摸之间保证着单点触摸的状态,此时以多点触摸按下的时刻处理掉单点触摸事件(即在move中已经按up处理掉事件了)
+                    //则在完成所有事件之后的up中将不再处理该事件,即下面的"不处理"
+                    if (!mIsInMotionMove || (mIsInMotionMove && mIsSingleMove)) {
                         showMsg("单击 up");
                         singleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     } else {
@@ -106,9 +110,15 @@ public abstract class AbsTouchEvent implements View.OnTouchListener {
         this.mIsShowLog = isShowLog;
     }
 
-    private void showMsg(String msg) {
+    public void showMsg(String msg) {
         if (mIsShowLog) {
             Log.i("touch event ", msg);
+        }
+    }
+
+    public void showMsg(String tag, String msg) {
+        if (mIsShowLog) {
+            Log.i(tag, msg);
         }
     }
 
