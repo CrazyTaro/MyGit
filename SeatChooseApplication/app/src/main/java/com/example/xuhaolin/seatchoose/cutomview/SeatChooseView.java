@@ -39,7 +39,7 @@ public class SeatChooseView extends View {
         StageParams stage = StageParams.getInstance();
         stage.setStageImage(R.drawable.icon_bg);
         stage.setStageTextColor(Color.WHITE);
-//        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_NO);
+//        stage.setIsDrawStage(false);
         mSeatDrawUtils.setStageParams(stage);
 
         SeatParams seat = SeatParams.getInstance();
