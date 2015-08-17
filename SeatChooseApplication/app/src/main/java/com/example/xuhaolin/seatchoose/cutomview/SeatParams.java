@@ -96,7 +96,7 @@ public class SeatParams {
     /**
      * 座位的绘制类型,不绘制
      */
-    public static final int SEAT_DRAW_TYPE_NO = 0;
+    public static int SEAT_DRAW_TYPE_NO = 0;
     /**
      * 座位的绘制类型,默认绘制
      */
@@ -131,8 +131,8 @@ public class SeatParams {
     private int[] mSeatImageID = null;
     private Bitmap[] mSeatImageBitmaps = null;
 
-    private float mSeatTextSize = DEFAULT_SEAT_TEXT_SIZE;
-    private int mSeatTextColor = DEFAULT_SEAT_TEXT_COLOR;
+    private float mSeatTypeDescSize = DEFAULT_SEAT_TEXT_SIZE;
+    private int mSeatTypeDescColor = DEFAULT_SEAT_TEXT_COLOR;
 
     private float[] valueHolder = null;
     private boolean mIsValueHold = false;
@@ -143,6 +143,13 @@ public class SeatParams {
         mSeatTypeDescription = DEFAULT_SEAT_TYPE_DESC;
     }
 
+    /**
+     * 获取座位绘制参数的单一实例,此参数包括管理的数据有座位类型及普通座位的绘制相关参数,
+     * <font color="yellow"><b>所有与座位类型有关的方法都是包括了<font color ="white"><i>seatType</i></font>,
+     * 所有与普通座位绘制相关的方法都只包括<font color ="white"><i>seat</i></font></b></font>
+     *
+     * @return
+     */
     public static synchronized SeatParams getInstance() {
         if (mInstance == null) {
             mInstance = new SeatParams();
@@ -154,11 +161,23 @@ public class SeatParams {
         Log.i("seatParams", msg);
     }
 
+
+    /**
+     * 设置是否绘制座位类型,<font color="yellow"><b>此处与是否绘制座位{@link #isDrawSeat()}是两个不同的方法,代表的意义不同</b></font>,
+     * 此方法是对座位类型是否绘制的判断处理,而{@link #isDrawSeat()}是对普通座位(出售座位)是否绘制的判断处理
+     *
+     * @param isDrawSeatType
+     */
     public void setIsDrawSeatType(boolean isDrawSeatType) {
         this.mIsDrawSeatType = isDrawSeatType;
     }
 
-    public boolean getIsDrawType() {
+    /**
+     * 获取座位类型是否进行绘制
+     *
+     * @return
+     */
+    public boolean isDrawSeatType() {
         return mIsDrawSeatType;
     }
 
@@ -173,7 +192,10 @@ public class SeatParams {
         //由于座位的宽度是决定座位对应的文字
         //文字大小不允许超过800
         //超过800的都取消缩放
-        if (newHeight > 800) {
+        //设置最大最小缩放值
+
+        //此处使用默认值的24倍,840
+        if (newHeight > DEFAULT_SEAT_HEIGHT * 24 || newHeight < DEFAULT_SEAT_HEIGHT * 0.5) {
             return false;
         } else {
             return true;
@@ -201,7 +223,7 @@ public class SeatParams {
             valueHolder[3] = this.mSeatVerticalInterval;
             valueHolder[4] = this.mSeatTextInterval;
             valueHolder[5] = this.mSeatTypeInterval;
-            valueHolder[6] = this.mSeatTextSize;
+            valueHolder[6] = this.mSeatTypeDescSize;
             mIsValueHold = true;
         }
         //每一次变化都处理为相对原始数据的变化
@@ -211,7 +233,7 @@ public class SeatParams {
         this.mSeatVerticalInterval = valueHolder[3] * scaleRate;
         this.mSeatTextInterval = valueHolder[4] * scaleRate;
         this.mSeatTypeInterval = valueHolder[5] * scaleRate;
-        this.mSeatTextSize = valueHolder[6] * scaleRate;
+        this.mSeatTypeDescSize = valueHolder[6] * scaleRate;
         //自动计算主次座位高度
         this.autoCalculateSeatShapeHeight(this.mSeatHeight);
         //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
@@ -224,7 +246,7 @@ public class SeatParams {
             valueHolder[3] = this.mSeatVerticalInterval;
             valueHolder[4] = this.mSeatTextInterval;
             valueHolder[5] = this.mSeatTypeInterval;
-            valueHolder[6] = this.mSeatTextSize;
+            valueHolder[6] = this.mSeatTypeDescSize;
             //重置记录标志
             mIsValueHold = false;
         }
@@ -234,7 +256,13 @@ public class SeatParams {
         mInstance = new SeatParams();
     }
 
-    public boolean getIsDrawSeat() {
+    /**
+     * 获取当前座位是否绘制,<font color="yellow"><b>此处的座位是指普通座位,与{@link #isDrawSeatType()}中的座位类型是不同概念的</b></font>
+     * <p>该返回的参数值来自于方法{@link #setSeatDrawType(int)}方法自动计算的结果,是否进行绘制是由方法根据普通座位的类型进行判断处理的</p>
+     *
+     * @return
+     */
+    public boolean isDrawSeat() {
         return mIsDrawSeat;
     }
 
@@ -246,42 +274,54 @@ public class SeatParams {
         return mSeatHeight;
     }
 
-    private float getMainSeatHeight() {
-        return mMainSeatHeight;
-    }
-
-    private float getMinorSeatHeight() {
-        return mMinorSeatHeight;
-    }
-
-    private float getSeatHeightInterval() {
-        return mSeatHeightInterval;
-    }
-
-    private float getSeatTotalHeight() {
-        return mSeatTotalHeight;
-    }
-
     public float getSeatRadius() {
         return mSeatRadius;
     }
 
+    /**
+     * 获取普通座位绘制之间的水平间隔
+     *
+     * @return
+     */
     public float getSeatHorizontalInterval() {
         return mSeatHorizontalInterval;
     }
 
+    /**
+     * 获取普通座位绘制之间的垂直间隔
+     *
+     * @return
+     */
     public float getSeatVerticalInterval() {
         return mSeatVerticalInterval;
     }
 
-    public float getSeatTextInterval() {
+
+    /**
+     * 获取座位类型与其描述文字之间的水平间隔
+     *
+     * @return
+     */
+    public float getSeatTypeDescInterval() {
         return mSeatTextInterval;
     }
 
+
+    /**
+     * 获取座位类型(包括描述文字为一整体)之间的水平间隔
+     *
+     * @return
+     */
     public float getSeatTypeInterval() {
         return mSeatTypeInterval;
     }
 
+    /**
+     * 获取当前绘制的座位的颜色,<font color="yellow"><b>注意此处是当前绘制的座位的颜色,该颜色值只用于当前绘制的座位,此座位包括了普通座位及绘制座位类型时的示例座位</b></font>
+     * <p>若使用默认的座位绘制方式,则应该保证在每次座位绘制之前设置该值,否则可能会使后面大量的座位使用同一个颜色值</p>
+     *
+     * @return
+     */
     public int getSeatColor() {
         return mSeatColor;
     }
@@ -334,12 +374,22 @@ public class SeatParams {
         }
     }
 
-    public int getSeatTextColor() {
-        return mSeatTextColor;
+    /**
+     * 获取座位类型描述文字的颜色
+     *
+     * @return
+     */
+    public int getSeatTypeDescColor() {
+        return mSeatTypeDescColor;
     }
 
-    public float getSeatTextSize() {
-        return mSeatTextSize;
+    /**
+     * 设置座位类型描述文字的字体大小
+     *
+     * @return
+     */
+    public float getSeatTypeTextSize() {
+        return mSeatTypeDescSize;
     }
 
     /**
@@ -356,7 +406,7 @@ public class SeatParams {
     }
 
     /**
-     * 获取当前座位绘制的方式
+     * 获取当前座位类型的绘制的方式
      * <p>
      * <li>{@link #SEAT_DRAW_TYPE_DEFAULT}默认绘制方式,座位分主次座位部分绘制,纯图形绘制</li>
      * <li>{@link #SEAT_DRAW_TYPE_IMAGE}图片绘制方式,使用座位类型对应的图片填充座位区域</li>
@@ -456,15 +506,25 @@ public class SeatParams {
         }
     }
 
-    public void setSeatTextColor(int mSeatTextColor) {
-        this.mSeatTextColor = mSeatTextColor;
+    /**
+     * 设置座位类型描述文字的颜色值
+     *
+     * @param mSeatTextColor
+     */
+    public void setSeatTypeDescColor(int mSeatTextColor) {
+        this.mSeatTypeDescColor = mSeatTextColor;
     }
 
-    public void setSeatTextSize(float mSeatTextSize) {
+    /**
+     * 设置座位类型描述文字字体大小
+     *
+     * @param mSeatTextSize
+     */
+    public void setSeatTypeDescSize(float mSeatTextSize) {
         if (mSeatTextSize == DEFAULT_FLOAT) {
-            this.mSeatTextSize = DEFAULT_SEAT_TEXT_SIZE;
+            this.mSeatTypeDescSize = DEFAULT_SEAT_TEXT_SIZE;
         } else {
-            this.mSeatTextSize = mSeatTextSize;
+            this.mSeatTypeDescSize = mSeatTextSize;
         }
     }
 
@@ -565,7 +625,17 @@ public class SeatParams {
     }
 
     /**
+     * 设置默认的不绘制座位的类型,默认值为0{@link #SEAT_DRAW_TYPE_NO},<font color="yellow"><b>如果不是必要的情况下,不建议修改该值,使用默认值即可</b></font>
+     *
+     * @param seatDrawNo
+     */
+    public static void setDefaultSeatDrawNoType(int seatDrawNo) {
+        SEAT_DRAW_TYPE_NO = seatDrawNo;
+    }
+
+    /**
      * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_DRAW_TYPE_NO}时，不绘制该座位
+     * <p><font color="yellow"><b>{@link #SEAT_DRAW_TYPE_NO}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
      *
      * @param seatType 座位类型
      */
@@ -595,9 +665,13 @@ public class SeatParams {
      * @param thirdSeatType  第三个座位类型
      */
     public static void setDefaultSeatType(int firstSeatType, int secondSeatType, int thirdSeatType) {
-        DEFAULT_SEAT_TYPE[0] = firstSeatType;
-        DEFAULT_SEAT_TYPE[1] = secondSeatType;
-        DEFAULT_SEAT_TYPE[2] = thirdSeatType;
+        if (DEFAULT_SEAT_TYPE != null && DEFAULT_SEAT_TYPE.length == 3) {
+            DEFAULT_SEAT_TYPE[0] = firstSeatType;
+            DEFAULT_SEAT_TYPE[1] = secondSeatType;
+            DEFAULT_SEAT_TYPE[2] = thirdSeatType;
+        } else {
+            throw new RuntimeException("默认座位类型不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+        }
     }
 
     /**
@@ -616,12 +690,15 @@ public class SeatParams {
      * @param secondColor 已选座位
      * @param thirdColor  已售座位
      */
-    public static void setDefaultSeatColorArrary(int firstColor, int secondColor, int thirdColor) {
+    public static void setDefaultSeatColor(int firstColor, int secondColor, int thirdColor) {
         //确保座位类型回到默认状态
-        resetDefaultSeatParams();
-        DEFAULT_SEAT_TYPE_COLOR[0] = firstColor;
-        DEFAULT_SEAT_TYPE_COLOR[1] = secondColor;
-        DEFAULT_SEAT_TYPE_COLOR[2] = thirdColor;
+        if (DEFAULT_SEAT_TYPE_COLOR != null && DEFAULT_SEAT_TYPE_COLOR.length == 3) {
+            DEFAULT_SEAT_TYPE_COLOR[0] = firstColor;
+            DEFAULT_SEAT_TYPE_COLOR[1] = secondColor;
+            DEFAULT_SEAT_TYPE_COLOR[2] = thirdColor;
+        } else {
+            throw new RuntimeException("默认座位类型颜色不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+        }
     }
 
     /**
@@ -633,10 +710,13 @@ public class SeatParams {
      */
     public static void setDefaultSeatTypeDescription(String firstDesc, String secondDesc, String thirdDesc) {
         //确保座位类型回来默认状态
-        resetDefaultSeatParams();
-        DEFAULT_SEAT_TYPE_DESC[0] = firstDesc;
-        DEFAULT_SEAT_TYPE_DESC[1] = secondDesc;
-        DEFAULT_SEAT_TYPE_DESC[2] = thirdDesc;
+        if (DEFAULT_SEAT_TYPE_DESC != null && DEFAULT_SEAT_TYPE_DESC.length == 3) {
+            DEFAULT_SEAT_TYPE_DESC[0] = firstDesc;
+            DEFAULT_SEAT_TYPE_DESC[1] = secondDesc;
+            DEFAULT_SEAT_TYPE_DESC[2] = thirdDesc;
+        } else {
+            throw new RuntimeException("默认座位描述变量不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+        }
     }
 
     /**

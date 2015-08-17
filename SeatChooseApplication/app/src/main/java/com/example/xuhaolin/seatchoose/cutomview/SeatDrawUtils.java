@@ -9,16 +9,14 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * Created by xuhaolin in 2015-08-07
  * 座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件
  */
-public class SeatDrawUtils extends AbsTouchEvent {
+public class SeatDrawUtils extends AbsTouchEventHandle {
 
     //座位参数
     private SeatParams mSeatParams = null;
@@ -56,7 +54,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
     private float mScaleSecondUpX = 0f;
     private float mScaleSecondUpY = 0f;
     //默认的缩放比例
-    private double mScaleRate = 1.0;
+    private float mLastScaleRate = 1f;
+    private float mTotalScaleRate = 1f;
     //按下事件的坐标
     private float mDownX = 0f;
     private float mDownY = 0f;
@@ -284,7 +283,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         if (text == null) {
             textLength = 0;
         } else {
-            paint.setTextSize(mSeatParams.getSeatTextSize());
+            paint.setTextSize(mSeatParams.getSeatTypeTextSize());
             textLength = paint.measureText(text);
         }
 
@@ -300,13 +299,13 @@ public class SeatDrawUtils extends AbsTouchEvent {
             textBeginDrawX = drawXPosition + interval / 2;
         }
         //计算文字的Y轴位置(由于文字只考虑绘制在左边和右边,所以文字的绘制高度是不会受影响的)
-        textBeginDrawY = drawYPosition + mSeatParams.getSeatTextSize() / 3;
+        textBeginDrawY = drawYPosition + mSeatParams.getSeatTypeTextSize() / 3;
         seatCenterY = drawYPosition;
 
         if (text != null) {
             //绘制文字
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(mSeatParams.getSeatTextColor());
+            paint.setColor(mSeatParams.getSeatTypeDescColor());
             canvas.drawText(text, textBeginDrawX, textBeginDrawY, paint);
         }
         if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
@@ -351,7 +350,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @param drawPositionY 座位绘制的中心Y轴坐标
      */
     private void drawSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
-        if (!mSeatParams.getIsDrawSeat()) {
+        if (!mSeatParams.isDrawSeat()) {
             return;
         }
         //座位的占拒的总高度(两部分座位)
@@ -385,7 +384,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @return 返回绘制后下一个元素开始绘制的Y轴中心坐标, <font color="yellow"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
      */
     private float drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
-        if (mStageParams == null || mStageParams.getDrawType() == StageParams.STAGE_DRAW_TYPE_NO) {
+        if (mStageParams == null || !mStageParams.isDrawStage()) {
             return drawPositionY;
         }
         RectF stageRectf = new RectF();
@@ -401,7 +400,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         stageRectf.top = drawPositionY - mStageParams.getStageHeight() / 2;
         stageRectf.bottom = stageRectf.top + mStageParams.getStageHeight();
 
-        if (mStageParams.getDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
+        if (mStageParams.getStageDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
             //绘制图片舞台
             mStageParams.loadStageImage(mContext, false);
             Bitmap bitmap = mStageParams.getStageImage();
@@ -502,6 +501,17 @@ public class SeatDrawUtils extends AbsTouchEvent {
             //增加Y轴的绘制高度
             beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getSeatHeight();
         }
+
+        //当前绘制的Y轴方向的最后的位置与view实际宽高进行比较
+        //超过view高度则可以进行上下的偏移量挪动
+        //否则使用默认偏移量
+        if (mIsScaleRedraw) {
+            if (beginDrawY < mWHPoint.y) {
+                mLargeOffsetY = 30f;
+            } else {
+                mLargeOffsetY = beginDrawY - mWHPoint.y + mSeatParams.getSeatVerticalInterval() * 2;
+            }
+        }
     }
 
     private void drawTitleColumn(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int columnCount) {
@@ -558,16 +568,17 @@ public class SeatDrawUtils extends AbsTouchEvent {
                     //增大行数与座位之间的间隔
                     beginDrawX += increment * mSeatParams.getSeatHorizontalInterval();
                     paint.setTextSize((float) (mSeatParams.getSeatHeight() * 0.8));
-                    paint.setColor(mSeatParams.getSeatTextColor());
+                    paint.setColor(mSeatParams.getSeatTypeDescColor());
                     //调整文字显示的Y轴坐标
-                    float drawTextY = drawPositionY + mSeatParams.getSeatTextSize() / 3;
+                    float drawTextY = drawPositionY + mSeatParams.getSeatTypeTextSize() / 3;
                     canvas.drawText(String.valueOf((currentRowIndex + 1)), beginDrawX, drawTextY, paint);
 
-                    //记录最大偏移量
+                    //记录最大偏移量,最左端开始绘制坐标与X轴的距离绝对值
                     //该值可能会改变的,此处由多个地方决定
                     if (mIsScaleRedraw) {
-                        //附加的部分是用于增大间隔
-                        mLargeOffsetX = Math.abs(beginDrawX) + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
+                        mLargeOffsetX = Math.abs(beginDrawX - mBeginDrawPositionX)
+                                //附加的部分是用于增大间隔
+                                + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
                     }
                 }
             } catch (ArrayIndexOutOfBoundsException ex) {
@@ -591,7 +602,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         }
         int seatTypeCount = mSeatParams.getSeatTypeArrary().length;
         float viewWidth = mDrawView.getWidth();
-        float seatTextInterval = mSeatParams.getSeatTextInterval();
+        float seatTextInterval = mSeatParams.getSeatTypeDescInterval();
         float eachSeatTypeDrawWidth = viewWidth / seatTypeCount;
         float drawPositionX = eachSeatTypeDrawWidth / 2;
         String[] seatTypeDesc = mSeatParams.getSeatTypeDescription();
@@ -610,12 +621,12 @@ public class SeatDrawUtils extends AbsTouchEvent {
             drawPositionX += eachSeatTypeDrawWidth;
         }
 
-        //记录最大偏移量
-        //该值可能会改变的,此处由多个地方决定
-        if (mIsScaleRedraw) {
-            //附加的部分是用于增大间隔
-            mLargeOffsetX = Math.abs(drawPositionX) + mSeatParams.getSeatHorizontalInterval();
-        }
+//        //记录最大偏移量
+//        //该值可能会改变的,此处由多个地方决定
+//        if (mIsScaleRedraw) {
+//            //附加的部分是用于增大间隔
+//            mLargeOffsetX = Math.abs(drawPositionX- this.getDrawCenterX(mWHPoint.x) - this.mWHPoint.x / 2) + mSeatParams.getSeatHorizontalInterval();
+//        }
     }
 
     /**
@@ -627,8 +638,9 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @param rowCount      预定需要绘制的行数
      * @return 返回绘制后的Y轴坐标位置, <font color="yellow"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
      */
+
     public float drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
-        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.getIsDrawType()) {
+        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.isDrawSeatType()) {
             return drawPositionY;
         }
         //保证原始的数据,座位类型/座位颜色/座位描述/座位图片ID/座位图片Bitmap
@@ -712,6 +724,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
                 }
                 //将新数据填充到原座位参数中
                 if (mSeatParams.getSeatDrawType() == SeatParams.SEAT_DRAW_TYPE_IMAGE) {
+                    //填充数据必须注意,imageID及imageBitmap不允许对象为null
                     if (newSeatImageIdArr != null) {
                         mSeatParams.setSeatTypeWithImage(newSeatTypeArr, newSeatImageIdArr);
                     }
@@ -738,6 +751,17 @@ public class SeatDrawUtils extends AbsTouchEvent {
         } else {
             mSeatParams.setAllSeatTypeWithColor(originSeatTypeArr, originSeatTypeColorArr, originSeatTypeDesc);
         }
+
+        //当前绘制的Y轴方向的最后的位置与view实际宽高进行比较
+        //超过view高度则可以进行上下的偏移量挪动
+        //否则使用默认偏移量
+        if (mIsScaleRedraw) {
+            if (drawPositionY < mWHPoint.y) {
+                mLargeOffsetY = 20f;
+            } else {
+                mLargeOffsetY = drawPositionY - mWHPoint.y + mSeatParams.getSeatVerticalInterval() * 2;
+            }
+        }
         return drawPositionY;
     }
 
@@ -761,7 +785,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         //座位的宽度
         float seatWidth = mSeatParams.getSeatWidth();
         //座位与邻近文字的距离
-        float seatTextInterval = mSeatParams.getSeatTextInterval();
+        float seatTextInterval = mSeatParams.getSeatTypeDescInterval();
         //座位类型之前的距离,每个座位(此处包含文字)绘制之间的距离
         float seatTypeInterval = mSeatParams.getSeatTypeInterval();
         //开始绘制的位置
@@ -780,26 +804,30 @@ public class SeatDrawUtils extends AbsTouchEvent {
         if (seatTypeDesc != null) {
             for (String text : seatTypeDesc) {
                 //计算所有文字长度
-                totalTextLength += this.getTextLength(mSeatParams.getSeatTextSize(), text);
+                totalTextLength += this.getTextLength(mSeatParams.getSeatTypeTextSize(), text);
             }
         } else {
             totalTextLength = 0f;
         }
         //计算所有座位(包含文字及座位之前的间隔)长度
         allSeatTypeWidth = totalTextLength + (mSeatParams.getSeatWidth()
-                + mSeatParams.getSeatTextInterval()) * seatTypeCount
+                + mSeatParams.getSeatTypeDescInterval()) * seatTypeCount
                 + mSeatParams.getSeatTypeInterval() * (seatTypeCount - 1);
         String firstText = seatTypeDesc == null ? null : seatTypeDesc[0];
+        float firstSeatTypeTotalWidth = seatWidth + seatTypeInterval + this.getTextLength(mSeatParams.getSeatTypeTextSize(), firstText);
         //计算开始绘制的X轴位置
-        drawPositionX = mBeginDrawPositionX + viewWidth / 2
+        drawPositionX = this.getDrawCenterX(mWHPoint.x)
                 - allSeatTypeWidth / 2
-                + (seatWidth + seatTypeInterval + this.getTextLength(mSeatParams.getSeatTextSize(), firstText)) / 2;
+                //以上为第一个座位类型开始绘制的X轴坐标,需要的是第一个座位绘制的X轴中心坐标，因此需要计算第一个座位(包括文字)占用的宽度的一半
+                //此时才为X轴的中心绘制的坐标
+                + firstSeatTypeTotalWidth / 2;
 
-        //记录最大偏移量
+        //记录最大偏移量,此处为最左端开始绘制坐标与X轴距离的绝对值
         //该值可能会改变的,此处由多个地方决定
         if (mIsScaleRedraw) {
-            //附加的部分是用于增大间隔
-            mLargeOffsetX = Math.abs(drawPositionX) + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
+            mLargeOffsetX = Math.abs(drawPositionX - firstSeatTypeTotalWidth / 2 - mBeginDrawPositionX)
+                    //附加的部分是用于增大间隔
+                    + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
         }
 
         String drawText = null;
@@ -816,7 +844,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
             //加载座位类型描述文字及计算其长度
             if (seatTypeDesc != null) {
                 drawText = mSeatParams.getSeatTypeDescription()[i];
-                textLength = this.getTextLength(mSeatParams.getSeatTextSize(), drawText);
+                textLength = this.getTextLength(mSeatParams.getSeatTypeTextSize(), drawText);
             } else {
                 drawText = null;
                 textLength = 0f;
@@ -828,7 +856,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
             //用于计算下一个绘制座位的X轴中心位置
             int nextTextIndex = i + 1;
             if (nextTextIndex < seatTypeCount && seatTypeDesc != null) {
-                nextTextLength = this.getTextLength(mSeatParams.getSeatTextSize(), seatTypeDesc[nextTextIndex]);
+                nextTextLength = this.getTextLength(mSeatParams.getSeatTypeTextSize(), seatTypeDesc[nextTextIndex]);
             } else {
                 nextTextLength = 0;
             }
@@ -844,6 +872,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @param beginDrawPositionX X轴初始偏移量
      * @param begindrawPositionY Y轴初始偏移量
      */
+
     public void setBeginDrawPositionXY(float beginDrawPositionX, float begindrawPositionY) {
         mOriginalOffsetX = beginDrawPositionX;
         mOriginalOffsetY = begindrawPositionY;
@@ -856,15 +885,21 @@ public class SeatDrawUtils extends AbsTouchEvent {
      */
     public float getStageBeginDrawCenterY() {
         //初始偏移量
-        return mOriginalOffsetY
+        float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
-                + mBeginDrawPositionY
-                //舞台与顶端的距离
-                + mStageParams.getStageMarginTop()
-                //舞台的自身高度一半
-                //此处返回的是舞台实际需要绘制的位置的Y轴中心坐标
-                //因此需要返回舞台自身ymyar一半
-                + mStageParams.getStageHeight() / 2;
+                + mBeginDrawPositionY;
+        if (mStageParams.isDrawStage()) {
+            //舞台与顶端的距离
+            beginDrawCenterY += mStageParams.getStageMarginTop()
+                    //舞台的自身高度一半
+                    //此处返回的是舞台实际需要绘制的位置的Y轴中心坐标
+                    //因此需要返回舞台自身ymyar一半
+                    + mStageParams.getStageHeight() / 2;
+
+            return beginDrawCenterY;
+        } else {
+            return this.getSeatTypeBeginDrawCenterY();
+        }
     }
 
     /**
@@ -874,13 +909,31 @@ public class SeatDrawUtils extends AbsTouchEvent {
      */
     public float getSeatTypeBeginDrawCenterY() {
         //初始偏移量
-        return mOriginalOffsetY
+        float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
-                + mBeginDrawPositionY
-                //已绘制舞台高度
-                + mStageParams.getStageTotalHeight()
+                + mBeginDrawPositionY;
+        if (mStageParams.isDrawStage()) {
+            //已绘制舞台高度
+            beginDrawCenterY += mStageParams.getStageTotalHeight();
+            if (mSeatParams.isDrawSeatType()) {
+                //需要绘制座位类型
                 //当前座位绘制的高度的一半
-                + mSeatParams.getSeatHeight() / 2;
+                beginDrawCenterY += mSeatParams.getSeatHeight() / 2;
+            }
+        } else {
+            if (mSeatParams.isDrawSeatType()) {
+                //不绘制舞台需要绘制座位类型
+                //舞台底端与座位类型的高度
+                beginDrawCenterY += mStageParams.getStageMarginBottom()
+                        //当前座位绘制的高度的一半
+                        + mSeatParams.getSeatHeight() / 2;
+            } else {
+                //即不绘制舞台也不绘制座位类型
+                //每行座位垂直方向的间隔高度
+                beginDrawCenterY += mSeatParams.getSeatVerticalInterval();
+            }
+        }
+        return beginDrawCenterY;
     }
 
     /**
@@ -891,6 +944,13 @@ public class SeatDrawUtils extends AbsTouchEvent {
      */
     public float getDrawCenterX(float viewWidth) {
         return mOriginalOffsetX + mBeginDrawPositionX + viewWidth / 2;
+    }
+
+    /**
+     * 完成绘制之后调用的方法,用于处理部分重置的变量等
+     */
+    private void finishDraw() {
+        this.mIsScaleRedraw = false;
     }
 
     /**
@@ -913,8 +973,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
         //开始绘制普通出售座位
         drawX = this.getDrawCenterX(mWHPoint.x);
         drawSellSeats(canvas, mPaint, mSeatMap, drawX, drawY);
-        //全局性将缩放时的记录标志重置
-        mIsScaleRedraw = false;
+
+        this.finishDraw();
     }
 
     /**
@@ -935,6 +995,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
         //计算行的索引
         int clickRow = calculateRowIndex(clickPositionY, beginDrawPositionY, seatRowCount);
+        showMsg("click", "row = " + clickRow + "/column = " + clickColumn);
         //座位有效则进行处理
         if (clickColumn != -1 && clickRow != -1) {
             clickSeatIndex.x = clickRow;
@@ -1134,19 +1195,31 @@ public class SeatDrawUtils extends AbsTouchEvent {
      */
     private void invalidateInMultiPoint(float newScaleRate, boolean isTrueSetValue) {
         //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
-        if (newScaleRate == mScaleRate) {
+        //如果是最后一次(up事件),除非是不能绘制,否则必定重绘并记录缩放比
+        if (newScaleRate == 1 && !isTrueSetValue) {
             return;
         }
         //是否缩放成功
-        //任何一个缩放不成功都不可以进行重绘
+        //任何一个缩放不成功都不可以进行重绘,舞台与座位的缩放应该是同步的
         if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
-            mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
-            mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
-            mIsScaleRedraw = true;
-            mDrawView.invalidate();
+            mLastScaleRate = newScaleRate;
+        } else if (isTrueSetValue) {
+            //若缩放比不合法且当前缩放为最后一次缩放(up事件),则将上一次的缩放比作为此次的缩放比,用于记录数据
+            //且将最后的缩放比设为1(因为已经达到缩放的上限,再缩放也不会改变,所以比例使用1)
+            //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(有闪屏的效果...)
+            newScaleRate = mLastScaleRate;
+            mLastScaleRate = 1;
         } else {
-            showMsg("已接近最大缩放值,无法再进行缩放!");
+            showMsg("已达到缩放的最大值");
+            return;
         }
+        //设置缩放的数据
+        //最后一次缩放比为1时,其实与原界面是相同的
+        mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
+        mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
+        //开始缩放的重绘的标志
+        mIsScaleRedraw = true;
+        mDrawView.invalidate();
     }
 
     /**
@@ -1155,18 +1228,35 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @param moveDistanceX X轴方向的移动距离(可负值)
      * @param moveDistanceY Y轴方向的移动距离(可负值)
      */
+
     private void invalidateInSinglePoint(float moveDistanceX, float moveDistanceY) {
         //此处做大于5的判断是为了避免在检测单击事件时
         //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
         if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
+
             float newDrawPositionX = mBeginDrawPositionX + moveDistanceX;
             float newDrawPositionY = mBeginDrawPositionY + moveDistanceY;
             //判断是否超过指定最大的可左右移动的距离
             //若不作限制则用户可以无限距离地移动界面
-            if (Math.abs(newDrawPositionX) > getLargeOffsetX()) {
-                newDrawPositionX = getLargeOffsetX() * (mBeginDrawPositionX < 0 ? -1 : 1);
+            //此处新的绘制座位值即为相对原始位置的移动偏量(由于原始值以原点(0,0)为标准，所以此处实际上应该为"新坐标值-0",省略0)
+            if (Math.abs(newDrawPositionX) > this.getLargeOffsetX()) {
+                newDrawPositionX = this.getLargeOffsetX() * (mBeginDrawPositionX < 0 ? -1 : 1);
                 mBeginDrawPositionX = newDrawPositionX;
             }
+//            //判断是否超过指定最大的可上下移动的距离
+//            //若不作限制则用户可以无限距离地移动界面
+//            //此处新的绘制座位值即为相对原始位置的移动偏量(由于原始值以原点(0,0)为标准，所以此处实际上应该为"新坐标值-0",省略0)
+//            if (newDrawPositionY > 0) {
+//                //向下偏移,上面只有舞台,所以基本不进行偏移
+//                mBeginDrawPositionY = 30f;
+//            } else if (Math.abs(newDrawPositionY) > this.getLargeOffsetY()) {
+//                //向上偏移且绘制高度大于view的高度,需要显示一定的偏移量
+//                newDrawPositionY = this.getLargeOffsetY() * (mBeginDrawPositionY < 0 ? -1 : 1);
+//                mBeginDrawPositionY = newDrawPositionY;
+//            } else {
+//                //向上偏移但绘制高度在view高度内,也就是view可以完全显示其高度,基本不需要偏移`
+//                mBeginDrawPositionY = 30f;
+//            }
             //当距离确实有效地改变了再进行重绘制,否则原界面不变,减少重绘的次数
             if (newDrawPositionX != mBeginDrawPositionX || newDrawPositionY != mBeginDrawPositionY) {
                 mBeginDrawPositionX = newDrawPositionX;
@@ -1179,10 +1269,6 @@ public class SeatDrawUtils extends AbsTouchEvent {
                 }
             }
         }
-    }
-
-    private void showMsg(String msg) {
-        Log.i("motion_action", msg);
     }
 
     @Override
@@ -1235,8 +1321,9 @@ public class SeatDrawUtils extends AbsTouchEvent {
                     }
                     //界面没有被移动过,则处理为单击事件
                     //由当前的界面位置计算出相对原来(完全没有被移动过的界面)当前单击点在原始界面的坐标位置
-                    float clickPositionX = event.getX() - mBeginDrawPositionX;
-                    float clickPositionY = event.getY() - mBeginDrawPositionY;
+                    float clickPositionX = event.getX() - mBeginDrawPositionX - mOriginalOffsetX;
+                    float clickPositionY = event.getY() - mBeginDrawPositionY - mOriginalOffsetY;
+                    //TODO:需要设置
                     //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
                     float beginDrawPositionY = getSellSeatsBeginDrawY(mSeatTypeRowCount);
                     if (mSeatMap != null && mSeatMap.length > 0) {
@@ -1252,13 +1339,11 @@ public class SeatDrawUtils extends AbsTouchEvent {
                                 //回调选中的座位
                                 mISeatInformationListener.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y);
                             }
-                            Toast.makeText(mContext, "clickRow = " + clickSeatPoint.x + " / clickColumn = " + clickSeatPoint.y, Toast.LENGTH_LONG).show();
                         } else {
                             if (mISeatInformationListener != null) {
                                 mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
                                 mISeatInformationListener.chosseSeatFail();
                             }
-                            Toast.makeText(mContext, "没有选中座位!", Toast.LENGTH_LONG).show();
                         }
                     } else {
                         //列表数据不合法,直接返回失败
@@ -1284,7 +1369,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
         //该部分可能为系统的问题
         try {
             int action = event.getAction();
-            double newScaleRate = 0f;
+            float newScaleRate = 0f;
             switch (action & MotionEvent.ACTION_MASK) {
 
                 case MotionEvent.ACTION_POINTER_DOWN:
@@ -1302,7 +1387,7 @@ public class SeatDrawUtils extends AbsTouchEvent {
 
                     newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
-                    invalidateInMultiPoint((float) newScaleRate, false);
+                    invalidateInMultiPoint(newScaleRate, false);
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
                     mScaleFirstUpX = event.getX(0);
@@ -1310,9 +1395,12 @@ public class SeatDrawUtils extends AbsTouchEvent {
                     mScaleSecondUpX = event.getX(1);
                     mScaleSecondUpY = event.getY(1);
 
+                    showMsg("mlargeoffset", "------------begin up------------");
                     newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
-                    invalidateInMultiPoint((float) newScaleRate, true);
+                    invalidateInMultiPoint(newScaleRate, true);
+                    showMsg("mlargeoffset", "X = " + mLargeOffsetX);
+                    showMsg("mlargeoffset", "offsetY = " + mLargeOffsetX);
 
                     mScaleFirstDownX = 0;
                     mScaleFirstDownY = 0;
@@ -1341,8 +1429,8 @@ public class SeatDrawUtils extends AbsTouchEvent {
      * @param secondUpY   多点触摸抬起或移动的pointer_2_y
      * @return
      */
-    private double getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
-                                float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
+    private float getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
+                               float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
         //计算平方和
         double downDistance = Math.pow(Math.abs((firstDownX - secondDownX)), 2) + Math.pow(Math.abs(firstDownY - secondDownY), 2);
         double upDistance = Math.pow(Math.abs((firstUpX - secondUpX)), 2) + Math.pow(Math.abs(firstUpY - secondUpY), 2);
@@ -1351,11 +1439,10 @@ public class SeatDrawUtils extends AbsTouchEvent {
         //计算与上一个比例的差
         //差值超过阀值则使用该比例,否则返回原比例
         if (newRate > 0.02 && newRate < 10) {
-            mScaleRate = newRate;
-            return newRate;
-        } else {
-            return mScaleRate;
+            //保存当前的缩放比为上一次的缩放比
+            return (float) newRate;
         }
+        return 1;
     }
 
     /**
@@ -1368,11 +1455,50 @@ public class SeatDrawUtils extends AbsTouchEvent {
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
      */
-    public float getSellSeatsBeginDrawY(int seatTypeRowCount) {
-        //舞台的占用高度
-        return mOriginalOffsetY + mStageParams.getStageTotalHeight()
-                //N个座位类型绘制后的占用的高度
-                + (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
+    private float getSellSeatsBeginDrawY(int seatTypeRowCount) {
+//        //舞台的占用高度
+//        float beginDrawY = this.getSeatTypeBeginDrawCenterY();
+//
+//        if (mSeatParams.isDrawSeatType()) {
+//            beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount - mSeatParams.getSeatHeight() / 2;
+//        } else {
+//            beginDrawY -= mSeatParams.getSeatHeight() / 2;
+//        }
+//        return beginDrawY;
+
+        float beginDrawY = mOriginalOffsetY;
+        if (mStageParams.isDrawStage()) {
+            beginDrawY += mStageParams.getStageTotalHeight();
+            if (mSeatParams.isDrawSeatType()) {
+                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
+            }
+        } else {
+            if (mSeatParams.isDrawSeatType()) {
+                beginDrawY += mStageParams.getStageMarginBottom();
+                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
+            } else {
+                beginDrawY += mSeatParams.getSeatVerticalInterval();
+            }
+        }
+        return beginDrawY;
+//        if (mStageParams.isDrawStage()) {
+//            //舞台需要绘制
+//            beginDrawY += mStageParams.getStageTotalHeight();
+//        } else {
+//            //舞台不需要绘制
+//            if (mSeatParams.isDrawSeatType()) {
+//                //座位类型需要绘制
+//                //添加舞台底端高度
+//                beginDrawY += mStageParams.getStageMarginBottom();
+//                //添加座位类型N行的绘制高度
+//                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
+//            } else {
+//                //舞台与座位类型都不需要绘制
+//                //返回座位之间的垂直高度
+//                beginDrawY += mSeatParams.getSeatVerticalInterval();
+//            }
+//        }
+//        return beginDrawY;
     }
 
     /**

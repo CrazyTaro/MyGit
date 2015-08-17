@@ -57,10 +57,7 @@ public class StageParams {
      * 舞台绘制方式,使用图片填充
      */
     public static final int STAGE_DRAW_TYPE_IMAGE = 0;
-    /**
-     * 舞台绘制方式,不进行绘制舞台
-     */
-    public static final int STAGE_DRAW_TYPE_NO = 1;
+
 
     private float mStageWidth = DEFAULT_STAGE_WIDTH;
     private float mStageHeight = DEFAULT_STAGE_HEIGHT;
@@ -71,11 +68,17 @@ public class StageParams {
     private int mStageTextColor = DEFAULT_STAGE_TEXT_COLOR;
     private String mStageText = DEFAULT_STAGE_TEXT;
 
+    //用于缩放暂存舞台数据
     private float[] mValueHolder = null;
+    //用于检测缩放时是否已暂存数据
     private boolean mIsValueHold = false;
+    //是否绘制舞台
+    private boolean mIsDrawStage = true;
     private static StageParams mInstance = null;
 
+    //舞台绘制类型
     private int mStageDrawType = STAGE_DRAW_TYPE_DEFAULT;
+    //默认资源ID
     private int mStageImageID = DEFAULT_INT;
     private Bitmap mStageImageBitmap = null;
 
@@ -97,7 +100,6 @@ public class StageParams {
      *                 <p>
      *                 <li>{@link #STAGE_DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制</li>
      *                 <li>{@link #STAGE_DRAW_TYPE_IMAGE},图片绘制方式</li>
-     *                 <li>{@link #STAGE_DRAW_TYPE_NO},不绘制</li>
      *                 </p>
      */
     public void setStageDrawType(int drawType) {
@@ -108,8 +110,35 @@ public class StageParams {
         }
     }
 
-    public int getDrawType() {
+    /**
+     * 获取舞台绘制的方式
+     * <p>
+     * <li>{@link #STAGE_DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制</li>
+     * <li>{@link #STAGE_DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充</li>
+     * </p>
+     *
+     * @return
+     */
+    public int getStageDrawType() {
         return mStageDrawType;
+    }
+
+    /**
+     * 设置是否进行舞台绘制
+     *
+     * @param isDrawStage
+     */
+    public void setIsDrawStage(boolean isDrawStage) {
+        this.mIsDrawStage = isDrawStage;
+    }
+
+    /**
+     * 是否绘制舞台
+     *
+     * @return 返回true绘制, 返回false不绘制
+     */
+    public boolean isDrawStage() {
+        return mIsDrawStage;
     }
 
     /**
@@ -201,7 +230,9 @@ public class StageParams {
         //由于舞台的宽度是决定座位对应的文字
         //文字大小不允许超过800
         //超过800的都取消缩放
-        if (newHeight > 800) {
+
+        //此处使用默认值的16倍,880
+        if (newHeight > DEFAULT_STAGE_HEIGHT * 16 || newHeight < DEFAULT_STAGE_HEIGHT * 0.5) {
             return false;
         } else {
             return true;
