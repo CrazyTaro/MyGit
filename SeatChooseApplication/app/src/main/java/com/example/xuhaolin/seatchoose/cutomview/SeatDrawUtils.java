@@ -349,10 +349,44 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         mImageRectf.right = mImageRectf.left + imageWidth;
         mImageRectf.top = drawPositionY - imageHeight / 2;
         mImageRectf.bottom = mImageRectf.top + imageHeight;
-        Bitmap seatImage = mSeatParams.getSeatBitmapByType(mContext, seatType);
-        if (seatImage != null) {
-            //当获取到的座位图片不为空时才进行绘制
-            canvas.drawBitmap(seatImage, null, mImageRectf, paint);
+        //当图片范围可见时才进行绘制
+        if (isRectfCanSeen(mImageRectf)) {
+            Bitmap seatImage = mSeatParams.getSeatBitmapByType(mContext, seatType);
+            if (seatImage != null) {
+                //当获取到的座位图片不为空时才进行绘制
+                canvas.drawBitmap(seatImage, null, mImageRectf, paint);
+            }
+        }
+    }
+
+    /**
+     * 判断当前的矩形区域是否可见,<font color="yellow"><b>此方法仅可用于座位,因为舞台可能放大后不四个点都不在屏幕内,但屏幕内可见一部分的舞台</b></font>
+     *
+     * @param rectF 矩形区域
+     * @return
+     */
+    private boolean isRectfCanSeen(RectF rectF) {
+        if (rectF != null) {
+            PointF[] angles = new PointF[4];
+            //左上角
+            angles[0] = new PointF(rectF.left, rectF.top);
+            //左下角
+            angles[1] = new PointF(rectF.left, rectF.bottom);
+            //右上角
+            angles[2] = new PointF(rectF.right, rectF.top);
+            //右下角
+            angles[3] = new PointF(rectF.right, rectF.bottom);
+
+            for (PointF point : angles) {
+                //任何一个点在可见屏幕内即进行绘制
+                if ((point.x > 0 && point.x <= mWHPoint.x) && (point.y > 0 && point.y <= mWHPoint.y)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } else {
+            return false;
         }
     }
 
@@ -380,12 +414,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         //默认的绘制方式
         //当该绘制图像有显示在画布上的部分时才进行绘制
         //所有的坐标都不在画布的有效显示范围则不进行绘制
-        if (mMainSeatRectf.left > 0 || mMainSeatRectf.right > 0 || mMainSeatRectf.top > 0 || mMainSeatRectf.bottom > 0) {
+        if (isRectfCanSeen(mMainSeatRectf)) {
             canvas.drawRoundRect(mMainSeatRectf, mSeatParams.getSeatRadius(), mSeatParams.getSeatRadius(), paint);
         }
         //当该绘制图像有显示在画布上的部分时才进行绘制
         //所有的坐标都不在画布的有效显示范围则不进行绘制
-        if (mMainSeatRectf.left > 0 || mMainSeatRectf.right > 0 || mMainSeatRectf.top > 0 || mMainSeatRectf.bottom > 0) {
+        if (isRectfCanSeen(mMainSeatRectf)) {
             canvas.drawRoundRect(mMinorSeatRectf, mSeatParams.getSeatRadius(), mSeatParams.getSeatRadius(), paint);
         }
     }
