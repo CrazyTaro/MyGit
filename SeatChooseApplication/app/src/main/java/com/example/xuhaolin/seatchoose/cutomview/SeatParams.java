@@ -94,6 +94,22 @@ public class SeatParams {
      */
     public static String[] DEFAULT_SEAT_TYPE_DESC = {"可选", "已选", "已售"};
     /**
+     * 座位默认基本类型,已选,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     */
+    public static int SEAT_TYPE_SELETED = 2;
+    /**
+     * 座位默认基本类型,未选,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     */
+    public static int SEAT_TYPE_UNSELETED = 1;
+    /**
+     * 座位默认基本类型,不可见,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>,其值与{@link #SEAT_DRAW_TYPE_NO}保持一致
+     */
+    public static int SEAT_TYPE_UNSHOW = 0;
+    /**
+     * 座位默认基本类型,错误座位,即不存在的座位(可能是列表数据不存在,也可能是查询索引超过此列表数据等)
+     */
+    public static final int SEAT_TYPE_ERRO = -1;
+    /**
      * 座位的绘制类型,不绘制
      */
     public static int SEAT_DRAW_TYPE_NO = 0;
@@ -161,6 +177,27 @@ public class SeatParams {
         Log.i("seatParams", msg);
     }
 
+    /**
+     * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已
+     *
+     * @param seleted   已选座位
+     * @param unSeleted 未选座位
+     * @param unShow    不显示座位(不可见,即未绘制出来)
+     */
+    public static void setSeatTypeConstant(int seleted, int unSeleted, int unShow) {
+        SEAT_TYPE_SELETED = seleted;
+        SEAT_TYPE_UNSELETED = unSeleted;
+        SEAT_TYPE_UNSHOW = unShow;
+    }
+
+    /**
+     * 重置所有的座位基本类型为原始状态
+     */
+    public static void resetSeatTypeConstant() {
+        SEAT_TYPE_SELETED = 2;
+        SEAT_TYPE_UNSELETED = 1;
+        SEAT_TYPE_UNSHOW = SEAT_DRAW_TYPE_NO;
+    }
 
     /**
      * 设置是否绘制座位类型,<font color="yellow"><b>此处与是否绘制座位{@link #isDrawSeat()}是两个不同的方法,代表的意义不同</b></font>,
@@ -410,7 +447,6 @@ public class SeatParams {
      * <p>
      * <li>{@link #SEAT_DRAW_TYPE_DEFAULT}默认绘制方式,座位分主次座位部分绘制,纯图形绘制</li>
      * <li>{@link #SEAT_DRAW_TYPE_IMAGE}图片绘制方式,使用座位类型对应的图片填充座位区域</li>
-     * <li>{@link #SEAT_DRAW_TYPE_NO}不进行绘制</li>
      * </p>
      *
      * @return
@@ -453,6 +489,10 @@ public class SeatParams {
 
     /**
      * 设置绘制类型,<font color="yellow"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>
+     * <p>
+     * <li>{@link #SEAT_DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色</li>
+     * <li>{@link #SEAT_DRAW_TYPE_IMAGE},图片绘制方式,使用图片进行填充</li>
+     * </p>
      *
      * @param drawType
      */
