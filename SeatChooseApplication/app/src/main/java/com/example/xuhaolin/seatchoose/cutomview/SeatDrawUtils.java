@@ -157,6 +157,22 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         }
     }
 
+
+    /**
+     * 获取座位列表中某行某列的座位类型数据,可能返回{@link SeatParams#SEAT_TYPE_ERRO}(无效值)
+     *
+     * @param rowIndex    座位行索引
+     * @param columnIndex 座位列索引
+     * @return 返回该位置的座位类型, 若无法获取返回-1
+     */
+    public int getSeatTypeInSeatMap(int rowIndex, int columnIndex) {
+        if (mSeatMap != null && rowIndex < mSeatMap.length && columnIndex < mSeatMap[0].length) {
+            return mSeatMap[rowIndex][columnIndex];
+        } else {
+            return SeatParams.SEAT_TYPE_ERRO;
+        }
+    }
+
     /**
      * 获取座位列表数据
      *
@@ -576,6 +592,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
                     //记录最大偏移量,最左端开始绘制坐标与X轴的距离绝对值
                     //该值可能会改变的,此处由多个地方决定
                     if (mIsScaleRedraw) {
+                        //此处必须与beginDrawPositionX的差值,因为该值才是实际上界面开始绘制的实际X轴
                         mLargeOffsetX = Math.abs(beginDrawX - mBeginDrawPositionX)
                                 //附加的部分是用于增大间隔
                                 + mSeatParams.getSeatWidth() + mSeatParams.getSeatHorizontalInterval();
@@ -980,8 +997,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     /**
      * 获取单击位置的座位索引值
      *
-     * @param clickPositionX     单击位置的相对X轴位置,<font color="yellow"><b>此处的相对是指通过计算后得到的与未进行任何界面移动操作前的默认绘制布局相等同的座标</b></font>
-     * @param clickPositionY     单击位置的相对Y轴位置,<font color="yellow"><b>原理同上</b></font>
+     * @param clickPositionX     单击位置的X轴位置
+     * @param clickPositionY     单击位置的Y轴位置
      * @param beginDrawPositionY 出售座位开始绘制的坐标,<font color="yellow"><b>此处的坐标是指第一行开始绘制的出售座位的Y轴坐标,即top而不是centerY</b></font>
      *                           <p>在实际中应该是除去舞台的高度(包括其间隔占用的高度)及座位类型(同理包括其间隔占用的高度)的高度</p>
      * @param seatColumnCount    座位列数,<font color="yellow"><b>列数,在二维表中应该是table[0].length</b></font>
@@ -989,8 +1006,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @return {@link Point},返回座位在表中对应的行列索引值,若单击点不在有效区域则返回null
      */
     private Point getClickSeatByPosition(float clickPositionX, float clickPositionY, float beginDrawPositionY, int seatColumnCount, int seatRowCount) {
-        //返回的座位对应的索引值点
-        Point clickSeatIndex = new Point();
         //计算列的索引
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
         //计算行的索引
@@ -998,6 +1013,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         showMsg("click", "row = " + clickRow + "/column = " + clickColumn);
         //座位有效则进行处理
         if (clickColumn != -1 && clickRow != -1) {
+            //返回的座位对应的索引值点
+            Point clickSeatIndex = new Point();
             clickSeatIndex.x = clickRow;
             clickSeatIndex.y = clickColumn;
             return clickSeatIndex;
@@ -1008,7 +1025,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     }
 
     /**
-     * 计算行索引(从高度计算)
+     * 计算行索引(从高度计算),通过计算当前的Y轴坐标与实际的绘制的普通座位的高度的间隔计算行数
      *
      * @param clickPositionY     单击位置相对的Y轴坐标
      * @param beginDrawPositionY 实际出售座位开始绘制的高度
@@ -1074,15 +1091,16 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     }
 
     /**
-     * 计算列索引(从宽度计算)
+     * 计算列索引(从宽度计算),通过计算当前的坐标值与实际绘制的X轴中心位置开始的坐标之间的间隔计算出当前的列数
      *
-     * @param clickPositionX  单击位置相对的X轴坐标
+     * @param clickPositionX  单击位置的X轴坐标
      * @param seatColumnCount 座位表中列数
      * @return 返回计算得到的列索引值, 当不存在时返回-1
      */
     private int calculateColumnIndex(float clickPositionX, int seatColumnCount) {
-        //计算控件的中心X轴位置
-        float centerX = mDrawView.getWidth() / 2;
+        //获取界面开始绘制的中心X轴位置
+        //整个界面的绘制是从中心位置的X轴开始的,此处的X轴包括偏移后的X轴
+        float centerX = this.getDrawCenterX(mWHPoint.x);
         //计算单击位置X轴与中心X轴位置
         float centerXInterval = clickPositionX - centerX;
         //上一次距离
@@ -1190,7 +1208,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     /**
      * 多点触摸的重绘,是否重绘由实际缩放的比例决定
      *
-     * @param newScaleRate   新的缩放比例,该比例可能为上一次缩放的比例
+     * @param newScaleRate   新的缩放比例,该比例可能为1(通常情况下比例为1不缩放,没有意义)
      * @param isTrueSetValue 是否将此次缩放结果永久性记录为新的原始数据
      */
     private void invalidateInMultiPoint(float newScaleRate, boolean isTrueSetValue) {
@@ -1320,9 +1338,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
                         mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
                     }
                     //界面没有被移动过,则处理为单击事件
-                    //由当前的界面位置计算出相对原来(完全没有被移动过的界面)当前单击点在原始界面的坐标位置
-                    float clickPositionX = event.getX() - mBeginDrawPositionX - mOriginalOffsetX;
-                    float clickPositionY = event.getY() - mBeginDrawPositionY - mOriginalOffsetY;
+                    float clickPositionX = event.getX();
+                    float clickPositionY = event.getY();
                     //TODO:需要设置
                     //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
                     float beginDrawPositionY = getSellSeatsBeginDrawY(mSeatTypeRowCount);
@@ -1395,12 +1412,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
                     mScaleSecondUpX = event.getX(1);
                     mScaleSecondUpY = event.getY(1);
 
-                    showMsg("mlargeoffset", "------------begin up------------");
                     newScaleRate = this.getScaleRate(mScaleFirstDownX, mScaleFirstDownY, mScaleSecondDownX, mScaleSecondDownY,
                             mScaleFirstUpX, mScaleFirstUpY, mScaleSecondUpX, mScaleSecondUpY);
                     invalidateInMultiPoint(newScaleRate, true);
-                    showMsg("mlargeoffset", "X = " + mLargeOffsetX);
-                    showMsg("mlargeoffset", "offsetY = " + mLargeOffsetX);
 
                     mScaleFirstDownX = 0;
                     mScaleFirstDownY = 0;
@@ -1456,45 +1470,23 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @return
      */
     private float getSellSeatsBeginDrawY(int seatTypeRowCount) {
-//        //舞台的占用高度
-//        float beginDrawY = this.getSeatTypeBeginDrawCenterY();
-//
-//        if (mSeatParams.isDrawSeatType()) {
-//            beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount - mSeatParams.getSeatHeight() / 2;
-//        } else {
-//            beginDrawY -= mSeatParams.getSeatHeight() / 2;
-//        }
-//        return beginDrawY;
-
-        float beginDrawY = mOriginalOffsetY;
-        if (mStageParams.isDrawStage()) {
-            beginDrawY += mStageParams.getStageTotalHeight();
-            if (mSeatParams.isDrawSeatType()) {
-                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
-            }
-        } else {
-            if (mSeatParams.isDrawSeatType()) {
-                beginDrawY += mStageParams.getStageMarginBottom();
-                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
-            } else {
-                beginDrawY += mSeatParams.getSeatVerticalInterval();
-            }
+        float beginDrawY = this.getSeatTypeBeginDrawCenterY();
+        if (mSeatParams.isDrawSeatType()) {
+            beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount - mSeatParams.getSeatHeight() / 2;
         }
         return beginDrawY;
+
+//        float beginDrawY = mOriginalOffsetY;
 //        if (mStageParams.isDrawStage()) {
-//            //舞台需要绘制
 //            beginDrawY += mStageParams.getStageTotalHeight();
-//        } else {
-//            //舞台不需要绘制
 //            if (mSeatParams.isDrawSeatType()) {
-//                //座位类型需要绘制
-//                //添加舞台底端高度
+//                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
+//            }
+//        } else {
+//            if (mSeatParams.isDrawSeatType()) {
 //                beginDrawY += mStageParams.getStageMarginBottom();
-//                //添加座位类型N行的绘制高度
 //                beginDrawY += (mSeatParams.getSeatHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
 //            } else {
-//                //舞台与座位类型都不需要绘制
-//                //返回座位之间的垂直高度
 //                beginDrawY += mSeatParams.getSeatVerticalInterval();
 //            }
 //        }
