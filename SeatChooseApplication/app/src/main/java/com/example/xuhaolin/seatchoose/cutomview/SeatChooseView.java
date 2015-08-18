@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.xuhaolin.seatchoose.R;
 
@@ -14,7 +15,7 @@ import com.example.xuhaolin.seatchoose.R;
  * Author:
  * Description:
  */
-public class SeatChooseView extends View {
+public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener {
     private SeatDrawUtils mSeatDrawUtils = null;
     private int[][] mSeatMap = {
             {3, 1, 0, 2, 1, 3, 0, 2, 1, 1, 2, 0, 3, 2, 1, 3, 0, 2,},
@@ -39,18 +40,19 @@ public class SeatChooseView extends View {
         StageParams stage = StageParams.getInstance();
         stage.setStageImage(R.drawable.icon_bg);
         stage.setStageTextColor(Color.WHITE);
-//        stage.setIsDrawStage(false);
+        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_DEFAULT);
         mSeatDrawUtils.setStageParams(stage);
 
         SeatParams seat = SeatParams.getInstance();
         seat.setSeatHeight(50f);
         seat.setSeatWidth(50f);
-//        seat.setIsDrawSeatType(false);
         seat.setSeatImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
+        seat.setSeatDrawType(SeatParams.SEAT_DRAW_TYPE_DEFAULT);
         mSeatDrawUtils.setSeatParams(seat);
 
         mSeatDrawUtils.setSeatDrawMap(mSeatMap);
         mSeatDrawUtils.setIsShowLog(true);
+        mSeatDrawUtils.setSeatInformationListener(this);
     }
 
     @Override
@@ -58,4 +60,25 @@ public class SeatChooseView extends View {
         mSeatDrawUtils.onDraw(canvas);
     }
 
+
+    @Override
+    public void seatStatus(int status) {
+    }
+
+    @Override
+    public void chooseSeatSuccess(int rowIndex, int columnIndex) {
+        int seatType = mSeatDrawUtils.getSeatTypeInSeatMap(rowIndex, columnIndex);
+        if (seatType == SeatParams.SEAT_TYPE_UNSHOW || seatType == SeatParams.SEAT_TYPE_ERRO) {
+            return;
+        } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
+            mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndex, columnIndex);
+        } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
+            mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_SELETED, rowIndex, columnIndex);
+        }
+    }
+
+    @Override
+    public void chosseSeatFail() {
+        Toast.makeText(getContext(), "没有选中座位", Toast.LENGTH_SHORT).show();
+    }
 }
