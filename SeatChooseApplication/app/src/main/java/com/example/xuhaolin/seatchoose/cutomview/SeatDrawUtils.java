@@ -1269,6 +1269,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
             showMsg("已达到缩放的最大值");
             return;
         }
+
         //设置缩放的数据
         //最后一次缩放比为1时,其实与原界面是相同的
         mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
@@ -1290,42 +1291,30 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
         if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
 
+            //新的偏移量
             float newDrawPositionX = mBeginDrawOffsetX + moveDistanceX;
             float newDrawPositionY = mBeginDrawOffsetY + moveDistanceY;
-
+            //新的开始绘制的界面中心X轴坐标
             float newStartDrawCenterX = newDrawPositionX + mOriginalOffsetX + mWHPoint.x / 2;
+            //新的开始绘制的界面最顶端
             float newStartDrawY = newDrawPositionY + mOriginalOffsetY;
 
+            //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
             if (((newStartDrawCenterX - mCanvasWidth / 2) > 0 && moveDistanceX > 0)
+                    //当前绘制的最右边边界坐标小于view宽度(即边界已经显示在屏幕上),且移动方向 为向左移动
                     || ((newStartDrawCenterX + mCanvasWidth / 2) < mWHPoint.x && moveDistanceX < 0)) {
+                //保持原来的偏移量不变
                 newDrawPositionX = mBeginDrawOffsetX;
             }
+            //当前绘制的顶端坐标大于0且移动方向为向下移动
             if ((newStartDrawY > 0 && moveDistanceY > 0)
+                    //当前绘制的最底端坐标大于view高度且移动方向向上移动时
                     || ((newStartDrawY + mCanvasHeight) < mWHPoint.y && moveDistanceY < 0)) {
+                //保持原来的Y轴偏移量
                 newDrawPositionY = mBeginDrawOffsetY;
             }
 
-
-//            //新界面与原界面的高度差(即移动的高度差,正负表示上下方向)
-//            float newDistanceY = newDrawPositionY - mOriginalOffsetY;
-//            if ((newDrawPositionX + mOriginalOffsetX) > mWHPoint.x / 2 && moveDistanceX > 0) {
-//                newDrawPositionX = mBeginDrawOffsetX;
-//            } else if (moveDistanceX < 0 && Math.abs(newDrawPositionX) > this.getLargeOffsetX()) {
-//                newDrawPositionX = this.getLargeOffsetX() * (mBeginDrawOffsetX < 0 ? -1 : 1);
-//            }
-//
-//
-//            //向下移动
-//            if ((newDrawPositionY + mOriginalOffsetY) > 0 && moveDistanceY > 0) {
-//                //不允许下滑移动,此时是最上方位置处在界面内
-//                newDrawPositionY = mBeginDrawOffsetY;
-//            } else if (moveDistanceY < 0 && Math.abs(newDrawPositionY) > this.getLargeOffsetY()) {
-//                //向上滑动,当没有移动距离没有超过高度差时,则允许移动
-//                //此处为超过高度差,将移动距离定为最大高度差
-//                newDrawPositionY = this.getLargeOffsetY() * (mBeginDrawOffsetY < 0 ? -1 : 1);
-//            }
-
-
+            //其它情况正常移动重绘
             //当距离确实有效地改变了再进行重绘制,否则原界面不变,减少重绘的次数
             if (newDrawPositionX != mBeginDrawOffsetX || newDrawPositionY != mBeginDrawOffsetY) {
                 mBeginDrawOffsetX = newDrawPositionX;
@@ -1397,7 +1386,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
                     //界面没有被移动过,则处理为单击事件
                     float clickPositionX = event.getX();
                     float clickPositionY = event.getY();
-                    //TODO:需要设置
                     //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
                     float beginDrawPositionY = getSellSeatsBeginDrawY(mSeatTypeRowCount);
                     if (mSeatMap != null && mSeatMap.length > 0) {
@@ -1485,6 +1473,16 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
             }
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    @Override
+    public void singleClick() {
+
+    }
+
+    @Override
+    public void doubleClick() {
+
     }
 
     /**
