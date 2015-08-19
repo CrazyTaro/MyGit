@@ -2,6 +2,8 @@ package com.example.xuhaolin.seatchoose.cutomview;/**
  * Created by xuhaolin on 15/8/14.
  */
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +17,8 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
      * 额外分配的触摸事件,用于建议优先处理的触摸事件
      */
     public static final int MOTION_EVENT_NOTHING = -1;
+    private static final int HANDLE_SINGLE_CLICK = 1;
+    private static final int HANDLE_SINGLE_DOWN = 2;
 
     private boolean mIsShowLog = false;
     //多点触摸按下
@@ -26,6 +30,26 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     //是否进入移动事件
     private boolean mIsInMotionMove = false;
 
+    private boolean mIsSingleDown = false;
+    private boolean mIsSingleClick = false;
+
+    private Handler mHandle = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case HANDLE_SINGLE_CLICK:
+                    //取消双击事件的标志
+                    mIsSingleClick = false;
+                    break;
+                case HANDLE_SINGLE_DOWN:
+                    //取消单击事件的标志
+                    mIsSingleDown = false;
+                    break;
+            }
+        }
+    };
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -33,6 +57,8 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 //进入单点单击处理
                 singleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 showMsg("单击 down ");
+                mIsSingleDown = true;
+                mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_DOWN, 500);
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 //若在确认进入多点单击之前没有任何移动操作
@@ -46,6 +72,24 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiDown = true;
                 break;
             case MotionEvent.ACTION_UP:
+                if (!mIsInMotionMove && !mIsMultiDown) {
+                    if (mIsSingleDown) {
+                        //单击事件处理
+                        if (mIsSingleClick) {
+                            //双击事件处理完直接退出,不进行下面的任何事件处理
+                            mHandle.removeMessages(HANDLE_SINGLE_CLICK);
+                            showMsg("双击事件 double");
+                            doubleClick();
+                            break;
+                        }
+                        mIsSingleClick = true;
+                        mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
+                        mHandle.removeMessages(HANDLE_SINGLE_DOWN);
+                        showMsg("单击事件 single");
+                        singleClick();
+                    }
+                }
+
                 //不行进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
                 //这种情况是为了避免有可能有用户单击移动之后再进行多点触控,这种情况无法处理为用户需要移动还是需要缩放
 
@@ -139,4 +183,14 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
      * @param extraMotionEvent 建议处理的额外事件,如果不需要进行额外处理则该参数值为{@link #MOTION_EVENT_NOTHING}
      */
     public abstract void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent);
+
+    /**
+     * 单击事件处理
+     */
+    public abstract void singleClick();
+
+    /**
+     * 双击事件处理
+     */
+    public abstract void doubleClick();
 }
