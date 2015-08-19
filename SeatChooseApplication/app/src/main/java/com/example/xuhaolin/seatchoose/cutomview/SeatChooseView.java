@@ -60,17 +60,16 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
         StageParams stage = StageParams.getInstance();
         stage.setStageImage(R.drawable.icon_bg);
         stage.setStageTextColor(Color.WHITE);
-        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_DEFAULT);
+//        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_DEFAULT);
         mSeatDrawUtils.setStageParams(stage);
 
         SeatParams seat = SeatParams.getInstance();
         seat.setSeatHeight(50f);
         seat.setSeatWidth(50f);
         seat.setSeatImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
-        seat.setSeatDrawType(SeatParams.SEAT_DRAW_TYPE_DEFAULT);
+//        seat.setSeatDrawType(SeatParams.SEAT_DRAW_TYPE_DEFAULT);
         mSeatDrawUtils.setSeatParams(seat);
 
-//        mSeatDrawUtils.setOriginalOffset(-500,-500);
         mSeatDrawUtils.setSeatDrawMap(mSeatMap);
         mSeatDrawUtils.setIsShowLog(true);
         mSeatDrawUtils.setSeatInformationListener(this);
