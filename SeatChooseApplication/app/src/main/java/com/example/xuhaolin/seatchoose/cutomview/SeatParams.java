@@ -121,21 +121,24 @@ public class SeatParams {
      * 座位的绘制类型,座位绘制为图片
      */
     public static final int SEAT_DRAW_TYPE_IMAGE = 2;
+    public static final int SEAT_DRAW_TYPE_THUMBNAIL = 3;
 
 
     private float mSeatWidth = DEFAULT_SEAT_WIDTH;
+    //座位绘制区域高度
     private float mSeatHeight = DEFAULT_SEAT_HEIGHT;
+    //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
+    //次座位高度
     private float mMinorSeatHeight = DEFAULT_SEAT_MINOR_HEIGHT;
+    //主次座位之间的间隔
     private float mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
-    private float mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
     private float mSeatRadius = DEFAULT_SEAT_RADIUS;
 
     private float mSeatHorizontalInterval = DEFAULT_SEAT_HORIZONTAL_INTERVAL;
     private float mSeatVerticalInterval = DEFAULT_SEAT_VERTICAL_INTERVAL;
     private float mSeatTextInterval = DEFAULT_SEAT_TEXT_INTERVAL;
     private float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
-
 
     private boolean mIsDrawSeat = true;
     private boolean mIsDrawSeatType = true;
@@ -153,6 +156,8 @@ public class SeatParams {
     private float mSeatTypeDescSize = DEFAULT_SEAT_TEXT_SIZE;
     private int mSeatTypeDescColor = DEFAULT_SEAT_TEXT_COLOR;
 
+    private boolean mIsDrawThumbnail = false;
+    private float mThumbnailRate = 0.1f;
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
     private static SeatParams mInstance = null;
@@ -178,6 +183,24 @@ public class SeatParams {
 
     private void showMsg(String msg) {
         Log.i("seatParams", msg);
+    }
+
+    public boolean getIsDrawThumbnail() {
+        return this.mIsDrawThumbnail;
+    }
+
+    /**
+     * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的
+     *
+     * @param isDrawThumbnail 是否绘制缩略图,<font color="yellow"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
+     * @param originalWidth   实际绘制界面的宽度
+     * @param targetWidth     目标缩略图的宽度
+     */
+    public void setIsDrawThumbnail(boolean isDrawThumbnail, float originalWidth, float targetWidth) {
+        this.mIsDrawThumbnail = isDrawThumbnail;
+        if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT) {
+            this.mThumbnailRate = targetWidth / originalWidth;
+        }
     }
 
     /**
@@ -344,15 +367,27 @@ public class SeatParams {
     }
 
     public float getSeatWidth() {
-        return mSeatWidth;
+        if (mIsDrawThumbnail) {
+            return mSeatWidth * mThumbnailRate;
+        } else {
+            return mSeatWidth;
+        }
     }
 
     public float getSeatHeight() {
-        return mSeatHeight;
+        if (mIsDrawThumbnail) {
+            return mSeatWidth * mThumbnailRate;
+        } else {
+            return mSeatHeight;
+        }
     }
 
     public float getSeatRadius() {
-        return mSeatRadius;
+        if (mIsDrawThumbnail) {
+            return mSeatRadius * mThumbnailRate;
+        } else {
+            return mSeatRadius;
+        }
     }
 
     /**
@@ -361,7 +396,11 @@ public class SeatParams {
      * @return
      */
     public float getSeatHorizontalInterval() {
-        return mSeatHorizontalInterval;
+        if (mIsDrawThumbnail) {
+            return mSeatHorizontalInterval * mThumbnailRate;
+        } else {
+            return mSeatHorizontalInterval;
+        }
     }
 
     /**
@@ -370,7 +409,11 @@ public class SeatParams {
      * @return
      */
     public float getSeatVerticalInterval() {
-        return mSeatVerticalInterval;
+        if (mIsDrawThumbnail) {
+            return mSeatVerticalInterval * mThumbnailRate;
+        } else {
+            return mSeatVerticalInterval;
+        }
     }
 
 
@@ -380,7 +423,11 @@ public class SeatParams {
      * @return
      */
     public float getSeatTypeDescInterval() {
-        return mSeatTextInterval;
+        if (mIsDrawThumbnail) {
+            return mSeatTextInterval * mThumbnailRate;
+        } else {
+            return mSeatTextInterval;
+        }
     }
 
 
@@ -390,7 +437,11 @@ public class SeatParams {
      * @return
      */
     public float getSeatTypeInterval() {
-        return mSeatTypeInterval;
+        if (mIsDrawThumbnail) {
+            return mSeatTypeInterval * mThumbnailRate;
+        } else {
+            return mSeatTypeInterval;
+        }
     }
 
     /**
@@ -466,7 +517,11 @@ public class SeatParams {
      * @return
      */
     public float getSeatTypeTextSize() {
-        return mSeatTypeDescSize;
+        if (mIsDrawThumbnail) {
+            return mSeatTypeDescSize * mThumbnailRate;
+        } else {
+            return mSeatTypeDescSize;
+        }
     }
 
     /**
@@ -483,16 +538,22 @@ public class SeatParams {
     }
 
     /**
-     * 获取当前座位类型的绘制的方式
+     * 获取当前座位类型的绘制的方式,<font color="yellow"><b>若为true,返回的绘制类型为实际的绘制类型(绝对不返回缩略图绘制方式),否则根据当前是否需要进行缩略图绘制返回对应的绘制方式(可能返回缩略图绘制方式)</b></font>
      * <p>
      * <li>{@link #SEAT_DRAW_TYPE_DEFAULT}默认绘制方式,座位分主次座位部分绘制,纯图形绘制</li>
      * <li>{@link #SEAT_DRAW_TYPE_IMAGE}图片绘制方式,使用座位类型对应的图片填充座位区域</li>
+     * <li>{@link #SEAT_DRAW_TYPE_THUMBNAIL}缩略图绘制方式,此方式下数据返回缩略图绘制需要的参数</li>
      * </p>
      *
+     * @param isGetOriginalDrawType 是否获取实际的绘制类型,<font color="yellow"><b>若为true,返回的绘制类型为实际的绘制类型(绝对不返回{@link #SEAT_DRAW_TYPE_THUMBNAIL}),否则根据当前是否需要进行缩略图绘制返回对应的绘制方式(可能返回{@link #SEAT_DRAW_TYPE_THUMBNAIL})</b></font>
      * @return
      */
-    public int getSeatDrawType() {
-        return mSeatDrawType;
+    public int getSeatDrawType(boolean isGetOriginalDrawType) {
+        if (mIsDrawThumbnail && !isGetOriginalDrawType) {
+            return SEAT_DRAW_TYPE_THUMBNAIL;
+        } else {
+            return mSeatDrawType;
+        }
     }
 
     /**
@@ -528,7 +589,7 @@ public class SeatParams {
     }
 
     /**
-     * 设置绘制类型,<font color="yellow"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>
+     * 设置绘制类型,<font color="yellow"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>,设置此方法前应该先设置图片资源ID{@link #setSeatImage(int[])}或图片对象{@link #setSeatImage(Bitmap[])}
      * <p>
      * <li>{@link #SEAT_DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色</li>
      * <li>{@link #SEAT_DRAW_TYPE_IMAGE},图片绘制方式,使用图片进行填充</li>
@@ -1055,11 +1116,33 @@ public class SeatParams {
      *
      * @param seatHeight
      */
-    private void autoCalculateSeatShapeHeight(float seatHeight) {
+    public void autoCalculateSeatShapeHeight(float seatHeight) {
+        float newRadius = seatHeight * 0.1f;
+        this.mSeatRadius = newRadius > 20f ? 20f : newRadius;
         this.mMainSeatHeight = seatHeight * 0.75f;
         this.mMinorSeatHeight = seatHeight * 0.2f;
         this.mSeatHeightInterval = seatHeight * 0.05f;
-        this.mSeatTotalHeight = mMainSeatHeight + mMinorSeatHeight + mSeatHeightInterval;
+    }
+
+    /**
+     * 获取计算后的图片绘制区域(即一个完整地座位占用的区域)
+     *
+     * @param imageRecft    图片绘制区域,可为null,用于重复利用
+     * @param drawPositionX 绘制的X轴中心位置
+     * @param drawPositionY 绘制的Y轴中心位置
+     * @return
+     */
+    public RectF getSeatDrawImageRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
+        if (imageRecft == null) {
+            imageRecft = new RectF();
+        }
+        float imageWidth = this.getSeatWidth();
+        float imageHeight = this.getSeatHeight();
+        imageRecft.left = drawPositionX - imageWidth / 2;
+        imageRecft.right = imageRecft.left + imageWidth;
+        imageRecft.top = drawPositionY - imageHeight / 2;
+        imageRecft.bottom = imageRecft.top + imageHeight;
+        return imageRecft;
     }
 
     /**
@@ -1071,18 +1154,18 @@ public class SeatParams {
      * @param isMainSeat    true为获取主座位,false为获取次座位
      * @return
      */
-    public RectF getSeatDrawRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
+    public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
         if (seatRectf == null) {
             seatRectf = new RectF();
         }
-        seatRectf.left = drawPositionX - this.mSeatWidth / 2;
-        seatRectf.right = seatRectf.left + this.mSeatWidth;
+        seatRectf.left = drawPositionX - this.getSeatWidth() / 2;
+        seatRectf.right = seatRectf.left + this.getSeatWidth();
 
-        seatRectf.top = drawPositionY - this.mSeatTotalHeight / 2;
+        seatRectf.top = drawPositionY - this.getSeatHeight() / 2;
         seatRectf.bottom = seatRectf.top + this.mMainSeatHeight;
 
         if (!isMainSeat) {
-            seatRectf.top = seatRectf.bottom + this.mSeatHeightInterval + this.mMinorSeatHeight / 2;
+            seatRectf.top = seatRectf.bottom + this.getSeatHorizontalInterval() + this.mMinorSeatHeight / 2;
             seatRectf.bottom = seatRectf.top + this.mMinorSeatHeight;
         }
 

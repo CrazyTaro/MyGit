@@ -76,6 +76,8 @@ public class StageParams {
     private boolean mIsDrawStage = true;
     private static StageParams mInstance = null;
 
+    private boolean mIsDrawThumbnail = false;
+    private float mThumbnailRate = 0f;
     //舞台绘制类型
     private int mStageDrawType = STAGE_DRAW_TYPE_DEFAULT;
     //默认资源ID
@@ -289,7 +291,11 @@ public class StageParams {
     }
 
     public float getStageWidth() {
-        return mStageWidth;
+        if (mIsDrawThumbnail) {
+            return mStageWidth * mThumbnailRate;
+        } else {
+            return mStageWidth;
+        }
     }
 
     public void setStageWidth(float mStageWidth) {
@@ -301,7 +307,11 @@ public class StageParams {
     }
 
     public float getStageHeight() {
-        return mStageHeight;
+        if (mIsDrawThumbnail) {
+            return mStageHeight * mThumbnailRate;
+        } else {
+            return mStageHeight;
+        }
     }
 
     public void setStageHeight(float mStageHeight) {
@@ -313,7 +323,11 @@ public class StageParams {
     }
 
     public float getStageMarginTop() {
-        return mStageMarginTop;
+        if (mIsDrawThumbnail) {
+            return mStageMarginTop * mThumbnailRate;
+        } else {
+            return mStageMarginTop;
+        }
     }
 
     /**
@@ -330,7 +344,11 @@ public class StageParams {
     }
 
     public float getStageMarginBottom() {
-        return mStageMarginBottom;
+        if (mIsDrawThumbnail) {
+            return mStageMarginBottom * mThumbnailRate;
+        } else {
+            return mStageMarginBottom;
+        }
     }
 
     /**
@@ -347,7 +365,11 @@ public class StageParams {
     }
 
     public float getStageRadius() {
-        return mStageRadius;
+        if (mIsDrawThumbnail) {
+            return mStageRadius * mThumbnailRate;
+        } else {
+            return mStageRadius;
+        }
     }
 
     /**
@@ -381,7 +403,7 @@ public class StageParams {
      * @return 返回舞台占用的高度
      */
     public float getStageTotalHeight() {
-        return mStageHeight + mStageMarginBottom + mStageMarginTop;
+        return this.getStageHeight() + this.getStageMarginBottom() + this.getStageMarginTop();
     }
 
     public void autoCalculateParams(float widthPrecent, float viewWidth) {
@@ -389,7 +411,14 @@ public class StageParams {
             widthPrecent = 0.3f;
         }
         mStageWidth = viewWidth * widthPrecent;
-        mStageHeight = mStageColor * 1 / 5;
+        mStageHeight = mStageWidth * 1 / 5;
+    }
+
+    public void setIsDrawThumbnail(boolean isDrawThumbnail, float originalWidth, float targetWidth) {
+        this.mIsDrawThumbnail = isDrawThumbnail;
+        if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT) {
+            this.mThumbnailRate = targetWidth / originalWidth;
+        }
     }
 
 }
