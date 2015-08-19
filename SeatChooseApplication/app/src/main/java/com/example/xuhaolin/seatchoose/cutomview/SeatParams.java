@@ -141,6 +141,9 @@ public class SeatParams {
     private boolean mIsDrawSeatType = true;
     private int mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
     private int mSeatColor = DEFAULT_SEAT_COLOR;
+    private int mLargeScaleRate = 24;
+    private float mSmallScaleRate = 0.5f;
+
     private int[] mSeatTypeArrary = null;
     private int[] mSeatColorArrary = null;
     private String[] mSeatTypeDescription = null;
@@ -150,7 +153,7 @@ public class SeatParams {
     private float mSeatTypeDescSize = DEFAULT_SEAT_TEXT_SIZE;
     private int mSeatTypeDescColor = DEFAULT_SEAT_TEXT_COLOR;
 
-    private float[] valueHolder = null;
+    private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
     private static SeatParams mInstance = null;
 
@@ -175,6 +178,44 @@ public class SeatParams {
 
     private void showMsg(String msg) {
         Log.i("seatParams", msg);
+    }
+
+    /**
+     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
+     * <p>该缩放倍数是以默认高度为基数{@link #DEFAULT_SEAT_HEIGHT}</p>
+     *
+     * @param large 放大倍数
+     * @return 设置成功返回true, 否则返回false, 不改变原值
+     */
+    public boolean setLargeScaleRate(int large) {
+        if (large == DEFAULT_INT) {
+            this.mLargeScaleRate = 24;
+            return true;
+        } else if (large > 0 && large * this.mSeatHeight <= 880) {
+            this.mLargeScaleRate = large;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
+     * <p>该缩放倍数是以默认高度为基数{@link #DEFAULT_SEAT_HEIGHT}</p>
+     *
+     * @param small 缩小比例
+     * @return 设置成功返回true, 否则返回false
+     */
+    public boolean setSmallScaleRate(float small) {
+        if (small == DEFAULT_INT) {
+            this.mSmallScaleRate = 0.5f;
+            return true;
+        } else if (small > 0 && small * this.mSeatHeight <= 880) {
+            this.mSmallScaleRate = small;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -232,7 +273,7 @@ public class SeatParams {
         //设置最大最小缩放值
 
         //此处使用默认值的24倍,840
-        if (newHeight > DEFAULT_SEAT_HEIGHT * 24 || newHeight < DEFAULT_SEAT_HEIGHT * 0.5) {
+        if (newHeight > DEFAULT_SEAT_HEIGHT * mLargeScaleRate || newHeight < DEFAULT_SEAT_HEIGHT * mSmallScaleRate) {
             return false;
         } else {
             return true;
@@ -247,43 +288,42 @@ public class SeatParams {
      */
     public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
         //创建缓存数据对象
-        if (valueHolder == null) {
-            valueHolder = new float[7];
+        if (mValueHolder == null) {
+            mValueHolder = new float[7];
         }
         if (!mIsValueHold) {
             showMsg("开始记录第一次数据");
             showMsg("new rate = " + scaleRate);
             //第一次更新数据记录下最原始的数据
-            valueHolder[0] = this.mSeatWidth;
-            valueHolder[1] = this.mSeatHeight;
-            valueHolder[2] = this.mSeatHeightInterval;
-            valueHolder[3] = this.mSeatVerticalInterval;
-            valueHolder[4] = this.mSeatTextInterval;
-            valueHolder[5] = this.mSeatTypeInterval;
-            valueHolder[6] = this.mSeatTypeDescSize;
+            mValueHolder[0] = this.mSeatWidth;
+            mValueHolder[1] = this.mSeatHeight;
+            mValueHolder[2] = this.mSeatHeightInterval;
+            mValueHolder[3] = this.mSeatVerticalInterval;
+            mValueHolder[4] = this.mSeatTextInterval;
+            mValueHolder[5] = this.mSeatTypeInterval;
+            mValueHolder[6] = this.mSeatTypeDescSize;
             mIsValueHold = true;
         }
         //每一次变化都处理为相对原始数据的变化
-        this.mSeatWidth = valueHolder[0] * scaleRate;
-        this.mSeatHeight = valueHolder[1] * scaleRate;
-        this.mSeatHeightInterval = valueHolder[2] * scaleRate;
-        this.mSeatVerticalInterval = valueHolder[3] * scaleRate;
-        this.mSeatTextInterval = valueHolder[4] * scaleRate;
-        this.mSeatTypeInterval = valueHolder[5] * scaleRate;
-        this.mSeatTypeDescSize = valueHolder[6] * scaleRate;
+        this.mSeatWidth = mValueHolder[0] * scaleRate;
+        this.mSeatHeight = mValueHolder[1] * scaleRate;
+        this.mSeatHeightInterval = mValueHolder[2] * scaleRate;
+        this.mSeatVerticalInterval = mValueHolder[3] * scaleRate;
+        this.mSeatTextInterval = mValueHolder[4] * scaleRate;
+        this.mSeatTypeInterval = mValueHolder[5] * scaleRate;
+        this.mSeatTypeDescSize = mValueHolder[6] * scaleRate;
         //自动计算主次座位高度
         this.autoCalculateSeatShapeHeight(this.mSeatHeight);
+
         //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
         if (isTrueSetValue) {
-            showMsg("记录最后一次数据");
-            showMsg("new rate = " + scaleRate);
-            valueHolder[0] = this.mSeatWidth;
-            valueHolder[1] = this.mSeatHeight;
-            valueHolder[2] = this.mSeatHeightInterval;
-            valueHolder[3] = this.mSeatVerticalInterval;
-            valueHolder[4] = this.mSeatTextInterval;
-            valueHolder[5] = this.mSeatTypeInterval;
-            valueHolder[6] = this.mSeatTypeDescSize;
+            mValueHolder[0] = this.mSeatWidth;
+            mValueHolder[1] = this.mSeatHeight;
+            mValueHolder[2] = this.mSeatHeightInterval;
+            mValueHolder[3] = this.mSeatVerticalInterval;
+            mValueHolder[4] = this.mSeatTextInterval;
+            mValueHolder[5] = this.mSeatTypeInterval;
+            mValueHolder[6] = this.mSeatTypeDescSize;
             //重置记录标志
             mIsValueHold = false;
         }
