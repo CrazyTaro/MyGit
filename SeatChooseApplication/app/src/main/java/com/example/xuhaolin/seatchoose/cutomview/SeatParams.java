@@ -135,31 +135,50 @@ public class SeatParams {
     private float mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
     private float mSeatRadius = DEFAULT_SEAT_RADIUS;
 
+    //座位间水平间隔
     private float mSeatHorizontalInterval = DEFAULT_SEAT_HORIZONTAL_INTERVAL;
+    //座位间垂直间隔
     private float mSeatVerticalInterval = DEFAULT_SEAT_VERTICAL_INTERVAL;
+    //座位与描述文字之间的间隔
     private float mSeatTextInterval = DEFAULT_SEAT_TEXT_INTERVAL;
+    //座位类型之间的间隔
     private float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
+    //是否绘制座位
     private boolean mIsDrawSeat = true;
+    //是否绘制座位类型
     private boolean mIsDrawSeatType = true;
     private int mSeatDrawType = SEAT_DRAW_TYPE_DEFAULT;
     private int mSeatColor = DEFAULT_SEAT_COLOR;
+    //最大缩放倍数
     private int mLargeScaleRate = 24;
+    //最小绽放比例
     private float mSmallScaleRate = 0.5f;
 
+    //座位类型数组
     private int[] mSeatTypeArrary = null;
+    //座位类型对应的颜色数组
     private int[] mSeatColorArrary = null;
+    //座位类型对应的描述文字
     private String[] mSeatTypeDescription = null;
+    //座位类型对应的资源图片ID
     private int[] mSeatImageID = null;
     private Bitmap[] mSeatImageBitmaps = null;
 
     private float mSeatTypeDescSize = DEFAULT_SEAT_TEXT_SIZE;
     private int mSeatTypeDescColor = DEFAULT_SEAT_TEXT_COLOR;
 
+    //是否绘制缩略图
     private boolean mIsDrawThumbnail = false;
+    //缩略图比例
     private float mThumbnailRate = 0.1f;
+    //缩略图背景色
+    private int mThumbnailColor = Color.BLACK;
+    //缩略图背景透明度
+    private int mThumbnailAlpha = 100;
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
+    //画布背景颜色
     private int mCanvasBackgroundColor = Color.GRAY;
     private static SeatParams mInstance = null;
 
@@ -214,6 +233,24 @@ public class SeatParams {
     }
 
     /**
+     * 获取缩略图背景色
+     *
+     * @return
+     */
+    public int getThumbnailBackgroundColor() {
+        return this.mThumbnailColor;
+    }
+
+    /**
+     * 获取缩略图背景色透明度
+     *
+     * @return
+     */
+    public int getThumbnailBgAlpha() {
+        return this.mThumbnailAlpha;
+    }
+
+    /**
      * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的
      *
      * @param isDrawThumbnail 是否绘制缩略图,<font color="yellow"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
@@ -224,6 +261,27 @@ public class SeatParams {
         this.mIsDrawThumbnail = isDrawThumbnail;
         if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT) {
             this.mThumbnailRate = targetWidth / originalWidth;
+        }
+    }
+
+    /**
+     * 设置缩略图背景色及透明度
+     *
+     * @param color 颜色值,颜色值不作任何检测(颜色默认值为{@link Color#BLACK})
+     * @param alpha 透明度,透明度必须在0-255之间,用默认值请用参数{@link #DEFAULT_INT}
+     * @return
+     */
+    public boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
+        if ((alpha < 0 || alpha > 255) && alpha != DEFAULT_INT) {
+            return false;
+        } else {
+            this.mThumbnailColor = color;
+            if (alpha == DEFAULT_INT) {
+                this.mThumbnailAlpha = 100;
+            } else {
+                this.mThumbnailAlpha = alpha;
+            }
+            return true;
         }
     }
 
