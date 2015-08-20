@@ -27,7 +27,7 @@ public class SeatParams {
     /**
      * 默认座位颜色值
      */
-    public static final int DEFAULT_SEAT_COLOR = Color.GRAY;
+    public static final int DEFAULT_SEAT_COLOR = Color.WHITE;
     /**
      * 默认座位宽度
      */
@@ -83,12 +83,12 @@ public class SeatParams {
     /**
      * 默认座位类型对应的颜色,分别为
      * <p>
-     * <li>可选=<font color="black"><b>黑色</b></font></li>
+     * <li>可选=<font color="white"><b>白色</b></font></li>
      * <li>已选=<font color="red"><b>红色</b></font></li>
      * <li>已售=<font color="yellow"><b>黄色</b></font></li>
      * </p>
      */
-    public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.BLACK, Color.RED, Color.YELLOW};
+    public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.WHITE, Color.RED, Color.YELLOW};
     /**
      * 默认座位类型描述,"可选,已选,已售"
      */
@@ -160,6 +160,7 @@ public class SeatParams {
     private float mThumbnailRate = 0.1f;
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
+    private int mCanvasBackgroundColor = Color.GRAY;
     private static SeatParams mInstance = null;
 
     private SeatParams() {
@@ -185,6 +186,20 @@ public class SeatParams {
         Log.i("seatParams", msg);
     }
 
+    /**
+     * 设置背影色
+     *
+     * @param bgColor
+     */
+    public void setCanvasBackgroundColor(int bgColor) {
+        this.mCanvasBackgroundColor = bgColor;
+    }
+
+    /**
+     * 获取当前是否进行缩略图绘制
+     *
+     * @return
+     */
     public boolean getIsDrawThumbnail() {
         return this.mIsDrawThumbnail;
     }
@@ -266,6 +281,8 @@ public class SeatParams {
     /**
      * 设置是否绘制座位类型,<font color="yellow"><b>此处与是否绘制座位{@link #isDrawSeat()}是两个不同的方法,代表的意义不同</b></font>,
      * 此方法是对座位类型是否绘制的判断处理,而{@link #isDrawSeat()}是对普通座位(出售座位)是否绘制的判断处理
+     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_DRAW_TYPE_NO}或不可见{@link #SEAT_TYPE_UNSHOW}的座位类型),
+     * 是否绘制一般由座位的类型决定,通过{@link #setIsDrawSeat(int)}决定座位是否绘制</b></p>
      *
      * @param isDrawSeatType
      */

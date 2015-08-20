@@ -57,6 +57,7 @@ public class StageParams {
      * 舞台绘制方式,使用图片填充
      */
     public static final int STAGE_DRAW_TYPE_IMAGE = 0;
+    public static final int STAGE_DRAW_TYPE_THUMBNAIL = 3;
 
 
     private float mStageWidth = DEFAULT_STAGE_WIDTH;
@@ -122,7 +123,11 @@ public class StageParams {
      * @return
      */
     public int getStageDrawType() {
-        return mStageDrawType;
+        if (mIsDrawThumbnail) {
+            return STAGE_DRAW_TYPE_DEFAULT;
+        } else {
+            return mStageDrawType;
+        }
     }
 
     /**
@@ -130,6 +135,7 @@ public class StageParams {
      *
      * @param isDrawStage
      */
+
     public void setIsDrawStage(boolean isDrawStage) {
         this.mIsDrawStage = isDrawStage;
     }
@@ -390,11 +396,7 @@ public class StageParams {
     }
 
     public void setStageColor(int mStageColor) {
-        if (mStageColor == DEFAULT_INT) {
-            this.mStageColor = DEFAULT_STAGE_COLOR;
-        } else {
-            this.mStageColor = mStageColor;
-        }
+        this.mStageColor = mStageColor;
     }
 
     /**
