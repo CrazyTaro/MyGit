@@ -187,12 +187,21 @@ public class SeatParams {
     }
 
     /**
-     * 设置背影色
+     * 设置背景色
      *
      * @param bgColor
      */
     public void setCanvasBackgroundColor(int bgColor) {
         this.mCanvasBackgroundColor = bgColor;
+    }
+
+    /**
+     * 获取背景色
+     *
+     * @return
+     */
+    public int getCanvasBackgroundColor() {
+        return this.mCanvasBackgroundColor;
     }
 
     /**
