@@ -20,6 +20,8 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     private static final int HANDLE_SINGLE_CLICK = 1;
     private static final int HANDLE_SINGLE_DOWN = 2;
 
+    //已经触发单击事件的情况下,是否触发单点触摸事件
+    private boolean mIsTriggerSingleTouchEvent = true;
     private boolean mIsShowLog = false;
     //多点触摸按下
     private boolean mIsMultiDown = false;
@@ -29,8 +31,9 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     private boolean mIsSingleMove = false;
     //是否进入移动事件
     private boolean mIsInMotionMove = false;
-
+    //是否单击按下
     private boolean mIsSingleDown = false;
+    //是否完成单击(一次)
     private boolean mIsSingleClick = false;
 
     private Handler mHandle = new Handler() {
@@ -72,7 +75,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiDown = true;
                 break;
             case MotionEvent.ACTION_UP:
-                if (!mIsInMotionMove && !mIsMultiDown) {
+                if (!mIsMultiDown) {
                     if (mIsSingleDown) {
                         //单击事件处理
                         if (mIsSingleClick) {
@@ -80,14 +83,28 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                             mHandle.removeMessages(HANDLE_SINGLE_CLICK);
                             showMsg("双击事件 double");
                             doubleClick();
-                            break;
+                        } else {
+                            mIsSingleClick = true;
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
+                            mHandle.removeMessages(HANDLE_SINGLE_DOWN);
+                            showMsg("单击事件 single");
+                            singleClickByTime(event);
                         }
-                        mIsSingleClick = true;
-                        mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
-                        mHandle.removeMessages(HANDLE_SINGLE_DOWN);
-                        showMsg("单击事件 single");
-                        singleClick();
                     }
+                }
+
+                //不触发单点触摸事件,则处理为单击事件
+                if (!mIsTriggerSingleTouchEvent) {
+                    //取消移动状态的记录
+                    mIsInMotionMove = false;
+                    //多点单击的标志必须在此处才可以被重置
+                    //因为多点单击的抬起事件优先处理于单击的抬起事件
+                    //如果在多点单击的抬起事件时重置该变量则会导致上面的判断百分百是成立的
+                    mIsMultiPoint = false;
+                    mIsMultiDown = false;
+                    mIsSingleMove = false;
+                    mIsSingleClick = false;
+                    break;
                 }
 
                 //不行进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
@@ -98,12 +115,15 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 if (!mIsMultiPoint && !mIsMultiDown) {
                     //此处分为两种情况
                     //一种是未进行任何多点触摸状态的,那么必定为单点触摸,事件必须响应
-                    //一种是进行了多点触摸,且在多点触摸之间保证着单点触摸的状态,此时以多点触摸按下的时刻处理掉单点触摸事件(即在move中已经按up处理掉事件了)
-                    //则在完成所有事件之后的up中将不再处理该事件,即下面的"不处理"
-                    if (!mIsInMotionMove || (mIsInMotionMove && mIsSingleMove)) {
+                    //在事件响应处两个判断条件是:1.用户快速单击,不产生move事件;
+                    if (!mIsInMotionMove
+                            //2. 用户慢速单击, 产生了move事件但仍没有造成多点触摸事件
+                            || (mIsInMotionMove && mIsSingleMove)) {
                         showMsg("单击 up");
                         singleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     } else {
+                        //一种是进行了多点触摸,且在多点触摸之间保证着单点触摸的状态,此时以多点触摸按下的时刻处理掉单点触摸事件(即在move中已经按up处理掉事件了)
+                        //则在完成所有事件之后的up中将不再处理该事件,即下面的"不处理"
                         showMsg("单击 up 不处理");
                     }
                 }
@@ -115,6 +135,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiPoint = false;
                 mIsMultiDown = false;
                 mIsSingleMove = false;
+                mIsSingleClick = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 //当确认进入多点单击状态,则执行多点单击抬起事件
@@ -150,16 +171,37 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
         return true;
     }
 
+    /**
+     * 设置在触发单击事件时是否同时触发单点触摸事件;默认触发
+     * <p>单击事件本身属于单点触摸事件之中的一种,只是触摸时间在500ms以内则认为是单击事件,但同时是满足触发单点触摸事件的(此处仅指up事件)</p>
+     *
+     * @param isTrigger true为同时触发,false为忽略单点触摸事件
+     */
+    public void setIsTriggerSingleTouchEvent(boolean isTrigger) {
+        this.mIsTriggerSingleTouchEvent = isTrigger;
+    }
+
     public void setIsShowLog(boolean isShowLog) {
         this.mIsShowLog = isShowLog;
     }
 
+    /**
+     * 打印默认的log,默认标志为:touch_event
+     *
+     * @param msg 打印消息
+     */
     public void showMsg(String msg) {
         if (mIsShowLog) {
-            Log.i("touch event ", msg);
+            Log.i("touch_event ", msg);
         }
     }
 
+    /**
+     * 打印log
+     *
+     * @param tag 标志tag
+     * @param msg 打印信息
+     */
     public void showMsg(String tag, String msg) {
         if (mIsShowLog) {
             Log.i(tag, msg);
@@ -185,9 +227,13 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     public abstract void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent);
 
     /**
-     * 单击事件处理
+     * 单击事件处理,由于只要触摸到屏幕且时间足够长,就可以产生move事件,并不一定需要移动触摸才能产生move事件,
+     * <font color="yellow"><b>所以产生单击事件的同时也会触发up事件{@link #singleTouchEventHandle(MotionEvent, int)}</b></font>,
+     * <p>单击事件仅仅只能控制触摸时间<font color="yellow"><b>少于500ms</b></font>的触摸事件,超过500ms将不会触摸单击事件</p>
+     *
+     * @param event 单击触摸事件
      */
-    public abstract void singleClick();
+    public abstract void singleClickByTime(MotionEvent event);
 
     /**
      * 双击事件处理
