@@ -263,7 +263,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @return {@link PointF},返回point对象,point.x为宽,point.y为高
      */
-    protected PointF getWidthAndHeight() {
+    private PointF getWidthAndHeight() {
         //获取view计算需要显示的宽高
         int width = mDrawView.getMeasuredWidth();
         int height = mDrawView.getMeasuredHeight();
@@ -285,7 +285,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawText 绘制的文字内容,当该参数值为null时返回0
      * @return
      */
-    protected float getTextLength(float textSize, String drawText) {
+    private float getTextLength(float textSize, String drawText) {
         if (drawText == null) {
             return 0;
         }
@@ -305,7 +305,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param seatType         座位类型
      * @param isDrawTextOfLeft 是否将文字绘制在座位的左边,<font color="yellow"><b>true为文字绘制在座位左边,false为文字绘制在座位右边</b></font>
      */
-    protected void drawSeatWithNearText(Canvas canvas, Paint paint, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
+    private void drawSeatWithNearText(Canvas canvas, Paint paint, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
         //座位绘制的中心X轴
         float seatCenterX = 0f;
         //座位绘制的中心Y轴
@@ -364,7 +364,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawPositionY 座位绘制的中心Y轴位置,centerY(参数值意义同{@link #drawSeat(Canvas, Paint, float, float)})
      * @param seatType      座位类型,用于区分使用的座位图片
      */
-    protected void drawImageSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int seatType) {
+    private void drawImageSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int seatType) {
         mImageRectf = mSeatParams.getSeatDrawImageRecf(mImageRectf, drawPositionX, drawPositionY);
         //当图片范围可见时才进行绘制
         if (isRectfCanSeen(mImageRectf)) {
@@ -382,7 +382,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param rectF 矩形区域
      * @return
      */
-    protected boolean isRectfCanSeen(RectF rectF) {
+    private boolean isRectfCanSeen(RectF rectF) {
         if (rectF != null) {
             PointF[] angles = new PointF[4];
             //左上角
@@ -416,7 +416,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawPositionX 座位绘制的中心X轴坐标
      * @param drawPositionY 座位绘制的中心Y轴坐标
      */
-    protected void drawSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+    private void drawSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
         if (!mSeatParams.isDrawSeat()) {
             return;
         }
@@ -461,7 +461,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawPositionX 舞台绘制位置的中心X轴
      * @param drawPositionY 舞台绘制位置的中心Y轴
      */
-    protected void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
+    private void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
         if (mStageParams == null || !mStageParams.isDrawStage()) {
             return;
         }
@@ -525,7 +525,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawPositionX 开始绘制的中心X轴位置(第一行座位,中心绘制位置)
      * @param drawPositionY 开始绘制的中心Y轴位置(第一行座位,中心绘制位置)
      */
-    protected void drawSellSeats(Canvas canvase, Paint paint, int[][] seatMap, float drawPositionX, float drawPositionY) {
+    private void drawSellSeats(Canvas canvase, Paint paint, int[][] seatMap, float drawPositionX, float drawPositionY) {
         if (seatMap == null || seatMap.length <= 0) {
             return;
         }
@@ -579,7 +579,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
 
         if (!mSeatParams.getIsDrawThumbnail()) {
             //记录界面高度值
-            mCanvasHeight = beginDrawY - this.getStageDrawCenterY()
+            mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mSeatTypeRowCount)
                     //附加部分,用于边界的空白
                     + mSeatParams.getSeatHeight();
         }
@@ -601,7 +601,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param end             座位列表中最后绘制的索引,<font color="yellow"><b>此索引位置的座位不被绘制</b></font>
      * @param currentRowIndex 当前绘制座位的行索引,用于绘制对应的行数,<font color="yellow"><b>不需要绘制行数请使用负值</b></font>
      */
-    protected void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end, int currentRowIndex) {
+    private void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end, int currentRowIndex) {
         float beginDrawX = drawPositionX;
         //从大到小则为向左绘制,增量为负值-1
         //从小到大则为向右绘制,增量为正值+1
@@ -671,7 +671,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param drawPositionY 开始绘制的座位类型中心Y轴位置,centerY
      * @deprecated 该方法可用, 但不建议使用, 在界面移动中无法达到预期效果
      */
-    protected void drawAutoExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
+    private void drawAutoExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
         if (mSeatParams == null) {
             return;
         }
@@ -707,7 +707,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param rowCount      预定需要绘制的行数
      */
 
-    protected void drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
+    private void drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
         if (mSeatParams == null || rowCount <= 0 || !mSeatParams.isDrawSeatType()) {
             return;
         }
@@ -830,7 +830,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param paint         画笔
      * @param drawPositionY 座位绘制的中心Y轴位置
      */
-    protected void drawSingleRowExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
+    private void drawSingleRowExampleSeatType(Canvas canvas, Paint paint, float drawPositionY) {
         if (mSeatParams == null) {
             //若座位参数为null,则不作任何绘制
             return;
@@ -932,7 +932,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @return
      */
-    protected float getSeatTypeDrawCenterY() {
+    private float getSeatTypeDrawCenterY() {
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
@@ -959,7 +959,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
      */
-    protected float getSellSeatDrawCenterY(int seatTypeRowCount) {
+    private float getSellSeatDrawCenterY(int seatTypeRowCount) {
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
@@ -984,7 +984,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @return
      */
-    protected float getStageDrawCenterY() {
+    private float getStageDrawCenterY() {
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
@@ -1019,9 +1019,25 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
      */
-    protected float getSellSeatDrawBeginY(int seatTypeRowCount) {
+    private float getSellSeatDrawBeginY(int seatTypeRowCount) {
         float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount) - mSeatParams.getSeatHeight() / 2;
         return beginY;
+    }
+
+    /**
+     * 获取界面绘制开始的Y轴位置
+     *
+     * @param seatTypeRowCount 座位类型绘制的行数
+     * @return
+     */
+    private float getCanvasDrawBeginY(int seatTypeRowCount) {
+        if (mStageParams.isDrawStage()) {
+            return this.getStageDrawCenterY() - mStageParams.getStageHeight() / 2 - mStageParams.getStageMarginTop();
+        } else if (mSeatParams.isDrawSeatType()) {
+            return this.getSeatTypeDrawCenterY() - mSeatParams.getSeatHeight() / 2 - mStageParams.getStageMarginBottom();
+        } else {
+            return this.getSellSeatDrawBeginY(seatTypeRowCount);
+        }
     }
 
     /**
@@ -1029,7 +1045,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @return
      */
-    protected float getThumbnailWidth() {
+    private float getThumbnailWidth() {
         if (mWHPoint == null) {
             mWHPoint = this.getWidthAndHeight();
         }
@@ -1042,7 +1058,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @return
      */
-    protected float getShowRectfBeginY(float originalCanvasWidth) {
+    private float getShowRectfBeginY(float originalCanvasWidth) {
         //用户可能进行移动的偏移量
         //取绝对值是在缩略图中垂直方向的偏移量必须是正数
         return Math.abs(mBeginDrawOffsetY * (this.getThumbnailWidth() / originalCanvasWidth));
@@ -1054,7 +1070,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @return
      */
-    protected float getShowRectfCenterX(float originalCanvasWidth) {
+    private float getShowRectfCenterX(float originalCanvasWidth) {
         //此处要注意的是,在实际界面的偏移量中,当向左移动时偏移量是正值
         //向右移动时偏移量是负值
         //而缩略图是完整并一直显示在屏幕上的
@@ -1078,7 +1094,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param originalCanvasHeight 主界面的实际界面高度,同上
      * @return 返回显示区域
      */
-    protected RectF getShowRectfInThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
+    private RectF getShowRectfInThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
         //获取当前缩略图的实际大小
         float targetWidth = this.getThumbnailWidth();
         //计算缩略图与实际界面的缩放比
@@ -1125,7 +1141,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param originalCanvasHeight 主界面的实际界面高度,同上
      * @return 返回缩略图绘制需要占用的空间大小
      */
-    protected RectF beginDrawThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
+    private RectF beginDrawThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
         if (mWHPoint == null) {
             mWHPoint = this.getWidthAndHeight();
         }
@@ -1148,7 +1164,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     /**
      * 完成绘制缩略图的工作
      */
-    protected void finishDrawThumbnail() {
+    private void finishDrawThumbnail() {
         //取消缩略图的绘制标志
         //防止下一次更新界面无法绘制出正常的界面
         mSeatParams.setIsDrawThumbnail(false, SeatParams.DEFAULT_FLOAT, SeatParams.DEFAULT_FLOAT);
@@ -1161,7 +1177,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param viewWidth
      * @return
      */
-    protected float getDrawCenterX(float viewWidth) {
+    private float getDrawCenterX(float viewWidth) {
         if (mSeatParams.getIsDrawThumbnail()) {
             return this.getThumbnailWidth() / 2;
         } else {
@@ -1174,7 +1190,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @param canvas 画板
      */
-    protected void beginDraw(Canvas canvas) {
+    private void beginDraw(Canvas canvas) {
         //重置界面绘制的宽高
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
@@ -1185,7 +1201,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     /**
      * 完成绘制之后调用的方法,用于处理部分重置的变量等
      */
-    protected void finishDraw() {
+    private void finishDraw() {
         this.mIsScaleRedraw = false;
     }
 
@@ -1218,7 +1234,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param height  此次绘制区域的高度,对实际界面而言是屏幕,对缩略图而言是缩略图的高度
      * @return
      */
-    protected float[] getCenterDotLine(float centerX, float height) {
+    private float[] getCenterDotLine(float centerX, float height) {
         //判断是否绘制缩略图,是则将线段长缩短为1/10
         float lineLength = mSeatParams.getIsDrawThumbnail() ? 2f : 20f;
         //计算需要的线段数
@@ -1244,7 +1260,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param paint      画笔
      * @param viewHeight 绘制界面的高度(主要用于绘制中心轴虚线可用),实际绘制界面高度为屏幕高度
      */
-    protected void drawNormalCanvas(Canvas canvas, Paint paint, float viewHeight) {
+    private void drawNormalCanvas(Canvas canvas, Paint paint, float viewHeight) {
         float drawX = 0f;
         float drawY = 0f;
         //开始绘制舞台
@@ -1272,7 +1288,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @param originalCanvasHeight 主界面的实际高度,同上
      */
-    protected void drawThumbnail(Canvas canvas, Paint paint, float originalCanvasWidth, float originalCanvasHeight) {
+    private void drawThumbnail(Canvas canvas, Paint paint, float originalCanvasWidth, float originalCanvasHeight) {
         //若不需要绘制缩略图,则不绘制
         if (!mIsDrawThumbnail || !mIsAllowDrawThumbnail) {
             return;
@@ -1281,11 +1297,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         RectF showRecf = this.getShowRectfInThumbnail(originalCanvasWidth, originalCanvasHeight);
 
         //绘制缩略图底色(半透明黑色)
-        paint.setColor(Color.BLACK);
+        paint.setColor(mSeatParams.getThumbnailBackgroundColor());
         paint.setStyle(Paint.Style.FILL);
-        paint.setAlpha(200);
+        paint.setAlpha(mSeatParams.getThumbnailBgAlpha());
         canvas.drawRect(thumbnailRectf, paint);
-        paint.setAlpha(0);
+//        paint.setAlpha(0);
 
         //绘制缩略图
         drawNormalCanvas(canvas, paint, thumbnailRectf.height());
@@ -1310,7 +1326,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param seatRowCount       座位行数,<font color="yellow"><b>行数,在二维表中应该是table.length</b></font>
      * @return {@link Point},返回座位在表中对应的行列索引值,若单击点不在有效区域则返回null
      */
-    protected Point getClickSeatByPosition(float clickPositionX, float clickPositionY, float beginDrawPositionY, int seatColumnCount, int seatRowCount) {
+    private Point getClickSeatByPosition(float clickPositionX, float clickPositionY, float beginDrawPositionY, int seatColumnCount, int seatRowCount) {
         //计算列的索引
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
         //计算行的索引
@@ -1337,7 +1353,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param seatRowCount       座位表中行数
      * @return 返回计算得到的行索引值, 当不存在时返回-1
      */
-    protected int calculateRowIndex(float clickPositionY, float beginDrawPositionY, int seatRowCount) {
+    private int calculateRowIndex(float clickPositionY, float beginDrawPositionY, int seatRowCount) {
         //计算当前单击位置与开始绘制位置的距离
         //用于后面计算在哪一行
         float clickYInterval = clickPositionY - beginDrawPositionY;
@@ -1402,7 +1418,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param seatColumnCount 座位表中列数
      * @return 返回计算得到的列索引值, 当不存在时返回-1
      */
-    protected int calculateColumnIndex(float clickPositionX, int seatColumnCount) {
+    private int calculateColumnIndex(float clickPositionX, int seatColumnCount) {
         //获取界面开始绘制的中心X轴位置
         //整个界面的绘制是从中心位置的X轴开始的,此处的X轴包括偏移后的X轴
         float centerX = this.getDrawCenterX(mWHPoint.x);
@@ -1486,7 +1502,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param currentInterval  当前需要被检测的区域间隔
      * @return 单击点在当前的区域内返回true, 否则返回false;
      */
-    protected boolean isClickedInInterval(float originalInterval, float lastInterval, float currentInterval) {
+    private boolean isClickedInInterval(float originalInterval, float lastInterval, float currentInterval) {
         //单击点在默认点的右方或者下方
         if (originalInterval > 0) {
             //上一次指定点与单击点的区域间隔为正(单击点还在上一个指定点的右边)
@@ -1516,7 +1532,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param newScaleRate     新的缩放比例,该比例可能为1(通常情况下比例为1不缩放,没有意义)
      * @param invalidateAction 重绘的动作标志
      */
-    protected void invalidateInMultiPoint(float newScaleRate, int invalidateAction) {
+    private void invalidateInMultiPoint(float newScaleRate, int invalidateAction) {
         //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
         //如果是最后一次(up事件),除非是不能绘制,否则必定重绘并记录缩放比
         boolean isTrueSetValue = invalidateAction == MotionEvent.ACTION_POINTER_UP;
@@ -1555,7 +1571,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param invalidateAction 重绘的行为标志
      */
 
-    protected boolean invalidateInSinglePoint(float moveDistanceX, float moveDistanceY, int invalidateAction) {
+    private boolean invalidateInSinglePoint(float moveDistanceX, float moveDistanceY, int invalidateAction) {
         //此处处理的是按是否进行移动过(默认移动范围为5像素)来确认是否是单击事件
         //而不是按单击事件来确定
         if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
@@ -1681,7 +1697,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      *
      * @param event
      */
-    protected void clickChooseSeat(MotionEvent event) {
+    private void clickChooseSeat(MotionEvent event) {
         if (mISeatInformationListener != null) {
             mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
         }
@@ -1829,7 +1845,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @param secondUpY   多点触摸抬起或移动的pointer_2_y
      * @return
      */
-    protected float getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
+    private float getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
                                  float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
         //计算平方和
         double downDistance = Math.pow(Math.abs((firstDownX - secondDownX)), 2) + Math.pow(Math.abs(firstDownY - secondDownY), 2);
