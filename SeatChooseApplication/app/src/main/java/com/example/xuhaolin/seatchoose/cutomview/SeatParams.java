@@ -1249,7 +1249,7 @@ public class SeatParams {
         seatRectf.bottom = seatRectf.top + this.mMainSeatHeight;
 
         if (!isMainSeat) {
-            seatRectf.top = seatRectf.bottom + this.getSeatHorizontalInterval() + this.mMinorSeatHeight / 2;
+            seatRectf.top = seatRectf.bottom + this.mSeatHeightInterval + this.mMinorSeatHeight / 2;
             seatRectf.bottom = seatRectf.top + this.mMinorSeatHeight;
         }
 
