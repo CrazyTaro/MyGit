@@ -121,6 +121,9 @@ public class SeatParams {
      * 座位的绘制类型,座位绘制为图片
      */
     public static final int SEAT_DRAW_TYPE_IMAGE = 2;
+    /**
+     * 座位绘制类型,缩略图模式
+     */
     public static final int SEAT_DRAW_TYPE_THUMBNAIL = 3;
 
 
@@ -153,7 +156,7 @@ public class SeatParams {
     //最大缩放倍数
     private int mLargeScaleRate = 24;
     //最小绽放比例
-    private float mSmallScaleRate = 0.5f;
+    private float mSmallScaleRate = 0.2f;
 
     //座位类型数组
     private int[] mSeatTypeArrary = null;
@@ -178,6 +181,8 @@ public class SeatParams {
     private int mThumbnailAlpha = 100;
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
+    private float[] mDefaultEnlargeHolder = null;
+    private float[] mDefaultReduceHolder = null;
     //画布背景颜色
     private int mCanvasBackgroundColor = Color.GRAY;
     private static SeatParams mInstance = null;
@@ -185,6 +190,7 @@ public class SeatParams {
     private SeatParams() {
         resetSeatTypeWithColor();
         mSeatTypeDescription = DEFAULT_SEAT_TYPE_DESC;
+        this.storeDefaultScaleVaule();
     }
 
     /**
@@ -399,8 +405,6 @@ public class SeatParams {
             mValueHolder = new float[7];
         }
         if (!mIsValueHold) {
-            showMsg("开始记录第一次数据");
-            showMsg("new rate = " + scaleRate);
             //第一次更新数据记录下最原始的数据
             mValueHolder[0] = this.mSeatWidth;
             mValueHolder[1] = this.mSeatHeight;
@@ -753,12 +757,18 @@ public class SeatParams {
         }
     }
 
+    /**
+     * 设置座位的宽度
+     *
+     * @param mSeatWidth
+     */
     public void setSeatWidth(float mSeatWidth) {
         if (mSeatWidth == DEFAULT_FLOAT) {
             this.mSeatWidth = DEFAULT_SEAT_WIDTH;
         } else {
             this.mSeatWidth = mSeatWidth;
         }
+        this.storeDefaultScaleVaule();
     }
 
     /**
@@ -772,6 +782,7 @@ public class SeatParams {
         } else {
             this.mSeatHeight = mSeatHeight;
         }
+        this.storeDefaultScaleVaule();
         this.autoCalculateSeatShapeHeight(this.mSeatHeight);
     }
 
@@ -1254,6 +1265,60 @@ public class SeatParams {
         }
 
         return seatRectf;
+    }
+
+    public float getScaleRateCompareToOriginal() {
+        if (mDefaultReduceHolder != null) {
+            return this.mSeatWidth / mDefaultReduceHolder[0];
+        } else {
+            return DEFAULT_FLOAT;
+        }
+    }
+
+    public float setDefaultScaleValue(boolean isSetEnlarge) {
+        float scaleRate = 0f;
+        float[] defaultValues = null;
+        if (isSetEnlarge) {
+            defaultValues = mDefaultEnlargeHolder;
+        } else {
+            defaultValues = mDefaultReduceHolder;
+        }
+        scaleRate = this.mSeatWidth / defaultValues[0];
+
+        this.mSeatWidth = defaultValues[0];
+        this.mSeatHeight = defaultValues[1];
+        this.mSeatHorizontalInterval = defaultValues[2];
+        this.mSeatVerticalInterval = defaultValues[3];
+        this.mSeatTextInterval = defaultValues[4];
+        this.mSeatTypeDescSize = defaultValues[5];
+
+        this.autoCalculateSeatShapeHeight(this.mSeatHeight);
+
+        return scaleRate;
+    }
+
+
+    private void storeDefaultScaleVaule() {
+        if (mDefaultEnlargeHolder == null) {
+            mDefaultEnlargeHolder = new float[6];
+        }
+        if (mDefaultReduceHolder == null) {
+            mDefaultReduceHolder = new float[6];
+        }
+
+        mDefaultEnlargeHolder[0] = this.mSeatWidth * 3;
+        mDefaultEnlargeHolder[1] = this.mSeatHeight * 3;
+        mDefaultEnlargeHolder[2] = this.mSeatHorizontalInterval * 3;
+        mDefaultEnlargeHolder[3] = this.mSeatVerticalInterval * 3;
+        mDefaultEnlargeHolder[4] = this.mSeatTextInterval * 3;
+        mDefaultEnlargeHolder[5] = this.mSeatTypeDescSize * 3;
+
+        mDefaultReduceHolder[0] = this.mSeatWidth * 1;
+        mDefaultReduceHolder[1] = this.mSeatHeight * 1;
+        mDefaultReduceHolder[2] = this.mSeatHorizontalInterval * 1;
+        mDefaultReduceHolder[3] = this.mSeatVerticalInterval * 1;
+        mDefaultReduceHolder[4] = this.mSeatTextInterval * 1;
+        mDefaultReduceHolder[5] = this.mSeatTypeDescSize * 1;
     }
 
 }

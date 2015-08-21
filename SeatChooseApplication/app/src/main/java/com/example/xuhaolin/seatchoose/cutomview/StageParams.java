@@ -57,6 +57,9 @@ public class StageParams {
      * 舞台绘制方式,使用图片填充
      */
     public static final int STAGE_DRAW_TYPE_IMAGE = 0;
+    /**
+     * 舞台绘制方式,缩略图模式
+     */
     public static final int STAGE_DRAW_TYPE_THUMBNAIL = 3;
 
 
@@ -69,6 +72,8 @@ public class StageParams {
     private int mStageTextColor = DEFAULT_STAGE_TEXT_COLOR;
     private String mStageText = DEFAULT_STAGE_TEXT;
 
+    private float[] mDefaultEnlargeHolder = null;
+    private float[] mDefaultReduceHolder = null;
     //用于缩放暂存舞台数据
     private float[] mValueHolder = null;
     //用于检测缩放时是否已暂存数据
@@ -86,6 +91,7 @@ public class StageParams {
     private Bitmap mStageImageBitmap = null;
 
     private StageParams() {
+        this.storeDefaultScaleValue();
     }
 
     public void setStageTextColor(int color) {
@@ -118,13 +124,15 @@ public class StageParams {
      * <p>
      * <li>{@link #STAGE_DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制</li>
      * <li>{@link #STAGE_DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充</li>
+     * <li>{@link #STAGE_DRAW_TYPE_THUMBNAIL}缩略图绘制模式</li>
      * </p>
      *
+     * @param isGetOriginalDrawType 是否获取实际的绘制类型(存在缩略图的情况下,缩略图不属于实际的绘制方式中的任何一种),true返回实际绘制类型,false返回缩略图绘制模式(如果允许绘制缩略图的话)
      * @return
      */
-    public int getStageDrawType() {
-        if (mIsDrawThumbnail) {
-            return STAGE_DRAW_TYPE_DEFAULT;
+    public int getStageDrawType(boolean isGetOriginalDrawType) {
+        if (mIsDrawThumbnail && !isGetOriginalDrawType) {
+            return STAGE_DRAW_TYPE_THUMBNAIL;
         } else {
             return mStageDrawType;
         }
@@ -310,6 +318,7 @@ public class StageParams {
         } else {
             this.mStageWidth = mStageWidth;
         }
+        this.storeDefaultScaleValue();
     }
 
     public float getStageHeight() {
@@ -326,6 +335,7 @@ public class StageParams {
         } else {
             this.mStageHeight = mStageHeight;
         }
+        this.storeDefaultScaleValue();
     }
 
     public float getStageMarginTop() {
@@ -421,6 +431,50 @@ public class StageParams {
         if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT) {
             this.mThumbnailRate = targetWidth / originalWidth;
         }
+    }
+
+    public float getScaleRateCompareToOriginal() {
+        if (mDefaultReduceHolder != null) {
+            return this.mStageWidth / mDefaultReduceHolder[0];
+        } else {
+            return DEFAULT_FLOAT;
+        }
+    }
+
+    public float setDefaultScaleValue(boolean isSetEnlarge) {
+        float scaleRate = 0f;
+        float[] defaultValues = null;
+        if (isSetEnlarge) {
+            defaultValues = mDefaultEnlargeHolder;
+        } else {
+            defaultValues = mDefaultReduceHolder;
+        }
+        scaleRate = this.mStageWidth / defaultValues[0];
+
+        this.mStageWidth = defaultValues[0];
+        this.mStageHeight = defaultValues[1];
+        this.mStageMarginTop = defaultValues[2];
+        this.mStageMarginBottom = defaultValues[3];
+
+        return scaleRate;
+    }
+
+    private void storeDefaultScaleValue() {
+        if (mDefaultEnlargeHolder == null) {
+            mDefaultEnlargeHolder = new float[4];
+        }
+        if (mDefaultReduceHolder == null) {
+            mDefaultReduceHolder = new float[4];
+        }
+        mDefaultEnlargeHolder[0] = this.mStageWidth * 3;
+        mDefaultEnlargeHolder[1] = this.mStageHeight * 3;
+        mDefaultEnlargeHolder[2] = this.mStageMarginTop * 3;
+        mDefaultEnlargeHolder[3] = this.mStageMarginBottom * 3;
+
+        mDefaultReduceHolder[0] = this.mStageWidth * 1;
+        mDefaultReduceHolder[1] = this.mStageHeight * 1;
+        mDefaultReduceHolder[2] = this.mStageMarginTop * 1;
+        mDefaultReduceHolder[3] = this.mStageMarginBottom * 1;
     }
 
 }

@@ -15,7 +15,7 @@ import android.view.View;
 
 /**
  * Created by xuhaolin in 2015-08-07
- * 座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件
+ * <p>座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件</p>
  */
 public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
     //座位参数
@@ -484,9 +484,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         stageRectf.top = drawPositionY - mStageParams.getStageHeight() / 2;
         stageRectf.bottom = stageRectf.top + mStageParams.getStageHeight();
 
-        showMsg("point", "x/y = " + stageRectf.left + "/" + stageRectf.top);
-
-        if (mStageParams.getStageDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
+        if (mStageParams.getStageDrawType(false) == StageParams.STAGE_DRAW_TYPE_IMAGE) {
             //绘制图片舞台
             mStageParams.loadStageImage(mContext, false);
             Bitmap bitmap = mStageParams.getStageImage();
@@ -496,6 +494,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 isDrawImageStage = true;
             }
         }
+        //缩略图的绘制也是使用默认的绘制方式,图片绘制到很小的的时候完全看不清楚而已很难分辨
         //没有绘制过图片舞台,尝试默认绘制方式
         if (!isDrawImageStage) {
             //绘制默认舞台
@@ -1822,46 +1821,47 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 单击某个区域选择座位
      */
     public void singleClickByTime(MotionEvent event) {
-//        //处理单击事件
-//        //选择座位
-//        if (mISeatInformationListener != null) {
-//            mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
-//        }
-//        float clickX = event.getX();
-//        float clickY = event.getY();
-//        //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
-//        float beginDrawPositionY = this.getSellSeatDrawBeginY(mSeatTypeRowCount);
-//        if (mSeatMap != null && mSeatMap.length > 0) {
-//            //计算单击位置的座位索引值
-//            Point clickSeatPoint = getClickSeatByPosition(clickX, clickY, beginDrawPositionY, mSeatMap[0].length, mSeatMap.length);
-//            //计算得到的座位索引值在有效范围内
-//            //行索引应该<=列表行数
-//            //列索引应该<=列表列数
-//            if (clickSeatPoint != null && clickSeatPoint.x < mSeatMap.length && clickSeatPoint.y < mSeatMap[0].length) {
-//                if (mISeatInformationListener != null) {
-//                    //更新座位状态
-//                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_SEAT);
-//                    //回调选中的座位
-//                    mISeatInformationListener.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y);
-//                }
-//            } else {
-//                if (mISeatInformationListener != null) {
-//                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
-//                    mISeatInformationListener.chosseSeatFail();
-//                }
-//            }
-//        } else {
-//            //列表数据不合法,直接返回失败
-//            if (mISeatInformationListener != null) {
-//                mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
-//                mISeatInformationListener.chosseSeatFail();
-//            }
-//        }
     }
 
     @Override
     public void doubleClick() {
-
+//        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
+//        float newScaleRate = 0f;
+//        if (currentScaleRate > 3) {
+//            newScaleRate = mSeatParams.setDefaultScaleValue(false);
+//        } else {
+//            if (currentScaleRate < 1.5) {
+//                newScaleRate = mSeatParams.setDefaultScaleValue(true);
+//                mStageParams.setDefaultScaleValue(true);
+//            } else {
+//                newScaleRate = mSeatParams.setDefaultScaleValue(false);
+//                mStageParams.setDefaultScaleValue(false);
+//            }
+//        }
+//        mSeatParams.setScaleRate(1,true);
+//        mStageParams.setScaleRate(1,true);
+//
+//        //判断是否已经存放了移动前的偏移数据
+//        if (!mIsFirstStorePoint) {
+//            //相对当前屏幕中心的X轴偏移量
+//            mOffsetPoint.x = mBeginDrawOffsetX;
+//            //相对当前屏幕中心的Y轴偏移量
+//            //原来的偏移量是以Y轴顶端为偏移值
+//            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+//            mIsFirstStorePoint = true;
+//        }
+//        //根据缩放比计算新的偏移值
+//        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+//        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+//        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+//        //是否进行up事件,是保存数据当前计算的最后数据
+//        mOffsetPoint.x = mBeginDrawOffsetX;
+//        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+//        //重置记录标志亦是
+//        mIsFirstStorePoint = false;
+//
+//        //重绘工作
+//        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
     }
 
     /**
