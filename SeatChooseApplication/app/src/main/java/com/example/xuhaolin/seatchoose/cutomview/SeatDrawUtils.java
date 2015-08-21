@@ -17,7 +17,7 @@ import android.view.View;
  * Created by xuhaolin in 2015-08-07
  * 座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件
  */
-public class SeatDrawUtils extends AbsTouchEventHandle {
+public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
     //座位参数
     private SeatParams mSeatParams = null;
     //舞台参数
@@ -54,6 +54,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     private float mScaleFirstUpY = 0f;
     private float mScaleSecondUpX = 0f;
     private float mScaleSecondUpY = 0f;
+    //用于暂时存放在开始移动缩放前的X/Y偏移量
+    private PointF mOffsetPoint = new PointF();
+    //是否第一次存放偏移量
+    private boolean mIsFirstStorePoint = false;
     //默认的缩放比例
     private float mLastScaleRate = 1f;
     //按下事件的坐标
@@ -80,6 +84,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
     private static SeatDrawUtils mInstance = null;
     //座位列表
     private int[][] mSeatMap = null;
+
 
     /**
      * 获取单一的实例,只有第一次初始化需要两个参数,其它时候获取该对象参数值可为null
@@ -126,6 +131,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         mSeatParams = SeatParams.getInstance();
         mStageParams = StageParams.getInstance();
 
+        this.setTouchEventListener(this);
         //设置监听事件,实际事件分配来自于抽象父类
         mDrawView.setOnTouchListener(this);
     }
@@ -477,6 +483,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         stageRectf.right = stageRectf.left + mStageParams.getStageWidth();
         stageRectf.top = drawPositionY - mStageParams.getStageHeight() / 2;
         stageRectf.bottom = stageRectf.top + mStageParams.getStageHeight();
+
+        showMsg("point", "x/y = " + stageRectf.left + "/" + stageRectf.top);
 
         if (mStageParams.getStageDrawType() == StageParams.STAGE_DRAW_TYPE_IMAGE) {
             //绘制图片舞台
@@ -1550,7 +1558,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
             newScaleRate = mLastScaleRate;
             mLastScaleRate = 1;
         } else {
-            showMsg("已达到缩放的最大值");
+            if (mISeatInformationListener != null) {
+                mISeatInformationListener.scaleMaximum();
+            }
             return;
         }
 
@@ -1560,6 +1570,28 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
         mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
         //开始缩放的重绘的标志
         mIsScaleRedraw = true;
+
+        //判断是否已经存放了移动前的偏移数据
+        if (!mIsFirstStorePoint) {
+            //相对当前屏幕中心的X轴偏移量
+            mOffsetPoint.x = mBeginDrawOffsetX;
+            //相对当前屏幕中心的Y轴偏移量
+            //原来的偏移量是以Y轴顶端为偏移值
+            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+            mIsFirstStorePoint = true;
+        }
+        //根据缩放比计算新的偏移值
+        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+        //是否进行up事件,是保存数据当前计算的最后数据
+        if (isTrueSetValue) {
+            mOffsetPoint.x = mBeginDrawOffsetX;
+            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+            //重置记录标志亦是
+            mIsFirstStorePoint = false;
+        }
+        //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, invalidateAction));
     }
 
@@ -1846,7 +1878,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
      * @return
      */
     private float getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
-                                 float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
+                               float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
         //计算平方和
         double downDistance = Math.pow(Math.abs((firstDownX - secondDownX)), 2) + Math.pow(Math.abs(firstDownY - secondDownY), 2);
         double upDistance = Math.pow(Math.abs((firstUpX - secondUpX)), 2) + Math.pow(Math.abs(firstUpY - secondUpY), 2);
@@ -1957,5 +1989,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle {
          * 选择座位失败
          */
         public void chosseSeatFail();
+
+        /**
+         * 缩放达到最大限度(已达到最小值或者最大值)
+         */
+        public void scaleMaximum();
     }
 }
