@@ -68,9 +68,11 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
         seat.setSeatHeight(50f);
         seat.setSeatWidth(50f);
         seat.setSeatImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
+        seat.setSeatDrawType(SeatParams.SEAT_DRAW_TYPE_DEFAULT);
 //        seat.setIsDrawSeatType(false);
         mSeatDrawUtils.setSeatParams(seat);
 
+        mSeatDrawUtils.setIsShowThumbnailAlways(false);
         mSeatDrawUtils.setSeatDrawMap(mSeatMap);
         mSeatDrawUtils.setIsShowLog(true);
         mSeatDrawUtils.setSeatInformationListener(this);
@@ -101,5 +103,10 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     @Override
     public void chosseSeatFail() {
         Toast.makeText(getContext(), "没有选中座位", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void scaleMaximum() {
+        Toast.makeText(getContext(), "已缩放到极限值", Toast.LENGTH_SHORT).show();
     }
 }
