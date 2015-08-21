@@ -10,7 +10,8 @@ import android.view.View;
 
 /**
  * Created by xuhaolin in 2015-08-14
- * 抽像类,处理触摸事件,区分单击及多点触摸事件,尽管该类为抽象类,但不存在任何抽象方法,所有的抽象方法包括在其接口中{@link com.example.xuhaolin.seatchoose.cutomview.AbsTouchEventHandle.ITouchEventListener}
+ * <p>抽像类,处理触摸事件,区分单击及多点触摸事件,尽管该类为抽象类,但不存在任何抽象方法,所有的抽象方法包括在其接口中{@link com.example.xuhaolin.seatchoose.cutomview.AbsTouchEventHandle.ITouchEventListener}</p>
+ * <p>此类中使用到handler,请确保使用在UI线程或者是自定义looper的线程中(一般也没有人会把触摸事件放在非UI线程吧 =_=)</p>
  */
 public class AbsTouchEventHandle implements View.OnTouchListener {
     /**
@@ -90,15 +91,17 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                             if (mItouchEventListener != null) {
                                 mItouchEventListener.doubleClick();
                             }
+                            break;
                         } else {
-                            mIsSingleClick = true;
-                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
-                            mHandle.removeMessages(HANDLE_SINGLE_DOWN);
                             showMsg("单击事件 single");
                             if (mItouchEventListener != null) {
                                 mItouchEventListener.singleClickByTime(event);
                             }
+                            mIsSingleClick = true;
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
+                            mHandle.removeMessages(HANDLE_SINGLE_DOWN);
                         }
+
                     }
                 }
 
@@ -112,7 +115,6 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                     mIsMultiPoint = false;
                     mIsMultiDown = false;
                     mIsSingleMove = false;
-                    mIsSingleClick = false;
                     break;
                 }
 
@@ -146,7 +148,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiPoint = false;
                 mIsMultiDown = false;
                 mIsSingleMove = false;
-                mIsSingleClick = false;
+//                mIsSingleClick = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 //当确认进入多点单击状态,则执行多点单击抬起事件
