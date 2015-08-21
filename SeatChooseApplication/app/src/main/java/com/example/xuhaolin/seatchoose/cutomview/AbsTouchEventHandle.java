@@ -17,9 +17,10 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
     /**
      * 额外分配的触摸事件,用于建议优先处理的触摸事件
      */
-    public static final int MOTION_EVENT_NOTHING = -1;
-    private static final int HANDLE_SINGLE_CLICK = 1;
-    private static final int HANDLE_SINGLE_DOWN = 2;
+    public static final int MOTION_EVENT_NOTHING = 0;
+    private static final int HANDLE_SINGLE_CLICK_AT_DISTANCE = 1;
+    private static final int HANDLE_SINGLE_CLICK_AT_TIME = -1;
+    private static final int HANDLE_SINGLE_DOWN_AT_TIME = -2;
 
     private ITouchEventListener mItouchEventListener = null;
     //已经触发单击事件的情况下,是否触发单点触摸事件
@@ -34,22 +35,31 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
     //是否进入移动事件
     private boolean mIsInMotionMove = false;
     //是否单击按下
-    private boolean mIsSingleDown = false;
+    private boolean mIsSingleDownAtTime = false;
     //是否完成单击(一次)
-    private boolean mIsSingleClick = false;
+    private boolean mIsSingleClickAtTime = false;
+    private boolean mIsSingleClickAtDistance = false;
+
+    private float mDownX = 0f;
+    private float mDownY = 0f;
+    private float mUpX = 0f;
+    private float mUpY = 0f;
 
     private Handler mHandle = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case HANDLE_SINGLE_CLICK:
+                case HANDLE_SINGLE_CLICK_AT_TIME:
                     //取消双击事件的标志
-                    mIsSingleClick = false;
+                    mIsSingleClickAtTime = false;
                     break;
-                case HANDLE_SINGLE_DOWN:
+                case HANDLE_SINGLE_CLICK_AT_DISTANCE:
+                    mIsSingleClickAtDistance = false;
+                    break;
+                case HANDLE_SINGLE_DOWN_AT_TIME:
                     //取消单击事件的标志
-                    mIsSingleDown = false;
+                    mIsSingleDownAtTime = false;
                     break;
             }
         }
@@ -64,8 +74,11 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                     mItouchEventListener.singleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 }
                 showMsg("单击 down ");
-                mIsSingleDown = true;
-                mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_DOWN, 500);
+                mIsSingleDownAtTime = true;
+                mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_DOWN_AT_TIME, 500);
+
+                mDownX = event.getX();
+                mDownY = event.getY();
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 //若在确认进入多点单击之前没有任何移动操作
@@ -81,15 +94,48 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiDown = true;
                 break;
             case MotionEvent.ACTION_UP:
+                //移动距离单击处理事件
+                //触摸点down事件的坐标与up事件的坐标距离不超过10像素时,认为一次单击事件(与时间无关)
+                //两次单击事件之间的时间间隔在500ms内则认为是一次双击事件
                 if (!mIsMultiDown) {
-                    if (mIsSingleDown) {
+                    mUpX = event.getX();
+                    mUpY = event.getY();
+                    float moveDistanceX = mUpX - mDownX;
+                    float moveDistanceY = mUpY - mDownY;
+                    //根据触摸点up与down事件的坐标差判断是否为单击事件(不由时间决定)
+                    if (Math.abs(moveDistanceX) < 10 && Math.abs(moveDistanceY) < 10) {
+                        if (mIsSingleClickAtDistance) {
+                            mHandle.removeMessages(HANDLE_SINGLE_CLICK_AT_DISTANCE);
+                            showMsg("双击事件(距离) double");
+                            if (mItouchEventListener != null) {
+                                mItouchEventListener.doubleClickByDistance();
+                            }
+                            break;
+                        } else {
+                            showMsg("单击事件(距离) single");
+                            if (mItouchEventListener != null) {
+                                mItouchEventListener.singleClickByDistance(event);
+                            }
+                            mIsSingleClickAtDistance = true;
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_DISTANCE, 500);
+                            mHandle.removeMessages(HANDLE_SINGLE_DOWN_AT_TIME);
+                        }
+                    }
+                }
+
+
+                //根据时间处理单击事件
+                //触摸点down之后500ms内触摸点抬起则认为是一次单击事件
+                //两次单击事件之间的时间间隔在500ms内即为一次双击事件
+                if (!mIsMultiDown) {
+                    if (mIsSingleDownAtTime) {
                         //单击事件处理
-                        if (mIsSingleClick) {
+                        if (mIsSingleClickAtTime) {
                             //双击事件处理完直接退出,不进行下面的任何事件处理
-                            mHandle.removeMessages(HANDLE_SINGLE_CLICK);
+                            mHandle.removeMessages(HANDLE_SINGLE_CLICK_AT_TIME);
                             showMsg("双击事件 double");
                             if (mItouchEventListener != null) {
-                                mItouchEventListener.doubleClick();
+                                mItouchEventListener.doubleClickByTime();
                             }
                             break;
                         } else {
@@ -97,9 +143,9 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                             if (mItouchEventListener != null) {
                                 mItouchEventListener.singleClickByTime(event);
                             }
-                            mIsSingleClick = true;
-                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK, 500);
-                            mHandle.removeMessages(HANDLE_SINGLE_DOWN);
+                            mIsSingleClickAtTime = true;
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_TIME, 500);
+                            mHandle.removeMessages(HANDLE_SINGLE_DOWN_AT_TIME);
                         }
 
                     }
@@ -148,7 +194,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiPoint = false;
                 mIsMultiDown = false;
                 mIsSingleMove = false;
-//                mIsSingleClick = false;
+//                mIsSingleClickAtTime = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 //当确认进入多点单击状态,则执行多点单击抬起事件
@@ -186,6 +232,13 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                     if (mItouchEventListener != null) {
                         mItouchEventListener.doubleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     }
+                }
+
+
+                float moveDistanceX = event.getX() - mUpX;
+                float moveDistanceY = event.getY() - mUpY;
+                if (Math.abs(moveDistanceX) > 20 || Math.abs(moveDistanceY) > 20) {
+                    mIsSingleClickAtDistance = false;
                 }
                 break;
         }
@@ -271,8 +324,20 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
         public abstract void singleClickByTime(MotionEvent event);
 
         /**
-         * 双击事件处理
+         * 单击事件处理,触摸点down的坐标与up坐标距离差不大于10像素则认为是一次单击,<font color="yellow"><b>与时间无关</b></font>
+         *
+         * @param event 单击触摸事件
          */
-        public abstract void doubleClick();
+        public abstract void singleClickByDistance(MotionEvent event);
+
+        /**
+         * 双击事件处理,每次单击判断由时间决定,参考{@link #singleClickByTime(MotionEvent)}
+         */
+        public abstract void doubleClickByTime();
+
+        /**
+         * 双击事件处理,每两次单击事件之间的间隔小于500ms则认为是一次双击事件,单击事件由距离决定而不是时间,参考{@link #singleClickByDistance(MotionEvent)}
+         */
+        public abstract void doubleClickByDistance();
     }
 }
