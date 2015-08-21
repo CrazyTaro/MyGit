@@ -94,6 +94,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,<font color="yellow"><b>建议使用自定义的View,且view为空白view即可</b></font>
      * @return
+     * @deprecated
      */
     public static synchronized SeatDrawUtils getInstance(Context context, View drawView) {
         if (mInstance == null) {
@@ -108,7 +109,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上
      */
-    private SeatDrawUtils(Context context, View drawView) {
+    public SeatDrawUtils(Context context, View drawView) {
         if (context == null || drawView == null) {
             throw new RuntimeException("初始化中context及drawView参数不可为null,该参数都是必需的");
         }
@@ -1709,10 +1710,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 moveDistanceY = mUpY - mDownY;
 
                 invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_UP);
-                //处理单击事件
-                if (!mIsMoved) {
-                    clickChooseSeat(event);
-                }
+//                //处理单击事件
+//                if (!mIsMoved) {
+//                    clickChooseSeat(event);
+//                }
                 //移动操作完把数据还原初始状态,以防出现不必要的错误
                 mDownX = 0f;
                 mDownY = 0f;
@@ -1824,7 +1825,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     @Override
-    public void doubleClick() {
+    public void singleClickByDistance(MotionEvent event) {
+        clickChooseSeat(event);
+    }
+
+    @Override
+    public void doubleClickByTime() {
 //        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
 //        float newScaleRate = 0f;
 //        if (currentScaleRate > 3) {
@@ -1862,6 +1868,47 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 //
 //        //重绘工作
 //        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+    }
+
+    @Override
+    public void doubleClickByDistance() {
+        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
+        float newScaleRate = 0f;
+        if (currentScaleRate > 3) {
+            newScaleRate = mSeatParams.setDefaultScaleValue(false);
+        } else {
+            if (currentScaleRate < 1.5) {
+                newScaleRate = mSeatParams.setDefaultScaleValue(true);
+                mStageParams.setDefaultScaleValue(true);
+            } else {
+                newScaleRate = mSeatParams.setDefaultScaleValue(false);
+                mStageParams.setDefaultScaleValue(false);
+            }
+        }
+        mSeatParams.setScaleRate(1, true);
+        mStageParams.setScaleRate(1, true);
+
+        //判断是否已经存放了移动前的偏移数据
+        if (!mIsFirstStorePoint) {
+            //相对当前屏幕中心的X轴偏移量
+            mOffsetPoint.x = mBeginDrawOffsetX;
+            //相对当前屏幕中心的Y轴偏移量
+            //原来的偏移量是以Y轴顶端为偏移值
+            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+            mIsFirstStorePoint = true;
+        }
+        //根据缩放比计算新的偏移值
+        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+        //是否进行up事件,是保存数据当前计算的最后数据
+        mOffsetPoint.x = mBeginDrawOffsetX;
+        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+        //重置记录标志亦是
+        mIsFirstStorePoint = false;
+
+        //重绘工作
+        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
     }
 
     /**
