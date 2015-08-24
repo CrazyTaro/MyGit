@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "com.example.xuhaolin.seatchooseapplication"
+        applicationId "com.crazytaro.bestapp"
         minSdkVersion 8
         targetSdkVersion 22
         versionCode 1

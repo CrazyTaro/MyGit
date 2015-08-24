@@ -1,22 +1,32 @@
-package com.example.xuhaolin.seatchoose.cutomview;/**
+package com.crazytaro.bestapp.view;/**
  * Created by xuhaolin on 15/8/13.
  */
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.xuhaolin.seatchoose.R;
+import com.crazytaro.bestapp.draw.utils.BaseParams;
+import com.crazytaro.bestapp.draw.utils.SeatDrawUtils;
+import com.crazytaro.bestapp.draw.utils.SeatParams;
+import com.crazytaro.bestapp.draw.utils.StageParams;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author:
  * Description:
  */
-public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener {
+public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener, ISeatChoose {
     private SeatDrawUtils mSeatDrawUtils = null;
+    private ISeatChooseEvent mSeatChooseEvent = null;
+    private int mMostSeletedCount = 5;
+    private List<Point> mCurrentSeletedSeats = null;
     private int[][] mSeatMap = {
 //            {1, 1, 0, 0, 1, 1, 0, 2, 1, 1, 2, 0, 0, 2, 1, 0, 0, 2,},//1
 //            {1, 1, 0, 0, 2, 1, 0, 2, 1, 1, 1, 0, 0, 2, 1, 0, 0, 2,},//2
@@ -81,26 +91,45 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     }
 
     public void initial() {
-        mSeatDrawUtils = SeatDrawUtils.getInstance(getContext(), this);
-        StageParams stage = StageParams.getInstance();
-        stage.setStageImage(R.drawable.icon_bg);
-        stage.setStageTextColor(Color.WHITE);
-        stage.setStageDrawType(StageParams.STAGE_DRAW_TYPE_DEFAULT);
-//        stage.setIsDrawStage(false);
-        mSeatDrawUtils.setStageParams(stage);
+        mSeatDrawUtils = new SeatDrawUtils(this.getContext(), this);
+        StageParams stage = mSeatDrawUtils.getStageParams();
+        stage.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
 
-        SeatParams seat = SeatParams.getInstance();
-        seat.setSeatHeight(50f);
-        seat.setSeatWidth(50f);
-        seat.setSeatImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
-        seat.setSeatDrawType(SeatParams.SEAT_DRAW_TYPE_DEFAULT);
-//        seat.setIsDrawSeatType(false);
-        mSeatDrawUtils.setSeatParams(seat);
+        SeatParams seat = mSeatDrawUtils.getSeatParams();
+        seat.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
 
-        mSeatDrawUtils.setIsShowThumbnailAlways(false);
-        mSeatDrawUtils.setSeatDrawMap(mSeatMap);
-        mSeatDrawUtils.setIsShowLog(true);
+        mSeatDrawUtils.setIsShowLog(false);
         mSeatDrawUtils.setSeatInformationListener(this);
+
+        mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
+    }
+
+    /**
+     * 从被选中的座位中将某个座位移除
+     *
+     * @param rowIndex    行索引
+     * @param columnIndex 列索引
+     */
+    private void removeSeat(int rowIndex, int columnIndex) {
+        for (Point seat : mCurrentSeletedSeats) {
+            if (seat.x == rowIndex && seat.y == columnIndex) {
+                mCurrentSeletedSeats.remove(seat);
+                return;
+            }
+        }
+    }
+
+    /**
+     * 将选中的座位加入到选中座位列表中
+     *
+     * @param rowIndex
+     * @param columnIndex
+     */
+    private void addSeat(int rowIndex, int columnIndex) {
+        Point seletedSeat = new Point();
+        seletedSeat.x = rowIndex;
+        seletedSeat.y = columnIndex;
+        mCurrentSeletedSeats.add(seletedSeat);
     }
 
     @Override
@@ -115,13 +144,40 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     public void chooseSeatSuccess(int rowIndex, int columnIndex) {
+        boolean isChoosen = false;
         int seatType = mSeatDrawUtils.getSeatTypeInSeatMap(rowIndex, columnIndex);
+        //回调选座结果
+        if (mSeatChooseEvent != null) {
+            mSeatChooseEvent.seatSeleted(rowIndex, columnIndex, seatType);
+        }
+
         if (seatType == SeatParams.SEAT_TYPE_UNSHOW || seatType == SeatParams.SEAT_TYPE_ERRO) {
-            return;
+            //选座出错或者未选中有效区域，选座位失败
+            if (mSeatChooseEvent != null) {
+                mSeatChooseEvent.seletedFail();
+            }
         } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
+            //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
             mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndex, columnIndex);
+            removeSeat(rowIndex, columnIndex);
+            isChoosen = false;
         } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
-            mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_SELETED, rowIndex, columnIndex);
+            if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
+                //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
+                mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_SELETED, rowIndex, columnIndex);
+                addSeat(rowIndex, columnIndex);
+                isChoosen = true;
+            } else {
+                //当前选中座位数已达上限，回调接口，不将座位加入选中列表中
+                if (mSeatChooseEvent != null) {
+                    mSeatChooseEvent.seletedFull();
+                }
+                return;
+            }
+        }
+        if (mSeatChooseEvent != null) {
+            //若座位有效且未满，则回调选中座位结果
+            mSeatChooseEvent.seatSeleted(rowIndex, columnIndex, isChoosen);
         }
     }
 
@@ -133,5 +189,75 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     @Override
     public void scaleMaximum() {
         Toast.makeText(getContext(), "已缩放到极限值", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void resetParams() {
+        mSeatDrawUtils.resetParams();
+    }
+
+    @Override
+    public void setSeatMap(int[][] seatMap) {
+        mSeatDrawUtils.setSeatDrawMap(seatMap);
+    }
+
+    @Override
+    public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex) {
+        return false;
+    }
+
+    @Override
+    public void setSeatParams(SeatParams params) {
+        mSeatDrawUtils.setSeatParams(params);
+    }
+
+    @Override
+    public void setStageParams(StageParams params) {
+        mSeatDrawUtils.setStageParams(params);
+    }
+
+    @Override
+    public SeatParams getSeatParams() {
+        return mSeatDrawUtils.getSeatParams();
+    }
+
+    @Override
+    public StageParams getStageParams() {
+        return mSeatDrawUtils.getStageParams();
+    }
+
+    @Override
+    /**
+     * 默认最多选择的个数为5，当参数不合法时该重置为默认值
+     */
+    public void setMostSeletedCount(int mostCount) {
+        mMostSeletedCount = mostCount > 0 ? mostCount : 5;
+    }
+
+    @Override
+    public List<Point> getSeletedSeats() {
+        List<Point> seletedSeatsList = new ArrayList<Point>(mCurrentSeletedSeats.size());
+        seletedSeatsList.addAll(mCurrentSeletedSeats);
+        return seletedSeatsList;
+    }
+
+    @Override
+    public void setIsShowThumbnailAlways(boolean isShowAlways) {
+        mSeatDrawUtils.setIsShowThumbnailAlways(isShowAlways);
+    }
+
+    @Override
+    public void setIsDrawThumbnail(boolean isDraw) {
+        mSeatDrawUtils.setIsDrawThumbnail(isDraw);
+    }
+
+    @Override
+    public void setISeatChooseEvent(ISeatChooseEvent eventListener) {
+        mSeatChooseEvent = eventListener;
+    }
+
+    @Override
+    public void setIsShowLog(boolean isShow) {
+        mSeatDrawUtils.setIsShowLog(isShow);
     }
 }

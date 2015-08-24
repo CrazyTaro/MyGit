@@ -1,4 +1,4 @@
-package com.example.xuhaolin.seatchoose.cutomview;/**
+package com.crazytaro.bestapp.draw.utils;/**
  * Created by xuhaolin on 15/8/14.
  */
 
@@ -10,7 +10,7 @@ import android.view.View;
 
 /**
  * Created by xuhaolin in 2015-08-14
- * <p>抽像类,处理触摸事件,区分单击及多点触摸事件,尽管该类为抽象类,但不存在任何抽象方法,所有的抽象方法包括在其接口中{@link com.example.xuhaolin.seatchoose.cutomview.AbsTouchEventHandle.ITouchEventListener}</p>
+ * <p>抽像类,处理触摸事件,区分单击及多点触摸事件,尽管该类为抽象类,但不存在任何抽象方法,所有的抽象方法包括在其接口中{@link AbsTouchEventHandle.ITouchEventListener}</p>
  * <p>此类中使用到handler,请确保使用在UI线程或者是自定义looper的线程中(一般也没有人会把触摸事件放在非UI线程吧 =_=)</p>
  */
 public class AbsTouchEventHandle implements View.OnTouchListener {
@@ -248,7 +248,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
     /**
      * 设置此类处理的触摸事件的实现接口
      *
-     * @param listener {@link com.example.xuhaolin.seatchoose.cutomview.AbsTouchEventHandle.ITouchEventListener} 自定义事件触摸接口
+     * @param listener {@link AbsTouchEventHandle.ITouchEventListener} 自定义事件触摸接口
      */
     public void setTouchEventListener(ITouchEventListener listener) {
         this.mItouchEventListener = listener;
