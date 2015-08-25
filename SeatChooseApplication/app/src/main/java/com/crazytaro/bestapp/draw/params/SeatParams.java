@@ -1,4 +1,4 @@
-package com.crazytaro.bestapp.draw.utils;/**
+package com.crazytaro.bestapp.draw.params;/**
  * Created by xuhaolin on 15/8/7.
  */
 
@@ -7,11 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
 
+import com.crazytaro.bestapp.draw.interfaces.ISeatParamsExport;
+
 /**
  * Created by xuhaolin on 2015/8/9.
  * <p>座位参数，包括座位绘制需要的各种参数</p>
  */
-public class SeatParams extends BaseParams {
+public class SeatParams extends BaseParams implements ISeatParamsExport{
     /**
      * 默认座位颜色值
      */
@@ -88,7 +90,7 @@ public class SeatParams extends BaseParams {
     /**
      * 座位的绘制类型,不绘制
      */
-    public static int SEAT_DRAW_TYPE_NO = BaseParams.DRAW_TYPE_NO;
+    public static int SEAT_DRAW_TYPE_NO = DRAW_TYPE_NO;
     /**
      * 座位默认基本类型,错误座位,即不存在的座位(可能是列表数据不存在,也可能是查询索引超过此列表数据等)
      */
@@ -123,7 +125,7 @@ public class SeatParams extends BaseParams {
     private int[] mSeatImageID = null;
     private Bitmap[] mSeatImageBitmaps = null;
 
-    private float mDescriptionSize = BaseParams.DEFAULT_DESCRIPTION_SIZE;
+    private float mDescriptionSize = DEFAULT_DESCRIPTION_SIZE;
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
     private float[] mDefaultEnlargeHolder = null;
@@ -220,7 +222,7 @@ public class SeatParams extends BaseParams {
      * @param scaleRate      新的缩放比
      * @param isTrueSetValue 是否将此次缩放结果记录为永久结果
      */
-    protected void setScaleRate(float scaleRate, boolean isTrueSetValue) {
+    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
         //创建缓存数据对象
         if (mValueHolder == null) {
             mValueHolder = new float[7];
@@ -694,7 +696,7 @@ public class SeatParams extends BaseParams {
                 throw new RuntimeException("座位类型描述不可为null,设置座位类型描述length应与座位类型length一致");
             }
 
-            super.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
+            super.setDrawType(DRAW_TYPE_DEFAULT);
         } else {
             throw new RuntimeException("设置新座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
         }
@@ -715,7 +717,7 @@ public class SeatParams extends BaseParams {
         System.arraycopy(DEFAULT_SEAT_TYPE, 0, mSeatTypeArrary, 0, DEFAULT_SEAT_TYPE.length);
         System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, mSeatColorArrary, 0, DEFAULT_SEAT_TYPE_COLOR.length);
 
-        super.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
+        super.setDrawType(DRAW_TYPE_DEFAULT);
     }
 
     /**
@@ -797,7 +799,7 @@ public class SeatParams extends BaseParams {
      * @param drawPositionY 绘制的Y轴中心位置
      * @return
      */
-    protected RectF getSeatDrawImageRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
+    public RectF getSeatDrawImageRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
         if (imageRecft == null) {
             imageRecft = new RectF();
         }
@@ -819,7 +821,7 @@ public class SeatParams extends BaseParams {
      * @param isMainSeat    true为获取主座位,false为获取次座位
      * @return
      */
-    protected RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
+    public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
         if (seatRectf == null) {
             seatRectf = new RectF();
         }

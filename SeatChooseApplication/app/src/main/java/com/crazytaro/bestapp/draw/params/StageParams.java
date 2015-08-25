@@ -1,14 +1,16 @@
-package com.crazytaro.bestapp.draw.utils;
+package com.crazytaro.bestapp.draw.params;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.crazytaro.bestapp.draw.interfaces.IStageParamsExport;
+
 /**
  * Created by xuhaolin on 2015/8/9.
  * <p>舞台参数，包括舞台绘制需要的所有参数</p>
  */
-public class StageParams extends BaseParams {
+public class StageParams extends BaseParams implements IStageParamsExport {
     /**
      * 默认舞台颜色
      */
@@ -39,7 +41,7 @@ public class StageParams extends BaseParams {
     public static final String DEFAULT_STAGE_TEXT = "舞台";
     private float mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
     private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
-    private String mStageText = DEFAULT_STAGE_TEXT;
+    private String mStageDescription = DEFAULT_STAGE_TEXT;
 
     private float[] mDefaultEnlargeHolder = null;
     private float[] mDefaultReduceHolder = null;
@@ -85,7 +87,8 @@ public class StageParams extends BaseParams {
      *
      * @return
      */
-    public Bitmap getImage() {
+    public Bitmap getImage(Context context) {
+        this.loadStageImage(context, false);
         return mStageImageBitmap;
     }
 
@@ -109,7 +112,7 @@ public class StageParams extends BaseParams {
      * @param scaleRate 新的缩放比
      * @param isTrueSet 是否将此次缩放结果记录为永久结果
      */
-    protected void setScaleRate(float scaleRate, boolean isTrueSet) {
+    public void setScaleRate(float scaleRate, boolean isTrueSet) {
         if (mValueHolder == null) {
             mValueHolder = new float[4];
         }
@@ -133,12 +136,12 @@ public class StageParams extends BaseParams {
         }
     }
 
-    public String getStageText() {
-        return mStageText;
+    public String getStageDescription() {
+        return mStageDescription;
     }
 
-    public void setStageText(String text) {
-        this.mStageText = text;
+    public void setStageDescription(String text) {
+        this.mStageDescription = text;
     }
 
     public float getStageMarginTop() {
@@ -188,7 +191,7 @@ public class StageParams extends BaseParams {
      *
      * @return 返回舞台占用的高度
      */
-    protected float getStageTotalHeight() {
+    public float getStageTotalHeight() {
         return this.getHeight() + this.getStageMarginBottom() + this.getStageMarginTop();
     }
 
@@ -200,7 +203,7 @@ public class StageParams extends BaseParams {
         mHeight = mWidth * 1 / 5;
     }
 
-    protected float getScaleRateCompareToOriginal() {
+    public float getScaleRateCompareToOriginal() {
         if (mDefaultReduceHolder != null) {
             return this.mWidth / mDefaultReduceHolder[0];
         } else {

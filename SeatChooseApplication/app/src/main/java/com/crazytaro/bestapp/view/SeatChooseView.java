@@ -4,16 +4,15 @@ package com.crazytaro.bestapp.view;/**
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
 
-import com.crazytaro.bestapp.draw.utils.BaseParams;
+import com.crazytaro.bestapp.draw.params.ExportParams;
+import com.crazytaro.bestapp.draw.params.SeatParams;
+import com.crazytaro.bestapp.draw.params.StageParams;
 import com.crazytaro.bestapp.draw.utils.SeatDrawUtils;
-import com.crazytaro.bestapp.draw.utils.SeatParams;
-import com.crazytaro.bestapp.draw.utils.StageParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,13 +91,11 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     public void initial() {
         mSeatDrawUtils = new SeatDrawUtils(this.getContext(), this);
-        StageParams stage = mSeatDrawUtils.getStageParams();
-        stage.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
+        ExportParams params = mSeatDrawUtils.getExportParams();
+        params.getSeatParams().setDrawType(SeatParams.DRAW_TYPE_DEFAULT);
+        params.getStageParams().setDrawType(StageParams.DRAW_TYPE_DEFAULT);
 
-        SeatParams seat = mSeatDrawUtils.getSeatParams();
-        seat.setDrawType(BaseParams.DRAW_TYPE_DEFAULT);
-
-        mSeatDrawUtils.setIsShowLog(false);
+        mSeatDrawUtils.setIsShowLog(false, null);
         mSeatDrawUtils.setSeatInformationListener(this);
 
         mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
@@ -193,7 +190,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     public void resetParams() {
-        mSeatDrawUtils.resetParams();
+        mSeatDrawUtils.resetParams(null);
     }
 
     @Override
@@ -203,27 +200,17 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex) {
-        return false;
+        return mSeatDrawUtils.updateSeatTypeInMap(seatType, rowIndex, columnIndex);
     }
 
     @Override
-    public void setSeatParams(SeatParams params) {
-        mSeatDrawUtils.setSeatParams(params);
+    public void setParams(ExportParams params) {
+        mSeatDrawUtils.resetParams(params);
     }
 
     @Override
-    public void setStageParams(StageParams params) {
-        mSeatDrawUtils.setStageParams(params);
-    }
-
-    @Override
-    public SeatParams getSeatParams() {
-        return mSeatDrawUtils.getSeatParams();
-    }
-
-    @Override
-    public StageParams getStageParams() {
-        return mSeatDrawUtils.getStageParams();
+    public ExportParams getParams() {
+        return mSeatDrawUtils.getExportParams();
     }
 
     @Override
@@ -257,7 +244,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     }
 
     @Override
-    public void setIsShowLog(boolean isShow) {
-        mSeatDrawUtils.setIsShowLog(isShow);
+    public void setIsShowLog(boolean isShow, String tag) {
+        mSeatDrawUtils.setIsShowLog(isShow, tag);
     }
 }

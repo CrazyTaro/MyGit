@@ -2,8 +2,7 @@ package com.crazytaro.bestapp.view;
 
 import android.graphics.Point;
 
-import com.crazytaro.bestapp.draw.utils.SeatParams;
-import com.crazytaro.bestapp.draw.utils.StageParams;
+import com.crazytaro.bestapp.draw.params.ExportParams;
 
 import java.util.List;
 
@@ -35,32 +34,18 @@ public interface ISeatChoose {
     public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex);
 
     /**
-     * 设置座位绘制使用的参数
+     * 设置绘制使用的参数
      *
-     * @param params 自定义座位绘制的参数
+     * @param params 自定义绘制的参数
      */
-    public void setSeatParams(SeatParams params);
+    public void setParams(ExportParams params);
 
     /**
-     * 设置舞台绘制使用的参数
-     *
-     * @param params 自定义舞台绘制的参数
-     */
-    public void setStageParams(StageParams params);
-
-    /**
-     * 获取座位参数对象，可进行座位参数设置
+     * 获取设置参数对象，可进行座位/舞台参数设置
      *
      * @return
      */
-    public SeatParams getSeatParams();
-
-    /**
-     * 获取舞台参数对象，可进行舞台参数设置
-     *
-     * @return
-     */
-    public StageParams getStageParams();
+    public ExportParams getParams();
 
     /**
      * 设置每次选座最多可以选择的座位个数
@@ -100,6 +85,7 @@ public interface ISeatChoose {
      * 是否显示日志
      *
      * @param isShow
+     * @param tag
      */
-    public void setIsShowLog(boolean isShow);
+    public void setIsShowLog(boolean isShow, String tag);
 }

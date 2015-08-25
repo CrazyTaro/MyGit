@@ -13,6 +13,11 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.crazytaro.bestapp.draw.params.BaseParams;
+import com.crazytaro.bestapp.draw.params.ExportParams;
+import com.crazytaro.bestapp.draw.params.SeatParams;
+import com.crazytaro.bestapp.draw.params.StageParams;
+
 /**
  * Created by xuhaolin in 2015-08-07
  * <p>座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件</p>
@@ -80,28 +85,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     private Context mContext = null;
     //绑定的用于绘制界面的View
     private View mDrawView = null;
-    //    //绘制方法
-//    private static SeatDrawUtils mInstance = null;
     //座位列表
     private int[][] mSeatMap = null;
-
-
-//    /**
-//     * 获取单一的实例,只有第一次初始化需要两个参数,其它时候获取该对象参数值可为null
-//     * <p><font color="yellow"><b>请注意此方法会直接设置绘制View的onTouch监听事件,如果不需要onTouch事件,请重新取消View的onTouch事件;
-//     * 如果需要同时处理自定义onTouch事件及使用本方法中的onTouch事件,请在自定义的事件中调用本方法中的onTouch事件以便处理</b></font></p>
-//     *
-//     * @param context  上下文对象
-//     * @param drawView 需要进行绘制的View,<font color="yellow"><b>建议使用自定义的View,且view为空白view即可</b></font>
-//     * @return
-//     * @deprecated
-//     */
-//    public static synchronized SeatDrawUtils getInstance(Context context, View drawView) {
-//        if (mInstance == null) {
-//            mInstance = new SeatDrawUtils(context, drawView);
-//        }
-//        return mInstance;
-//    }
 
     /**
      * 构造函数
@@ -129,14 +114,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上
      */
     public SeatDrawUtils(Context context, View drawView) {
-        if (context == null || drawView == null) {
-            throw new RuntimeException("初始化中context及drawView参数不可为null,该参数都是必需的");
-        }
-        mContext = context;
-        mDrawView = drawView;
-        mSeatParams = new SeatParams();
-        mStageParams = new StageParams();
-        initial();
+        this(context, drawView, new SeatParams(), new StageParams());
     }
 
     //初始化数据
@@ -149,9 +127,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         mMainSeatRectf = new RectF();
         mMinorSeatRectf = new RectF();
         mImageRectf = new RectF();
-
-//        mSeatParams = SeatParams.getInstance();
-//        mStageParams = StageParams.getInstance();
 
         this.setTouchEventListener(this);
         //设置监听事件,实际事件分配来自于抽象父类
@@ -236,52 +211,34 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 获取座位参数对象，可进行座位参数设置
+     * 获取参数设置对象，可进行座位参数设置
+     * <p><font color="yellow"><b>对于全局通用的参数,如背景或者缩略图背景等,设置任意一个内部参数即有效</b></font></p>
+     * <p>通用的参数
+     * <li>{@link BaseParams#setCanvasBackgroundColor(int)},设置背景色</li>
+     * <li>{@link BaseParams#setThumbnailBackgroundColorWithAlpha(int, int)},设置缩略图背景色及透明度</li>
+     * </p>
      *
      * @return
      */
-    public SeatParams getSeatParams() {
-        return this.mSeatParams;
+    public ExportParams getExportParams() {
+        return new ExportParams(this.mSeatParams, this.mStageParams);
     }
 
     /**
-     * 获取舞台参数对象，可进行舞台参数设置
+     * 重置座位绘制使用的参数,当参数不为null时,设置参数值,当参数为null时,使用默认参数值
      *
-     * @return
+     * @param params {@link ExportParams},参数设置接口
      */
-    public StageParams getStageParams() {
-        return this.mStageParams;
-    }
-
-    /**
-     * 重置座位绘制使用的参数(使用默认值)
-     */
-    public void resetParams() {
-        mSeatParams = new SeatParams();
-        mStageParams = new StageParams();
-    }
-
-    /**
-     * 设置座位绘制使用的参数
-     *
-     * @param params 自定义座位绘制的参数
-     */
-    public void setSeatParams(SeatParams params) {
+    public void resetParams(ExportParams params) {
         if (params != null) {
-            mSeatParams = params;
+            this.mSeatParams = (SeatParams) params.getSeatParams();
+            this.mStageParams = (StageParams) params.getSeatParams();
+        } else {
+            this.mSeatParams = new SeatParams();
+            this.mStageParams = new StageParams();
         }
     }
 
-    /**
-     * 设置舞台绘制使用的参数
-     *
-     * @param params 自定义舞台绘制的参数
-     */
-    public void setStageParams(StageParams params) {
-        if (params != null) {
-            mStageParams = params;
-        }
-    }
 
     /**
      * 设置是否绘制缩略图
@@ -528,10 +485,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
         if (mStageParams.getDrawType(false) == BaseParams.DRAW_TYPE_IMAGE) {
             //绘制图片舞台
-            mStageParams.loadStageImage(mContext, false);
-            Bitmap bitmap = mStageParams.getImage();
+            Bitmap bitmap = mStageParams.getImage(mContext);
             if (bitmap != null) {
-                canvas.drawBitmap(mStageParams.getImage(), null, stageRectf, paint);
+                canvas.drawBitmap(bitmap, null, stageRectf, paint);
                 //绘制成功
                 isDrawImageStage = true;
             }
@@ -550,7 +506,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
 
         //绘制舞台文字
-        String stageText = mStageParams.getStageText();
+        String stageText = mStageParams.getStageDescription();
         if (stageText != null) {
             paint.setTextSize(textSize);
             paint.setColor(mStageParams.getDescriptionColor());
@@ -1238,12 +1194,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param canvas 画板
      */
-    private void beginDraw(Canvas canvas) {
+    private void beginDraw(Canvas canvas, Paint paint) {
         //重置界面绘制的宽高
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
-        //绘制背景色
-        canvas.drawColor(mSeatParams.getCanvasBackgroundColor());
+        paint.setColor(mSeatParams.getCanvasBackgroundColor());
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0, 0, mWHPoint.x, mWHPoint.y, paint);
+//        //绘制背景色
+//        canvas.drawColor(mSeatParams.getCanvasBackgroundColor());
     }
 
     /**
@@ -1262,7 +1221,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         if (mWHPoint == null) {
             mWHPoint = getWidthAndHeight();
         }
-        this.beginDraw(canvas);
+        this.beginDraw(canvas, mPaint);
 
         drawNormalCanvas(canvas, mPaint, mWHPoint.y);
         //判断当前是否需要显示缩略图
@@ -1379,7 +1338,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
         //计算行的索引
         int clickRow = calculateRowIndex(clickPositionY, beginDrawPositionY, seatRowCount);
-        showMsg("click", "row = " + clickRow + "/column = " + clickColumn);
+        showMsg("单击座位结果:row = " + clickRow + "/column = " + clickColumn);
         //座位有效则进行处理
         if (clickColumn != -1 && clickRow != -1) {
             //返回的座位对应的索引值点
@@ -1858,59 +1817,25 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     @Override
-    /**
-     * 单击某个区域选择座位
-     */
     public void singleClickByTime(MotionEvent event) {
     }
 
     @Override
+    /**
+     * 单击某个区域选择座位
+     */
     public void singleClickByDistance(MotionEvent event) {
         clickChooseSeat(event);
     }
 
     @Override
     public void doubleClickByTime() {
-//        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
-//        float newScaleRate = 0f;
-//        if (currentScaleRate > 3) {
-//            newScaleRate = mSeatParams.setDefaultScaleValue(false);
-//        } else {
-//            if (currentScaleRate < 1.5) {
-//                newScaleRate = mSeatParams.setDefaultScaleValue(true);
-//                mStageParams.setDefaultScaleValue(true);
-//            } else {
-//                newScaleRate = mSeatParams.setDefaultScaleValue(false);
-//                mStageParams.setDefaultScaleValue(false);
-//            }
-//        }
-//        mSeatParams.setScaleRate(1,true);
-//        mStageParams.setScaleRate(1,true);
-//
-//        //判断是否已经存放了移动前的偏移数据
-//        if (!mIsFirstStorePoint) {
-//            //相对当前屏幕中心的X轴偏移量
-//            mOffsetPoint.x = mBeginDrawOffsetX;
-//            //相对当前屏幕中心的Y轴偏移量
-//            //原来的偏移量是以Y轴顶端为偏移值
-//            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-//            mIsFirstStorePoint = true;
-//        }
-//        //根据缩放比计算新的偏移值
-//        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
-//        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-//        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
-//        //是否进行up事件,是保存数据当前计算的最后数据
-//        mOffsetPoint.x = mBeginDrawOffsetX;
-//        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-//        //重置记录标志亦是
-//        mIsFirstStorePoint = false;
-//
-//        //重绘工作
-//        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
     }
 
     @Override
+    /**
+     * 双击放大缩小
+     */
     public void doubleClickByDistance() {
 //        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
 //        float newScaleRate = 0f;

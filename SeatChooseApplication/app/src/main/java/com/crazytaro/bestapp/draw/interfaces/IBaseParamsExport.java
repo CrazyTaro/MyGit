@@ -1,7 +1,7 @@
 package com.crazytaro.bestapp.draw.interfaces;
 
 /**
- * Created by lenovo on 2015/8/24.
+ * Created by xuhaolin on 2015/8/24.
  */
 public interface IBaseParamsExport {
     public boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha);
@@ -13,8 +13,6 @@ public interface IBaseParamsExport {
     public boolean setLargeScaleRate(int large);
 
     public boolean setSmallScaleRate(float small);
-
-    public void setDescriptionSize(float mSeatTextSize);
 
     public void setDescriptionColor(int color);
 

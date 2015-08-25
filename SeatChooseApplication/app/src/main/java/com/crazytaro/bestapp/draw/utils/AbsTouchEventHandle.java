@@ -21,6 +21,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
     private static final int HANDLE_SINGLE_CLICK_AT_DISTANCE = 1;
     private static final int HANDLE_SINGLE_CLICK_AT_TIME = -1;
     private static final int HANDLE_SINGLE_DOWN_AT_TIME = -2;
+    private static String TAG = "touch_event";
 
     private ITouchEventListener mItouchEventListener = null;
     //已经触发单击事件的情况下,是否触发单点触摸事件
@@ -194,7 +195,6 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
                 mIsMultiPoint = false;
                 mIsMultiDown = false;
                 mIsSingleMove = false;
-//                mIsSingleClickAtTime = false;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 //当确认进入多点单击状态,则执行多点单击抬起事件
@@ -264,7 +264,10 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
         this.mIsTriggerSingleTouchEvent = isTrigger;
     }
 
-    public void setIsShowLog(boolean isShowLog) {
+    public void setIsShowLog(boolean isShowLog, String tag) {
+        if (tag != null) {
+            TAG = tag;
+        }
         this.mIsShowLog = isShowLog;
     }
 
@@ -275,7 +278,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
      */
     public void showMsg(String msg) {
         if (mIsShowLog) {
-            Log.i("touch_event ", msg);
+            Log.i(TAG, msg);
         }
     }
 

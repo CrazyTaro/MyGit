@@ -3,7 +3,7 @@ package com.crazytaro.bestapp.draw.interfaces;
 import android.graphics.Bitmap;
 
 /**
- * Created by lenovo on 2015/8/24.
+ * Created by xuhaolin on 2015/8/24.
  */
 public interface ISeatParamsExport extends IBaseParamsExport {
     public Bitmap[] getImageBitmap();

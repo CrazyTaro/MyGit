@@ -1,4 +1,4 @@
-package com.crazytaro.bestapp.draw.utils;
+package com.crazytaro.bestapp.draw.params;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -68,18 +68,21 @@ public abstract class BaseParams {
     protected int mColor = DEFAULT_COLOR;
     protected int mDescriptionColor = DEFAULT_DESCRIPTION_COLOR;
 
+    //静态变量,全局通用的
     //画布背景颜色
-    private int mCanvasBackgroundColor = 0xf0ffff;
+    private static int mCanvasBackgroundColor = 0xf0ffff;
+    //缩略图背景色
+    private static int mThumbnailColor = Color.BLACK;
+    //缩略图背景透明度
+    private static int mThumbnailAlpha = 100;
+
+
     //是否绘制
     private boolean mIsDraw = true;
     //是否绘制缩略图
     private boolean mIsDrawThumbnail = false;
     //缩略图绘制的比例
     private float mThumbnailRate = 0.1f;
-    //缩略图背景色
-    private int mThumbnailColor = Color.BLACK;
-    //缩略图背景透明度
-    private int mThumbnailAlpha = 100;
     //绘制类型
     private int mDrawType = DRAW_TYPE_DEFAULT;
     //最大缩放倍数
@@ -414,14 +417,6 @@ public abstract class BaseParams {
                     return;
                 }
             }
-//            if (mSeatImageBitmaps != null) {
-//                //存在空元素,尝试回收无用的图片,重新加载数据
-//                for (Bitmap bitmap : mSeatImageBitmaps) {
-//                    if (bitmap != null) {
-//                        bitmap.recycle();
-//                    }
-//                }
-//            }
             //存在空元素则重新加载数据
             imageBitmap = new Bitmap[imageID.length];
 
@@ -579,7 +574,7 @@ public abstract class BaseParams {
      * @param scaleRate 新的缩放比例
      * @return 可以缩放返回true, 否则返回false
      */
-    protected boolean isCanScale(float scaleRate) {
+    public boolean isCanScale(float scaleRate) {
         float newHeight = this.mHeight * scaleRate;
         //由于座位的宽度是决定座位对应的文字
         //文字大小不允许超过800
@@ -600,5 +595,5 @@ public abstract class BaseParams {
      * @param scaleRate 新的缩放比
      * @param isTrueSet 是否将此次缩放结果记录为永久结果
      */
-    protected abstract void setScaleRate(float scaleRate, boolean isTrueSet);
+    public abstract void setScaleRate(float scaleRate, boolean isTrueSet);
 }
