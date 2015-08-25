@@ -18,8 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Author:
- * Description:
+ * created by xuhaolin at 2015/08/10
+ * <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
+ * <p>使用自定义View时需要创建内部对象{@link SeatDrawUtils},此类是处理所有绘制方法的重要类,必须使用该类才能完成绘制功能,
+ * 同时需要重写view的onDraw事件,通过调用seatDrawUtil.onDraw()完成绘制.</p>
+ * <p>如果需要处理选座事件,请实现接口{@link com.crazytaro.bestapp.draw.utils.SeatDrawUtils.ISeatInformationListener},
+ * 并为seatDrawUtil设置该接口对应的监听事件</p>
+ * <br/>
+ * <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
  */
 public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener, ISeatChoose {
     private SeatDrawUtils mSeatDrawUtils = null;
