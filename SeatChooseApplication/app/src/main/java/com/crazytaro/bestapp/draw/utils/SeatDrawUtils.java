@@ -21,6 +21,7 @@ import com.crazytaro.bestapp.draw.params.StageParams;
 /**
  * Created by xuhaolin in 2015-08-07
  * <p>座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件</p>
+ * <p><font color="yellow"><b>如果需要定制特殊的绘制,可以继承此类,通过提供的部分方法可以更加灵活地处理</b></font></p>
  */
 public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
     //座位参数
@@ -1837,43 +1838,47 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 双击放大缩小
      */
     public void doubleClickByDistance() {
-//        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
-//        float newScaleRate = 0f;
-//        if (currentScaleRate > 3) {
-//            newScaleRate = mSeatParams.setDefaultScaleValue(false);
-//        } else {
-//            if (currentScaleRate < 1.5) {
-//                newScaleRate = mSeatParams.setDefaultScaleValue(true);
-//                mStageParams.setDefaultScaleValue(true);
-//            } else {
-//                newScaleRate = mSeatParams.setDefaultScaleValue(false);
-//                mStageParams.setDefaultScaleValue(false);
-//            }
-//        }
-//        mSeatParams.setScaleRate(1, true);
-//        mStageParams.setScaleRate(1, true);
-//
-//        //判断是否已经存放了移动前的偏移数据
-//        if (!mIsFirstStorePoint) {
-//            //相对当前屏幕中心的X轴偏移量
-//            mOffsetPoint.x = mBeginDrawOffsetX;
-//            //相对当前屏幕中心的Y轴偏移量
-//            //原来的偏移量是以Y轴顶端为偏移值
-//            mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-//            mIsFirstStorePoint = true;
-//        }
-//        //根据缩放比计算新的偏移值
-//        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
-//        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-//        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
-//        //是否进行up事件,是保存数据当前计算的最后数据
-//        mOffsetPoint.x = mBeginDrawOffsetX;
-//        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-//        //重置记录标志亦是
-//        mIsFirstStorePoint = false;
-//
-//        //重绘工作
-//        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+        //当前缩放比,当前的界面相对原始界面的比例
+        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
+        //新的缩放比,用于处理偏移量
+        float newScaleRate = 0f;
+        //当前缩放比大于3,比默认最大缩放值大了,缩放到默认最大缩放值
+        if (currentScaleRate > 3) {
+            newScaleRate = mSeatParams.setDefaultScaleValue(true);
+            mStageParams.setDefaultScaleValue(true);
+        } else {
+            //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
+            if (currentScaleRate < 1.5) {
+                newScaleRate = mSeatParams.setDefaultScaleValue(true);
+                mStageParams.setDefaultScaleValue(true);
+            } else {
+                //当前缩放比大于1.5小于3,在最大缩放值与最小缩放值之前,缩放到默认最大值
+                newScaleRate = mSeatParams.setDefaultScaleValue(false);
+                mStageParams.setDefaultScaleValue(false);
+            }
+        }
+        //记录当前的值,写入存储信息(以便下次缩放使用,不是特指双击缩放,而是包括任何方式的缩放)
+        mSeatParams.setScaleRate(1, true);
+        mStageParams.setScaleRate(1, true);
+
+        //存放移动前的偏移数据
+        //相对当前屏幕中心的X轴偏移量
+        mOffsetPoint.x = mBeginDrawOffsetX;
+        //相对当前屏幕中心的Y轴偏移量
+        //原来的偏移量是以Y轴顶端为偏移值
+        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+
+
+        //根据缩放比计算新的偏移值
+        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+        //是否进行up事件,是保存数据当前计算的最后数据
+        mOffsetPoint.x = mBeginDrawOffsetX;
+        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+
+        //重绘工作
+        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
     }
 
     /**

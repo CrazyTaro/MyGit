@@ -137,7 +137,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         super.setSmallScaleRate(0.2f);
         resetSeatTypeWithColor();
         mSeatTypeDescription = DEFAULT_SEAT_TYPE_DESC;
-        super.storeDefaultScaleValue();
+        this.storeDefaultScaleValue();
     }
 
     /**
@@ -846,6 +846,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         return seatRectf;
     }
 
+    @Override
     public float getScaleRateCompareToOriginal() {
         if (mDefaultReduceHolder != null) {
             return this.mWidth / mDefaultReduceHolder[0];
@@ -854,6 +855,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
+    @Override
     public float setDefaultScaleValue(boolean isSetEnlarge) {
         float scaleRate = 0f;
         float[] defaultValues = null;
@@ -862,7 +864,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         } else {
             defaultValues = mDefaultReduceHolder;
         }
-        scaleRate = this.mWidth / defaultValues[0];
+        scaleRate = defaultValues[0] / this.mWidth;
 
         this.mWidth = defaultValues[0];
         this.mHeight = defaultValues[1];
@@ -877,7 +879,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
 
-    private void storeDefaultScaleVaule() {
+    @Override
+    public void storeDefaultScaleValue() {
         if (mDefaultEnlargeHolder == null) {
             mDefaultEnlargeHolder = new float[6];
         }

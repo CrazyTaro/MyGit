@@ -552,9 +552,6 @@ public abstract class BaseParams implements IBaseParamsExport {
         this.mColor = color;
     }
 
-    protected void storeDefaultScaleValue() {
-    }
-
     /**
      * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
@@ -583,4 +580,24 @@ public abstract class BaseParams implements IBaseParamsExport {
      * @param isTrueSet 是否将此次缩放结果记录为永久结果
      */
     public abstract void setScaleRate(float scaleRate, boolean isTrueSet);
+
+    /**
+     * 获取当前的绘制界面与原始(最初设定的界面)的比例,当前界面/原始界面
+     *
+     * @return
+     */
+    public abstract float getScaleRateCompareToOriginal();
+
+    /**
+     * 设置预设的缩放比为当前值(只用于双击缩放)
+     *
+     * @param isSetEnlarge 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
+     * @return
+     */
+    public abstract float setDefaultScaleValue(boolean isSetEnlarge);
+
+    /**
+     * 存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例
+     */
+    public abstract void storeDefaultScaleValue();
 }

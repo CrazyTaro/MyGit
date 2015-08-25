@@ -55,6 +55,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
 
     public StageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
+        this.storeDefaultScaleValue();
     }
 
     /**
@@ -138,6 +139,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
 
     /**
      * 获取舞台描述文字
+     *
      * @return
      */
     public String getStageDescription() {
@@ -146,6 +148,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
 
     /**
      * 设置舞台描述文字
+     *
      * @param text
      */
     public void setStageDescription(String text) {
@@ -211,6 +214,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         mHeight = mWidth * 1 / 5;
     }
 
+    @Override
     public float getScaleRateCompareToOriginal() {
         if (mDefaultReduceHolder != null) {
             return this.mWidth / mDefaultReduceHolder[0];
@@ -219,7 +223,8 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         }
     }
 
-    protected float setDefaultScaleValue(boolean isSetEnlarge) {
+    @Override
+    public float setDefaultScaleValue(boolean isSetEnlarge) {
         float scaleRate = 0f;
         float[] defaultValues = null;
         if (isSetEnlarge) {
@@ -227,7 +232,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         } else {
             defaultValues = mDefaultReduceHolder;
         }
-        scaleRate = this.mWidth / defaultValues[0];
+        scaleRate = defaultValues[0] / this.mWidth;
 
         this.mWidth = defaultValues[0];
         this.mHeight = defaultValues[1];
@@ -238,7 +243,7 @@ public class StageParams extends BaseParams implements IStageParamsExport {
     }
 
     @Override
-    protected void storeDefaultScaleValue() {
+    public void storeDefaultScaleValue() {
         if (mDefaultEnlargeHolder == null) {
             mDefaultEnlargeHolder = new float[4];
         }
