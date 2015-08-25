@@ -136,10 +136,18 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         }
     }
 
+    /**
+     * 获取舞台描述文字
+     * @return
+     */
     public String getStageDescription() {
         return mStageDescription;
     }
 
+    /**
+     * 设置舞台描述文字
+     * @param text
+     */
     public void setStageDescription(String text) {
         this.mStageDescription = text;
     }

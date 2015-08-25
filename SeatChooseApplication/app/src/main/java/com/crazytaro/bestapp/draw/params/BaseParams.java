@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import com.crazytaro.bestapp.draw.interfaces.IBaseParamsExport;
+
 import java.io.InputStream;
 
 
@@ -12,7 +14,7 @@ import java.io.InputStream;
  * Created by xuhaolin on 2015/8/24.
  * 创建参数类型对应的基本类
  */
-public abstract class BaseParams {
+public abstract class BaseParams implements IBaseParamsExport {
 
     /**
      * 默认文字大小
@@ -22,30 +24,6 @@ public abstract class BaseParams {
      * 默认文字颜色
      */
     public static final int DEFAULT_DESCRIPTION_COLOR = Color.BLACK;
-    /**
-     * 默认整数值:-1
-     */
-    public static final int DEFAULT_INT = -1;
-    /**
-     * 默认浮点值:-1
-     */
-    public static final float DEFAULT_FLOAT = -1;
-    /**
-     * 绘制方式,默认方式,使用颜色及图形绘制
-     */
-    public static final int DRAW_TYPE_DEFAULT = -1;
-    /**
-     * 绘制方式,使用图片填充
-     */
-    public static final int DRAW_TYPE_IMAGE = 0;
-    /**
-     * 绘制方式,缩略图模式
-     */
-    public static final int DRAW_TYPE_THUMBNAIL = 1;
-    /**
-     * 座位的绘制类型,不绘制
-     */
-    public static final int DRAW_TYPE_NO = 0;
     /**
      * 默认的宽度，此值不为定值，由子类实现具体默认宽度
      */
@@ -70,7 +48,7 @@ public abstract class BaseParams {
 
     //静态变量,全局通用的
     //画布背景颜色
-    private static int mCanvasBackgroundColor = 0xf0ffff;
+    private static int mCanvasBackgroundColor = Color.LTGRAY;
     //缩略图背景色
     private static int mThumbnailColor = Color.BLACK;
     //缩略图背景透明度
@@ -161,15 +139,15 @@ public abstract class BaseParams {
      * @param alpha 透明度,透明度必须在0-255之间,用默认值请用参数{@link #DEFAULT_INT}
      * @return
      */
-    public boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
+    public static boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
         if ((alpha < 0 || alpha > 255) && alpha != DEFAULT_INT) {
             return false;
         } else {
-            this.mThumbnailColor = color;
+            mThumbnailColor = color;
             if (alpha == DEFAULT_INT) {
-                this.mThumbnailAlpha = 100;
+                mThumbnailAlpha = 100;
             } else {
-                this.mThumbnailAlpha = alpha;
+                mThumbnailAlpha = alpha;
             }
             return true;
         }
@@ -180,8 +158,8 @@ public abstract class BaseParams {
      *
      * @return
      */
-    public int getThumbnailBackgroundColor() {
-        return this.mThumbnailColor;
+    public static int getThumbnailBackgroundColor() {
+        return mThumbnailColor;
     }
 
     /**
@@ -189,8 +167,8 @@ public abstract class BaseParams {
      *
      * @return
      */
-    public int getThumbnailBgAlpha() {
-        return this.mThumbnailAlpha;
+    public static int getThumbnailBgAlpha() {
+        return mThumbnailAlpha;
     }
 
     /**
@@ -198,8 +176,8 @@ public abstract class BaseParams {
      *
      * @param bgColor
      */
-    public void setCanvasBackgroundColor(int bgColor) {
-        this.mCanvasBackgroundColor = bgColor;
+    public static void setCanvasBackgroundColor(int bgColor) {
+        mCanvasBackgroundColor = bgColor;
     }
 
     /**
@@ -207,8 +185,8 @@ public abstract class BaseParams {
      *
      * @return
      */
-    public int getCanvasBackgroundColor() {
-        return this.mCanvasBackgroundColor;
+    public static int getCanvasBackgroundColor() {
+        return mCanvasBackgroundColor;
     }
 
     /**
@@ -267,10 +245,19 @@ public abstract class BaseParams {
         return this.mHeight * mSmallScaleRate;
     }
 
+    /**
+     * 设置描述文字的颜色,此颜色是用于绘制时使用的(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
+     * <p>设置座位描述文字时请勿使用此方法</p>
+     *
+     * @param color
+     */
     public void setDescriptionColor(int color) {
         this.mDescriptionColor = color;
     }
 
+    /**
+     * 获取描述文字的颜色(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
+     */
     public int getDescriptionColor() {
         return this.mDescriptionColor;
     }

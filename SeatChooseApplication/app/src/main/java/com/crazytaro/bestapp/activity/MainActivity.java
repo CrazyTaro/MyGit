@@ -73,8 +73,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         chooseView.setSeatMap(mSeatMap);
         chooseView.setISeatChooseEvent(this);
         chooseView.setIsDrawThumbnail(true);
-        chooseView.getParams().getSeatParams().setCanvasBackgroundColor(0x7ED321);
-//        chooseView.getParams().getSeatParams().setThumbnailBackgroundColorWithAlpha(0x7ED321, 80);
+        chooseView.getParams().setCanvasBackgroundColor(0x7ed321);
+        chooseView.setMostSeletedCount(3);
     }
 
     @Override

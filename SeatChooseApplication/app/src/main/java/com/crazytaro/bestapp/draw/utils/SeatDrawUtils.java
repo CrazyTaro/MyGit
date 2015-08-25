@@ -119,6 +119,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     //初始化数据
     private void initial() {
+
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
 
@@ -1198,11 +1199,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         //重置界面绘制的宽高
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
-        paint.setColor(mSeatParams.getCanvasBackgroundColor());
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(0, 0, mWHPoint.x, mWHPoint.y, paint);
-//        //绘制背景色
-//        canvas.drawColor(mSeatParams.getCanvasBackgroundColor());
+//        paint.setColor(mSeatParams.getCanvasBackgroundColor());
+//        paint.setStyle(Paint.Style.FILL);
+//        canvas.drawRect(0, 0, mWHPoint.x, mWHPoint.y, paint);
+        //绘制背景色
+        canvas.drawColor(BaseParams.getCanvasBackgroundColor());
     }
 
     /**
@@ -1304,11 +1305,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         RectF showRecf = this.getShowRectfInThumbnail(originalCanvasWidth, originalCanvasHeight);
 
         //绘制缩略图底色(半透明黑色)
-        paint.setColor(mSeatParams.getThumbnailBackgroundColor());
+        paint.setColor(BaseParams.getThumbnailBackgroundColor());
         paint.setStyle(Paint.Style.FILL);
-        paint.setAlpha(mSeatParams.getThumbnailBgAlpha());
+        paint.setAlpha(BaseParams.getThumbnailBgAlpha());
         canvas.drawRect(thumbnailRectf, paint);
-//        paint.setAlpha(0);
 
         //绘制缩略图
         drawNormalCanvas(canvas, paint, thumbnailRectf.height());
@@ -1890,7 +1890,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @return
      */
     protected float getScaleRate(float firstDownX, float firstDownY, float secondDownX, float secondDownY,
-                               float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
+                                 float firstUpX, float firstUpY, float secondUpX, float secondUpY) {
         //计算平方和
         double downDistance = Math.pow(Math.abs((firstDownX - secondDownX)), 2) + Math.pow(Math.abs(firstDownY - secondDownY), 2);
         double upDistance = Math.pow(Math.abs((firstUpX - secondUpX)), 2) + Math.pow(Math.abs(firstUpY - secondUpY), 2);

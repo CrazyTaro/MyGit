@@ -13,7 +13,7 @@ import com.crazytaro.bestapp.draw.interfaces.ISeatParamsExport;
  * Created by xuhaolin on 2015/8/9.
  * <p>座位参数，包括座位绘制需要的各种参数</p>
  */
-public class SeatParams extends BaseParams implements ISeatParamsExport{
+public class SeatParams extends BaseParams implements ISeatParamsExport {
     /**
      * 默认座位颜色值
      */
@@ -197,8 +197,6 @@ public class SeatParams extends BaseParams implements ISeatParamsExport{
     /**
      * 设置是否绘制座位类型,<font color="yellow"><b>此处与是否绘制座位{@link #isDraw()}是两个不同的方法,代表的意义不同</b></font>,
      * 此方法是对座位类型是否绘制的判断处理,而{@link #isDraw()}是对普通座位(出售座位)是否绘制的判断处理
-     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_DRAW_TYPE_NO}或不可见{@link #SEAT_TYPE_UNSHOW}的座位类型),
-     * 是否绘制一般由座位的类型决定,通过{@link #setIsDraw(int)}决定座位是否绘制</b></p>
      *
      * @param isDrawSeatType
      */
@@ -524,6 +522,15 @@ public class SeatParams extends BaseParams implements ISeatParamsExport{
         } else {
             super.setIsDraw(true);
         }
+    }
+
+    @Override
+    /**
+     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_DRAW_TYPE_NO}或不可见{@link #SEAT_TYPE_UNSHOW}的座位类型),
+     * 是否绘制一般由座位的类型决定,通过{@link #setIsDraw(int)}决定座位是否绘制</b></p>
+     */
+    public void setIsDraw(boolean isDraw) {
+        super.setIsDraw(isDraw);
     }
 
     @Override
