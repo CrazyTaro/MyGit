@@ -297,7 +297,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
     /**
      * 自定义触摸事件处理接口
      */
-    interface ITouchEventListener {
+    public interface ITouchEventListener {
 
         /**
          * 单点触摸事件处理

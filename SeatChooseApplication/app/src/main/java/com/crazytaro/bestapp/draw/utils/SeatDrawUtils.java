@@ -27,7 +27,7 @@ import com.crazytaro.bestapp.draw.params.StageParams;
  * 基本座位类型及普通座位参数均来自于{@link SeatParams}</b>,
  * 当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @apiNote}标注</font></p>
  * <br/>
- * <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@cod public}方法中进行设置</p>
+ * <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
 public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
     //座位参数
@@ -610,7 +610,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     /**
      * 绘制一行水平的座位表,<font color="#ff9900"><b>向一个固定的方向绘制</b></font>
      * <p><b>此方法从(drawPositionX,drawPositionY)的位置开始向某个方向绘制,
-     * 绘制方向由start/end决定,当start>end时,向左绘制,当start<end时,向右绘制,
+     * 绘制方向由start/end决定,当start&gt;end时,向左绘制,当start&lt;end时,向右绘制,
      * 此处的start与end是在列表数据seatList中的索引值</b></p>
      *
      * @param canvas          画板
@@ -1159,7 +1159,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 开始绘制缩略图并初始化部分工作
-     * <p><font color="#ff9900"><b>缩略图的绘制大小由view宽度决定,一般为view宽度的1/3,即宽度保持不变地占用了控件宽度的1/3,此参数可进行设置,但不建议更改</b></font></p>
+     * <p><font color="#ff9900"><b>缩略图的绘制大小由view宽度决定,一般为view宽度的1/3,即宽度保持不变地占用了控件宽度的1/3</b></font></p>
      *
      * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @param originalCanvasHeight 主界面的实际界面高度,同上
@@ -1282,8 +1282,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 绘制正常的界面,缩略图的绘制{@link #drawThumbnail(Canvas, Paint, float, float)}本身是依赖于此方法的,
-     * 此若需要自定义绘制类,通过继承此类后修改绘制流程则基本必须重写此类
-     * <p>此方法的绘制流程大致如下:<br/>
+     * <b>此若需要自定义绘制类,通过继承此类后修改绘制流程则基本必须重写此类</b>
+     * <br/>
+     * <br/>
+     * <p>此方法的绘制流程大致如下:
+     * <br/>
+     * <br/>
      * 1.获取X轴的中心位置(需要计算偏移量在内){@link #getDrawCenterX(float)}<br/>
      * 2.获取舞台绘制的高度(X轴是永远固定从中心位置开始的){@link #getStageDrawCenterY()}<br/>
      * 3.绘制舞台{@link #drawStage(Canvas, Paint, float, float)}<br/>
