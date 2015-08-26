@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 /**
  * Created by xuhaolin on 2015/8/24.
- * 创建参数类型对应的基本类
+ * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParamsExport})及全局性的参数(开放设置接口为{@link com.crazytaro.bestapp.draw.interfaces.IGlobleParamsExport})</p>
  */
 public abstract class BaseParams implements IBaseParamsExport {
 
@@ -39,12 +39,13 @@ public abstract class BaseParams implements IBaseParamsExport {
     /**
      * 默认颜色，此值不为定值，由子类实现具体的默认值
      */
-    protected int DEFAULT_COLOR = Color.GRAY;
-    protected float mWidth = DEFAULT_WIDTH;
-    protected float mHeight = DEFAULT_HEIGHT;
-    protected float mRadius = DEFAULT_RADIUS;
-    protected int mColor = DEFAULT_COLOR;
-    protected int mDescriptionColor = DEFAULT_DESCRIPTION_COLOR;
+
+    private int DEFAULT_COLOR = Color.GRAY;
+    private float mWidth = DEFAULT_WIDTH;
+    private float mHeight = DEFAULT_HEIGHT;
+    private float mRadius = DEFAULT_RADIUS;
+    private int mColor = DEFAULT_COLOR;
+    private int mDescriptionColor = DEFAULT_DESCRIPTION_COLOR;
 
     //静态变量,全局通用的
     //画布背景颜色
@@ -103,7 +104,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     /**
      * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的
      *
-     * @param isDrawThumbnail 是否绘制缩略图,<font color="yellow"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
+     * @param isDrawThumbnail 是否绘制缩略图,<font color="#ff9900"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
      * @param originalWidth   实际绘制界面的宽度
      * @param targetWidth     目标缩略图的宽度
      */
@@ -136,7 +137,7 @@ public abstract class BaseParams implements IBaseParamsExport {
      * 设置缩略图背景色及透明度
      *
      * @param color 颜色值,颜色值不作任何检测(颜色默认值为{@link Color#BLACK})
-     * @param alpha 透明度,透明度必须在0-255之间,用默认值请用参数{@link #DEFAULT_INT}
+     * @param alpha 透明度,透明度必须在0-255之间,用默认值请用参数{@link IBaseParamsExport#DEFAULT_INT}
      * @return
      */
     public static boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
@@ -190,7 +191,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
+     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParamsExport#DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
      * <p>该缩放倍数是以默认高度为基数{@link #DEFAULT_HEIGHT}</p>
      *
      * @param large 放大倍数
@@ -209,7 +210,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
+     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParamsExport#DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
      * <p>该缩放倍数是以默认高度为基数{@link #DEFAULT_HEIGHT}</p>
      *
      * @param small 缩小比例
@@ -276,8 +277,8 @@ public abstract class BaseParams implements IBaseParamsExport {
      *
      * @param drawType 绘制方式
      *                 <p>
-     *                 <li>{@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制</li>
-     *                 <li>{@link #DRAW_TYPE_IMAGE},图片绘制方式</li>
+     *                 {@link IBaseParamsExport#DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制<br/>
+     *                 {@link IBaseParamsExport#DRAW_TYPE_IMAGE},图片绘制方式<br/>
      *                 </p>
      */
     public void setDrawType(int drawType) {
@@ -291,9 +292,9 @@ public abstract class BaseParams implements IBaseParamsExport {
     /**
      * 获取绘制的方式
      * <p>
-     * <li>{@link #DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制</li>
-     * <li>{@link #DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充</li>
-     * <li>{@link #DRAW_TYPE_THUMBNAIL}缩略图绘制模式</li>
+     * {@link IBaseParamsExport#DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制<br/>
+     * {@link IBaseParamsExport#DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充<br/>
+     * {@link IBaseParamsExport#DRAW_TYPE_THUMBNAIL}缩略图绘制模式<br/>
      * </p>
      *
      * @param isGetOriginalDrawType 是否获取实际的绘制类型(存在缩略图的情况下,缩略图不属于实际的绘制方式中的任何一种),true返回实际绘制类型,false返回缩略图绘制模式(如果允许绘制缩略图的话)
@@ -327,8 +328,8 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置图片资源ID,<font color="yellow"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)})
-     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
+     * 设置图片资源ID,<font color="#ff9900"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)})
+     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
      * 资源ID设置通过拷贝的方式设置，防止内部数据受到外部数据的影响
      *
      * @param imageID   设置的资源ID
@@ -350,8 +351,8 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置图片资源,<font color="yellow"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
-     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[], int, int[])})</b></font></p>
+     * 设置图片资源,<font color="#ff9900"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
+     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[], int, int[])})</b></font></p>
      * 资源设置通过拷贝的方式设置，防止内部数据受到外部数据的影响
      *
      * @param imageBitmap   设置资源的图片对象数组
@@ -376,12 +377,12 @@ public abstract class BaseParams implements IBaseParamsExport {
      * 加载座位图片
      *
      * @param context      上下文对象,用于加载图片
-     * @param imageID      用于加载的资源ID，可为null，<font color="yellow"><b>但是两个资源参数必须一个不为null，且isReload为true时，此参数不可为null，否则抛出异常</b></font>
-     * @param imageBitmap  用于加载的资源图片数组，可为null，<font color="yellow"><b>但是两个资源参数必须一个不为null</b></font>
+     * @param imageID      用于加载的资源ID，可为null，<font color="#ff9900"><b>但是两个资源参数必须一个不为null，且isReload为true时，此参数不可为null，否则抛出异常</b></font>
+     * @param imageBitmap  用于加载的资源图片数组，可为null，<font color="#ff9900"><b>但是两个资源参数必须一个不为null</b></font>
      * @param targetWidth  加载图片的预期宽度
      * @param targetHeight 加载图片的预期高度
      * @param isReload     是否重新加载,若为true则以imageID为准,重新加载所有的bitmap,若为false则根据bitmap是否存在,若不存在则加载imageID的图片,存在则直接使用bitmap
-     *                     <p><font color="yellow"><b>此参数为true时，参数imageID不可为null，否则抛出异常</b></font></p>
+     *                     <p><font color="#ff9900"><b>此参数为true时，参数imageID不可为null，否则抛出异常</b></font></p>
      */
     protected void loadSeatImage(Context context, int[] imageID, Bitmap[] imageBitmap, int targetWidth, int targetHeight, boolean isReload) {
         if (imageID == null && isReload) {
@@ -449,24 +450,12 @@ public abstract class BaseParams implements IBaseParamsExport {
         }
     }
 
-//    /**
-//     * 获取描述文字
-//     *
-//     * @return
-//     */
-//    public String getDescription() {
-//        return mDescription;
-//    }
-
-//    /**
-//     * 设置描述文字
-//     *
-//     * @param text
-//     */
-//    public void setDescription(String text) {
-//        this.mDescription = text;
-//    }
-
+    /**
+     * 获取宽度
+     * <p>基类{@link BaseParams}中的宽高值都为0,必须是子类的值覆盖了基类中的值,或者通过{@link #setDefault(float, float, float, int)}进行设置</p>
+     *
+     * @return
+     */
     public float getWidth() {
         if (mIsDrawThumbnail) {
             return mWidth * mThumbnailRate;
@@ -476,20 +465,39 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置宽度
+     * 设置宽度，使用默认值请用{@link IBaseParamsExport#DEFAULT_FLOAT}
      *
      * @param width
      */
     public void setWidth(float width) {
+        this.setWidth(width, true);
+    }
+
+    /**
+     * 设置宽度,同时指定是否将此次值作为原始值存储,详见{@link #storeDefaultScaleValue()}
+     * <p>此方法为内部开放使用,外部公开设置请用{@link #setWidth(float)} ,且该方法必定会存储设置值</p>
+     *
+     * @param width
+     * @param isStoreValue true为存储此次值,false为不存储
+     */
+    protected void setWidth(float width, boolean isStoreValue) {
         if (width == DEFAULT_FLOAT) {
             this.mWidth = DEFAULT_WIDTH;
         } else {
             this.mWidth = width;
         }
-        this.storeDefaultScaleValue();
+        if (isStoreValue) {
+            this.storeDefaultScaleValue();
+        }
     }
 
 
+    /**
+     * 获取高度
+     * <p>基类{@link BaseParams}中的宽高值都为0,必须是子类的值覆盖了基类中的值,或者通过{@link #setDefault(float, float, float, int)}进行设置</p>
+     *
+     * @return
+     */
     public float getHeight() {
         if (mIsDrawThumbnail) {
             return mHeight * mThumbnailRate;
@@ -499,20 +507,40 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置高度
+     * 设置高度，使用默认值请用{@link IBaseParamsExport#DEFAULT_FLOAT}
      *
      * @param height
      * @return
      */
     public void setHeight(float height) {
+        this.setHeight(height, true);
+    }
+
+
+    /**
+     * 设置高度,同时指定是否将此次值作为原始值存储,详见{@link #storeDefaultScaleValue()}
+     * <p>此方法为内部开放使用,外部公开设置请用{@link #setHeight(float)},且该方法必定会存储设置值</p>
+     *
+     * @param height
+     * @param isStoreValue true为存储此次值,false为不存储
+     */
+    protected void setHeight(float height, boolean isStoreValue) {
         if (height == DEFAULT_FLOAT) {
             this.mHeight = DEFAULT_HEIGHT;
         } else {
             this.mHeight = height;
         }
-        this.storeDefaultScaleValue();
+        if (isStoreValue) {
+            this.storeDefaultScaleValue();
+        }
     }
 
+    /**
+     * 获取圆角弧度
+     * <p>基类{@link BaseParams}中的弧度值为0,必须是子类的值覆盖了基类中的值,或者通过{@link #setDefault(float, float, float, int)}进行设置</p>
+     *
+     * @return
+     */
     public float getRadius() {
         if (mIsDrawThumbnail) {
             return mRadius * mThumbnailRate;
@@ -522,7 +550,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置圆角弧度，此处并不是以度数计算的，使用默认值请用{@link #DEFAULT_FLOAT}
+     * 设置圆角弧度，此处并不是以度数计算的，使用默认值请用{@link IBaseParamsExport#DEFAULT_FLOAT}
      *
      * @param radius 圆角弧度
      */
@@ -535,7 +563,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 获取绘制的颜色值
+     * 获取当前绘制的颜色
      *
      * @return
      */
@@ -553,7 +581,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate 新的缩放比例
      * @return 可以缩放返回true, 否则返回false
@@ -574,7 +602,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate 新的缩放比
      * @param isTrueSet 是否将此次缩放结果记录为永久结果

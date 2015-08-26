@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 
 /**
  * Created by xuhaolin on 2015/8/24.
+ * 舞台参数设置接口,此接口用于公开可进行设置的参数方法,不允许访问和设置的方法没有在此接口公开(此接口仅仅相当于一个中间转换而已)
  */
 public interface IStageParamsExport extends IBaseParamsExport {
     /**

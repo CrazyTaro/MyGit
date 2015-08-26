@@ -2,15 +2,15 @@ package com.crazytaro.bestapp.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.crazytaro.bestapp.R;
 import com.crazytaro.bestapp.view.ISeatChooseEvent;
 import com.crazytaro.bestapp.view.SeatChooseView;
 
-
+/**
+ * 测试activity
+ */
 public class MainActivity extends Activity implements ISeatChooseEvent {
     private int[][] mSeatMap = {
             {1, 1, 0, 0, 1, 1, 0, 2, 1, 1, 2, 0, 0, 2, 1, 0, 0, 2,},//1
@@ -73,30 +73,9 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         chooseView.setSeatMap(mSeatMap);
         chooseView.setISeatChooseEvent(this);
         chooseView.setIsDrawThumbnail(true);
+        chooseView.setIsShowThumbnailAlways(false);
         chooseView.getParams().setCanvasBackgroundColor(0x7ed321);
         chooseView.setMostSeletedCount(3);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

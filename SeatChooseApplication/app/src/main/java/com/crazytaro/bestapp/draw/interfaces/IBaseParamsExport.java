@@ -2,6 +2,7 @@ package com.crazytaro.bestapp.draw.interfaces;
 
 /**
  * Created by xuhaolin on 2015/8/24.
+ * 基本参数设置接口,所有的接口来自于{@link com.crazytaro.bestapp.draw.params.BaseParams},且这一部分的接口为对外公开设置可用
  */
 public interface IBaseParamsExport {
     /**
@@ -30,7 +31,7 @@ public interface IBaseParamsExport {
     public static final int DRAW_TYPE_NO = 0;
 
     /**
-     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
+     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
      * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
      *
      * @param large 放大倍数
@@ -39,7 +40,7 @@ public interface IBaseParamsExport {
     public boolean setLargeScaleRate(int large);
 
     /**
-     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="yellow"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
+     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
      * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
      *
      * @param small 缩小比例
@@ -72,8 +73,8 @@ public interface IBaseParamsExport {
      *
      * @param drawType 绘制方式
      *                 <p>
-     *                 <li>{@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制</li>
-     *                 <li>{@link #DRAW_TYPE_IMAGE},图片绘制方式</li>
+     *                 {@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色绘制<br/>
+     *                 {@link #DRAW_TYPE_IMAGE},图片绘制方式<br/>
      *                 </p>
      */
     public void setDrawType(int drawType);
@@ -81,9 +82,9 @@ public interface IBaseParamsExport {
     /**
      * 获取绘制的方式
      * <p>
-     * <li>{@link #DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制</li>
-     * <li>{@link #DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充</li>
-     * <li>{@link #DRAW_TYPE_THUMBNAIL}缩略图绘制模式</li>
+     * {@link #DRAW_TYPE_DEFAULT}默认绘制方式,使用图形及颜色绘制<br/>
+     * {@link #DRAW_TYPE_IMAGE}图片绘制方式,使用图片填充<br/>
+     * {@link #DRAW_TYPE_THUMBNAIL}缩略图绘制模式<br/>
      * </p>
      *
      * @param isGetOriginalDrawType 是否获取实际的绘制类型(存在缩略图的情况下,缩略图不属于实际的绘制方式中的任何一种),true返回实际绘制类型,false返回缩略图绘制模式(如果允许绘制缩略图的话)

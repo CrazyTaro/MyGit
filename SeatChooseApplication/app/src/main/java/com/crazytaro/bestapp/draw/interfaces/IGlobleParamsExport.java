@@ -4,6 +4,8 @@ import android.graphics.Color;
 
 /**
  * Created by xuhaolin on 15/8/25.
+ * 全局设置参数接口,所有接口来自于{@link com.crazytaro.bestapp.draw.params.BaseParams},此接口内的方法是独立且涉及全局数据的设置的,是独立对外开放的接口
+ * <p>此接口与{@link IBaseParamsExport}不同,此接口为设置全局性的参数,而{@link IBaseParamsExport}是设置具体参数类型(座位/舞台)对应的相同的参数(宽/高等)</p>
  */
 public interface IGlobleParamsExport {
 

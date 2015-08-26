@@ -305,7 +305,7 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
          * @param event            单点触摸事件
          * @param extraMotionEvent 建议处理的额外事件,如果不需要进行额外处理则该参数值为{@link #MOTION_EVENT_NOTHING}
          *                         <p>存在此参数是因为可能用户进行单点触摸并移动之后,会再进行多点触摸(此时并没有松开触摸),在这种情况下是无法分辨需要处理的是单点触摸事件还是多点触摸事件.
-         *                         <font color="yellow"><b>此时会传递此参数值为单点触摸的{@link MotionEvent#ACTION_UP},建议按抬起事件处理并结束事件</b></font></p>
+         *                         <font color="#ff9900"><b>此时会传递此参数值为单点触摸的{@link MotionEvent#ACTION_UP},建议按抬起事件处理并结束事件</b></font></p>
          */
         public abstract void singleTouchEventHandle(MotionEvent event, int extraMotionEvent);
 
@@ -319,15 +319,15 @@ public class AbsTouchEventHandle implements View.OnTouchListener {
 
         /**
          * 单击事件处理,由于只要触摸到屏幕且时间足够长,就可以产生move事件,并不一定需要移动触摸才能产生move事件,
-         * <font color="yellow"><b>所以产生单击事件的同时也会触发up事件{@link #singleTouchEventHandle(MotionEvent, int)}</b></font>,
-         * <p>单击事件仅仅只能控制触摸时间<font color="yellow"><b>少于500ms</b></font>的触摸事件,超过500ms将不会触摸单击事件</p>
+         * <font color="#ff9900"><b>所以产生单击事件的同时也会触发up事件{@link #singleTouchEventHandle(MotionEvent, int)}</b></font>,
+         * <p>单击事件仅仅只能控制触摸时间<font color="#ff9900"><b>少于500ms</b></font>的触摸事件,超过500ms将不会触摸单击事件</p>
          *
          * @param event 单击触摸事件
          */
         public abstract void singleClickByTime(MotionEvent event);
 
         /**
-         * 单击事件处理,触摸点down的坐标与up坐标距离差不大于10像素则认为是一次单击,<font color="yellow"><b>与时间无关</b></font>
+         * 单击事件处理,触摸点down的坐标与up坐标距离差不大于10像素则认为是一次单击,<font color="#ff9900"><b>与时间无关</b></font>
          *
          * @param event 单击触摸事件
          */

@@ -1,6 +1,4 @@
-package com.crazytaro.bestapp.draw.params;/**
- * Created by xuhaolin on 15/8/25.
- */
+package com.crazytaro.bestapp.draw.params;
 
 import com.crazytaro.bestapp.draw.interfaces.IGlobleParamsExport;
 import com.crazytaro.bestapp.draw.interfaces.ISeatParamsExport;
@@ -8,7 +6,7 @@ import com.crazytaro.bestapp.draw.interfaces.IStageParamsExport;
 
 /**
  * created by xuhaolin at 2015/08/25
- * <p>外部参数设置接口</p>
+ * <p>外部参数设置类,实现了全局参数设置接口{@link IGlobleParamsExport},全局参数的设置在此类实现</p>
  */
 public class ExportParams implements IGlobleParamsExport {
     ISeatParamsExport mSeatParams = null;

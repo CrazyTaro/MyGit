@@ -9,6 +9,7 @@ import com.crazytaro.bestapp.draw.interfaces.IStageParamsExport;
 /**
  * Created by xuhaolin on 2015/8/9.
  * <p>舞台参数，包括舞台绘制需要的所有参数</p>
+ * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link IStageParamsExport}</p>
  */
 public class StageParams extends BaseParams implements IStageParamsExport {
     /**
@@ -106,31 +107,26 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         super.loadSeatImage(context, imageID, imageBitmap, (int) this.getWidth(), (int) this.getHeight(), isReload);
     }
 
+
     @Override
-    /**
-     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
-     *
-     * @param scaleRate 新的缩放比
-     * @param isTrueSet 是否将此次缩放结果记录为永久结果
-     */
     public void setScaleRate(float scaleRate, boolean isTrueSet) {
         if (mValueHolder == null) {
             mValueHolder = new float[4];
         }
         if (!mIsValueHold) {
-            mValueHolder[0] = this.mWidth;
-            mValueHolder[1] = this.mHeight;
+            mValueHolder[0] = this.getWidth();
+            mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mStageMarginTop;
             mValueHolder[3] = this.mStageMarginBottom;
             mIsValueHold = true;
         }
-        this.mWidth = mValueHolder[0] * scaleRate;
-        this.mHeight = mValueHolder[1] * scaleRate;
+        this.setWidth(mValueHolder[0] * scaleRate, false);
+        this.setHeight(mValueHolder[1] * scaleRate, false);
         this.mStageMarginTop = mValueHolder[2] * scaleRate;
         this.mStageMarginBottom = mValueHolder[3] * scaleRate;
         if (isTrueSet) {
-            mValueHolder[0] = this.mWidth;
-            mValueHolder[1] = this.mHeight;
+            mValueHolder[0] = this.getWidth();
+            mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mStageMarginTop;
             mValueHolder[3] = this.mStageMarginBottom;
             mIsValueHold = false;
@@ -210,14 +206,14 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         if (widthPrecent == DEFAULT_FLOAT || widthPrecent < 0 || widthPrecent > 1) {
             widthPrecent = 0.3f;
         }
-        mWidth = viewWidth * widthPrecent;
-        mHeight = mWidth * 1 / 5;
+        this.setWidth(viewWidth * widthPrecent, false);
+        this.setHeight(this.getWidth() * 1 / 5, false);
     }
 
     @Override
     public float getScaleRateCompareToOriginal() {
         if (mDefaultReduceHolder != null) {
-            return this.mWidth / mDefaultReduceHolder[0];
+            return this.getWidth() / mDefaultReduceHolder[0];
         } else {
             return DEFAULT_FLOAT;
         }
@@ -232,10 +228,10 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         } else {
             defaultValues = mDefaultReduceHolder;
         }
-        scaleRate = defaultValues[0] / this.mWidth;
+        scaleRate = defaultValues[0] / this.getWidth();
 
-        this.mWidth = defaultValues[0];
-        this.mHeight = defaultValues[1];
+        this.setWidth(defaultValues[0], false);
+        this.setHeight(defaultValues[1], false);
         this.mStageMarginTop = defaultValues[2];
         this.mStageMarginBottom = defaultValues[3];
 
@@ -250,13 +246,13 @@ public class StageParams extends BaseParams implements IStageParamsExport {
         if (mDefaultReduceHolder == null) {
             mDefaultReduceHolder = new float[4];
         }
-        mDefaultEnlargeHolder[0] = this.mWidth * 3;
-        mDefaultEnlargeHolder[1] = this.mHeight * 3;
+        mDefaultEnlargeHolder[0] = this.getWidth() * 3;
+        mDefaultEnlargeHolder[1] = this.getHeight() * 3;
         mDefaultEnlargeHolder[2] = this.mStageMarginTop * 3;
         mDefaultEnlargeHolder[3] = this.mStageMarginBottom * 3;
 
-        mDefaultReduceHolder[0] = this.mWidth * 1;
-        mDefaultReduceHolder[1] = this.mHeight * 1;
+        mDefaultReduceHolder[0] = this.getWidth() * 1;
+        mDefaultReduceHolder[1] = this.getHeight() * 1;
         mDefaultReduceHolder[2] = this.mStageMarginTop * 1;
         mDefaultReduceHolder[3] = this.mStageMarginBottom * 1;
     }

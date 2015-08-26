@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by lenovo on 2015/8/24.
+ * <p>{@link SeatChooseView}实现的接口,用于提供对外设置参数的一些方法</p>
  */
 public interface ISeatChoose {
     /**
@@ -16,7 +17,7 @@ public interface ISeatChoose {
     public void resetParams();
 
     /**
-     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="yellow"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改，或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据</b></font>
+     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="#ff9900"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改，或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据</b></font>
      * <p>此方法应该在View绘制前被调用,否则将获取不到绘制数据</p>
      *
      * @param seatMap 座位列表
@@ -62,6 +63,7 @@ public interface ISeatChoose {
 
     /**
      * 设置是否保持缩略图的显示，若设为false，则缩略图只在拖动界面或者是缩放时显示，当界面静止是不显示缩略图
+     * 默认为true,保持显示
      *
      * @param isShowAlways
      */
@@ -77,7 +79,7 @@ public interface ISeatChoose {
     /**
      * 设置座位选中监听事件
      *
-     * @param eventListener
+     * @param eventListener {@link ISeatChooseEvent},选择座位回调的事件
      */
     public void setISeatChooseEvent(ISeatChooseEvent eventListener);
 

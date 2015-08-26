@@ -11,7 +11,8 @@ import com.crazytaro.bestapp.draw.interfaces.ISeatParamsExport;
 
 /**
  * Created by xuhaolin on 2015/8/9.
- * <p>座位参数，包括座位绘制需要的各种参数</p>
+ * <p>座位参数，包括座位绘制需要的各种参数;座位类型及其描述相关参数与在此类设置</p>
+ * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link ISeatParamsExport}</p>
  */
 public class SeatParams extends BaseParams implements ISeatParamsExport {
     /**
@@ -59,15 +60,15 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static final float DEFAULT_SEAT_RADIUS = DEFAULT_SEAT_HEIGHT * 0.1f;
     /**
-     * 默认座位类型,分别为<font color="yellow"><b>可选,已选,已售</b></font>
+     * 默认座位类型,分别为<font color="#ff9900"><b>可选,已选,已售</b></font>
      */
     public static int[] DEFAULT_SEAT_TYPE = {1, 2, 3};
     /**
      * 默认座位类型对应的颜色,分别为
      * <p>
-     * <li>可选=<font color="white"><b>白色</b></font></li>
-     * <li>已选=<font color="red"><b>红色</b></font></li>
-     * <li>已售=<font color="yellow"><b>黄色</b></font></li>
+     * 可选=<font color="white"><b>白色</b></font><br/>
+     * 已选=<font color="red"><b>红色</b></font><br/>
+     * 已售=<font color="#ff9900"><b>黄色</b></font><br/>
      * </p>
      */
     public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.WHITE, Color.RED, Color.YELLOW};
@@ -76,15 +77,15 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static String[] DEFAULT_SEAT_TYPE_DESC = {"可选", "已选", "已售"};
     /**
-     * 座位默认基本类型,已选,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     * 座位默认基本类型,已选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
      */
     public static int SEAT_TYPE_SELETED = 2;
     /**
-     * 座位默认基本类型,未选,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     * 座位默认基本类型,未选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
      */
     public static int SEAT_TYPE_UNSELETED = 1;
     /**
-     * 座位默认基本类型,不可见,<font color="yellow"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>,其值与{@link #SEAT_DRAW_TYPE_NO}保持一致
+     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>,其值与{@link #SEAT_DRAW_TYPE_NO}保持一致
      */
     public static int SEAT_TYPE_UNSHOW = 0;
     /**
@@ -126,11 +127,18 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     private Bitmap[] mSeatImageBitmaps = null;
 
     private float mDescriptionSize = DEFAULT_DESCRIPTION_SIZE;
+    //移动缩放时用于暂时存放缩放前的数据(以便于正常使用比例缩放)
     private float[] mValueHolder = null;
     private boolean mIsValueHold = false;
+    //用于保存最原始的数据默认缩放值
+    //最大默认缩放值
     private float[] mDefaultEnlargeHolder = null;
+    //最小默认缩放值
     private float[] mDefaultReduceHolder = null;
 
+    /**
+     * 创建并初始化参数
+     */
     public SeatParams() {
         super(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR);
         super.setLargeScaleRate(16);
@@ -195,7 +203,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置是否绘制座位类型,<font color="yellow"><b>此处与是否绘制座位{@link #isDraw()}是两个不同的方法,代表的意义不同</b></font>,
+     * 设置是否绘制座位类型,<font color="#ff9900"><b>此处与是否绘制座位{@link #isDraw()}是两个不同的方法,代表的意义不同</b></font>,
      * 此方法是对座位类型是否绘制的判断处理,而{@link #isDraw()}是对普通座位(出售座位)是否绘制的判断处理
      *
      * @param isDrawSeatType
@@ -215,7 +223,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
 
     @Override
     /**
-     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="yellow"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     * <font color="#ff9900"><b>此方法不对用户开放使用,设置参数请忽略此方法</b></font><br/>
+     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate      新的缩放比
      * @param isTrueSetValue 是否将此次缩放结果记录为永久结果
@@ -227,8 +236,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         }
         if (!mIsValueHold) {
             //第一次更新数据记录下最原始的数据
-            mValueHolder[0] = this.mWidth;
-            mValueHolder[1] = this.mHeight;
+            mValueHolder[0] = this.getWidth();
+            mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mSeatHeightInterval;
             mValueHolder[3] = this.mSeatVerticalInterval;
             mValueHolder[4] = this.mSeatTextInterval;
@@ -237,20 +246,20 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
             mIsValueHold = true;
         }
         //每一次变化都处理为相对原始数据的变化
-        this.mWidth = mValueHolder[0] * scaleRate;
-        this.mHeight = mValueHolder[1] * scaleRate;
+        this.setWidth(mValueHolder[0] * scaleRate, false);
+        this.setHeight(mValueHolder[1] * scaleRate, false);
         this.mSeatHeightInterval = mValueHolder[2] * scaleRate;
         this.mSeatVerticalInterval = mValueHolder[3] * scaleRate;
         this.mSeatTextInterval = mValueHolder[4] * scaleRate;
         this.mSeatTypeInterval = mValueHolder[5] * scaleRate;
         this.mDescriptionSize = mValueHolder[6] * scaleRate;
         //自动计算主次座位高度
-        this.autoCalculateSeatShapeHeight(this.mHeight);
+        this.autoCalculateSeatShapeHeight(this.getHeight());
 
         //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
         if (isTrueSetValue) {
-            mValueHolder[0] = this.mWidth;
-            mValueHolder[1] = this.mHeight;
+            mValueHolder[0] = this.getWidth();
+            mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mSeatHeightInterval;
             mValueHolder[3] = this.mSeatVerticalInterval;
             mValueHolder[4] = this.mSeatTextInterval;
@@ -316,19 +325,20 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
-    @Override
     /**
-     * 获取当前绘制的座位的颜色,<font color="yellow"><b>注意此处是当前绘制的座位的颜色,该颜色值只用于当前绘制的座位,此座位包括了普通座位及绘制座位类型时的示例座位</b></font>
+     * <font color="#ff9900"><b>此方法不对用户开放使用,设置参数请忽略此方法</b></font><br/>
+     * 获取当前绘制的座位的颜色,<font color="#ff9900"><b>注意此处是当前绘制的座位的颜色,该颜色值只用于当前绘制的座位,此座位包括了普通座位及绘制座位类型时的示例座位</b></font>
      * <p>若使用默认的座位绘制方式,则应该保证在每次座位绘制之前设置该值,否则可能会使后面大量的座位使用同一个颜色值</p>
      *
      * @return
      */
+    @Override
     public int getColor() {
         return super.getColor();
     }
 
     /**
-     * 获取座位参数类型对应的数据表示,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     * 获取座位参数类型对应的数据表示,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
      *
      * @return
      */
@@ -344,7 +354,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 获取座位类型对应的颜色数据,,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     * 获取座位类型对应的颜色数据,,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
      *
      * @return
      */
@@ -360,7 +370,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 获取座位类型对应的描述文字,,<font color="yellow"><b>结果为拷贝对象,不是原始引用</b></font>
+     * 获取座位类型对应的描述文字,,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
      *
      * @return
      */
@@ -388,17 +398,16 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
-
-    @Override
     /**
-     * 设置绘制类型,<font color="yellow"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>,设置此方法前应该先设置图片资源ID{@link #setImage(int[])}或图片对象{@link #setImage(Bitmap[])}
+     * 设置绘制类型,<font color="#ff9900"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>,设置此方法前应该先设置图片资源ID{@link #setImage(int[])}或图片对象{@link #setImage(Bitmap[])}
      * <p>
-     * <li>{@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色</li>
-     * <li>{@link #DRAW_TYPE_IMAGE},图片绘制方式,使用图片进行填充</li>
+     * {@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色<br/>
+     * {@link #DRAW_TYPE_IMAGE},图片绘制方式,使用图片进行填充<br/>
      * </p>
      *
      * @param drawType
      */
+    @Override
     public void setDrawType(int drawType) {
         if (drawType == DRAW_TYPE_IMAGE && (mSeatImageID == null || mSeatImageBitmaps == null)) {
             throw new RuntimeException("设置绘制方式为图像类型时,必须存在图片资源或者图像资源!");
@@ -408,8 +417,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置图片资源ID,<font color="yellow"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
-     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
+     * 设置图片资源ID,<font color="#ff9900"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
+     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
      *
      * @param imageID
      */
@@ -421,8 +430,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置图片资源,<font color="yellow"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)})
-     * <p><font color="yellow"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[])})</b></font></p>
+     * 设置图片资源,<font color="#ff9900"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)})
+     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[])})</b></font></p>
      *
      * @param imageBitmap
      */
@@ -433,13 +442,12 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         super.setImage(imageBitmap, mSeatTypeArrary.length, mSeatImageBitmaps);
     }
 
-
-    @Override
     /**
      * 设置座位的高度,此方法的高度直接用于绘制图片座位的高度;且该方法会自动计算默认绘制方式的主次座位部分的高度
      *
      * @param height
      */
+    @Override
     public void setHeight(float height) {
         super.setHeight(height);
         this.autoCalculateSeatShapeHeight(height);
@@ -472,7 +480,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置座位与邻近文字之间的间隔,<font color="yellow"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
+     * 设置座位与邻近文字之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
      *
      * @param mSeatTextInterval
      */
@@ -485,10 +493,10 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置座位类型之间的间隔,<font color="yellow"><b>此参数仅在绘制座位类型及其描述的时候有效,在绘制普通座位时无效</b></font>.
+     * 设置座位类型之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述的时候有效,在绘制普通座位时无效</b></font>.
      * <p>
-     * <li>设置普通座位之间的间隔请用{@link #setSeatHorizontalInterval(float)}</li>
-     * <li>设置普通座位上下之间的间隔请用{@link #setSeatVerticalInterval(float)}</li>
+     * 设置普通座位之间的间隔请用{@link #setSeatHorizontalInterval(float)}<br/>
+     * 设置普通座位上下之间的间隔请用{@link #setSeatVerticalInterval(float)}<br/>
      * </p>
      *
      * @param mSeatTypeInterval
@@ -502,7 +510,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置默认的不绘制座位的类型,默认值为0{@link #SEAT_DRAW_TYPE_NO},<font color="yellow"><b>如果不是必要的情况下,不建议修改该值,使用默认值即可</b></font>
+     * 设置默认的不绘制座位的类型,默认值为0{@link #SEAT_DRAW_TYPE_NO},<font color="#ff9900"><b>如果不是必要的情况下,不建议修改该值,使用默认值即可</b></font>
      *
      * @param seatDrawNo
      */
@@ -512,7 +520,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
 
     /**
      * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_DRAW_TYPE_NO}时，不绘制该座位
-     * <p><font color="yellow"><b>{@link #SEAT_DRAW_TYPE_NO}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
+     * <p><font color="#ff9900"><b>{@link #SEAT_DRAW_TYPE_NO}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
      *
      * @param seatType 座位类型
      */
@@ -524,22 +532,22 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
-    @Override
     /**
      * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_DRAW_TYPE_NO}或不可见{@link #SEAT_TYPE_UNSHOW}的座位类型),
      * 是否绘制一般由座位的类型决定,通过{@link #setIsDraw(int)}决定座位是否绘制</b></p>
      */
+    @Override
     public void setIsDraw(boolean isDraw) {
         super.setIsDraw(isDraw);
     }
 
-    @Override
     /**
-     * 设置绘制时使用的座位颜色，<font color="yellow"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font>
-     * <p><font color="yellow"><b>在任何一次绘制座位之前都必须考虑是否需要调用此方法，否则绘制使用的颜色将是上一次绘制使用的颜色</b></font></p>
+     * 设置绘制时使用的座位颜色，<font color="#ff9900"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font>
+     * <p><font color="#ff9900"><b>在任何一次绘制座位之前都必须考虑是否需要调用此方法，否则绘制使用的颜色将是上一次绘制使用的颜色</b></font></p>
      *
      * @param seatColor
      */
+    @Override
     public void setColor(int seatColor) {
         super.setColor(seatColor);
     }
@@ -563,7 +571,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 重置默认的座位参数,包括<font color="yellow"><b>座位类型,座位颜色,座位描述</b></font>
+     * 重置默认的座位参数,包括<font color="#ff9900"><b>座位类型,座位颜色,座位描述</b></font>
      */
     public void resetDefaultSeatParams() {
         DEFAULT_SEAT_TYPE = new int[]{1, 2, 3};
@@ -609,7 +617,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
 
     /**
      * 设置/添加额外的座位类型、颜色及其类型对应的描述
-     * <p><font color="yellow"><b>该方法保留了默认的座位类型及颜色参数,只是在其基础上添加了其它的类型与参数</b></font></p>
+     * <p><font color="#ff9900"><b>该方法保留了默认的座位类型及颜色参数,只是在其基础上添加了其它的类型与参数</b></font></p>
      *
      * @param seatExtraTypeArr  新增的座位类型，不可为null
      * @param colorExtraArr     新增的座位类型对应的颜色，不可为null
@@ -682,7 +690,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置所有座位的类型，颜色及其描述,<font color="yellow"><b>该方法会替换所有的座位对应的默认参数</b></font>
+     * 设置所有座位的类型，颜色及其描述,<font color="#ff9900"><b>该方法会替换所有的座位对应的默认参数</b></font>
      * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int)},方便数据处理及以防出错</p>
      *
      * @param seatTypeArr  新的座位类型
@@ -712,9 +720,9 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     /**
      * 重置所有的座位类型与参数,回到默认状态(三个座位类型及颜色参数),座位的绘制类型也重置为默认绘制方式
      * <p>
-     * <li>可选座位</li>
-     * <li>已选座位</li>
-     * <li>已售座位</li>
+     * 可选座位<br/>
+     * 已选座位<br/>
+     * 已售座位<br/>
      * </p>
      */
     public void resetSeatTypeWithColor() {
@@ -742,9 +750,9 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
      *
      * @param seatType 座位类型
      *                 <p>默认座位类型
-     *                 <li>可选座位</li>
-     *                 <li>已选座位</li>
-     *                 <li>已售座位</li>
+     *                 可选座位<br/>
+     *                 已选座位<br/>
+     *                 已售座位<br/>
      *                 </p>
      * @return 返回对应的座位颜色, 若查询不到对应的座位类型颜色则返回默认颜色值 {@link #DEFAULT_SEAT_COLOR}
      */
@@ -789,7 +797,7 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     protected void autoCalculateSeatShapeHeight(float seatHeight) {
         float newRadius = seatHeight * 0.1f;
-        this.mRadius = newRadius > 20f ? 20f : newRadius;
+        this.setRadius(newRadius > 20f ? 20f : newRadius);
         this.mMainSeatHeight = seatHeight * 0.75f;
         this.mMinorSeatHeight = seatHeight * 0.2f;
         this.mSeatHeightInterval = seatHeight * 0.05f;
@@ -849,7 +857,8 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     @Override
     public float getScaleRateCompareToOriginal() {
         if (mDefaultReduceHolder != null) {
-            return this.mWidth / mDefaultReduceHolder[0];
+            //计算当前值与原始值的缩放比
+            return this.getWidth() / mDefaultReduceHolder[0];
         } else {
             return DEFAULT_FLOAT;
         }
@@ -859,21 +868,24 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
     public float setDefaultScaleValue(boolean isSetEnlarge) {
         float scaleRate = 0f;
         float[] defaultValues = null;
+        //是否缩放到默认最大值
         if (isSetEnlarge) {
             defaultValues = mDefaultEnlargeHolder;
         } else {
+            //缩放到最小值
             defaultValues = mDefaultReduceHolder;
         }
-        scaleRate = defaultValues[0] / this.mWidth;
+        //计算缩放后的值与当前值的比例,作为当前缩放比
+        scaleRate = defaultValues[0] / this.getWidth();
 
-        this.mWidth = defaultValues[0];
-        this.mHeight = defaultValues[1];
+        this.setWidth(defaultValues[0], false);
+        this.setHeight(defaultValues[1], false);
         this.mSeatHorizontalInterval = defaultValues[2];
         this.mSeatVerticalInterval = defaultValues[3];
         this.mSeatTextInterval = defaultValues[4];
         this.mDescriptionSize = defaultValues[5];
-
-        this.autoCalculateSeatShapeHeight(this.mHeight);
+        //计算座位参数
+        this.autoCalculateSeatShapeHeight(this.getHeight());
 
         return scaleRate;
     }
@@ -888,15 +900,15 @@ public class SeatParams extends BaseParams implements ISeatParamsExport {
             mDefaultReduceHolder = new float[6];
         }
 
-        mDefaultEnlargeHolder[0] = this.mWidth * 3;
-        mDefaultEnlargeHolder[1] = this.mHeight * 3;
+        mDefaultEnlargeHolder[0] = this.getWidth() * 3;
+        mDefaultEnlargeHolder[1] = this.getHeight() * 3;
         mDefaultEnlargeHolder[2] = this.mSeatHorizontalInterval * 3;
         mDefaultEnlargeHolder[3] = this.mSeatVerticalInterval * 3;
         mDefaultEnlargeHolder[4] = this.mSeatTextInterval * 3;
         mDefaultEnlargeHolder[5] = this.mDescriptionSize * 3;
 
-        mDefaultReduceHolder[0] = this.mWidth * 1;
-        mDefaultReduceHolder[1] = this.mHeight * 1;
+        mDefaultReduceHolder[0] = this.getWidth() * 1;
+        mDefaultReduceHolder[1] = this.getHeight() * 1;
         mDefaultReduceHolder[2] = this.mSeatHorizontalInterval * 1;
         mDefaultReduceHolder[3] = this.mSeatVerticalInterval * 1;
         mDefaultReduceHolder[4] = this.mSeatTextInterval * 1;

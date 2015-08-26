@@ -43,15 +43,19 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
         initial();
     }
 
-    public void initial() {
+    //初始化
+    private void initial() {
+        //创建绘制对象
         mSeatDrawUtils = new SeatDrawUtils(this.getContext(), this);
+        //设置部分绘制参数
         ExportParams params = mSeatDrawUtils.getExportParams();
         params.getSeatParams().setDrawType(SeatParams.DRAW_TYPE_DEFAULT);
         params.getStageParams().setDrawType(StageParams.DRAW_TYPE_DEFAULT);
-
+        //不显示log
         mSeatDrawUtils.setIsShowLog(false, null);
+        //设置监听事件
         mSeatDrawUtils.setSeatInformationListener(this);
-
+        //创建选择座位的存储列表
         mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
     }
 
@@ -144,7 +148,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     public void resetParams() {
-        mSeatDrawUtils.resetParams(null);
+        mSeatDrawUtils.resetParams();
     }
 
     @Override
@@ -159,7 +163,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     public void setParams(ExportParams params) {
-        mSeatDrawUtils.resetParams(params);
+        mSeatDrawUtils.resetParams();
     }
 
     @Override

@@ -21,7 +21,13 @@ import com.crazytaro.bestapp.draw.params.StageParams;
 /**
  * Created by xuhaolin in 2015-08-07
  * <p>座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件</p>
- * <p><font color="yellow"><b>如果需要定制特殊的绘制,可以继承此类,通过提供的部分方法可以更加灵活地处理</b></font></p>
+ * <p><font color="#ff9900"><b>如果需要定制特殊的绘制,可以继承此类,通过组合提供的{@code protected}绘制方法可以更加灵活地处理</b></font>,
+ * 如果通过继承此类完成定制的绘制时,需要注意重写部分方法以达到正确的绘制结果</p>
+ * <p><b>此类默认的绘制流程如下:使用参数{@link StageParams}在顶端中心位置绘制舞台,并以舞台为起点,依次向下绘制座位类型{@code seatType}及普通座位{@code sellSeat};
+ * 基本座位类型及普通座位参数均来自于{@link SeatParams}</b>,
+ * 当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @apiNote}标注</font></p>
+ * <br/>
+ * <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@cod public}方法中进行设置</p>
  */
 public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
     //座位参数
@@ -90,7 +96,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     private int[][] mSeatMap = null;
 
     /**
-     * 构造函数
+     * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
+     * 当参数seat/stage为null时,会尝试创建默认的参数作为初始参数使用
      *
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上
@@ -109,7 +116,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 初始化对象
+     * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
+     * 同时使用默认的绘制参数进行绘制详见{@link #SeatDrawUtils(Context, View, SeatParams, StageParams)}
      *
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上
@@ -136,7 +144,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="yellow"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改</b></font>，
+     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="#ff9900"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改</b></font>，
      * 或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据
      * <p>此方法应该在View绘制前被调用,否则将获取不到绘制数据</p>
      *
@@ -214,10 +222,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 获取参数设置对象，可进行座位参数设置
-     * <p><font color="yellow"><b>对于全局通用的参数,如背景或者缩略图背景等,设置任意一个内部参数即有效</b></font></p>
-     * <p>通用的参数
-     * <li>{@link BaseParams#setCanvasBackgroundColor(int)},设置背景色</li>
-     * <li>{@link BaseParams#setThumbnailBackgroundColorWithAlpha(int, int)},设置缩略图背景色及透明度</li>
+     * <p><font color="#ff9900"><b>对于全局通用的参数,如背景或者缩略图背景等,设置任意一个内部参数即有效</b></font></p>
+     * <p>通用的参数<br/>
+     * {@link BaseParams#setCanvasBackgroundColor(int)},设置背景色<br/>
+     * {@link BaseParams#setThumbnailBackgroundColorWithAlpha(int, int)},设置缩略图背景色及透明度<br/>
      * </p>
      *
      * @return
@@ -227,18 +235,13 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 重置座位绘制使用的参数,当参数不为null时,设置参数值,当参数为null时,使用默认参数值
-     *
-     * @param params {@link ExportParams},参数设置接口
+     * 重置座位绘制使用的参数,使用默认参数值
+     * <p>此类中处理的座位参数及舞台参数是由内部管理的,不开放.
+     * 设置参数值可用方法{@link #getExportParams()}获取设置参数的对象进行设置</p>
      */
-    public void resetParams(ExportParams params) {
-        if (params != null) {
-            this.mSeatParams = (SeatParams) params.getSeatParams();
-            this.mStageParams = (StageParams) params.getSeatParams();
-        } else {
-            this.mSeatParams = new SeatParams();
-            this.mStageParams = new StageParams();
-        }
+    public void resetParams() {
+        this.mSeatParams = new SeatParams();
+        this.mStageParams = new StageParams();
     }
 
 
@@ -305,12 +308,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param canvas           画板
      * @param paint            画笔
-     * @param drawXPosition    座位与文字绘制位置的<font color="yellow"><b>X轴中心(仅提供需要绘制到的X轴中心坐标即可)</b></font>
-     * @param drawYPosition    座位与文字绘制位置的<font color="yellow"><b>Y轴中心(仅提供需要绘制到的Y轴中心坐标即可)</b></font>
+     * @param drawXPosition    座位与文字绘制位置的<font color="#ff9900"><b>X轴中心(仅提供需要绘制到的X轴中心坐标即可)</b></font>
+     * @param drawYPosition    座位与文字绘制位置的<font color="#ff9900"><b>Y轴中心(仅提供需要绘制到的Y轴中心坐标即可)</b></font>
      * @param text             需要绘制的文字
      * @param interval         文字与座位之前的间隔
      * @param seatType         座位类型
-     * @param isDrawTextOfLeft 是否将文字绘制在座位的左边,<font color="yellow"><b>true为文字绘制在座位左边,false为文字绘制在座位右边</b></font>
+     * @param isDrawTextOfLeft 是否将文字绘制在座位的左边,<font color="#ff9900"><b>true为文字绘制在座位左边,false为文字绘制在座位右边</b></font>
      */
     protected void drawSeatWithNearText(Canvas canvas, Paint paint, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
         //座位绘制的中心X轴
@@ -372,6 +375,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param seatType      座位类型,用于区分使用的座位图片
      */
     protected void drawImageSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int seatType) {
+        if (mSeatParams == null) {
+            return;
+        }
         mImageRectf = mSeatParams.getSeatDrawImageRecf(mImageRectf, drawPositionX, drawPositionY);
         //当图片范围可见时才进行绘制
         if (isRectfCanSeen(mImageRectf)) {
@@ -384,7 +390,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 判断当前的矩形区域是否可见,<font color="yellow"><b>此方法仅可用于座位,因为舞台可能放大后不四个点都不在屏幕内,但屏幕内可见一部分的舞台</b></font>
+     * 判断当前的矩形区域是否可见,<font color="#ff9900"><b>此方法仅可用于座位,因为舞台可能放大后不四个点都不在屏幕内,但屏幕内可见一部分的舞台</b></font>
      *
      * @param rectF 矩形区域
      * @return
@@ -416,7 +422,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 默认方式绘制座位
-     * <p><font color="yellow"><b>该方法绘制座位时会根据seatParams确定是否需要对该座位进行绘制，请注意</b></font></p>
+     * <p><font color="#ff9900"><b>该方法绘制座位时会根据seatParams确定是否需要对该座位进行绘制，请注意</b></font></p>
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -424,7 +430,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param drawPositionY 座位绘制的中心Y轴坐标
      */
     protected void drawSeat(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
-        if (!mSeatParams.isDraw()) {
+        if (mSeatParams == null || !mSeatParams.isDraw()) {
             return;
         }
         //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
@@ -461,7 +467,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制舞台及其文字,<font color="yellow"><b>此方法中舞台文字的大小为自动计算,文字大小由舞台高度决定</b></font>
+     * 绘制舞台及其文字,<font color="#ff9900"><b>此方法中舞台文字的大小为自动计算,文字大小由舞台高度决定</b></font>
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -524,7 +530,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制售票的座位
+     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(int[][])},
+     * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
+     * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
+     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int, int)}进行完成,
+     * 在绘制一行时,从中心位置开始向左右两端分别绘制,每一次调用{@code drawHorizontalSeatList}仅仅只绘制从中心到两端中某一端的部分,
+     * 即只有半行,因此需要绘制两次</b></p>
      *
      * @param canvase       画板
      * @param paint         画笔
@@ -597,16 +608,19 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制一行水平的座位表,<font color="yellow"><b>向一个固定的方向绘制</b></font>
+     * 绘制一行水平的座位表,<font color="#ff9900"><b>向一个固定的方向绘制</b></font>
+     * <p><b>此方法从(drawPositionX,drawPositionY)的位置开始向某个方向绘制,
+     * 绘制方向由start/end决定,当start>end时,向左绘制,当start<end时,向右绘制,
+     * 此处的start与end是在列表数据seatList中的索引值</b></p>
      *
      * @param canvas          画板
      * @param paint           画笔
      * @param drawPositionX   该行座位开始绘制的第一个座位中心X轴位置
      * @param drawPositionY   该行座位开始绘制的第一个座位中心Y轴位置
      * @param seatList        单行座位列表
-     * @param start           座位列表中开始绘制的索引,<font color="yellow"><b>此索引位置的座位将被绘制</b></font>
-     * @param end             座位列表中最后绘制的索引,<font color="yellow"><b>此索引位置的座位不被绘制</b></font>
-     * @param currentRowIndex 当前绘制座位的行索引,用于绘制对应的行数,<font color="yellow"><b>不需要绘制行数请使用负值</b></font>
+     * @param start           座位列表中开始绘制的索引,<font color="#ff9900"><b>此索引位置的座位将被绘制</b></font>
+     * @param end             座位列表中最后绘制的索引,<font color="#ff9900"><b>此索引位置的座位不被绘制</b></font>
+     * @param currentRowIndex 当前绘制座位的行索引,用于绘制对应的行数,<font color="#ff9900"><b>不需要绘制行数请使用负值</b></font>
      */
     protected void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end, int currentRowIndex) {
         float beginDrawX = drawPositionX;
@@ -671,7 +685,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 自动计算并绘制座位类型及其邻近文字的方法,该方法不适用于可移动界面
-     * <p><font color="yellow">由于是自动计算,所以移动界面后座位类型位置还是不变,所以不推荐使用(特别需要情况下可用),但绘制的结果是保证适应屏幕界面的</font></p>
+     * <p><font color="#ff9900">由于是自动计算,所以移动界面后座位类型位置还是不变,所以不推荐使用(特别需要情况下可用),但绘制的结果是保证适应屏幕界面的</font></p>
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -706,12 +720,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 根据指定的行数自动计算并绘制座位类型及其描述文字,将所有的座位类型按指定行数分开绘制,并返回绘制后的Y轴坐标位置,
-     * <font color="yellow"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
+     * <font color="#ff9900"><b>若无法绘制返回drawPositionY,若绘制成功,返回的Y轴坐标位置将为一下次可直接绘制的坐标值(即已经将最后一行之后的间隔距离计算在内)</b></font>
      *
      * @param canvas        画板
      * @param paint         画笔
      * @param drawPositionY 开始绘制的Y轴坐标的中心位置,centerY
-     * @param rowCount      预定需要绘制的行数
+     * @param rowCount      预定需要绘制的行数,此值将会被记录下用于后续处理,详见部分方法{@link #getCanvasDrawBeginY(int)}
      */
 
     protected void drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
@@ -735,7 +749,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         //若计算结果为0,说明不足一行,按一行绘制
         if (eachRowSeatTypeCount == 0) {
             drawSingleRowExampleSeatType(canvas, paint, drawPositionY);
-//            drawPositionY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
             //记录绘制的座位类型行数
             mSeatTypeRowCount = 1;
         } else {
@@ -831,7 +844,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 绘制单行的座位类型及其描述文字
-     * <p><font color="yellow"><b>此方法绘制时以参数设置固定的座位类型间的间隔为基准进行绘制,不保证绘制结果会完全适应屏幕</b></font></p>
+     * <p><font color="#ff9900"><b>此方法绘制时以参数设置固定的座位类型间的间隔为基准进行绘制,不保证绘制结果会完全适应屏幕</b></font></p>
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -934,9 +947,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 获取座位类型绘制的中心位置
+     * 获取座位类型绘制的Y轴中心位置(此处指第一行绘制的座位类型)
      *
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getSeatTypeDrawCenterY() {
         //初始偏移量
@@ -960,10 +974,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     /**
      * 获取实际出售座位开始绘制的Y轴中心位置,centerY
      *
-     * @param seatTypeRowCount 座位类型绘制了几行,<font color="yellow"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
+     * @param seatTypeRowCount 座位类型绘制了几行,<font color="#ff9900"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getSellSeatDrawCenterY(int seatTypeRowCount) {
         //初始偏移量
@@ -989,6 +1004,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 获取舞台开始绘制的Y轴中心位置
      *
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getStageDrawCenterY() {
         //初始偏移量
@@ -1017,13 +1033,14 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 获取实际出售座位开始绘制的Y轴顶端坐标,top
-     * <p><font color="yellow"><b><p>此处必须注意的地方是,这里的Y轴坐标是指top,而不是绘制位置的中心centerY</b></font></p>
-     * <p><font color="yellow">此外,这里的Y轴坐标是原始绘制界面的坐标,而不是移动后的坐标(即在第一次绘制时把该坐标记录返回即可)</font></p>
+     * <p><font color="#ff9900"><b><p>此处必须注意的地方是,这里的Y轴坐标是指top,而不是绘制位置的中心centerY</b></font></p>
+     * <p><font color="#ff9900">此外,这里的Y轴坐标是原始绘制界面的坐标,而不是移动后的坐标(即在第一次绘制时把该坐标记录返回即可)</font></p>
      *
-     * @param seatTypeRowCount 座位类型绘制了几行,<font color="yellow"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
+     * @param seatTypeRowCount 座位类型绘制了几行,<font color="#ff9900"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getSellSeatDrawBeginY(int seatTypeRowCount) {
         float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount) - mSeatParams.getHeight() / 2;
@@ -1035,6 +1052,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param seatTypeRowCount 座位类型绘制的行数
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getCanvasDrawBeginY(int seatTypeRowCount) {
         if (mStageParams.isDraw()) {
@@ -1051,7 +1069,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @return
      */
-    private float getThumbnailWidth() {
+    protected float getThumbnailWidth() {
         if (mWHPoint == null) {
             mWHPoint = this.getWidthAndHeight();
         }
@@ -1061,10 +1079,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     /**
      * 获取显示区域的高度
      *
-     * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
+     * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @return
      */
-    private float getShowRectfBeginY(float originalCanvasWidth) {
+    protected float getShowRectfBeginY(float originalCanvasWidth) {
         //用户可能进行移动的偏移量
         //取绝对值是在缩略图中垂直方向的偏移量必须是正数
         return Math.abs(mBeginDrawOffsetY * (this.getThumbnailWidth() / originalCanvasWidth));
@@ -1073,10 +1091,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     /**
      * 获取显示区域中心X轴位置
      *
-     * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
+     * @param originalCanvasWidth 主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @return
      */
-    private float getShowRectfCenterX(float originalCanvasWidth) {
+    protected float getShowRectfCenterX(float originalCanvasWidth) {
         //此处要注意的是,在实际界面的偏移量中,当向左移动时偏移量是正值
         //向右移动时偏移量是负值
         //而缩略图是完整并一直显示在屏幕上的
@@ -1096,11 +1114,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     /**
      * 获取在缩略图中显示当前屏幕所在区域的矩形区域
      *
-     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
+     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @param originalCanvasHeight 主界面的实际界面高度,同上
      * @return 返回显示区域
      */
-    private RectF getShowRectfInThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
+    protected RectF getShowRectfInThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
         //获取当前缩略图的实际大小
         float targetWidth = this.getThumbnailWidth();
         //计算缩略图与实际界面的缩放比
@@ -1141,13 +1159,13 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
     /**
      * 开始绘制缩略图并初始化部分工作
-     * <p><font color="yellow"><b>缩略图的绘制大小由view宽度决定,一般为view宽度的1/3,即宽度保持不变地占用了控件宽度的1/3,此参数可进行设置,但不建议更改</b></font></p>
+     * <p><font color="#ff9900"><b>缩略图的绘制大小由view宽度决定,一般为view宽度的1/3,即宽度保持不变地占用了控件宽度的1/3,此参数可进行设置,但不建议更改</b></font></p>
      *
-     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
+     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @param originalCanvasHeight 主界面的实际界面高度,同上
      * @return 返回缩略图绘制需要占用的空间大小
      */
-    private RectF beginDrawThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
+    protected RectF beginDrawThumbnail(float originalCanvasWidth, float originalCanvasHeight) {
         if (mWHPoint == null) {
             mWHPoint = this.getWidthAndHeight();
         }
@@ -1182,6 +1200,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param viewWidth
      * @return
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected float getDrawCenterX(float viewWidth) {
         if (mSeatParams.getIsDrawThumbnail()) {
@@ -1200,9 +1219,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         //重置界面绘制的宽高
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
-//        paint.setColor(mSeatParams.getCanvasBackgroundColor());
-//        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawRect(0, 0, mWHPoint.x, mWHPoint.y, paint);
         //绘制背景色
         canvas.drawColor(BaseParams.getCanvasBackgroundColor());
     }
@@ -1215,9 +1231,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 界面绘制,该方法提供给View调用,view.invaliate本身也是重新调用此方法进行绘制
+     * 界面绘制,该方法提供给View调用,view.invalidate()本身也是重新调用此方法进行绘制
+     * <p>此方法是先绘制实际界面,再绘制缩略图(若需要绘制的话)</p>
      *
      * @param canvas view画板
+     * @apiNote 继承此类时该方法可能需要重写
      */
     public void onDraw(Canvas canvas) {
         if (mWHPoint == null) {
@@ -1243,7 +1261,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param height  此次绘制区域的高度,对实际界面而言是屏幕,对缩略图而言是缩略图的高度
      * @return
      */
-    private float[] getCenterDotLine(float centerX, float height) {
+    protected float[] getCenterDotLine(float centerX, float height) {
         //判断是否绘制缩略图,是则将线段长缩短为1/10
         float lineLength = mSeatParams.getIsDrawThumbnail() ? 2f : 20f;
         //计算需要的线段数
@@ -1263,11 +1281,23 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制正常的界面
+     * 绘制正常的界面,缩略图的绘制{@link #drawThumbnail(Canvas, Paint, float, float)}本身是依赖于此方法的,
+     * 此若需要自定义绘制类,通过继承此类后修改绘制流程则基本必须重写此类
+     * <p>此方法的绘制流程大致如下:<br/>
+     * 1.获取X轴的中心位置(需要计算偏移量在内){@link #getDrawCenterX(float)}<br/>
+     * 2.获取舞台绘制的高度(X轴是永远固定从中心位置开始的){@link #getStageDrawCenterY()}<br/>
+     * 3.绘制舞台{@link #drawStage(Canvas, Paint, float, float)}<br/>
+     * 4.获取座位类型绘制的高度{@link #getSeatTypeDrawCenterY()}<br/>
+     * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
+     * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int)}<br/>
+     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, int[][], float, float)}<br/>
+     * 8.绘制中心分界线{@link #getCenterDotLine(float, float)}<br/>
+     * </p>
      *
      * @param canvas     画板
      * @param paint      画笔
      * @param viewHeight 绘制界面的高度(主要用于绘制中心轴虚线可用),实际绘制界面高度为屏幕高度
+     * @apiNote 继承此类时该方法可能需要重写
      */
     protected void drawNormalCanvas(Canvas canvas, Paint paint, float viewHeight) {
         float drawX = 0f;
@@ -1290,11 +1320,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制缩略图
+     * 绘制缩略图,此方法绘制依赖于{@link #drawNormalCanvas(Canvas, Paint, float)}
      *
      * @param canvas               画板
      * @param paint                画笔
-     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="yellow"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
+     * @param originalCanvasWidth  主界面(非缩略图)的实际界面宽度,<font color="#ff9900"><b>此处不是指view的宽度,是canvas绘制出来的宽度</b></font>
      * @param originalCanvasHeight 主界面的实际高度,同上
      */
     protected void drawThumbnail(Canvas canvas, Paint paint, float originalCanvasWidth, float originalCanvasHeight) {
@@ -1328,10 +1358,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param clickPositionX     单击位置的X轴位置
      * @param clickPositionY     单击位置的Y轴位置
-     * @param beginDrawPositionY 出售座位开始绘制的坐标,<font color="yellow"><b>此处的坐标是指第一行开始绘制的出售座位的Y轴坐标,即top而不是centerY</b></font>
+     * @param beginDrawPositionY 出售座位开始绘制的坐标,<font color="#ff9900"><b>此处的坐标是指第一行开始绘制的出售座位的Y轴坐标,即top而不是centerY</b></font>
      *                           <p>在实际中应该是除去舞台的高度(包括其间隔占用的高度)及座位类型(同理包括其间隔占用的高度)的高度</p>
-     * @param seatColumnCount    座位列数,<font color="yellow"><b>列数,在二维表中应该是table[0].length</b></font>
-     * @param seatRowCount       座位行数,<font color="yellow"><b>行数,在二维表中应该是table.length</b></font>
+     * @param seatColumnCount    座位列数,<font color="#ff9900"><b>列数,在二维表中应该是table[0].length</b></font>
+     * @param seatRowCount       座位行数,<font color="#ff9900"><b>行数,在二维表中应该是table.length</b></font>
      * @return {@link Point},返回座位在表中对应的行列索引值,若单击点不在有效区域则返回null
      */
     protected Point getClickSeatByPosition(float clickPositionX, float clickPositionY, float beginDrawPositionY, int seatColumnCount, int seatRowCount) {
@@ -1710,10 +1740,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 moveDistanceY = mUpY - mDownY;
 
                 invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_UP);
-//                //处理单击事件
-//                if (!mIsMoved) {
-//                    clickChooseSeat(event);
-//                }
                 //移动操作完把数据还原初始状态,以防出现不必要的错误
                 mDownX = 0f;
                 mDownY = 0f;
@@ -1821,10 +1847,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     public void singleClickByTime(MotionEvent event) {
     }
 
-    @Override
     /**
      * 单击某个区域选择座位
      */
+    @Override
     public void singleClickByDistance(MotionEvent event) {
         clickChooseSeat(event);
     }
@@ -1833,10 +1859,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     public void doubleClickByTime() {
     }
 
-    @Override
     /**
      * 双击放大缩小
      */
+    @Override
     public void doubleClickByDistance() {
         //当前缩放比,当前的界面相对原始界面的比例
         float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
@@ -1882,7 +1908,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 根据坐标值计算需要缩放的比例,<font color="yellow"><b>返回值为移动距离与按下距离的商,move/down</b></font>
+     * 根据坐标值计算需要缩放的比例,<font color="#ff9900"><b>返回值为移动距离与按下距离的商,move/down</b></font>
      *
      * @param firstDownX  多点触摸按下的pointer_1_x
      * @param firstDownY  多点触摸按下的pointer_1_y
@@ -1925,8 +1951,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
          * @param invalidateView   重绘的view
          * @param invalidateAction 重绘的动作标志(此处使用的是当前触摸的动作标志)
          *                         <p>
-         *                         <li>{@link MotionEvent#ACTION_UP},单击抬起</li>
-         *                         <li>{@link MotionEvent#ACTION_MOVE},单击移动</li>
+         *                         {@link MotionEvent#ACTION_UP},单击抬起<br/>
+         *                         {@link MotionEvent#ACTION_MOVE},单击移动<br/>
          *                         </p>
          */
         public InvalidateRunnable(View invalidateView, int invalidateAction) {
@@ -1969,25 +1995,25 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
          */
         public static final int STATUS_MOVE = 1;
         /**
-         * 当前座位状态,处理座位区域单击事件,<font color="yellow"><b>事件为单击事件且在座位区域内,但座位此时不一定被选中单击,可能单击在无效区域</b></font>
+         * 当前座位状态,处理座位区域单击事件,<font color="#ff9900"><b>事件为单击事件且在座位区域内,但座位此时不一定被选中单击,可能单击在无效区域</b></font>
          */
         public static final int STATUS_CLICK = 2;
         /**
-         * 当前座位状态,处理座位被单击事件,<font color="yellow"><b>座位已被选中</b></font>
+         * 当前座位状态,处理座位被单击事件,<font color="#ff9900"><b>座位已被选中</b></font>
          */
         public static final int STATUS_CHOOSE_SEAT = 3;
         /**
-         * 当前座位状态,处理座位区域被单击事件,<font color="yellow"><b>座位空白区域被选中,无任何座位被选中</b></font>
+         * 当前座位状态,处理座位区域被单击事件,<font color="#ff9900"><b>座位空白区域被选中,无任何座位被选中</b></font>
          */
         public static final int STATUS_CHOOSE_NOTHING = 4;
 
         /**
          * 当前座位区域的状态
          * <p>
-         * <li>{@link #STATUS_MOVE},座位移动</li>
-         * <li>{@link #STATUS_CLICK},座位区域被单击</li>
-         * <li>{@link #STATUS_CHOOSE_SEAT},座位被选中</li>
-         * <li>{@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域</li>
+         * {@link #STATUS_MOVE},座位移动<br/>
+         * {@link #STATUS_CLICK},座位区域被单击<br/>
+         * {@link #STATUS_CHOOSE_SEAT},座位被选中<br/>
+         * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
          * </p>
          *
          * @param status 座位状态
