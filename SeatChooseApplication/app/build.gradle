@@ -17,8 +17,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/com.crazytaro.bestapp.seatchoose.jar')
+}
+
+task makeJar(type: Copy) {
+    delete 'build/libs/com.crazytaro.bestapp.seatchoose.jar'
+    from('build/intermediates/classes/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'com.crazytaro.bestapp.seatchoose.jar')
 }
