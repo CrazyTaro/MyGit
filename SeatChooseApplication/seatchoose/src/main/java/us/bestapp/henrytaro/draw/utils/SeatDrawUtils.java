@@ -20,7 +20,7 @@ import us.bestapp.henrytaro.draw.params.SeatParams;
 import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
- * @version 1.2
+ * @version 1.3
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -84,14 +84,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     private float mUpX = 0f;
     private float mUpY = 0f;
 
-    //    private boolean mIsAllowDrawThumbnail = true;
-    //    private boolean mIsShowThumbnailAlways = true;
-//    //是否绘制缩略图
-//    private boolean mIsDrawThumbnail = true;
     //是否已经移动过(满足移动条件)
     private boolean mIsMoved = false;
-    //默认座位类型被绘制的行数
-    private int mSeatTypeRowCount = 1;
 
     private Context mContext = null;
     //绑定的用于绘制界面的View
@@ -578,7 +572,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
         if (!mSeatParams.getIsDrawThumbnail()) {
             //记录界面高度值
-            mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mSeatTypeRowCount)
+            mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mSeatParams.getSeatTypeRowCount())
                     //附加部分,用于边界的空白
                     + mSeatParams.getHeight();
         }
@@ -731,11 +725,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         //若计算结果为0,说明不足一行,按一行绘制
         if (eachRowSeatTypeCount == 0) {
             drawSingleRowExampleSeatType(canvas, paint, drawPositionY);
-            //记录绘制的座位类型行数
-            mSeatTypeRowCount = 1;
         } else {
-            //记录绘制的座位类型行数
-            mSeatTypeRowCount = rowCount;
             //否则是多行绘制
             //按每行处理的座位数量创建新的数据,座位类型/座位颜色/座位描述/座位图片ID/座位图片Bitmap
             int[] newSeatTypeArr = new int[eachRowSeatTypeCount];
@@ -1312,9 +1302,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         drawStage(canvas, paint, drawX, drawY);
         //开始绘制座位类型
         drawY = this.getSeatTypeDrawCenterY();
-        drawSeatTypeByAuto(canvas, paint, drawY, 1);
+        drawSeatTypeByAuto(canvas, paint, drawY, mSeatParams.getSeatTypeRowCount());
         //开始绘制普通出售座位
-        drawY = this.getSellSeatDrawCenterY(mSeatTypeRowCount);
+        drawY = this.getSellSeatDrawCenterY(mSeatParams.getSeatTypeRowCount());
         drawSellSeats(canvas, paint, mSeatMap, drawX, drawY);
 
         float[] dotline = this.getCenterDotLine(drawX, viewHeight);
@@ -1772,7 +1762,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         float clickPositionY = event.getY();
         //计算当前绘制出售座位开始绘制的Y轴坐标位置(在原始界面)
         //此处获取的是开始绘制的出售座位的Y轴坐标顶端,top,不是centerY
-        float beginDrawPositionY = this.getSellSeatDrawBeginY(mSeatTypeRowCount);
+        float beginDrawPositionY = this.getSellSeatDrawBeginY(mSeatParams.getSeatTypeRowCount());
         if (mSeatMap != null && mSeatMap.length > 0) {
             //计算单击位置的座位索引值
             Point clickSeatPoint = getClickSeatByPosition(clickPositionX, clickPositionY, beginDrawPositionY, mSeatMap[0].length, mSeatMap.length);
