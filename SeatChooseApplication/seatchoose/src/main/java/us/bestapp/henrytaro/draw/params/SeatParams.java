@@ -135,6 +135,9 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     //最小默认缩放值
     private float[] mDefaultReduceHolder = null;
 
+    //默认绘制的座位类型行数为1
+    private int mSeatTypeDrawRowCount = 1;
+
     /**
      * 创建并初始化参数
      */
@@ -144,7 +147,6 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         super.setSmallScaleRate(0.2f);
         resetSeatTypeWithColor();
         mSeatTypeDescription = DEFAULT_SEAT_TYPE_DESC;
-        this.storeDefaultScaleValue();
     }
 
     @Override
@@ -433,6 +435,20 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         }
         mThumbnailColorArray = new int[colorArr.length];
         System.arraycopy(colorArr, 0, mThumbnailColorArray, 0, colorArr.length);
+    }
+
+    @Override
+    public void setSeatTypeRowCount(int rowCount) {
+        if (rowCount > 0) {
+            this.mSeatTypeDrawRowCount = rowCount;
+        } else {
+            this.mSeatTypeDrawRowCount = 1;
+        }
+    }
+
+    @Override
+    public int getSeatTypeRowCount() {
+        return this.mSeatTypeDrawRowCount;
     }
 
     /**
