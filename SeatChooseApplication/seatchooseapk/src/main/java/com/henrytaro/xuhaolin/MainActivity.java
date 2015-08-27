@@ -106,8 +106,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     public void seletedFull() {
         Toast.makeText(this, "选座已满", Toast.LENGTH_SHORT).show();
         ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
-        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
-        seatParams.setImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
+//        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
+        seatParams.setImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
 
         IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
         globleParams.setCanvasBackgroundColor(Color.parseColor("#ff9900"));
