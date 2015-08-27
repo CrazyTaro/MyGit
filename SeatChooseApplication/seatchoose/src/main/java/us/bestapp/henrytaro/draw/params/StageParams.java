@@ -19,11 +19,11 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
     /**
      * 默认舞台宽度
      */
-    public static final float DEFAULT_STAGE_WIDTH = 350f;
+    public static final float DEFAULT_STAGE_WIDTH = 500f;
     /**
      * 默认舞台高度
      */
-    public static final float DEFAULT_STAGE_HEIGHT = 55f;
+    public static final float DEFAULT_STAGE_HEIGHT = 80f;
     /**
      * 默认舞台圆角度
      */
@@ -56,7 +56,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
 
     public StageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
-        this.storeDefaultScaleValue();
+//        this.storeDefaultScaleValue();
     }
 
     /**
