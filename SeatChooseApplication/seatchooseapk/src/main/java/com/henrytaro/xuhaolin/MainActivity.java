@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport;
+import us.bestapp.henrytaro.draw.interfaces.IStageParamsExport;
 import us.bestapp.henrytaro.view.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.SeatChooseView;
 
@@ -73,19 +74,17 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setSeatMap(mSeatMap);
         mChooseview.setISeatChooseEvent(this);
-        mChooseview.setIsShowLog(true,null);
+        mChooseview.setIsShowLog(true, null);
 
-//        IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
-//        globleParams.setIsShowThumbnailAlways(true);
+        IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
+        globleParams.setIsShowThumbnailAlways(true);
 
-//        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
-//        seatParams.setWidth(65f);
-//        seatParams.setHeight(65f);
-////        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
-//
-//        IStageParamsExport stageParams = mChooseview.getParams().getStageParams();
-//        stageParams.setWidth(400f);
-//        stageParams.setHeight(50f);
+        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
+        seatParams.setExtraSeatTypeWithColor(new int[]{7, 8, 9}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
+        seatParams.setSeatTypeRowCount(2);
+//        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
+
+        IStageParamsExport stageParams = mChooseview.getParams().getStageParams();
     }
 
     @Override
