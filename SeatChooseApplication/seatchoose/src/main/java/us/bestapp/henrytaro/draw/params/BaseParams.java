@@ -72,6 +72,7 @@ public abstract class BaseParams implements IBaseParamsExport {
      */
     public BaseParams(float defaultWidth, float defaultHeight, float defaultRadius, int defaultColor) {
         this.setDefault(defaultWidth, defaultHeight, defaultRadius, defaultColor);
+        this.storeDefaultScaleValue();
     }
 
     /**
