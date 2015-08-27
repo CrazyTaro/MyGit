@@ -3,13 +3,15 @@ package com.henrytaro.xuhaolin;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport;
+import us.bestapp.henrytaro.view.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.SeatChooseView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ISeatChooseEvent {
     SeatChooseView mChooseview = null;
     private int[][] mSeatMap = {
             {1, 1, 0, 0, 1, 1, 0, 2, 1, 1, 2, 0, 0, 2, 1, 0, 0, 2,},//1
@@ -70,17 +72,45 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setSeatMap(mSeatMap);
-        mChooseview.setMostSeletedCount(3);
+        mChooseview.setISeatChooseEvent(this);
+        mChooseview.setIsShowLog(true,null);
+
+//        IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
+//        globleParams.setIsShowThumbnailAlways(true);
+
+//        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
+//        seatParams.setWidth(65f);
+//        seatParams.setHeight(65f);
+////        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
+//
+//        IStageParamsExport stageParams = mChooseview.getParams().getStageParams();
+//        stageParams.setWidth(400f);
+//        stageParams.setHeight(50f);
+    }
+
+    @Override
+    public void seatSeleted(int rowIndex, int columnIndex, boolean isChosen) {
+
+    }
+
+    @Override
+    public void seatSeleted(int rowIndex, int columnIndex, int seatType) {
+
+    }
+
+    @Override
+    public void seletedFail() {
+
+    }
+
+    @Override
+    public void seletedFull() {
+        Toast.makeText(this, "选座已满", Toast.LENGTH_SHORT).show();
+        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
+        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
+        seatParams.setImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
 
         IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
-//        globleParams.setCanvasBackgroundColor(Color.BLACK);
-        globleParams.setIsShowThumbnailAlways(true);
-        globleParams.setThumbnailWidthRate(1 / 4f);
-
-        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
-        seatParams.setWidth(65f);
-        seatParams.setHeight(65f);
-        int[] thumbilColorArr = new int[]{Color.parseColor("#7ED321"), Color.parseColor("#ff9900"), Color.parseColor("#ffffff")};
-        seatParams.setThumbnailSeatColor(thumbilColorArr);
+        globleParams.setCanvasBackgroundColor(Color.parseColor("#ff9900"));
     }
 }
