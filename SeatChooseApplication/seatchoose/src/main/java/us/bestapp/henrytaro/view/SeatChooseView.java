@@ -14,7 +14,6 @@ import java.util.List;
 
 import us.bestapp.henrytaro.draw.params.ExportParams;
 import us.bestapp.henrytaro.draw.params.SeatParams;
-import us.bestapp.henrytaro.draw.params.StageParams;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
 
 /**
@@ -49,10 +48,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     private void initial() {
         //创建绘制对象
         mSeatDrawUtils = new SeatDrawUtils(this.getContext(), this);
-        //设置部分绘制参数
-        ExportParams params = mSeatDrawUtils.getExportParams();
-        params.getSeatParams().setDrawType(SeatParams.DRAW_TYPE_DEFAULT);
-        params.getStageParams().setDrawType(StageParams.DRAW_TYPE_DEFAULT);
+
         //不显示log
         mSeatDrawUtils.setIsShowLog(false, null);
         //设置监听事件

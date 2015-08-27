@@ -22,7 +22,7 @@ public class GlobleParams implements IGlobleParamsExport {
     //缩略图背景透明度
     private int mThumbnailAlpha = 100;
     //缩略图显示宽比
-    private float mThumbnailWidthRate = 1 / 3;
+    private float mThumbnailWidthRate = 1 / 3f;
     //是否绘制缩略图
     private boolean mIsDrawThumbnail = true;
     //是否保持显示缩略图

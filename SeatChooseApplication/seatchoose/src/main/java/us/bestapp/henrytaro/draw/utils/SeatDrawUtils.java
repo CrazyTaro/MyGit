@@ -1332,6 +1332,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param originalCanvasHeight 主界面的实际高度,同上
      */
     protected void drawThumbnail(Canvas canvas, Paint paint, float originalCanvasWidth, float originalCanvasHeight) {
+//        showMsg("thumbnail", "isAllowDraw = " + mGlobleParams.getIsAllowDrawThumbnail());
+
         //若不需要绘制缩略图,则不绘制
         //移动过程中会强制要求显示重绘缩略图
         //因此需要获取是否需要绘制缩略图以判断是否确实需要绘制
@@ -1976,11 +1978,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                         mGlobleParams.setIsAllowDrawThumbnail(false);
                         //延迟500毫秒重绘,使结束移动时依然可以保持显示一小段时间
                         mInvalidateView.postInvalidateDelayed(1000);
+
+//                        showMsg("thumbnail", "up");
                         break;
                     case MotionEvent.ACTION_MOVE:
                         //移动过程强制重绘
                         mGlobleParams.setIsAllowDrawThumbnail(true);
                         mInvalidateView.invalidate();
+
+//                        showMsg("thumbnail", "move");
                         break;
                 }
             }
