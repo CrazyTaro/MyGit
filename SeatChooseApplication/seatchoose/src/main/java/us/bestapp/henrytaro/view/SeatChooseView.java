@@ -18,7 +18,7 @@ import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
 
 /**
  * @author xuhaolin
- * @version 1.5
+ * @version 1.6
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
@@ -28,6 +28,16 @@ import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
+ *          <p/>
+ *          <br/>
+ *          <br/>
+ *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
+ *          1.默认不绘制行数/列数
+ *          2.默认绘制缩略图并不保持显示
+ *          3.默认绘制图形界面而不使用图片
+ *          4.默认座位类型只有三种,已选,可选,已售
+ *          5.默认缩略图座位颜色跟随界面座位颜色
+ *          6.默认不提醒当前选中座位行列值
  */
 public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener, ISeatChoose {
     private SeatDrawUtils mSeatDrawUtils = null;
