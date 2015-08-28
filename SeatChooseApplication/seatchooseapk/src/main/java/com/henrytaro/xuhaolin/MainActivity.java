@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 //            {1, 2, 0, 0, 0, 0, 0, 1, 2, 1, 2, 2, 1, 1, 0, 0, 0, 1,},//23
 //            {2, 1, 0, 0, 0, 0, 0, 2, 1, 1, 2, 1, 2, 1, 0, 0, 0, 1,},//24
 //            {1, 1, 0, 0, 0, 0, 0, 2, 1, 1, 1, 2, 1, 1, 0, 0, 0, 2,},//25
-            
+
 
 //            {2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1,},//1
 //            {2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1,},//2
@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
         seatParams.setExtraSeatTypeWithColor(new int[]{7, 8, 9}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
         seatParams.setSeatTypeRowCount(2);
+        seatParams.setIsDrawRowNumber(false);
 //        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
 
         IStageParamsExport stageParams = mChooseview.getParams().getStageParams();

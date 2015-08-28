@@ -21,7 +21,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
  * @author xuhaolin
- * @version 1.4
+ * @version 1.5
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -527,10 +527,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         int columnLength = seatMap[0].length;
         int leftBeginColumn = 0;
         int rightBeginColumn = 0;
+        int isDrawRowNumber = mSeatParams.getIsDrawRowNumber() ? 1 : -1;
         float beginDrawLeftX = 0f;
         float beginDrawRightX = 0f;
         float beginDrawY = 0f;
 
+        //计算绘制的值
         if ((columnLength & 0x1) == 0) {
             //偶数列
             //向左边绘制X轴开始点
@@ -558,15 +560,18 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             //向右开始绘制列数，当前指定索引列将被绘制
             rightBeginColumn = leftBeginColumn + 1;
         }
+
+
+        //开始绘制
         beginDrawY = drawPositionY;
         for (int i = 0; i < seatMap.length; i++) {
             //画左边的座位
             //绘制的时候由start位置到end位置
             //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
             //即数组不可越界
-            drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatMap[i], leftBeginColumn, 0 - 1, i);
+            drawHorizontalSeatList(canvase, paint, beginDrawLeftX, beginDrawY, seatMap[i], leftBeginColumn, 0 - 1, (i + 1) * isDrawRowNumber);
             //画右边的座位
-            drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatMap[i], rightBeginColumn, seatMap[i].length, i);
+            drawHorizontalSeatList(canvase, paint, beginDrawRightX, beginDrawY, seatMap[i], rightBeginColumn, seatMap[i].length, (i + 1) * isDrawRowNumber);
             //增加Y轴的绘制高度
             beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
         }
@@ -633,7 +638,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 //当前不是绘制缩略图
                 //当前行数有效且绘制的方向为从右向左绘制时(即绘制到最开始的座位)
                 //尝试绘制当前的行数
-                if (!mSeatParams.getIsDrawThumbnail() && currentRowIndex >= 0 && increment < 0) {
+                if (!mSeatParams.getIsDrawThumbnail() && currentRowIndex > 0 && increment < 0) {
                     //增大行数与座位之间的间隔
                     beginDrawX += increment * mSeatParams.getWidth();
                     paint.setTextSize(mSeatParams.getDescriptionSize());
@@ -641,18 +646,18 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                     paint.setStyle(Paint.Style.FILL);
                     //调整文字显示的Y轴坐标
                     float drawTextY = drawPositionY + mSeatParams.getDescriptionSize() / 3;
-                    canvas.drawText(String.valueOf((currentRowIndex + 1)), beginDrawX, drawTextY, paint);
-
-                    //计算新的界面宽度值
-                    //此处只在这个地方计算是因为在最左边还需要绘制一列行数文字
-                    float newCanvasWidth =
-                            //最左边边界到中心X轴位置的宽度(即总宽度的一半)
-                            (Math.abs(beginDrawX - this.getDrawCenterX(mWHPoint.x))
-                                    //附加边界空白
-                                    + mSeatParams.getWidth()) * 2;
-                    //记录新的界面宽度值,保存最大值
-                    mCanvasWidth = newCanvasWidth > mCanvasWidth ? newCanvasWidth : mCanvasWidth;
+                    canvas.drawText(String.valueOf(currentRowIndex), beginDrawX, drawTextY, paint);
                 }
+
+                //计算新的界面宽度值
+                //此处只在这个地方计算是因为在最左边还需要绘制一列行数文字
+                float newCanvasWidth =
+                        //最左边边界到中心X轴位置的宽度(即总宽度的一半)
+                        (Math.abs(beginDrawX - this.getDrawCenterX(mWHPoint.x))
+                                //附加边界空白
+                                + mSeatParams.getWidth()) * 2;
+                //记录新的界面宽度值,保存最大值
+                mCanvasWidth = newCanvasWidth > mCanvasWidth ? newCanvasWidth : mCanvasWidth;
             } catch (ArrayIndexOutOfBoundsException ex) {
                 ex.printStackTrace();
             }
