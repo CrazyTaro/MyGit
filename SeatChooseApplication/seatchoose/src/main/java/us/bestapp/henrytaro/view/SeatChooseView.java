@@ -32,12 +32,13 @@ import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
- *          1.默认不绘制行数/列数
- *          2.默认绘制缩略图并不保持显示
- *          3.默认绘制图形界面而不使用图片
- *          4.默认座位类型只有三种,已选,可选,已售
- *          5.默认缩略图座位颜色跟随界面座位颜色
- *          6.默认不提醒当前选中座位行列值
+ *          1.默认不绘制行数/列数<br/>
+ *          2.默认绘制缩略图并不保持显示<br/>
+ *          3.默认绘制图形界面而不使用图片<br/>
+ *          4.默认座位类型只有三种,已选,可选,已售<br/>
+ *          5.默认缩略图座位颜色跟随界面座位颜色<br/>
+ *          6.默认不提醒当前选中座位行列值<br/>
+ *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener, ISeatChoose {
     private SeatDrawUtils mSeatDrawUtils = null;
@@ -175,10 +176,10 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
         return mSeatDrawUtils.getExportParams();
     }
 
-    @Override
     /**
      * 默认最多选择的个数为5，当参数不合法时该重置为默认值
      */
+    @Override
     public void setMostSeletedCount(int mostCount) {
         mMostSeletedCount = mostCount > 0 ? mostCount : 5;
     }
