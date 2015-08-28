@@ -68,11 +68,11 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static int[] DEFAULT_SEAT_TYPE = {1, 2, 3};
     /**
-     * 默认座位类型对应的颜色,分别为
+     * 默认座位类型对应的颜色,分别为<br/>
      * <p>
      * 可选=<font color="white"><b>白色</b></font><br/>
      * 已选=<font color="red"><b>红色</b></font><br/>
-     * 已售=<font color="#ff9900"><b>黄色</b></font><br/>
+     * 已售=<font color="#yellow"><b>黄色</b></font><br/>
      * </p>
      */
     public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.WHITE, Color.RED, Color.YELLOW};
@@ -143,10 +143,16 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public SeatParams() {
         super(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR);
+        initial();
+    }
+
+    //初始化
+    private void initial(){
         super.setLargeScaleRate(16);
         super.setSmallScaleRate(0.2f);
         resetSeatTypeWithColor();
         mSeatTypeDescription = DEFAULT_SEAT_TYPE_DESC;
+        this.storeDefaultScaleValue();
     }
 
     @Override
@@ -311,8 +317,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * <font color="#ff9900"><b>此方法不对用户开放使用,设置参数请忽略此方法</b></font><br/>
-     * 获取当前绘制的座位的颜色,<font color="#ff9900"><b>注意此处是当前绘制的座位的颜色,该颜色值只用于当前绘制的座位,此座位包括了普通座位及绘制座位类型时的示例座位</b></font>
+     * 获取当前绘制的座位的颜色,<font color="#ff9900"><b>注意此处是当前绘制的座位的颜色,该颜色值只用于当前绘制的座位,此座位包括了普通座位及绘制座位类型时的示例座位</b></font><br/>
      * <p>若使用默认的座位绘制方式,则应该保证在每次座位绘制之前设置该值,否则可能会使后面大量的座位使用同一个颜色值</p>
      *
      * @return
@@ -323,7 +328,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * 设置绘制时使用的座位颜色，<font color="#ff9900"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font>
+     * 设置绘制时使用的座位颜色，<font color="#ff9900"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font><br/>
      * <p><font color="#ff9900"><b>在任何一次绘制座位之前都必须考虑是否需要调用此方法，否则绘制使用的颜色将是上一次绘制使用的颜色</b></font></p>
      *
      * @param seatColor

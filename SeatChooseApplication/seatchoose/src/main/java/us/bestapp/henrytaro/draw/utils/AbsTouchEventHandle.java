@@ -15,11 +15,26 @@ import android.view.View;
  */
 public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     /**
+     * 距离双击事件
+     */
+    public static final int EVENT_DOUBLE_CLICK_DISTANCE = 0;
+
+
+    /**
      * 额外分配的触摸事件,用于建议优先处理的触摸事件
      */
     public static final int MOTION_EVENT_NOTHING = 0;
+    /**
+     * 处理距离单击事件
+     */
     private static final int HANDLE_SINGLE_CLICK_AT_DISTANCE = 1;
+    /**
+     * 处理时间单击事件
+     */
     private static final int HANDLE_SINGLE_CLICK_AT_TIME = -1;
+    /**
+     * 处理时间按下事件
+     */
     private static final int HANDLE_SINGLE_DOWN_AT_TIME = -2;
     private static String TAG = "touch_event";
 
@@ -264,9 +279,17 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
         this.mIsTriggerSingleTouchEvent = isTrigger;
     }
 
+    /**
+     * 设置是否显示log
+     *
+     * @param isShowLog
+     * @param tag       tag为显示log的标志,可为null,tag为null时使用默认标志"touch_event"
+     */
     public void setIsShowLog(boolean isShowLog, String tag) {
         if (tag != null) {
             TAG = tag;
+        } else {
+            TAG = "touch_event";
         }
         this.mIsShowLog = isShowLog;
     }
@@ -291,6 +314,22 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     public void showMsg(String tag, String msg) {
         if (mIsShowLog) {
             Log.i(tag, msg);
+        }
+    }
+
+    /**
+     * <font color="#ff9900">取消事件有效性,目前仅对距离双击事件有效{@link ITouchEventListener#doubleClickByDistance()}</font><br/>
+     * <p>这是由于距离双击事件触发双击的本质是在同一个地方(坐标差距不超过10像素)单击两次即可.<br/>
+     * 除了单击本身有时间限制外(500ms内触发down事件并触发up事件才会被判定为一次单击),两次单击之间并没有时间限制,<br/>
+     * 只要保证前后两次单击的距离在触发范围内即可触发事件,因此在触发事件后需要通过取消事件从而达到结束双击事件的触发</p>
+     *
+     * @param event 需要取消的事件
+     */
+    public void cancelEvent(int event) {
+        switch (event) {
+            case EVENT_DOUBLE_CLICK_DISTANCE:
+                this.mIsSingleClickAtDistance = false;
+                break;
         }
     }
 
@@ -339,7 +378,8 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
         public abstract void doubleClickByTime();
 
         /**
-         * 双击事件处理,每两次单击事件之间的间隔小于500ms则认为是一次双击事件,单击事件由距离决定而不是时间,参考{@link #singleClickByDistance(MotionEvent)}
+         * 双击事件处理,每两次单击事件之间的间隔小于500ms则认为是一次双击事件,单击事件由距离决定而不是时间,参考{@link #singleClickByDistance(MotionEvent)}<br/>
+         * <font color="#ff9900">处理双击事件后建议调用{@link AbsTouchEventHandle#cancelEvent(int)}来取消双击事件</font>
          */
         public abstract void doubleClickByDistance();
     }

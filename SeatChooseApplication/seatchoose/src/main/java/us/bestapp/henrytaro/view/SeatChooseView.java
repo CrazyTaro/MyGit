@@ -17,7 +17,8 @@ import us.bestapp.henrytaro.draw.params.SeatParams;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
 
 /**
- * @version 1.2
+ * @author xuhaolin
+ * @version 1.4
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>

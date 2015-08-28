@@ -20,7 +20,8 @@ import us.bestapp.henrytaro.draw.params.SeatParams;
 import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
- * @version 1.3
+ * @author xuhaolin
+ * @version 1.4
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -29,7 +30,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
  *          如果通过继承此类完成定制的绘制时,需要注意重写部分方法以达到正确的绘制结果</p>
  *          <p><b>此类默认的绘制流程如下:使用参数{@link StageParams}在顶端中心位置绘制舞台,并以舞台为起点,依次向下绘制座位类型{@code seatType}及普通座位{@code sellSeat};
  *          基本座位类型及普通座位参数均来自于{@link SeatParams}</b>,
- *          当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @apiNote}标注</font></p>
+ *          当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @since}标注</font></p>
  *          <br/>
  *          <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
@@ -941,7 +942,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 获取座位类型绘制的Y轴中心位置(此处指第一行绘制的座位类型)
      *
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getSeatTypeDrawCenterY() {
         //初始偏移量
@@ -969,7 +970,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getSellSeatDrawCenterY(int seatTypeRowCount) {
         //初始偏移量
@@ -995,7 +996,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 获取舞台开始绘制的Y轴中心位置
      *
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getStageDrawCenterY() {
         //初始偏移量
@@ -1031,7 +1032,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getSellSeatDrawBeginY(int seatTypeRowCount) {
         float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount) - mSeatParams.getHeight() / 2;
@@ -1043,7 +1044,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param seatTypeRowCount 座位类型绘制的行数
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getCanvasDrawBeginY(int seatTypeRowCount) {
         if (mStageParams.isDraw()) {
@@ -1190,7 +1191,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      *
      * @param viewWidth
      * @return
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getDrawCenterX(float viewWidth) {
         if (mSeatParams.getIsDrawThumbnail()) {
@@ -1225,7 +1226,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * <p>此方法是先绘制实际界面,再绘制缩略图(若需要绘制的话)</p>
      *
      * @param canvas view画板
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     public void onDraw(Canvas canvas) {
         if (mWHPoint == null) {
@@ -1291,7 +1292,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param canvas     画板
      * @param paint      画笔
      * @param viewHeight 绘制界面的高度(主要用于绘制中心轴虚线可用),实际绘制界面高度为屏幕高度
-     * @apiNote 继承此类时该方法可能需要重写
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected void drawNormalCanvas(Canvas canvas, Paint paint, float viewHeight) {
         float drawX = 0f;
@@ -1872,11 +1873,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             mStageParams.setDefaultScaleValue(true);
         } else {
             //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
-            if (currentScaleRate < 1.5) {
+            if (currentScaleRate >= 1 && currentScaleRate < 1.5) {
                 newScaleRate = mSeatParams.setDefaultScaleValue(true);
                 mStageParams.setDefaultScaleValue(true);
             } else {
-                //当前缩放比大于1.5小于3,在最大缩放值与最小缩放值之前,缩放到默认最大值
+                //当前缩放比大于1.5小于3,或者是小于1,在最大缩放值与最小缩放值之前,缩放到默认最小值
                 newScaleRate = mSeatParams.setDefaultScaleValue(false);
                 mStageParams.setDefaultScaleValue(false);
             }
@@ -1903,6 +1904,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
 
         //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+
+        //当双击事件触发后,取消双击事件,否则可能再次造成触发
+        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
     }
 
     /**
@@ -1968,15 +1972,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                         mGlobleParams.setIsAllowDrawThumbnail(false);
                         //延迟500毫秒重绘,使结束移动时依然可以保持显示一小段时间
                         mInvalidateView.postInvalidateDelayed(1000);
-
-//                        showMsg("thumbnail", "up");
                         break;
                     case MotionEvent.ACTION_MOVE:
                         //移动过程强制重绘
                         mGlobleParams.setIsAllowDrawThumbnail(true);
                         mInvalidateView.invalidate();
-
-//                        showMsg("thumbnail", "move");
                         break;
                 }
             }
@@ -2007,9 +2007,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         /**
          * 当前座位区域的状态<br/>
          * <p>
-         * {@link #STATUS_MOVE},座位移动<br/>
-         * {@link #STATUS_CLICK},座位区域被单击<br/>
-         * {@link #STATUS_CHOOSE_SEAT},座位被选中<br/>
+         * {@link #STATUS_MOVE},座位移动中<br/>
+         * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
+         * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseSeatSuccess(int, int)}<br/>
          * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
          * </p>
          *
@@ -2018,7 +2018,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         public void seatStatus(int status);
 
         /**
-         * 选择座位成功,即选中某个座位
+         * 单击选中某个座位位置,此处的选中并不是真实的选中意思,指的是成功单击到一个座位的有效区域,
+         * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该座位的行列索引则,并不作任何的处理
          *
          * @param rowIndex    座位在列表中的行索引
          * @param columnIndex 座位在列表中的列索引
@@ -2026,7 +2027,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         public void chooseSeatSuccess(int rowIndex, int columnIndex);
 
         /**
-         * 选择座位失败
+         * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
          */
         public void chosseSeatFail();
 

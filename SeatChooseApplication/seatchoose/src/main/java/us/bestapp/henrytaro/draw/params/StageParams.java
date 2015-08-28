@@ -56,7 +56,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
 
     public StageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
-//        this.storeDefaultScaleValue();
+        this.storeDefaultScaleValue();
     }
 
     /**
