@@ -21,7 +21,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
  * @author xuhaolin
- * @version 1.6
+ * @version 1.7
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -50,6 +50,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     //图片座位位置
     private RectF mImageRectf = null;
     private ISeatInformationListener mISeatInformationListener = null;
+
+    private float mRowBeginDrawY = 0f;
+    private float mColumnBeginDrawX = 0f;
 
     //实际界面绘制的高度
     private float mCanvasHeight = 0f;
@@ -566,14 +569,16 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
 
 
+        //开始绘制
+        beginDrawY = drawPositionY;
         if (mGlobleParams.getIsDrawColumnNumber()) {
-            //开始绘制
-            beginDrawY = drawPositionY;
             this.drawSellSeatTitleColumn(canvas, paint, beginDrawLeftX, beginDrawY, leftBeginColumn, 0 - 1);
             this.drawSellSeatTitleColumn(canvas, paint, beginDrawRightX, beginDrawY, rightBeginColumn, columnLength);
             //增加Y轴的绘制高度
             beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
         }
+
+        mRowBeginDrawY = beginDrawY;
 
         for (int i = 0; i < seatMap.length; i++) {
             //画左边的座位
@@ -1024,14 +1029,18 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param seatTypeRowCount 座位类型绘制了几行,<font color="#ff9900"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
+     * @param isBaseOriginal
      * @return
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
-    protected float getSellSeatDrawCenterY(int seatTypeRowCount) {
+    protected float getSellSeatDrawCenterY(int seatTypeRowCount, boolean isBaseOriginal) {
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
                 + mBeginDrawOffsetY;
+        if (isBaseOriginal) {
+            beginDrawCenterY = 0f;
+        }
         if (mSeatParams.getIsDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
@@ -1090,7 +1099,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getSellSeatDrawBeginY(int seatTypeRowCount) {
-        float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount) - mSeatParams.getHeight() / 2;
+        float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount, false) - mSeatParams.getHeight() / 2;
         //绘制列数再下移一行
         if (mGlobleParams.getIsDrawColumnNumber()) {
             beginY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
@@ -1294,6 +1303,16 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         this.beginDraw(canvas, mPaint);
 
         drawNormalCanvas(canvas, mPaint, mWHPoint.y);
+
+//        float sellSeatBeginDrawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), false);
+//        float columnBeginDrawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), true);
+//        columnBeginDrawY = sellSeatBeginDrawY > columnBeginDrawY ? sellSeatBeginDrawY : columnBeginDrawY;
+        float columnBeginDrawY = mRowBeginDrawY;
+        columnBeginDrawY = mRowBeginDrawY < mSeatParams.getHeight() / 2 ? mSeatParams.getHeight() / 2 : mRowBeginDrawY;
+        this.drawSellSeatTitleColumn(canvas, mPaint, this.getDrawCenterX(mWHPoint.x), columnBeginDrawY, mSeatMap[0].length / 2, 0 - 1);
+        this.drawSellSeatTitleColumn(canvas, mPaint, this.getDrawCenterX(mWHPoint.x), columnBeginDrawY, mSeatMap[0].length / 2, mSeatMap[0].length);
+        this.drawSellSeatTitleRow(canvas, mPaint, 50f, mRowBeginDrawY, mSeatMap.length);
+
         //判断当前是否需要显示缩略图
         //当界面基本在当前屏幕范围内时,不显示缩略图
         if (mCanvasWidth > (mWHPoint.x + 30f) || mCanvasHeight > (mWHPoint.y + 30f)) {
@@ -1307,6 +1326,25 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
 
         this.finishDraw();
+    }
+
+    protected void drawSellSeatTitleRow(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int rowCount) {
+        float textLength = 0f;
+        float beginDrawX = drawPositionX;
+        float beginDrawY = drawPositionY;
+
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(mSeatParams.getDescriptionColor());
+        paint.setTextSize(mSeatParams.getDescriptionSize());
+        for (int i = 0; i < rowCount; i++) {
+            textLength = this.getTextLength(mSeatParams.getDescriptionSize(), String.valueOf(i + 1));
+            beginDrawX -= textLength / 2;
+            beginDrawY += mSeatParams.getDescriptionSize() / 3;
+            canvas.drawText(String.valueOf(i + 1), beginDrawX, beginDrawY, paint);
+
+            beginDrawX = drawPositionX;
+            beginDrawY = drawPositionY + (i + 1) * (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval());
+        }
     }
 
     /**
@@ -1394,7 +1432,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 3.绘制舞台{@link #drawStage(Canvas, Paint, float, float)}<br/>
      * 4.获取座位类型绘制的高度{@link #getSeatTypeDrawCenterY()}<br/>
      * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
-     * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int)}<br/>
+     * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int, boolean)}<br/>
      * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, int[][], float, float)}<br/>
      * 8.绘制中心分界线{@link #getCenterDotLine(float, float)}<br/>
      * </p>
@@ -1415,7 +1453,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         drawY = this.getSeatTypeDrawCenterY();
         drawSeatTypeByAuto(canvas, paint, drawY, mGlobleParams.getSeatTypeRowCount());
         //开始绘制普通出售座位
-        drawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount());
+        drawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), false);
         drawSellSeats(canvas, paint, mSeatMap, drawX, drawY);
 
         float[] dotline = this.getCenterDotLine(drawX, viewHeight);
