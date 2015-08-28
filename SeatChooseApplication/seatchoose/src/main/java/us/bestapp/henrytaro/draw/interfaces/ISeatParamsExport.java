@@ -277,4 +277,16 @@ public interface ISeatParamsExport extends IBaseParamsExport {
      * @return
      */
     public int getSeatTypeRowCount();
+
+    /**
+     * 是否绘制行号
+     *
+     * @param isDrawRowNumber
+     */
+    public void setIsDrawRowNumber(boolean isDrawRowNumber);
+
+    /**
+     * 获取是否绘制行号
+     */
+    public boolean getIsDrawRowNumber();
 }

@@ -112,6 +112,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     //座位类型之间的间隔
     private float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
+    private boolean mIsDrawRowNumber = true;
     //是否绘制座位类型
     private boolean mIsDrawSeatType = true;
     //座位类型数组
@@ -147,7 +148,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     //初始化
-    private void initial(){
+    private void initial() {
         super.setLargeScaleRate(16);
         super.setSmallScaleRate(0.2f);
         resetSeatTypeWithColor();
@@ -454,6 +455,16 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     @Override
     public int getSeatTypeRowCount() {
         return this.mSeatTypeDrawRowCount;
+    }
+
+    @Override
+    public void setIsDrawRowNumber(boolean isDrawRowNumber) {
+        this.mIsDrawRowNumber = isDrawRowNumber;
+    }
+
+    @Override
+    public boolean getIsDrawRowNumber() {
+        return this.mIsDrawRowNumber;
     }
 
     /**
