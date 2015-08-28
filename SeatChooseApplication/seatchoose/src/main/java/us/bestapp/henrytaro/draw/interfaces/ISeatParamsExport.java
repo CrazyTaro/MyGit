@@ -262,31 +262,31 @@ public interface ISeatParamsExport extends IBaseParamsExport {
      */
     public void setThumbnailSeatColor(int[] colorArr);
 
-    /**
-     * 设置座位类型需要自动绘制成几行
-     * <p>分行绘制的规则如下:座位类型总数/rowCount,若整除则每行为相同的座位类型个数,
-     * 若有余则最后一行比其它行将多一个座位类型</p>
-     *
-     * @param rowCount 此参数值必须大于0,否则将置为默认值1
-     */
-    public void setSeatTypeRowCount(int rowCount);
-
-    /**
-     * 获取座位类型绘制的行数
-     *
-     * @return
-     */
-    public int getSeatTypeRowCount();
-
-    /**
-     * 是否绘制行号
-     *
-     * @param isDrawRowNumber
-     */
-    public void setIsDrawRowNumber(boolean isDrawRowNumber);
-
-    /**
-     * 获取是否绘制行号
-     */
-    public boolean getIsDrawRowNumber();
+//    /**
+//     * 设置座位类型需要自动绘制成几行
+//     * <p>分行绘制的规则如下:座位类型总数/rowCount,若整除则每行为相同的座位类型个数,
+//     * 若有余则最后一行比其它行将多一个座位类型</p>
+//     *
+//     * @param rowCount 此参数值必须大于0,否则将置为默认值1
+//     */
+//    public void setSeatTypeRowCount(int rowCount);
+//
+//    /**
+//     * 获取座位类型绘制的行数
+//     *
+//     * @return
+//     */
+//    public int getSeatTypeRowCount();
+//
+//    /**
+//     * 是否绘制行号
+//     *
+//     * @param isDrawRowNumber
+//     */
+//    public void setIsDrawRowNumber(boolean isDrawRowNumber);
+//
+//    /**
+//     * 获取是否绘制行号
+//     */
+//    public boolean getIsDrawRowNumber();
 }

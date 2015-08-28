@@ -93,7 +93,10 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static int SEAT_TYPE_UNSHOW = 0;
     /**
-     * 座位的绘制类型,不绘制
+     * 座位的绘制类型,不绘制<br/>
+     * 此参数值默认与{@link us.bestapp.henrytaro.draw.interfaces.IBaseParamsExport#DRAW_TYPE_NO}保持一值,<font color="#ff9900"><b>此参数值为静态值,非常量</b></font><br/>
+     * 该变量为用户备用变量,若不需要绘制的座位类型设置为0,则不需要做任何的改动;<br/>
+     * <font color="#ff9900"><b>若用户需要自定义不绘制的座位类型,则必须通过方法{@link #setDefaultSeatDrawNoType(int)}设置此变量</b></font>,否则可能会导致绘制结果与预期不符合
      */
     public static int SEAT_DRAW_TYPE_NO = DRAW_TYPE_NO;
     //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
@@ -112,7 +115,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     //座位类型之间的间隔
     private float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
-    private boolean mIsDrawRowNumber = true;
+
     //是否绘制座位类型
     private boolean mIsDrawSeatType = true;
     //座位类型数组
@@ -136,8 +139,9 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     //最小默认缩放值
     private float[] mDefaultReduceHolder = null;
 
-    //默认绘制的座位类型行数为1
-    private int mSeatTypeDrawRowCount = 1;
+//    private boolean mIsDrawRowNumber = true;
+//    //默认绘制的座位类型行数为1
+//    private int mSeatTypeDrawRowCount = 1;
 
     /**
      * 创建并初始化参数
@@ -443,29 +447,29 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         System.arraycopy(colorArr, 0, mThumbnailColorArray, 0, colorArr.length);
     }
 
-    @Override
-    public void setSeatTypeRowCount(int rowCount) {
-        if (rowCount > 0) {
-            this.mSeatTypeDrawRowCount = rowCount;
-        } else {
-            this.mSeatTypeDrawRowCount = 1;
-        }
-    }
-
-    @Override
-    public int getSeatTypeRowCount() {
-        return this.mSeatTypeDrawRowCount;
-    }
-
-    @Override
-    public void setIsDrawRowNumber(boolean isDrawRowNumber) {
-        this.mIsDrawRowNumber = isDrawRowNumber;
-    }
-
-    @Override
-    public boolean getIsDrawRowNumber() {
-        return this.mIsDrawRowNumber;
-    }
+//    @Override
+//    public void setSeatTypeRowCount(int rowCount) {
+//        if (rowCount > 0) {
+//            this.mSeatTypeDrawRowCount = rowCount;
+//        } else {
+//            this.mSeatTypeDrawRowCount = 1;
+//        }
+//    }
+//
+//    @Override
+//    public int getSeatTypeRowCount() {
+//        return this.mSeatTypeDrawRowCount;
+//    }
+//
+//    @Override
+//    public void setIsDrawRowNumber(boolean isDrawRowNumber) {
+//        this.mIsDrawRowNumber = isDrawRowNumber;
+//    }
+//
+//    @Override
+//    public boolean getIsDrawRowNumber() {
+//        return this.mIsDrawRowNumber;
+//    }
 
     /**
      * 设置座位的高度,此方法的高度直接用于绘制图片座位的高度;且该方法会自动计算默认绘制方式的主次座位部分的高度

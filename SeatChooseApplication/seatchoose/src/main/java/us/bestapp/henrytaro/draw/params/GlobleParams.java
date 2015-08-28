@@ -30,6 +30,15 @@ public class GlobleParams implements IGlobleParamsExport {
     //是否允许绘制缩略图
     private boolean mIsAllowDrawThumbnail = true;
 
+    //选中行列的提醒
+    private boolean mIsDrawSeletedRowColumnNotification = false;
+    //绘制列数
+    private boolean mIsDrawColumnNumber = false;
+    //绘制行数
+    private boolean mIsDrawRowNumber = false;
+    //默认绘制的座位类型行数为1
+    private int mSeatTypeDrawRowCount = 1;
+
     @Override
     public boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
         if ((alpha < 0 || alpha > 255) && alpha != IBaseParamsExport.DEFAULT_INT) {
@@ -98,6 +107,50 @@ public class GlobleParams implements IGlobleParamsExport {
     public void setIsShowThumbnailAlways(boolean isShowAlways) {
         this.mIsShowThumbnailAlways = isShowAlways;
         this.mIsAllowDrawThumbnail = isShowAlways && mIsDrawThumbnail;
+    }
+
+    @Override
+    public void setSeatTypeRowCount(int rowCount) {
+        if (rowCount > 0) {
+            this.mSeatTypeDrawRowCount = rowCount;
+        } else {
+            this.mSeatTypeDrawRowCount = 1;
+        }
+    }
+
+    @Override
+    public int getSeatTypeRowCount() {
+        return this.mSeatTypeDrawRowCount;
+    }
+
+    @Override
+    public void setIsDrawRowNumber(boolean isDrawRowNumber) {
+        this.mIsDrawRowNumber = isDrawRowNumber;
+    }
+
+    @Override
+    public boolean getIsDrawRowNumber() {
+        return this.mIsDrawRowNumber;
+    }
+
+    @Override
+    public void setIsDrawColumnNumber(boolean isDrawColumnNumber) {
+        this.mIsDrawColumnNumber = isDrawColumnNumber;
+    }
+
+    @Override
+    public boolean getIsDrawColumnNumber() {
+        return this.mIsDrawColumnNumber;
+    }
+
+    @Override
+    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification) {
+        this.mIsDrawSeletedRowColumnNotification = isDrawNotification;
+    }
+
+    @Override
+    public boolean getIsDrawSeletedRowColumnNotification() {
+        return this.mIsDrawSeletedRowColumnNotification;
     }
 
     /**
