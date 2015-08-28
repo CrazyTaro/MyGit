@@ -2075,6 +2075,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
          *                         <p>
          *                         {@link MotionEvent#ACTION_UP},单击抬起<br/>
          *                         {@link MotionEvent#ACTION_MOVE},单击移动<br/>
+         *                         {@link MotionEvent#ACTION_MASK},通知更新座位提醒的绘制<br/>
+         *                         {@link MotionEvent#ACTION_CANCEL},取消更新座位提醒的绘制<br/>
          *                         </p>
          */
         public InvalidateRunnable(View invalidateView, int invalidateAction) {
