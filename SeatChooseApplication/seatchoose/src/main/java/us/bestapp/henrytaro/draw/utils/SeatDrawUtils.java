@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.draw.params.BaseParams;
 import us.bestapp.henrytaro.draw.params.ExportParams;
 import us.bestapp.henrytaro.draw.params.GlobleParams;
@@ -21,7 +22,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
  * @author xuhaolin
- * @version 1.7
+ * @version 2.2
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -52,7 +53,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     private ISeatInformationListener mISeatInformationListener = null;
 
     private float mRowBeginDrawY = 0f;
-    private float mColumnBeginDrawX = 0f;
+    private float mColumnOriginalDrawY = Float.MAX_VALUE;
 
     //实际界面绘制的高度
     private float mCanvasHeight = 0f;
@@ -572,12 +573,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         //开始绘制
         beginDrawY = drawPositionY;
         if (mGlobleParams.getIsDrawColumnNumber()) {
-            this.drawSellSeatTitleColumn(canvas, paint, beginDrawLeftX, beginDrawY, leftBeginColumn, 0 - 1);
-            this.drawSellSeatTitleColumn(canvas, paint, beginDrawRightX, beginDrawY, rightBeginColumn, columnLength);
-            //增加Y轴的绘制高度
-            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
+            //下移一行,实际需要绘制的座位,空出的一行为列数绘制需要
+            beginDrawY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
         }
-
+        //计录当前需要绘制的行位置(后续需要)
+        //行数的绘制应该与实际行的位置统一
         mRowBeginDrawY = beginDrawY;
 
         for (int i = 0; i < seatMap.length; i++) {
@@ -600,6 +600,138 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
     }
 
+
+    /**
+     * 绘制悬浮的行数显示
+     *
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param drawPositionX 开始绘制的X轴中心位置
+     * @param drawPositionY 开始绘制的Y轴起始位置,即座位开始绘制的第一行相同的Y坐标
+     * @param edgeY         Y轴边界值,在此处特指顶端可显示的最top值,<font color="#ff9900">此值向下的部分可显示</font>
+     * @param rowCount      行数(即seatMap.length)
+     */
+    protected void drawFloatTitleRowNumber(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, float edgeY, int rowCount) {
+        float textLength = 0f;
+        //设定文字最大值为80
+        float textSize = mSeatParams.getDescriptionSize() > 80 ? 80 : mSeatParams.getDescriptionSize();
+        float beginDrawX = drawPositionX;
+        float beginDrawY = drawPositionY;
+
+        //计算行数背景
+        mImageRectf.left = drawPositionX - mSeatParams.getHeight() / 2;
+        mImageRectf.right = mImageRectf.left + mSeatParams.getHeight();
+        mImageRectf.top = drawPositionY - mSeatParams.getHeight() / 2 - mSeatParams.getSeatVerticalInterval() / 2;
+        mImageRectf.bottom = mImageRectf.top + (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval()) * rowCount;
+
+        //超过边界值不绘制
+        if (mImageRectf.top < edgeY) {
+            mImageRectf.top = edgeY;
+        } else if (mImageRectf.top < (0 - mSeatParams.getRadius())) {
+            //当顶端超过屏幕,只取屏幕部分绘制,其它忽略
+            mImageRectf.top = -mSeatParams.getRadius();
+        }
+        //当底端超过屏幕,只取屏幕部分绘制,其它忽略,否则可能造成数据太大无法绘制的问题
+        if (mImageRectf.bottom > (mWHPoint.y + mSeatParams.getRadius())) {
+            mImageRectf.bottom = mWHPoint.y + mSeatParams.getRadius();
+        }
+
+        //绘制透明背景
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(mGlobleParams.getRowNumberBackgroundColor());
+        paint.setAlpha(mGlobleParams.getRowNumberAlpha());
+        canvas.drawRoundRect(mImageRectf, mSeatParams.getRadius(), mSeatParams.getRadius(), mPaint);
+
+        //绘制文字
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(mGlobleParams.getRowNumberTextColor());
+        //字体最大使用80
+        paint.setTextSize(textSize);
+        for (int i = 0; i < rowCount; i++) {
+            textLength = this.getTextLength(mSeatParams.getDescriptionSize(), String.valueOf(i + 1));
+            beginDrawX -= textLength / 2;
+            beginDrawY += mSeatParams.getDescriptionSize() / 3;
+
+            //超过边界值的不绘制
+            if (beginDrawY > edgeY + textSize) {
+                canvas.drawText(String.valueOf(i + 1), beginDrawX, beginDrawY, paint);
+            }
+
+            beginDrawX = drawPositionX;
+            beginDrawY = drawPositionY + (i + 1) * (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval());
+        }
+    }
+
+    /**
+     * 绘制悬浮的列数,此方法依赖于{@link #drawHorizontalColumnNumber(Canvas, Paint, float, float, float, int, int, boolean)}
+     *
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param drawPositionX 绘制列的中心X轴位置,通过方法{@link #getDrawCenterX(float)}获取最好
+     * @param drawPositionY 绘制列的中心Y轴位置,若需要绘制则通过{@link #getSellSeatDrawCenterY(int, boolean)}获取<br/>
+     *                      此处需要注意的是,列数的绘制与普通座位是统一的,在同一个绘制区域内,如果需要绘制列,则第一行座位不绘制,下移到第二行开始绘制,
+     *                      若不需要绘制列,则第一行绘制为座位而不是列数,此部分由{@link IGlobleParamsExport#getIsDrawColumnNumber()}设置
+     * @param edgeX         X轴边界值,此处特指在左边可显示的最left值,<font color="#ff9900">此值往右的部分可显示</font>
+     * @param columnCount   绘制列的数量
+     * @param columnStyle   绘制列的类型,此处暂时未完善,此值暂时无用,保留//TODO
+     */
+    protected void drawFloatTitleColumnNumber(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, float edgeX, int columnCount, int columnStyle) {
+        int middleColumnToLeft = 0;
+        int middleColumnToRight = 0;
+        //背景一半的宽度
+        float halfWidth = 0f;
+        float beginLeftDrawX = 0f;
+        float beginRightDrawX = 0f;
+        if ((columnCount & 0x1) == 0) {
+            //偶数列
+            middleColumnToLeft = columnCount / 2;
+            //计算背影宽度一半的值
+            //按座位宽度及间隔计算
+            halfWidth = (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval()) * middleColumnToLeft
+                    //偶数列中间是间隔,加上一半的间隔
+                    + mSeatParams.getSeatHorizontalInterval() / 2;
+            beginLeftDrawX = drawPositionX - mSeatParams.getSeatHorizontalInterval() / 2 - mSeatParams.getWidth() / 2;
+        } else {
+            //奇数列
+            middleColumnToLeft = columnCount / 2;
+            //计算背影宽度一半的值
+            //按座位宽度及间隔计算
+            halfWidth = (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval()) * middleColumnToLeft
+                    //奇数列中间是座位,减去一半的座位宽度(此部分超过了中间线)
+                    - mSeatParams.getWidth() / 2;
+            beginLeftDrawX = drawPositionX;
+        }
+        middleColumnToRight = middleColumnToLeft + 1;
+        beginRightDrawX = beginLeftDrawX + mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval();
+
+        //计算绘制背景
+        mImageRectf.left = drawPositionX - halfWidth;
+        mImageRectf.right = mImageRectf.left + (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval()) * columnCount;
+        mImageRectf.top = drawPositionY - mSeatParams.getHeight() / 2;
+        mImageRectf.bottom = mImageRectf.top + mSeatParams.getHeight();
+        //当左边界不在屏幕内时,只取屏幕内绘制
+        if (mImageRectf.left < edgeX) {
+            mImageRectf.left = edgeX;
+        } else if (mImageRectf.left < (0 - mSeatParams.getRadius())) {
+            mImageRectf.left = -mSeatParams.getRadius();
+        }
+        //当右边界不在屏幕内时,只取屏幕内绘制
+        if (mImageRectf.right > (mWHPoint.x + mSeatParams.getRadius())) {
+            mImageRectf.right = mWHPoint.x + mSeatParams.getRadius();
+        }
+
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(mGlobleParams.getColumnNumberBackgroundColor());
+        paint.setAlpha(mGlobleParams.getColumnNumberAlpha());
+        canvas.drawRoundRect(mImageRectf, mSeatParams.getRadius(), mSeatParams.getRadius(), paint);
+
+        //绘制文字列
+        //从右向左绘制
+        this.drawHorizontalColumnNumber(canvas, paint, beginLeftDrawX, drawPositionY, edgeX, middleColumnToLeft, 0, false);
+        //从左向右绘制
+        this.drawHorizontalColumnNumber(canvas, paint, beginRightDrawX, drawPositionY, edgeX, middleColumnToRight, columnCount + 1, true);
+    }
+
     /**
      * 在sellSeat第一行绘制列数
      *
@@ -607,37 +739,43 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * @param paint         画笔
      * @param drawPositionX 开始绘制的位置的中心X坐标
      * @param drawPositionY 开始绘制的位置的Y坐标
-     * @param fromIndex     开始绘制的列索引,此索引将会绘制
-     * @param toIndex       最终绘制的列索引,此索引将不会绘制
+     * @param edgeX
+     * @param from          开始绘制的列,此索引将会绘制,<font color="#ff9900">此处不是以0为起始值,而是以1为起始值,即绘制的值即为给定的值)</font>
+     * @param to            最终绘制的列,此索引将不会绘制,同上
+     * @param isLeftToRight 是否从左向右绘制
      */
-    protected void drawSellSeatTitleColumn(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int fromIndex, int toIndex) {
+    protected void drawHorizontalColumnNumber(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, float edgeX, int from, int to, boolean isLeftToRight) {
         //计算增量
-        int increament = (fromIndex - toIndex) > 0 ? -1 : 1;
+        int increament = isLeftToRight ? 1 : -1;
         //总数
-        int totalCount = Math.abs(fromIndex - toIndex);
+        int totalCount = Math.abs(from - to);
         int currentDrawColumn = 0;
+        //文字大小最大值80
+        float textSize = mSeatParams.getDescriptionSize() > 80 ? 80 : mSeatParams.getDescriptionSize();
         float textLength = 0f;
         //文字开始绘制的X坐标
         float textDrawX = 0f;
         //绘制的X中心坐标
         float beginDrawX = drawPositionX;
         //文本绘制的底端Y坐标
-        float beginDrawY = drawPositionY + mSeatParams.getHeight() / 2;
+        float beginDrawY = drawPositionY + mSeatParams.getHeight() / 3;
 
         //通用文本设置
-        paint.setColor(mSeatParams.getDescriptionColor());
-        paint.setTextSize(mSeatParams.getDescriptionSize() * 0.5f);
+        paint.setColor(mGlobleParams.getColumnNumberTextColor());
+        paint.setTextSize(textSize);
         paint.setStyle(Paint.Style.FILL);
         for (int i = 0; i < totalCount; i++) {
             //计算当前绘制的列文本
-            currentDrawColumn = fromIndex + i * increament;
+            currentDrawColumn = from + i * increament;
             //计算文本长度
-            textLength = this.getTextLength(mSeatParams.getDescriptionSize(), String.valueOf(currentDrawColumn + 1));
+            textLength = this.getTextLength(mSeatParams.getDescriptionSize(), String.valueOf(currentDrawColumn));
             //计算文本开始绘制的X坐标,所以将文本向左推移一半的文本长度
             textDrawX = beginDrawX - textLength / 2;
 
-            //绘制文本
-            canvas.drawText(String.valueOf(currentDrawColumn + 1), textDrawX, beginDrawY, paint);
+            if (textDrawX > edgeX) {
+                //绘制文本
+                canvas.drawText(String.valueOf(currentDrawColumn), textDrawX, beginDrawY, paint);
+            }
             //移动到下一个文本绘制的中心位置
             beginDrawX += increament * (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval());
         }
@@ -690,18 +828,22 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                     //通过增量改变下一个绘制座位的索引
                     i += increment;
                 } while (i != end);
-                //当前不是绘制缩略图
-                //当前行数有效且绘制的方向为从右向左绘制时(即绘制到最开始的座位)
-                //尝试绘制当前的行数
-                if (!mSeatParams.getIsDrawThumbnail() && currentRowIndex > 0 && increment < 0) {
-                    //增大行数与座位之间的间隔
-                    beginDrawX += increment * mSeatParams.getWidth();
-                    paint.setTextSize(mSeatParams.getDescriptionSize());
-                    paint.setColor(mSeatParams.getDescriptionColor());
-                    paint.setStyle(Paint.Style.FILL);
-                    //调整文字显示的Y轴坐标
-                    float drawTextY = drawPositionY + mSeatParams.getDescriptionSize() / 3;
-                    canvas.drawText(String.valueOf(currentRowIndex), beginDrawX, drawTextY, paint);
+//                //当前不是绘制缩略图
+//                //当前行数有效且绘制的方向为从右向左绘制时(即绘制到最开始的座位)
+//                //尝试绘制当前的行数
+//                if (!mSeatParams.getIsDrawThumbnail() && currentRowIndex > 0 && increment < 0) {
+//                    //增大行数与座位之间的间隔
+//                    beginDrawX += increment * mSeatParams.getWidth();
+//                    paint.setTextSize(mSeatParams.getDescriptionSize());
+//                    paint.setColor(mSeatParams.getDescriptionColor());
+//                    paint.setStyle(Paint.Style.FILL);
+//                    //调整文字显示的Y轴坐标
+//                    float drawTextY = drawPositionY + mSeatParams.getDescriptionSize() / 3;
+//                    canvas.drawText(String.valueOf(currentRowIndex), beginDrawX, drawTextY, paint);
+//                }
+                //若需要绘制行数,则将每行的左右边界多留一个座位宽度的空白
+                if (mGlobleParams.getIsDrawRowNumber()) {
+                    beginDrawX += increment * mSeatParams.getHeight() * 1.5f;
                 }
 
                 //计算新的界面宽度值
@@ -999,6 +1141,22 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
+     * 获取第一行座位绘制的Y轴中心位置<br/>
+     * 座位区域开始绘制的Y轴坐标可通过方法{@link #getSellSeatDrawCenterY(int, boolean)}获取,<font color="#ff9900"><b>但此方法获取的坐标值不一定是第一行座位绘制的坐标值</b>,
+     * 此处获取的坐标值可能是列数绘制的坐标位置(若需要绘制列数),若不需要绘制列数才是第一行座位绘制的Y轴中心位置</font>
+     *
+     * @param seatTypeCount
+     * @return
+     */
+    protected float getFirstSellSeatDrawCenterY(int seatTypeCount) {
+        float drawCenterY = this.getSellSeatDrawCenterY(seatTypeCount, false);
+        if (mGlobleParams.getIsDrawColumnNumber()) {
+            drawCenterY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
+        }
+        return drawCenterY;
+    }
+
+    /**
      * 获取座位类型绘制的Y轴中心位置(此处指第一行绘制的座位类型)
      *
      * @return
@@ -1024,12 +1182,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 获取实际出售座位开始绘制的Y轴中心位置,centerY
+     * 获取实际出售座位开始绘制的Y轴中心位置,centerY<br/>
+     * 此处需要注意的是,此方法获取的是座位区域开始绘制的Y轴中心位置,但不一定是第一行座位开始绘制的位置,
+     * 若需要绘制列数,则需要此坐标值为列数绘制的位置(第一行座位在列数绘制后才进行绘制)
      *
      * @param seatTypeRowCount 座位类型绘制了几行,<font color="#ff9900"><b>此处有这个参数是因为前面设计座位类型是可以被反复绘制多次的</b></font>,
      *                         这种情况是为了解决当座位类型很多时(如可能有5个以上的座位类型),则一行可能绘制不了或者会造成绘制结果不清晰,因此座位允许自定义选择绘制行数,
      *                         用户可以自主拆分座位类型并分批进行绘制
-     * @param isBaseOriginal
+     * @param isBaseOriginal   <font color="#ff9900"><b>是否依赖于最原始的值</b></font>,若为true,则忽略所有的偏移量,返回的结果为初始偏移量为0的高度;
+     *                         若为fale则返回的值包含了所有有偏移量,即为实际应该显示的位置
      * @return
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
@@ -1038,9 +1199,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
                 + mBeginDrawOffsetY;
+
         if (isBaseOriginal) {
             beginDrawCenterY = 0f;
         }
+
         if (mSeatParams.getIsDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
@@ -1053,6 +1216,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             beginDrawCenterY += (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
         }
         beginDrawCenterY += mSeatParams.getHeight() / 2;
+
         return beginDrawCenterY;
     }
 
@@ -1270,7 +1434,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 绘制之前进行的数据初始化或者必须的数据处理
+     * 绘制之前进行的数据初始化或者必须的数据处理,绘制画板背景色
      *
      * @param canvas 画板
      */
@@ -1300,18 +1464,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         if (mWHPoint == null) {
             mWHPoint = getWidthAndHeight();
         }
+        //初始化绘制工作
         this.beginDraw(canvas, mPaint);
 
+        //绘制正常实际的界面
         drawNormalCanvas(canvas, mPaint, mWHPoint.y);
-
-//        float sellSeatBeginDrawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), false);
-//        float columnBeginDrawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), true);
-//        columnBeginDrawY = sellSeatBeginDrawY > columnBeginDrawY ? sellSeatBeginDrawY : columnBeginDrawY;
-        float columnBeginDrawY = mRowBeginDrawY;
-        columnBeginDrawY = mRowBeginDrawY < mSeatParams.getHeight() / 2 ? mSeatParams.getHeight() / 2 : mRowBeginDrawY;
-        this.drawSellSeatTitleColumn(canvas, mPaint, this.getDrawCenterX(mWHPoint.x), columnBeginDrawY, mSeatMap[0].length / 2, 0 - 1);
-        this.drawSellSeatTitleColumn(canvas, mPaint, this.getDrawCenterX(mWHPoint.x), columnBeginDrawY, mSeatMap[0].length / 2, mSeatMap[0].length);
-        this.drawSellSeatTitleRow(canvas, mPaint, 50f, mRowBeginDrawY, mSeatMap.length);
+        if (mSeatMap != null && mSeatMap.length > 0) {
+            //绘制行列显示条
+            drawColumnAndRowNumber(canvas, mPaint, mCanvasWidth, mSeatMap[0].length, mSeatMap.length);
+        }
 
         //判断当前是否需要显示缩略图
         //当界面基本在当前屏幕范围内时,不显示缩略图
@@ -1328,22 +1489,79 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         this.finishDraw();
     }
 
-    protected void drawSellSeatTitleRow(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int rowCount) {
-        float textLength = 0f;
-        float beginDrawX = drawPositionX;
-        float beginDrawY = drawPositionY;
+    /**
+     * 绘制行列显示条
+     *
+     * @param canvas              画板
+     * @param paint               画笔
+     * @param originalCanvasWidth 实际绘制界面的宽度
+     * @param columnCount         列数
+     * @param rowCount            行数
+     */
+    protected void drawColumnAndRowNumber(Canvas canvas, Paint paint, float originalCanvasWidth, int columnCount, int rowCount) {
+        //计算列的Y轴绘制坐标
+        //实际界面绘制的高度(受到偏移量的影响)
+        float theoryColumnDrawCenterY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), false);
+        //固定位置的绘制高度,不受偏移量影响
+        float fixColumnDrawCenterY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), true);
+        //若当前界面列绘制的高度大于固定位置的高度,则按实际界面绘制(界面可能下移)
+        //否则按固定位置,此情况即为界面被上移了
+        float drawCenterY = 0f;
+//        fixColumnDrawCenterY = mColumnOriginalDrawY < fixColumnDrawCenterY ? mColumnOriginalDrawY : fixColumnDrawCenterY;
 
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(mSeatParams.getDescriptionColor());
-        paint.setTextSize(mSeatParams.getDescriptionSize());
-        for (int i = 0; i < rowCount; i++) {
-            textLength = this.getTextLength(mSeatParams.getDescriptionSize(), String.valueOf(i + 1));
-            beginDrawX -= textLength / 2;
-            beginDrawY += mSeatParams.getDescriptionSize() / 3;
-            canvas.drawText(String.valueOf(i + 1), beginDrawX, beginDrawY, paint);
 
-            beginDrawX = drawPositionX;
-            beginDrawY = drawPositionY + (i + 1) * (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval());
+        //当前理论位置在固定位置之下,使用理论值
+        if (theoryColumnDrawCenterY >= fixColumnDrawCenterY) {
+            drawCenterY = theoryColumnDrawCenterY;
+        } else if (theoryColumnDrawCenterY < fixColumnDrawCenterY && (theoryColumnDrawCenterY - mSeatParams.getHeight()) >= 0) {
+            //当前理论位置在固定位置之上,同时理论位置到边界的距离大于固定偏移量
+            //使用理论值
+            drawCenterY = theoryColumnDrawCenterY;
+        } else if (theoryColumnDrawCenterY < fixColumnDrawCenterY && (theoryColumnDrawCenterY - mSeatParams.getHeight()) < 0) {
+            //当前理论位置在固定位置之上,同时理论位置到边界的距离小于固定偏移量
+            //此时使用理论值会使列被遮挡,所以使用固定值
+            //此方式保证了在理论值切换到固定值时过渡值是一致的
+            //因此不会出现不平滑的移动现象
+            drawCenterY = mSeatParams.getHeight();
+        } else {
+            showMsg("draw", "列数第三种情况......");
+        }
+
+
+        //计算行的X轴绘制坐标
+        float theoryRowDrawCenterX = this.getDrawCenterX(mWHPoint.x) - (originalCanvasWidth / 2) + mSeatParams.getDescriptionSize();
+        //固定悬浮值,此值虽然是动态的(在全局中会变动)
+        //但是使用此值可以使程序在最边界的时候可以平滑切换
+        float fixRowDrawCenterX = mSeatParams.getWidth();
+        float drawCenterX = 0f;
+        //当前理论位置在固定位置右边,说明被右移了,按理论位置绘制
+        if (theoryRowDrawCenterX >= fixRowDrawCenterX) {
+            drawCenterX = theoryRowDrawCenterX;
+        } else if (theoryRowDrawCenterX < fixRowDrawCenterX && (theoryRowDrawCenterX - fixRowDrawCenterX) >= 0) {
+            //当前理论位置在固定位置左边,同时理论位置到边界的距离没有超过固定悬浮值,
+            //使用理论绘制
+            drawCenterX = theoryRowDrawCenterX;
+        } else if (theoryRowDrawCenterX < fixRowDrawCenterX && (theoryRowDrawCenterX - fixRowDrawCenterX) < 0) {
+            //当前理论位置在固定位置左边,同时理论位置到边界的距离小于固定悬浮值
+            //此时按理论值绘制则行数会被遮挡,所以按固定值绘制
+            //此方式保证了在理论值切换到固定值时过渡值是一致的
+            //因此不会出现不平滑的移动现象
+            drawCenterX = fixRowDrawCenterX;
+        } else {
+            showMsg("draw", "行数第三种情况");
+        }
+
+        //行数绘制的左边界值,防止行列的叠加
+        float edgeX = drawCenterX + mSeatParams.getHeight() / 2;
+        //列数绘制的右边界值,防止行列的叠加
+        float edgeY = drawCenterY + mSeatParams.getHeight() / 2;
+        if (mGlobleParams.getIsDrawColumnNumber()) {
+            //绘制列数
+            this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
+        }
+        if (mGlobleParams.getIsDrawRowNumber()) {
+            //绘制行数
+            this.drawFloatTitleRowNumber(canvas, paint, drawCenterX, this.getFirstSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount()), edgeY, rowCount);
         }
     }
 
@@ -1951,7 +2169,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     @Override
-    public void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
+    public void multiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //使用try是为了防止获取系统的触摸点坐标失败
         //该部分可能为系统的问题
         try {
@@ -2139,11 +2357,13 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                         mInvalidateView.invalidate();
                         break;
                     case MotionEvent.ACTION_MASK:
+                        //选中行列绘制提醒
                         mIsDrawSeletedRowColumn = true;
                         mInvalidateView.invalidate();
                         mInvalidateView.postDelayed(new InvalidateRunnable(mInvalidateView, MotionEvent.ACTION_CANCEL), 1500);
                         break;
                     case MotionEvent.ACTION_CANCEL:
+                        //选中行列取消绘制提醒
                         mIsDrawSeletedRowColumn = false;
                         mInvalidateView.invalidate();
                         break;
