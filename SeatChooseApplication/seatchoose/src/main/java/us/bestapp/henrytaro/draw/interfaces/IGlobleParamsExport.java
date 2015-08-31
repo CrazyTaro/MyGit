@@ -119,6 +119,42 @@ public interface IGlobleParamsExport {
     public boolean getIsDrawRowNumber();
 
     /**
+     * 设置行数绘制的背景色及文本颜色
+     *
+     * @param bgColor   背景色
+     * @param textColor 文本颜色
+     */
+    public void setRowNumberBgColorWithTextColor(int bgColor, int textColor);
+
+    /**
+     * 设置行数绘制的透明度,默认值使用{@link IBaseParamsExport#DEFAULT_INT},<font color="#ff9900">透明度的值只能是0-255</font>
+     *
+     * @param alpha
+     */
+    public void setRowNumberAlpha(int alpha);
+
+    /**
+     * 获取行数绘制的背景颜色
+     *
+     * @return
+     */
+    public int getRowNumberBackgroundColor();
+
+    /**
+     * 获取行数绘制的文本颜色
+     *
+     * @return
+     */
+    public int getRowNumberTextColor();
+
+    /**
+     * 获取行数绘制的透明度
+     *
+     * @return
+     */
+    public int getRowNumberAlpha();
+
+    /**
      * 是否绘制列号
      *
      * @param isDrawColumnNumber
@@ -129,6 +165,42 @@ public interface IGlobleParamsExport {
      * 获取是否绘制列号
      */
     public boolean getIsDrawColumnNumber();
+
+    /**
+     * 设置列数背景颜色及文本颜色
+     *
+     * @param bgColor
+     * @param textColor
+     */
+    public void setColumnNumberBgColorWithTextColor(int bgColor, int textColor);
+
+    /**
+     * 设置列数绘制的透明度,默认值请使用{@link IBaseParamsExport#DEFAULT_INT},<font color="#ff9900">透明度的值只能是0-255</font>
+     *
+     * @param alpha
+     */
+    public void setColumnNumberAlpha(int alpha);
+
+    /**
+     * 获取列数绘制的背景颜色
+     *
+     * @return
+     */
+    public int getColumnNumberBackgroundColor();
+
+    /**
+     * 获取列数绘制的文本颜色
+     *
+     * @return
+     */
+    public int getColumnNumberTextColor();
+
+    /**
+     * 获取列数绘制的透明度
+     *
+     * @return
+     */
+    public int getColumnNumberAlpha();
 
     /**
      * 设置是否显示选中某行某列时的提醒

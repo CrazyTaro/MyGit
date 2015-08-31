@@ -104,7 +104,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                     mIsMultiPoint = true;
                     showMsg("多点触控 down");
                     if (mItouchEventListener != null) {
-                        mItouchEventListener.doubleTouchEventHandle(event, MOTION_EVENT_NOTHING);
+                        mItouchEventListener.multiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     }
                 }
                 mIsMultiDown = true;
@@ -216,7 +216,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 if (mIsMultiPoint) {
                     showMsg("多点触控 up");
                     if (mItouchEventListener != null) {
-                        mItouchEventListener.doubleTouchEventHandle(event, MOTION_EVENT_NOTHING);
+                        mItouchEventListener.multiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     }
                 }
                 //此处不重置mIsMultiDown变量是因为后面检测单击事件的up与多点触控的up需要
@@ -245,7 +245,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                 } else if (mIsMultiPoint && mIsMultiDown) {
                     showMsg("多点触控 move");
                     if (mItouchEventListener != null) {
-                        mItouchEventListener.doubleTouchEventHandle(event, MOTION_EVENT_NOTHING);
+                        mItouchEventListener.multiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     }
                 }
 
@@ -354,7 +354,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
          * @param event            多点触摸事件
          * @param extraMotionEvent 建议处理的额外事件,如果不需要进行额外处理则该参数值为{@link #MOTION_EVENT_NOTHING}
          */
-        public abstract void doubleTouchEventHandle(MotionEvent event, int extraMotionEvent);
+        public abstract void multiTouchEventHandle(MotionEvent event, int extraMotionEvent);
 
         /**
          * 单击事件处理,由于只要触摸到屏幕且时间足够长,就可以产生move事件,并不一定需要移动触摸才能产生move事件,

@@ -36,6 +36,20 @@ public class GlobleParams implements IGlobleParamsExport {
     private boolean mIsDrawColumnNumber = false;
     //绘制行数
     private boolean mIsDrawRowNumber = false;
+    //列数绘制的背景色
+    private int mColumnNumberBgColor = Color.BLACK;
+    //列数绘制的文本颜色
+    private int mColumnNumberTextColor = Color.WHITE;
+    //列数绘制的背景透明度
+    private int mColumnNumberAlpha = 100;
+    //行数绘制的背景色
+    private int mRowNumberBgColor = Color.BLACK;
+    //行数绘制的文本颜色
+    private int mRowNumberTextColor = Color.WHITE;
+    //行数绘制的背景透明色
+    private int mRowNumberAlpha = 100;
+
+
     //默认绘制的座位类型行数为1
     private int mSeatTypeDrawRowCount = 1;
 
@@ -134,6 +148,36 @@ public class GlobleParams implements IGlobleParamsExport {
     }
 
     @Override
+    public void setRowNumberBgColorWithTextColor(int bgColor, int textColor) {
+        this.mRowNumberBgColor = bgColor;
+        this.mRowNumberTextColor = textColor;
+    }
+
+    @Override
+    public void setRowNumberAlpha(int alpha) {
+        if (alpha == IBaseParamsExport.DEFAULT_INT) {
+            this.mRowNumberAlpha = 100;
+        } else if (alpha >= 0 && alpha <= 255) {
+            this.mRowNumberAlpha = alpha;
+        }
+    }
+
+    @Override
+    public int getRowNumberBackgroundColor() {
+        return this.mRowNumberBgColor;
+    }
+
+    @Override
+    public int getRowNumberTextColor() {
+        return this.mRowNumberTextColor;
+    }
+
+    @Override
+    public int getRowNumberAlpha() {
+        return this.mRowNumberAlpha;
+    }
+
+    @Override
     public void setIsDrawColumnNumber(boolean isDrawColumnNumber) {
         this.mIsDrawColumnNumber = isDrawColumnNumber;
     }
@@ -141,6 +185,36 @@ public class GlobleParams implements IGlobleParamsExport {
     @Override
     public boolean getIsDrawColumnNumber() {
         return this.mIsDrawColumnNumber;
+    }
+
+    @Override
+    public void setColumnNumberBgColorWithTextColor(int bgColor, int textColor) {
+        this.mColumnNumberBgColor = bgColor;
+        this.mColumnNumberTextColor = textColor;
+    }
+
+    @Override
+    public void setColumnNumberAlpha(int alpha) {
+        if (alpha == IBaseParamsExport.DEFAULT_INT) {
+            this.mColumnNumberAlpha = 100;
+        } else if (alpha >= 0 && alpha <= 255) {
+            this.mColumnNumberAlpha = alpha;
+        }
+    }
+
+    @Override
+    public int getColumnNumberBackgroundColor() {
+        return this.mColumnNumberBgColor;
+    }
+
+    @Override
+    public int getColumnNumberTextColor() {
+        return this.mColumnNumberTextColor;
+    }
+
+    @Override
+    public int getColumnNumberAlpha() {
+        return this.mColumnNumberAlpha;
     }
 
     @Override
