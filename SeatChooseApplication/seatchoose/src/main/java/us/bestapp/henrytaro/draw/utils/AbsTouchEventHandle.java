@@ -153,7 +153,6 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                             if (mItouchEventListener != null) {
                                 mItouchEventListener.doubleClickByTime();
                             }
-                            break;
                         } else {
                             showMsg("单击事件 single");
                             if (mItouchEventListener != null) {
@@ -180,7 +179,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                     break;
                 }
 
-                //不行进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
+                //不进入多点触发事件,同时单点移动也不允许任何的多点触摸事件
                 //这种情况是为了避免有可能有用户单击移动之后再进行多点触控,这种情况无法处理为用户需要移动还是需要缩放
 
                 //在处理单击事件up中,任何时候只要在结束up之前产生任何的多点触控,都不将此次的事件处理为单击up
