@@ -22,7 +22,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
  * @author xuhaolin
- * @version 2.2
+ * @version 2.3
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -517,7 +517,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(int[][])},
      * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
      * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
-     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int, int)}进行完成,
+     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int)}进行完成,
      * 在绘制一行时,从中心位置开始向左右两端分别绘制,每一次调用{@code drawHorizontalSeatList}仅仅只绘制从中心到两端中某一端的部分,
      * 即只有半行,因此需要绘制两次</b></p>
      *
@@ -585,9 +585,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             //绘制的时候由start位置到end位置
             //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
             //即数组不可越界
-            drawHorizontalSeatList(canvas, paint, beginDrawLeftX, beginDrawY, seatMap[i], leftBeginColumn, 0 - 1, (i + 1) * isDrawRowNumber);
+            drawHorizontalSeatList(canvas, paint, beginDrawLeftX, beginDrawY, seatMap[i], leftBeginColumn, 0 - 1);
             //画右边的座位
-            drawHorizontalSeatList(canvas, paint, beginDrawRightX, beginDrawY, seatMap[i], rightBeginColumn, columnLength, (i + 1) * isDrawRowNumber);
+            drawHorizontalSeatList(canvas, paint, beginDrawRightX, beginDrawY, seatMap[i], rightBeginColumn, columnLength);
             //增加Y轴的绘制高度
             beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
         }
@@ -733,7 +733,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 在sellSeat第一行绘制列数
+     * 在sellSeat第一行绘制列数,此处的绘制方式同{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int)},原理相同;<br/>
+     * 绘制行数分为两部分,从中轴线开始向左右两边绘制,所以需要调用此方法两次;
      *
      * @param canvas        画板
      * @param paint         画笔
@@ -787,16 +788,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      * 绘制方向由start/end决定,当start&gt;end时,向左绘制,当start&lt;end时,向右绘制,
      * 此处的start与end是在列表数据seatList中的索引值</b></p>
      *
-     * @param canvas          画板
-     * @param paint           画笔
-     * @param drawPositionX   该行座位开始绘制的第一个座位中心X轴位置
-     * @param drawPositionY   该行座位开始绘制的第一个座位中心Y轴位置
-     * @param seatList        单行座位列表
-     * @param start           座位列表中开始绘制的索引,<font color="#ff9900"><b>此索引位置的座位将被绘制</b></font>
-     * @param end             座位列表中最后绘制的索引,<font color="#ff9900"><b>此索引位置的座位不被绘制</b></font>
-     * @param currentRowIndex 当前绘制座位的行索引,用于绘制对应的行数,<font color="#ff9900"><b>不需要绘制行数请使用负值</b></font>
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param drawPositionX 该行座位开始绘制的第一个座位中心X轴位置
+     * @param drawPositionY 该行座位开始绘制的第一个座位中心Y轴位置
+     * @param seatList      单行座位列表
+     * @param start         座位列表中开始绘制的索引,<font color="#ff9900"><b>此索引位置的座位将被绘制</b></font>
+     * @param end           座位列表中最后绘制的索引,<font color="#ff9900"><b>此索引位置的座位不被绘制</b></font>
      */
-    protected void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end, int currentRowIndex) {
+    protected void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end) {
         float beginDrawX = drawPositionX;
         //从大到小则为向左绘制,增量为负值-1
         //从小到大则为向右绘制,增量为正值+1
@@ -828,19 +828,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                     //通过增量改变下一个绘制座位的索引
                     i += increment;
                 } while (i != end);
-//                //当前不是绘制缩略图
-//                //当前行数有效且绘制的方向为从右向左绘制时(即绘制到最开始的座位)
-//                //尝试绘制当前的行数
-//                if (!mSeatParams.getIsDrawThumbnail() && currentRowIndex > 0 && increment < 0) {
-//                    //增大行数与座位之间的间隔
-//                    beginDrawX += increment * mSeatParams.getWidth();
-//                    paint.setTextSize(mSeatParams.getDescriptionSize());
-//                    paint.setColor(mSeatParams.getDescriptionColor());
-//                    paint.setStyle(Paint.Style.FILL);
-//                    //调整文字显示的Y轴坐标
-//                    float drawTextY = drawPositionY + mSeatParams.getDescriptionSize() / 3;
-//                    canvas.drawText(String.valueOf(currentRowIndex), beginDrawX, drawTextY, paint);
-//                }
+
                 //若需要绘制行数,则将每行的左右边界多留一个座位宽度的空白
                 if (mGlobleParams.getIsDrawRowNumber()) {
                     beginDrawX += increment * mSeatParams.getHeight() * 1.5f;
@@ -2116,11 +2104,66 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
+     * 双击放大缩小操作
+     */
+    protected void doubleClickScale() {
+        //若不允许双击放大缩小,则直接返回
+        if (!mGlobleParams.getIsEnabledDoubleClickScale()) {
+            return;
+        }
+
+        //当前缩放比,当前的界面相对原始界面的比例
+        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
+        //新的缩放比,用于处理偏移量
+        float newScaleRate = 0f;
+        //当前缩放比大于3,比默认最大缩放值大了,缩放到默认最大缩放值
+        if (currentScaleRate > 3) {
+            newScaleRate = mSeatParams.setDefaultScaleValue(true);
+            mStageParams.setDefaultScaleValue(true);
+        } else {
+            //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
+            if (currentScaleRate >= 1 && currentScaleRate < 1.5) {
+                newScaleRate = mSeatParams.setDefaultScaleValue(true);
+                mStageParams.setDefaultScaleValue(true);
+            } else {
+                //当前缩放比大于1.5小于3,或者是小于1,在最大缩放值与最小缩放值之前,缩放到默认最小值
+                newScaleRate = mSeatParams.setDefaultScaleValue(false);
+                mStageParams.setDefaultScaleValue(false);
+            }
+        }
+        //记录当前的值,写入存储信息(以便下次缩放使用,不是特指双击缩放,而是包括任何方式的缩放)
+        mSeatParams.setScaleRate(1, true);
+        mStageParams.setScaleRate(1, true);
+
+        //存放移动前的偏移数据
+        //相对当前屏幕中心的X轴偏移量
+        mOffsetPoint.x = mBeginDrawOffsetX;
+        //相对当前屏幕中心的Y轴偏移量
+        //原来的偏移量是以Y轴顶端为偏移值
+        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+
+
+        //根据缩放比计算新的偏移值
+        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+        //是否进行up事件,是保存数据当前计算的最后数据
+        mOffsetPoint.x = mBeginDrawOffsetX;
+        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+
+        //重绘工作
+        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+
+        //当双击事件触发后,取消双击事件,否则可能再次造成触发
+        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
+    }
+
+    /**
      * 单击选择座位事件
      *
      * @param event
      */
-    protected void clickChooseSeat(MotionEvent event) {
+    protected void singleClickChooseSeat(MotionEvent event) {
         if (mISeatInformationListener != null) {
             mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
         }
@@ -2227,7 +2270,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      */
     @Override
     public void singleClickByDistance(MotionEvent event) {
-        clickChooseSeat(event);
+        this.singleClickChooseSeat(event);
     }
 
     @Override
@@ -2239,50 +2282,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      */
     @Override
     public void doubleClickByDistance() {
-        //当前缩放比,当前的界面相对原始界面的比例
-        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
-        //新的缩放比,用于处理偏移量
-        float newScaleRate = 0f;
-        //当前缩放比大于3,比默认最大缩放值大了,缩放到默认最大缩放值
-        if (currentScaleRate > 3) {
-            newScaleRate = mSeatParams.setDefaultScaleValue(true);
-            mStageParams.setDefaultScaleValue(true);
-        } else {
-            //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
-            if (currentScaleRate >= 1 && currentScaleRate < 1.5) {
-                newScaleRate = mSeatParams.setDefaultScaleValue(true);
-                mStageParams.setDefaultScaleValue(true);
-            } else {
-                //当前缩放比大于1.5小于3,或者是小于1,在最大缩放值与最小缩放值之前,缩放到默认最小值
-                newScaleRate = mSeatParams.setDefaultScaleValue(false);
-                mStageParams.setDefaultScaleValue(false);
-            }
-        }
-        //记录当前的值,写入存储信息(以便下次缩放使用,不是特指双击缩放,而是包括任何方式的缩放)
-        mSeatParams.setScaleRate(1, true);
-        mStageParams.setScaleRate(1, true);
-
-        //存放移动前的偏移数据
-        //相对当前屏幕中心的X轴偏移量
-        mOffsetPoint.x = mBeginDrawOffsetX;
-        //相对当前屏幕中心的Y轴偏移量
-        //原来的偏移量是以Y轴顶端为偏移值
-        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-
-
-        //根据缩放比计算新的偏移值
-        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
-        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
-        //是否进行up事件,是保存数据当前计算的最后数据
-        mOffsetPoint.x = mBeginDrawOffsetX;
-        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
-
-        //重绘工作
-        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
-
-        //当双击事件触发后,取消双击事件,否则可能再次造成触发
-        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
+        this.doubleClickScale();
     }
 
     /**
