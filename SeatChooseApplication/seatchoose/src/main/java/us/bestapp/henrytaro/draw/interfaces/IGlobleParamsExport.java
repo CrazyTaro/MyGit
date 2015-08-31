@@ -216,4 +216,18 @@ public interface IGlobleParamsExport {
      */
     public boolean getIsDrawSeletedRowColumnNotification();
 
+    /**
+     * 设置是否允许双击同一地方放大或者缩小界面
+     *
+     * @param isEnabled
+     */
+    public void setIsEnabledDoubleClickScale(boolean isEnabled);
+
+    /**
+     * 获取是否允许双击同一地方放大或者缩小界面
+     *
+     * @return
+     */
+    public boolean getIsEnabledDoubleClickScale();
+
 }

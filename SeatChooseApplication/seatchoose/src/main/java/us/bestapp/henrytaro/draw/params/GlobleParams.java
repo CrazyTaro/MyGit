@@ -29,6 +29,8 @@ public class GlobleParams implements IGlobleParamsExport {
     private boolean mIsShowThumbnailAlways = false;
     //是否允许绘制缩略图
     private boolean mIsAllowDrawThumbnail = true;
+    //是否允许双击放大缩小界面
+    private boolean mIsEnabledDoubleClickScale = true;
 
     //选中行列的提醒
     private boolean mIsDrawSeletedRowColumnNotification = false;
@@ -225,6 +227,16 @@ public class GlobleParams implements IGlobleParamsExport {
     @Override
     public boolean getIsDrawSeletedRowColumnNotification() {
         return this.mIsDrawSeletedRowColumnNotification;
+    }
+
+    @Override
+    public void setIsEnabledDoubleClickScale(boolean isEnabled) {
+        this.mIsEnabledDoubleClickScale = isEnabled;
+    }
+
+    @Override
+    public boolean getIsEnabledDoubleClickScale() {
+        return this.mIsEnabledDoubleClickScale;
     }
 
     /**
