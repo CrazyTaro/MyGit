@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/SeatChooseApplication.iml" filepath="$PROJECT_DIR$/SeatChooseApplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/seatchoose/seatchoose.iml" filepath="$PROJECT_DIR$/seatchoose/seatchoose.iml" />
       <module fileurl="file://$PROJECT_DIR$/seatchooseapk/seatchooseapk.iml" filepath="$PROJECT_DIR$/seatchooseapk/seatchooseapk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/textjar/textjar.iml" filepath="$PROJECT_DIR$/textjar/textjar.iml" />
     </modules>
   </component>
 </project>
