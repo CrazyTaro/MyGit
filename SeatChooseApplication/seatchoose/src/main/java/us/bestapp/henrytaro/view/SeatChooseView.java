@@ -12,23 +12,24 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.params.ExportParams;
+import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.params.SeatParams;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
 
 /**
  * @author xuhaolin
- * @version 1.7
+ * @version 2.0
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
  *          <p>使用自定义View时需要创建内部对象{@link SeatDrawUtils},此类是处理所有绘制方法的重要类,必须使用该类才能完成绘制功能,
- *          同时需要重写view的onDraw事件,通过调用seatDrawUtil.onDraw()完成绘制.</p>
- *          <p>如果需要处理选座事件,请实现接口{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils.ISeatInformationListener},
+ *          同时需要重写view的onDraw事件,通过调用seatDrawUtil.drawCanvas()完成绘制.</p>
+ *          <p>如果需要处理选座事件,请实现接口{@link us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces.ISeatInformationListener},
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
- *          <p/>
+ *          <p>
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
@@ -40,8 +41,8 @@ import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
  *          6.默认不提醒当前选中座位行列值<br/>
  *          7.默认可选座位最大值为5<br/>
  */
-public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformationListener, ISeatChoose {
-    private SeatDrawUtils mSeatDrawUtils = null;
+public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
+    private ISeatInterfaces mSeatHandleInterface = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
@@ -59,12 +60,12 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     //初始化
     private void initial() {
         //创建绘制对象
-        mSeatDrawUtils = new SeatDrawUtils(this.getContext(), this);
+        mSeatHandleInterface = new SeatDrawUtils(this.getContext(), this);
 
         //不显示log
-        mSeatDrawUtils.setIsShowLog(false, null);
+        mSeatHandleInterface.setIsShowLog(false, null);
         //设置监听事件
-        mSeatDrawUtils.setSeatInformationListener(this);
+        mSeatHandleInterface.setSeatInformationListener(this);
         //创建选择座位的存储列表
         mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
     }
@@ -99,7 +100,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mSeatDrawUtils.onDraw(canvas);
+        mSeatHandleInterface.drawCanvas(canvas);
     }
 
 
@@ -110,7 +111,7 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     @Override
     public void chooseSeatSuccess(int rowIndex, int columnIndex) {
         boolean isChoosen = false;
-        int seatType = mSeatDrawUtils.getSeatTypeInSeatMap(rowIndex, columnIndex);
+        int seatType = mSeatHandleInterface.getSeatTypeInSeatMap(rowIndex, columnIndex);
         //回调选座结果
         if (mSeatChooseEvent != null) {
             mSeatChooseEvent.seatSeleted(rowIndex, columnIndex, seatType);
@@ -123,13 +124,13 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
             }
         } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
-            mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndex, columnIndex);
+            mSeatHandleInterface.updateSeatTypeInMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndex, columnIndex);
             removeSeat(rowIndex, columnIndex);
             isChoosen = false;
         } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
-                mSeatDrawUtils.updateSeatTypeInMap(SeatParams.SEAT_TYPE_SELETED, rowIndex, columnIndex);
+                mSeatHandleInterface.updateSeatTypeInMap(SeatParams.SEAT_TYPE_SELETED, rowIndex, columnIndex);
                 addSeat(rowIndex, columnIndex);
                 isChoosen = true;
             } else {
@@ -157,23 +158,8 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     }
 
     @Override
-    public void resetParams() {
-        mSeatDrawUtils.resetParams();
-    }
-
-    @Override
-    public void setSeatMap(int[][] seatMap) {
-        mSeatDrawUtils.setSeatDrawMap(seatMap);
-    }
-
-    @Override
-    public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex) {
-        return mSeatDrawUtils.updateSeatTypeInMap(seatType, rowIndex, columnIndex);
-    }
-
-    @Override
-    public ExportParams getParams() {
-        return mSeatDrawUtils.getExportParams();
+    public ISeatInterfaces getSeatHandleInterface() {
+        return mSeatHandleInterface;
     }
 
     /**
@@ -194,10 +180,5 @@ public class SeatChooseView extends View implements SeatDrawUtils.ISeatInformati
     @Override
     public void setISeatChooseEvent(ISeatChooseEvent eventListener) {
         mSeatChooseEvent = eventListener;
-    }
-
-    @Override
-    public void setIsShowLog(boolean isShow, String tag) {
-        mSeatDrawUtils.setIsShowLog(isShow, tag);
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
 import us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport;
 import us.bestapp.henrytaro.draw.interfaces.IStageParamsExport;
 import us.bestapp.henrytaro.view.ISeatChooseEvent;
@@ -72,20 +73,21 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
-        mChooseview.setSeatMap(mSeatMap);
         mChooseview.setISeatChooseEvent(this);
-        mChooseview.setIsShowLog(true, null);
+        ISeatInterfaces seatDataHandle = mChooseview.getSeatHandleInterface();
+        seatDataHandle.setIsShowLog(false, null);
+        seatDataHandle.setSeatDrawMap(mSeatMap);
 
-        IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
+        IGlobleParamsExport globleParams = seatDataHandle.getExportParams().getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
         globleParams.setIsDrawSeletedRowColumnNotification(true);
         globleParams.setIsDrawColumnNumber(true);
         globleParams.setIsDrawRowNumber(true);
 
-        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
+        ISeatParamsExport seatParams = seatDataHandle.getExportParams().getSeatParams();
         seatParams.setExtraSeatTypeWithColor(new int[]{7, 8, 9}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
 
-        IStageParamsExport stageParams = mChooseview.getParams().getStageParams();
+        IStageParamsExport stageParams = seatDataHandle.getExportParams().getStageParams();
     }
 
     @Override

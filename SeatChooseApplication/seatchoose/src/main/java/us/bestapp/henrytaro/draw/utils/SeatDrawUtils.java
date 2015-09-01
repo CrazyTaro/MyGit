@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
 import us.bestapp.henrytaro.draw.params.BaseParams;
 import us.bestapp.henrytaro.draw.params.ExportParams;
 import us.bestapp.henrytaro.draw.params.GlobleParams;
@@ -22,7 +23,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
 
 /**
  * @author xuhaolin
- * @version 2.3
+ * @version 3.0
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -35,7 +36,7 @@ import us.bestapp.henrytaro.draw.params.StageParams;
  *          <br/>
  *          <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
-public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener {
+public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventHandle.ITouchEventListener, ISeatInterfaces {
     private GlobleParams mGlobleParams = null;
     //座位参数
     private SeatParams mSeatParams = null;
@@ -50,10 +51,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     private RectF mMinorSeatRectf = null;
     //图片座位位置
     private RectF mImageRectf = null;
-    private ISeatInformationListener mISeatInformationListener = null;
-
-    private float mRowBeginDrawY = 0f;
-    private float mColumnOriginalDrawY = Float.MAX_VALUE;
+    private ISeatInterfaces.ISeatInformationListener mISeatInformationListener = null;
 
     //实际界面绘制的高度
     private float mCanvasHeight = 0f;
@@ -152,13 +150,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         mDrawView.setOnTouchListener(this);
     }
 
-    /**
-     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="#ff9900"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改</b></font>，
-     * 或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据
-     * <p>此方法应该在View绘制前被调用,否则将获取不到绘制数据</p>
-     *
-     * @param seatMap 座位列表
-     */
+    @Override
     public void setSeatDrawMap(int[][] seatMap) {
         if (seatMap != null && seatMap.length > 0) {
             mSeatMap = new int[seatMap.length][seatMap[0].length];
@@ -168,14 +160,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
     }
 
-    /**
-     * 更新座位列表中的数据
-     *
-     * @param seatType    座位类型
-     * @param rowIndex    行索引
-     * @param columnIndex 列索引
-     * @return 更新成功返回true, 否则返回false
-     */
+    @Override
     public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex) {
         if (mSeatMap != null && rowIndex < mSeatMap.length && columnIndex < mSeatMap[0].length) {
             mSeatMap[rowIndex][columnIndex] = seatType;
@@ -187,13 +172,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
 
-    /**
-     * 获取座位列表中某行某列的座位类型数据,可能返回{@link SeatParams#SEAT_TYPE_ERRO}(无效值)
-     *
-     * @param rowIndex    座位行索引
-     * @param columnIndex 座位列索引
-     * @return 返回该位置的座位类型, 若无法获取返回-1
-     */
+    @Override
     public int getSeatTypeInSeatMap(int rowIndex, int columnIndex) {
         if (mSeatMap != null && rowIndex < mSeatMap.length && columnIndex < mSeatMap[0].length) {
             return mSeatMap[rowIndex][columnIndex];
@@ -202,11 +181,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
     }
 
-    /**
-     * 获取座位列表数据
-     *
-     * @return
-     */
+    @Override
     public int[][] getSeatDrawMap() {
         if (mSeatMap != null && mSeatMap.length > 0) {
             int[][] cloneSeatMap = new int[mSeatMap.length][mSeatMap[0].length];
@@ -220,36 +195,32 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
     }
 
-    /**
-     * 设置座位信息监听事件
-     *
-     * @param mInterface {@link ISeatInformationListener}
-     */
-    public void setSeatInformationListener(ISeatInformationListener mInterface) {
+    @Override
+    public void setSeatInformationListener(ISeatInterfaces.ISeatInformationListener mInterface) {
         mISeatInformationListener = mInterface;
     }
 
-    /**
-     * 获取参数设置对象，可进行座位/舞台及全局参数设置
-     *
-     * @return
-     */
+    @Override
     public ExportParams getExportParams() {
         return new ExportParams(this.mSeatParams, this.mStageParams, this.mGlobleParams);
     }
 
-    /**
-     * 重置座位绘制使用的参数,使用默认参数值
-     * <p>(包括座位参数{@link us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport},<br/>
-     * 舞台参数{@link us.bestapp.henrytaro.draw.interfaces.IStageParamsExport},<br/>
-     * 全局参数{@link us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport})</p>
-     * <p>此类中处理的座位参数及舞台参数是由内部管理的,不开放.
-     * 设置参数值可用方法{@link #getExportParams()}获取设置参数的对象进行设置</p>
-     */
+    @Override
     public void resetParams() {
         this.mSeatParams = new SeatParams();
         this.mStageParams = new StageParams();
         this.mGlobleParams = new GlobleParams();
+    }
+
+    @Override
+    public void setOriginalOffset(float beginDrawPositionX, float begindrawPositionY) {
+        mOriginalOffsetX = beginDrawPositionX;
+        mOriginalOffsetY = begindrawPositionY;
+    }
+
+    @Override
+    public void setIsShowLog(boolean isShowLog, String tag) {
+        super.setIsShowLog(isShowLog, tag);
     }
 
     /**
@@ -576,9 +547,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             //下移一行,实际需要绘制的座位,空出的一行为列数绘制需要
             beginDrawY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
         }
-        //计录当前需要绘制的行位置(后续需要)
-        //行数的绘制应该与实际行的位置统一
-        mRowBeginDrawY = beginDrawY;
 
         for (int i = 0; i < seatMap.length; i++) {
             //画左边的座位
@@ -1117,18 +1085,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
     }
 
     /**
-     * 设置初始绘制的XY轴偏移量,默认偏移量是0,且绘制的原始位置在视图的X轴中心,Y轴的最上方(centerX,topY)
-     *
-     * @param beginDrawPositionX X轴初始偏移量
-     * @param begindrawPositionY Y轴初始偏移量
-     */
-
-    public void setOriginalOffset(float beginDrawPositionX, float begindrawPositionY) {
-        mOriginalOffsetX = beginDrawPositionX;
-        mOriginalOffsetY = begindrawPositionY;
-    }
-
-    /**
      * 获取第一行座位绘制的Y轴中心位置<br/>
      * 座位区域开始绘制的Y轴坐标可通过方法{@link #getSellSeatDrawCenterY(int, boolean)}获取,<font color="#ff9900"><b>但此方法获取的坐标值不一定是第一行座位绘制的坐标值</b>,
      * 此处获取的坐标值可能是列数绘制的坐标位置(若需要绘制列数),若不需要绘制列数才是第一行座位绘制的Y轴中心位置</font>
@@ -1441,14 +1397,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         this.mIsScaleRedraw = false;
     }
 
-    /**
-     * 界面绘制,该方法提供给View调用,view.invalidate()本身也是重新调用此方法进行绘制
-     * <p>此方法是先绘制实际界面,再绘制缩略图(若需要绘制的话)</p>
-     *
-     * @param canvas view画板
-     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
-     */
-    public void onDraw(Canvas canvas) {
+    @Override
+    public void drawCanvas(Canvas canvas) {
         if (mWHPoint == null) {
             mWHPoint = getWidthAndHeight();
         }
@@ -2031,7 +1981,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 mBeginDrawOffsetY = newDrawPositionY;
                 mDrawView.post(new InvalidateRunnable(mDrawView, invalidateAction));
                 if (mISeatInformationListener != null) {
-                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_MOVE);
+                    mISeatInformationListener.seatStatus(ISeatInterfaces.ISeatInformationListener.STATUS_MOVE);
                 }
                 return true;
             }
@@ -2165,7 +2115,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
      */
     protected void singleClickChooseSeat(MotionEvent event) {
         if (mISeatInformationListener != null) {
-            mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
+            mISeatInformationListener.seatStatus(ISeatInterfaces.ISeatInformationListener.STATUS_CLICK);
         }
         //界面没有被移动过,则处理为单击事件
         float clickPositionX = event.getX();
@@ -2182,7 +2132,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
             if (clickSeatPoint != null && clickSeatPoint.x < mSeatMap.length && clickSeatPoint.y < mSeatMap[0].length) {
                 if (mISeatInformationListener != null) {
                     //更新座位状态
-                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_SEAT);
+                    mISeatInformationListener.seatStatus(ISeatInterfaces.ISeatInformationListener.STATUS_CHOOSE_SEAT);
                     //回调选中的座位
                     mISeatInformationListener.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y);
                     //绘制选中座位通知显示
@@ -2198,14 +2148,14 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
                 }
             } else {
                 if (mISeatInformationListener != null) {
-                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
+                    mISeatInformationListener.seatStatus(ISeatInterfaces.ISeatInformationListener.STATUS_CHOOSE_NOTHING);
                     mISeatInformationListener.chosseSeatFail();
                 }
             }
         } else {
             //列表数据不合法,直接返回失败
             if (mISeatInformationListener != null) {
-                mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
+                mISeatInformationListener.seatStatus(ISeatInterfaces.ISeatInformationListener.STATUS_CHOOSE_NOTHING);
                 mISeatInformationListener.chosseSeatFail();
             }
         }
@@ -2372,57 +2322,57 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements AbsTouchEventH
         }
     }
 
-    /**
-     * 座位信息监听接口
-     */
-    public interface ISeatInformationListener {
-        /**
-         * 当前座位状态,处理座位移动事件
-         */
-        public static final int STATUS_MOVE = 1;
-        /**
-         * 当前座位状态,处理座位区域单击事件,<font color="#ff9900"><b>事件为单击事件且在座位区域内,但座位此时不一定被选中单击,可能单击在无效区域</b></font>
-         */
-        public static final int STATUS_CLICK = 2;
-        /**
-         * 当前座位状态,处理座位被单击事件,<font color="#ff9900"><b>座位已被选中</b></font>
-         */
-        public static final int STATUS_CHOOSE_SEAT = 3;
-        /**
-         * 当前座位状态,处理座位区域被单击事件,<font color="#ff9900"><b>座位空白区域被选中,无任何座位被选中</b></font>
-         */
-        public static final int STATUS_CHOOSE_NOTHING = 4;
-
-        /**
-         * 当前座位区域的状态<br/>
-         * <p>
-         * {@link #STATUS_MOVE},座位移动中<br/>
-         * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
-         * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseSeatSuccess(int, int)}<br/>
-         * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
-         * </p>
-         *
-         * @param status 座位状态
-         */
-        public void seatStatus(int status);
-
-        /**
-         * 单击选中某个座位位置,此处的选中并不是真实的选中意思,指的是成功单击到一个座位的有效区域,
-         * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该座位的行列索引则,并不作任何的处理
-         *
-         * @param rowIndex    座位在列表中的行索引
-         * @param columnIndex 座位在列表中的列索引
-         */
-        public void chooseSeatSuccess(int rowIndex, int columnIndex);
-
-        /**
-         * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
-         */
-        public void chosseSeatFail();
-
-        /**
-         * 缩放达到最大限度(已达到最小值或者最大值)
-         */
-        public void scaleMaximum();
-    }
+//    /**
+//     * 座位信息监听接口
+//     */
+//    public interface ISeatInformationListener {
+//        /**
+//         * 当前座位状态,处理座位移动事件
+//         */
+//        public static final int STATUS_MOVE = 1;
+//        /**
+//         * 当前座位状态,处理座位区域单击事件,<font color="#ff9900"><b>事件为单击事件且在座位区域内,但座位此时不一定被选中单击,可能单击在无效区域</b></font>
+//         */
+//        public static final int STATUS_CLICK = 2;
+//        /**
+//         * 当前座位状态,处理座位被单击事件,<font color="#ff9900"><b>座位已被选中</b></font>
+//         */
+//        public static final int STATUS_CHOOSE_SEAT = 3;
+//        /**
+//         * 当前座位状态,处理座位区域被单击事件,<font color="#ff9900"><b>座位空白区域被选中,无任何座位被选中</b></font>
+//         */
+//        public static final int STATUS_CHOOSE_NOTHING = 4;
+//
+//        /**
+//         * 当前座位区域的状态<br/>
+//         * <p>
+//         * {@link #STATUS_MOVE},座位移动中<br/>
+//         * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
+//         * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseSeatSuccess(int, int)}<br/>
+//         * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
+//         * </p>
+//         *
+//         * @param status 座位状态
+//         */
+//        public void seatStatus(int status);
+//
+//        /**
+//         * 单击选中某个座位位置,此处的选中并不是真实的选中意思,指的是成功单击到一个座位的有效区域,
+//         * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该座位的行列索引则,并不作任何的处理
+//         *
+//         * @param rowIndex    座位在列表中的行索引
+//         * @param columnIndex 座位在列表中的列索引
+//         */
+//        public void chooseSeatSuccess(int rowIndex, int columnIndex);
+//
+//        /**
+//         * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
+//         */
+//        public void chosseSeatFail();
+//
+//        /**
+//         * 缩放达到最大限度(已达到最小值或者最大值)
+//         */
+//        public void scaleMaximum();
+//    }
 }
