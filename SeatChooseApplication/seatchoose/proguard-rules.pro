@@ -48,23 +48,23 @@
     public <methods>;
 }
 
--keepclasseswithmembers class us.bestapp.henrytaro.view.ISeatChooseEvent{
+-keepclasseswithmembers class us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent{
     public <fields>;
     public <methods>;
 }
 
--keepclasseswithmembers class us.bestapp.henrytaro.view.ISeatViewInterface{
+-keepclasseswithmembers class us.bestapp.henrytaro.view.interfaces.ISeatViewInterface{
     public <fields>;
     public <methods>;
 }
 
--keep class us.bestapp.henrytaro.view.ISeatViewInterface$*{
+-keep class us.bestapp.henrytaro.view.interfaces.ISeatViewInterface$*{
 #    public <fields>;
 #    public <methods>;
 *;
 }
 
--keepclasseswithmembers class us.bestapp.henrytaro.draw.params.ExportParams{
+-keepclasseswithmembers class ExportParams{
     public <fields>;
     public <methods>;
 }
