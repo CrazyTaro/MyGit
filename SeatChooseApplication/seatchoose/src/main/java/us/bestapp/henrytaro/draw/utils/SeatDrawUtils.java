@@ -656,6 +656,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatHandleInt
         float beginRightDrawX = 0f;
         if ((columnCount & 0x1) == 0) {
             //偶数列
+            //左右两边列数一样,所以是平均的
             middleColumnToLeft = columnCount / 2;
             //计算背影宽度一半的值
             //按座位宽度及间隔计算
@@ -665,7 +666,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatHandleInt
             beginLeftDrawX = drawPositionX - mSeatParams.getSeatHorizontalInterval() / 2 - mSeatParams.getWidth() / 2;
         } else {
             //奇数列
-            middleColumnToLeft = columnCount / 2;
+            //此列数是中间列,因此数据要加1(直接除结果为前小半部分,不包括中间列)
+            middleColumnToLeft = columnCount / 2 + 1;
             //计算背影宽度一半的值
             //按座位宽度及间隔计算
             halfWidth = (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval()) * middleColumnToLeft
