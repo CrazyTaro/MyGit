@@ -5,12 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.entity.SeatMap;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
 import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
-import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.SeatChooseView;
+import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 
 
 public class MainActivity extends Activity implements ISeatChooseEvent {
@@ -68,15 +69,85 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 //            {1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 3, 1, 1, 0, 0, 0, 3,},//25
     };
 
+    String jsonStr = "{\n" +
+            "    \"success\": true, \n" +
+            "    \"error_code\": \"0\", \n" +
+            "    \"message\": \"请求成功\", \n" +
+            "    \"data\": {\n" +
+            "        \"row\": [\n" +
+            "            {\n" +
+            "                \"rownum\": \"1\", \n" +
+            "                \"rowid\": \"1\", \n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"2\", \n" +
+            "                \"rowid\": \"2\", \n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"3\", \n" +
+            "                \"rowid\": \"3\", \n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"4\", \n" +
+            "                \"rowid\": \"4\", \n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"5\", \n" +
+            "                \"rowid\": \"5\", \n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"6\", \n" +
+            "                \"rowid\": \"6\", \n" +
+            "                \"columns\": \"ZL,ZL,ZL,01@A@0,02@A@0,03@A@0,04@LK@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"7\", \n" +
+            "                \"rowid\": \"7\", \n" +
+            "                \"columns\": \"ZL,ZL,ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"8\", \n" +
+            "                \"rowid\": \"8\", \n" +
+            "                \"columns\": \"ZL,ZL,ZL,01@A@0,02@LK@0,03@LK@0,04@A@0,05@A@0,06@LK@0,07@A@0,08@A@0,09@A@0,10@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"9\", \n" +
+            "                \"rowid\": \"9\", \n" +
+            "                \"columns\": \"ZL,ZL,ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"10\", \n" +
+            "                \"rowid\": \"10\", \n" +
+            "                \"columns\": \"01@A@0,02@A@0,ZL,03@A@0,04@A@0,05@A@0,06@A@0,07@LK@0,08@LK@0,09@LK@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "            }, \n" +
+            "            {\n" +
+            "                \"rownum\": \"11\", \n" +
+            "                \"rowid\": \"11\", \n" +
+            "                \"columns\": \"01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0,13@A@0\"\n" +
+            "            }\n" +
+            "        ]\n" +
+            "    }, \n" +
+            "    \"source\": \"gewala\"\n" +
+            "}";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SeatMap dataMap = SeatMap.objectFromJSONStr(jsonStr);
+        int[][] drawMap = SeatMap.getDrawMap(dataMap);
+
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
         ISeatHandleInterfaces seatDataHandle = mChooseview.getSeatHandleInterface();
         seatDataHandle.setIsShowLog(false, null);
-        seatDataHandle.setSeatDrawMap(mSeatMap);
+        seatDataHandle.setSeatDrawMap(drawMap);
 
         IGlobleParamsExport globleParams = seatDataHandle.getExportParams().getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
