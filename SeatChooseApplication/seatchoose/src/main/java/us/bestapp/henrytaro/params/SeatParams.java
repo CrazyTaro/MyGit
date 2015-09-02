@@ -82,24 +82,21 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static String[] DEFAULT_SEAT_TYPE_DESC = {"可选", "已选", "已售"};
     /**
-     * 座位默认基本类型,已选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     * 座位默认基本类型,不可选(可见),<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
+     */
+    public static int SEAT_TYPE_DISABLE_SELETED = 3;
+    /**
+     * 座位默认基本类型,已选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
      */
     public static int SEAT_TYPE_SELETED = 2;
     /**
-     * 座位默认基本类型,未选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>
+     * 座位默认基本类型,未选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
      */
     public static int SEAT_TYPE_UNSELETED = 1;
     /**
-     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已</b></font>,其值与{@link #SEAT_DRAW_TYPE_NO}保持一致
+     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParamsExport#DRAW_TYPE_NO}保持一致
      */
-    public static int SEAT_TYPE_UNSHOW = 0;
-    /**
-     * 座位的绘制类型,不绘制<br/>
-     * 此参数值默认与{@link IBaseParamsExport#DRAW_TYPE_NO}保持一值,<font color="#ff9900"><b>此参数值为静态值,非常量</b></font><br/>
-     * 该变量为用户备用变量,若不需要绘制的座位类型设置为0,则不需要做任何的改动;<br/>
-     * <font color="#ff9900"><b>若用户需要自定义不绘制的座位类型,则必须通过方法{@link #setDefaultSeatDrawNoType(int)}设置此变量</b></font>,否则可能会导致绘制结果与预期不符合
-     */
-    public static int SEAT_DRAW_TYPE_NO = DRAW_TYPE_NO;
+    public static int SEAT_TYPE_UNSHOW = IBaseParamsExport.DRAW_TYPE_NO;
     //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
     //次座位高度
@@ -136,10 +133,6 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     private boolean mIsValueHold = false;
     //用于保存最原始的数据
     private OriginalValuesHolder mOriginalHolder = null;
-//    //最大默认缩放值
-//    private float[] mDefaultEnlargeHolder = null;
-//    //最小默认缩放值
-//    private float[] mDefaultReduceHolder = null;
 
     /**
      * 创建并初始化参数
@@ -183,17 +176,19 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     @Override
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow) {
+    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted) {
         SEAT_TYPE_SELETED = seleted;
         SEAT_TYPE_UNSELETED = unSeleted;
         SEAT_TYPE_UNSHOW = unShow;
+        SEAT_TYPE_DISABLE_SELETED = disableSeleted;
     }
 
     @Override
     public void resetSeatTypeConstant() {
         SEAT_TYPE_SELETED = 2;
         SEAT_TYPE_UNSELETED = 1;
-        SEAT_TYPE_UNSHOW = SEAT_DRAW_TYPE_NO;
+        SEAT_TYPE_DISABLE_SELETED = 3;
+        SEAT_TYPE_UNSHOW = IBaseParamsExport.DRAW_TYPE_NO;
     }
 
     @Override
@@ -466,19 +461,15 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
-    @Override
-    public void setDefaultSeatDrawNoType(int seatDrawNo) {
-        SEAT_DRAW_TYPE_NO = seatDrawNo;
-    }
 
     /**
-     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_DRAW_TYPE_NO}时，不绘制该座位
-     * <p><font color="#ff9900"><b>{@link #SEAT_DRAW_TYPE_NO}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
+     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_TYPE_UNSHOW}时，不绘制该座位
+     * <p><font color="#ff9900"><b>{@link #SEAT_TYPE_UNSHOW}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
      *
      * @param seatType 座位类型
      */
     public void setIsDraw(int seatType) {
-        if (seatType == SEAT_DRAW_TYPE_NO) {
+        if (seatType == SEAT_TYPE_UNSHOW) {
             super.setIsDraw(false);
         } else {
             super.setIsDraw(true);
@@ -486,7 +477,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     /**
-     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_DRAW_TYPE_NO}或不可见{@link #SEAT_TYPE_UNSHOW}的座位类型),
+     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #SEAT_TYPE_UNSHOW}的座位类型),
      * 是否绘制一般由座位的类型决定,通过{@link #setIsDraw(int)}决定座位是否绘制</b></p>
      */
     @Override

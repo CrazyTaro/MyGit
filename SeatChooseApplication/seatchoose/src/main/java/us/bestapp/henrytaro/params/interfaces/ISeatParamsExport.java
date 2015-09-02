@@ -24,11 +24,12 @@ public interface ISeatParamsExport extends IBaseParamsExport {
     /**
      * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已
      *
-     * @param seleted   已选座位
-     * @param unSeleted 未选座位
-     * @param unShow    不显示座位(不可见,即未绘制出来)
+     * @param seleted        已选座位
+     * @param unSeleted      未选座位
+     * @param unShow         不显示座位(不可见,即未绘制出来)
+     * @param disableSeleted 不可选座位(可见)
      */
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow);
+    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted);
 
     /**
      * 重置所有的座位基本类型为原始状态
@@ -161,7 +162,7 @@ public interface ISeatParamsExport extends IBaseParamsExport {
 
     /**
      * 设置自定义默认的座位类型
-     * <p>设置全新的默认座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int)},方便数据处理及以防出错</p>
+     * <p>设置全新的默认座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int)},方便数据处理及以防出错</p>
      *
      * @param firstSeatType  第一个座位类型
      * @param secondSeatType 第二个座位类型
@@ -187,12 +188,6 @@ public interface ISeatParamsExport extends IBaseParamsExport {
      */
     public void setDefaultSeatTypeDescription(String firstDesc, String secondDesc, String thirdDesc);
 
-    /**
-     * 设置默认的不绘制座位的类型,默认值为0{@link ISeatParamsExport#DRAW_TYPE_NO},<font color="#ff9900"><b>如果不是必要的情况下,不建议修改该值,使用默认值即可</b></font>
-     *
-     * @param seatDrawNo
-     */
-    public void setDefaultSeatDrawNoType(int seatDrawNo);
 
     /**
      * 设置/添加额外的座位类型、颜色及其类型对应的描述
@@ -225,7 +220,7 @@ public interface ISeatParamsExport extends IBaseParamsExport {
 
     /**
      * 设置所有座位的类型，颜色及其描述,<font color="#ff9900"><b>该方法会替换所有的座位对应的默认参数</b></font>
-     * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int)},方便数据处理及以防出错</p>
+     * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int)},方便数据处理及以防出错</p>
      *
      * @param seatTypeArr       新的座位类型
      * @param colorArr          新的座位类型对应的颜色
