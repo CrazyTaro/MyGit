@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.draw.interfaces;
+package us.bestapp.henrytaro.params.interfaces;
 
 import android.graphics.Bitmap;
 
@@ -93,18 +93,18 @@ public interface ISeatParamsExport extends IBaseParamsExport {
     public void setSeatVerticalInterval(float mSeatVerticalInterval);
 
     /**
-     * 获取座位类型与其描述文字之间的水平间隔
-     *
-     * @return
-     */
-    public float getSeatTypeDescInterval();
-
-    /**
      * 设置座位与邻近文字之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
      *
      * @param mSeatTextInterval
      */
-    public void setSeatTextInterval(float mSeatTextInterval);
+    public void setSeatTypeDescInterval(float mSeatTextInterval);
+
+    /**
+     * 获取座位与邻近文字之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
+     *
+     * @return
+     */
+    public float getSeatTypeDescInterval();
 
     /**
      * 获取座位类型(包括描述文字为一整体)之间的水平间隔
@@ -248,7 +248,7 @@ public interface ISeatParamsExport extends IBaseParamsExport {
      * 使用此方法设置图片无法自动压缩并按适当的宽高加载图片,可能会占用大量内存</p>
      * <br/>
      * 设置图片资源,<font color="#ff9900"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
-     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[], int, int[])})</b></font></p>
+     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[])} )</b></font></p>
      * 资源设置通过拷贝的方式设置，防止内部数据受到外部数据的影响
      *
      * @param imageBitmap 设置资源的图片对象数组
@@ -262,31 +262,4 @@ public interface ISeatParamsExport extends IBaseParamsExport {
      */
     public void setThumbnailSeatColor(int[] colorArr);
 
-//    /**
-//     * 设置座位类型需要自动绘制成几行
-//     * <p>分行绘制的规则如下:座位类型总数/rowCount,若整除则每行为相同的座位类型个数,
-//     * 若有余则最后一行比其它行将多一个座位类型</p>
-//     *
-//     * @param rowCount 此参数值必须大于0,否则将置为默认值1
-//     */
-//    public void setSeatTypeRowCount(int rowCount);
-//
-//    /**
-//     * 获取座位类型绘制的行数
-//     *
-//     * @return
-//     */
-//    public int getSeatTypeRowCount();
-//
-//    /**
-//     * 是否绘制行号
-//     *
-//     * @param isDrawRowNumber
-//     */
-//    public void setIsDrawRowNumber(boolean isDrawRowNumber);
-//
-//    /**
-//     * 获取是否绘制行号
-//     */
-//    public boolean getIsDrawRowNumber();
 }

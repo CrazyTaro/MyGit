@@ -12,24 +12,26 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
-import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces.ISeatInformationListener;
-import us.bestapp.henrytaro.draw.params.SeatParams;
+import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
+import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
+import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
 
 /**
  * @author xuhaolin
- * @version 2.0
+ * @version 3.0
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
  *          <p>使用自定义View时需要创建内部对象{@link SeatDrawUtils},此类是处理所有绘制方法的重要类,必须使用该类才能完成绘制功能,
  *          同时需要重写view的onDraw事件,通过调用seatDrawUtil.drawCanvas()完成绘制.</p>
- *          <p>如果需要处理选座事件,请实现接口{@link us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces.ISeatInformationListener},
+ *          <p>如果需要处理选座事件,请实现接口{@link ISeatInformationListener},
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
- *          <p>
+ *          <p/>
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
@@ -42,7 +44,7 @@ import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
  *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
-    private ISeatInterfaces mSeatHandleInterface = null;
+    private ISeatHandleInterfaces mSeatHandleInterface = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
@@ -158,7 +160,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public ISeatInterfaces getSeatHandleInterface() {
+    public ISeatHandleInterfaces getSeatHandleInterface() {
         return mSeatHandleInterface;
     }
 

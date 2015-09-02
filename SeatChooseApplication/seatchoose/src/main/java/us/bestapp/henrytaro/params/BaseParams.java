@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.draw.params;
+package us.bestapp.henrytaro.params;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,12 +7,13 @@ import android.graphics.Color;
 
 import java.io.InputStream;
 
-import us.bestapp.henrytaro.draw.interfaces.IBaseParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IBaseParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 
 
 /**
  * Created by xuhaolin on 2015/8/24.
- * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParamsExport})及全局性的参数(开放设置接口为{@link us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport})</p>
+ * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParamsExport})及全局性的参数(开放设置接口为{@link IGlobleParamsExport})</p>
  */
 public abstract class BaseParams implements IBaseParamsExport {
 
@@ -120,10 +121,13 @@ public abstract class BaseParams implements IBaseParamsExport {
         this.mHeight = defaultHeight;
         this.mRadius = defaultRadius;
         this.mColor = defaultColor;
+
+        this.storeOriginalValues(null);
     }
 
     /**
-     * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的
+     * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的<br/>
+     * <font color="#ff9900"><b>只有当设置为true时,后面两个参数才有效,否则无效</b></font>
      *
      * @param isDrawThumbnail 是否绘制缩略图,<font color="#ff9900"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
      * @param originalWidth   实际绘制界面的宽度
@@ -131,7 +135,7 @@ public abstract class BaseParams implements IBaseParamsExport {
      */
     public void setIsDrawThumbnail(boolean isDrawThumbnail, float originalWidth, float targetWidth) {
         this.mIsDrawThumbnail = isDrawThumbnail;
-        if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT) {
+        if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT && isDrawThumbnail) {
             this.mThumbnailRate = targetWidth / originalWidth;
         }
     }
@@ -152,6 +156,15 @@ public abstract class BaseParams implements IBaseParamsExport {
      */
     protected float getThumbnailRate() {
         return this.mThumbnailRate;
+    }
+
+    /**
+     * 设置当前缩略图缩放比例,此方法不对外公开,设置缩放比时也请尽量不使用此方法,请使用{@link #setIsDrawThumbnail(boolean, float, float)}
+     *
+     * @param thumbnailRate
+     */
+    protected void setThumbnailRate(float thumbnailRate) {
+        this.mThumbnailRate = thumbnailRate;
     }
 
     /**
@@ -287,7 +300,7 @@ public abstract class BaseParams implements IBaseParamsExport {
      *
      * @return 返回true绘制, 返回false不绘制
      */
-    public boolean isDraw() {
+    public boolean getIsDraw() {
         return mIsDraw;
     }
 
@@ -424,7 +437,7 @@ public abstract class BaseParams implements IBaseParamsExport {
     }
 
     /**
-     * 设置宽度,同时指定是否将此次值作为原始值存储,详见{@link #storeDefaultScaleValue()}
+     * 设置宽度,同时指定是否将此次值作为原始值存储,详见{@link #storeOriginalValues(Object)}
      * <p>此方法为内部开放使用,外部公开设置请用{@link #setWidth(float)} ,且该方法必定会存储设置值</p>
      *
      * @param width
@@ -437,7 +450,7 @@ public abstract class BaseParams implements IBaseParamsExport {
             this.mWidth = width;
         }
         if (isStoreValue) {
-            this.storeDefaultScaleValue();
+            this.storeOriginalValues(null);
         }
     }
 
@@ -468,7 +481,7 @@ public abstract class BaseParams implements IBaseParamsExport {
 
 
     /**
-     * 设置高度,同时指定是否将此次值作为原始值存储,详见{@link #storeDefaultScaleValue()}
+     * 设置高度,同时指定是否将此次值作为原始值存储,详见{@link #storeOriginalValues(Object)}
      * <p>此方法为内部开放使用,外部公开设置请用{@link #setHeight(float)},且该方法必定会存储设置值</p>
      *
      * @param height
@@ -481,7 +494,7 @@ public abstract class BaseParams implements IBaseParamsExport {
             this.mHeight = height;
         }
         if (isStoreValue) {
-            this.storeDefaultScaleValue();
+            this.storeOriginalValues(null);
         }
     }
 
@@ -572,10 +585,19 @@ public abstract class BaseParams implements IBaseParamsExport {
      * @param isSetEnlarge 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
      * @return
      */
-    public abstract float setDefaultScaleValue(boolean isSetEnlarge);
+    public abstract float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge);
 
     /**
      * 存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例
+     *
+     * @param copyObj 用于拷贝的存储对象,此参数可为null,若不为null则以此参数为源拷贝值
      */
-    public abstract void storeDefaultScaleValue();
+    public abstract void storeOriginalValues(Object copyObj);
+
+    /**
+     * 获取存储的原始座位数据,返回的数据类型由子类自身确定(子类通过创建内部类用于存储的方式进行数据存储)
+     *
+     * @return
+     */
+    public abstract Object getOriginalValues();
 }

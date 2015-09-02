@@ -1,10 +1,11 @@
-package us.bestapp.henrytaro.view;
+package us.bestapp.henrytaro.view.interfaces;
 
 import android.graphics.Point;
 
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.view.SeatChooseView;
 
 /**
  * Created by lenovo on 2015/8/24.
@@ -17,7 +18,7 @@ public interface ISeatViewInterface {
      *
      * @return
      */
-    public ISeatInterfaces getSeatHandleInterface();
+    public ISeatHandleInterfaces getSeatHandleInterface();
 
     /**
      * 设置每次选座最多可以选择的座位个数

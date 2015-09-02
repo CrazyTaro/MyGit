@@ -5,11 +5,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
-import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
-import us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport;
-import us.bestapp.henrytaro.draw.interfaces.IStageParamsExport;
-import us.bestapp.henrytaro.view.ISeatChooseEvent;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.SeatChooseView;
 
 
@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         setContentView(R.layout.activity_main);
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
-        ISeatInterfaces seatDataHandle = mChooseview.getSeatHandleInterface();
+        ISeatHandleInterfaces seatDataHandle = mChooseview.getSeatHandleInterface();
         seatDataHandle.setIsShowLog(false, null);
         seatDataHandle.setSeatDrawMap(mSeatMap);
 
@@ -83,6 +83,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         globleParams.setIsDrawSeletedRowColumnNotification(true);
         globleParams.setIsDrawColumnNumber(true);
         globleParams.setIsDrawRowNumber(true);
+        globleParams.setSeatTypeRowCount(2);
+
 
         ISeatParamsExport seatParams = seatDataHandle.getExportParams().getSeatParams();
         seatParams.setExtraSeatTypeWithColor(new int[]{7, 8, 9}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
@@ -108,11 +110,5 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     @Override
     public void seletedFull() {
         Toast.makeText(this, "选座已满", Toast.LENGTH_SHORT).show();
-//        ISeatParamsExport seatParams = mChooseview.getParams().getSeatParams();
-////        seatParams.setImage(new int[]{R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq});
-//        seatParams.setImage(new int[]{R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca, R.drawable.icon_logo_main, R.drawable.icon_logo_pkq, R.drawable.icon_logo_alpaca});
-//
-//        IGlobleParamsExport globleParams = mChooseview.getParams().getGlobleParams();
-//        globleParams.setCanvasBackgroundColor(Color.parseColor("#ff9900"));
     }
 }

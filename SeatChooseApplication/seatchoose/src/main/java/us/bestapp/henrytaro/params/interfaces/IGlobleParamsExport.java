@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.draw.interfaces;
+package us.bestapp.henrytaro.params.interfaces;
 
 import android.graphics.Color;
 

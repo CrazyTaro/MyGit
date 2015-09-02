@@ -1,8 +1,10 @@
-package us.bestapp.henrytaro.draw.interfaces;
+package us.bestapp.henrytaro.params.interfaces;
+
+import us.bestapp.henrytaro.params.BaseParams;
 
 /**
  * Created by xuhaolin on 2015/8/24.
- * 基本参数设置接口,所有的接口来自于{@link us.bestapp.henrytaro.draw.params.BaseParams},且这一部分的接口为对外公开设置可用
+ * 基本参数设置接口,所有的接口来自于{@link BaseParams},且这一部分的接口为对外公开设置可用
  */
 public interface IBaseParamsExport {
     /**
@@ -16,11 +18,11 @@ public interface IBaseParamsExport {
     /**
      * 绘制方式,默认方式,使用颜色及图形绘制
      */
-    public static final int DRAW_TYPE_DEFAULT = -1;
+    public static final int DRAW_TYPE_DEFAULT = 0;
     /**
      * 绘制方式,使用图片填充
      */
-    public static final int DRAW_TYPE_IMAGE = 0;
+    public static final int DRAW_TYPE_IMAGE = -1;
     /**
      * 绘制方式,缩略图模式
      */
@@ -125,5 +127,12 @@ public interface IBaseParamsExport {
      * @param radius 圆角弧度
      */
     public void setRadius(float radius);
+
+    /**
+     * 获取此实例的自我复制
+     *
+     * @return
+     */
+    public Object getClone();
 
 }

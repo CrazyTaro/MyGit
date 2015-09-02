@@ -1,8 +1,8 @@
-package us.bestapp.henrytaro.draw.params;
+package us.bestapp.henrytaro.params;
 
-import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
-import us.bestapp.henrytaro.draw.interfaces.ISeatParamsExport;
-import us.bestapp.henrytaro.draw.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
 
 /**
  * created by xuhaolin at 2015/08/25

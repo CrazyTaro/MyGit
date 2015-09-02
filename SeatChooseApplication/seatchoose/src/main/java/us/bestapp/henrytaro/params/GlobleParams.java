@@ -1,11 +1,11 @@
-package us.bestapp.henrytaro.draw.params;/**
+package us.bestapp.henrytaro.params;/**
  * Created by xuhaolin on 15/8/27.
  */
 
 import android.graphics.Color;
 
-import us.bestapp.henrytaro.draw.interfaces.IBaseParamsExport;
-import us.bestapp.henrytaro.draw.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IBaseParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 
 /**
  * created by xuhaolin at 2015/08/27

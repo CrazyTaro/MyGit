@@ -1,6 +1,6 @@
-package us.bestapp.henrytaro.view;
+package us.bestapp.henrytaro.view.interfaces;
 
-import us.bestapp.henrytaro.draw.params.SeatParams;
+import us.bestapp.henrytaro.params.SeatParams;
 
 /**
  * Created by lenovo on 2015/8/24.

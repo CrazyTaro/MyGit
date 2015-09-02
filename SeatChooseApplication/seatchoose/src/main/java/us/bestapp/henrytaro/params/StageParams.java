@@ -1,10 +1,10 @@
-package us.bestapp.henrytaro.draw.params;
+package us.bestapp.henrytaro.params;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import us.bestapp.henrytaro.draw.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
 
 /**
  * Created by xuhaolin on 2015/8/9.
@@ -44,8 +44,9 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
     private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
     private String mStageDescription = DEFAULT_STAGE_TEXT;
 
-    private float[] mDefaultEnlargeHolder = null;
-    private float[] mDefaultReduceHolder = null;
+    //    private float[] mDefaultEnlargeHolder = null;
+//    private float[] mDefaultReduceHolder = null;
+    private OriginalValuesHolder mOriginalHolder = null;
     //用于缩放暂存舞台数据
     private float[] mValueHolder = null;
     //用于检测缩放时是否已暂存数据
@@ -56,7 +57,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
 
     public StageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
-        this.storeDefaultScaleValue();
+        this.storeOriginalValues(null);
     }
 
     /**
@@ -81,6 +82,24 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         } else {
             this.mStageImageBitmap = null;
         }
+    }
+
+    /**
+     * 获取图片资源ID,默认值为{@link us.bestapp.henrytaro.params.interfaces.IBaseParamsExport#DEFAULT_INT}
+     *
+     * @return
+     */
+    public int getImageId() {
+        return this.mStageImageID;
+    }
+
+    /**
+     * 获取图片资源,可能为null
+     *
+     * @return
+     */
+    public Bitmap getImageBitmap() {
+        return this.mStageImageBitmap;
     }
 
     /**
@@ -212,49 +231,103 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
 
     @Override
     public float getScaleRateCompareToOriginal() {
-        if (mDefaultReduceHolder != null) {
-            return this.getWidth() / mDefaultReduceHolder[0];
+        if (mOriginalHolder != null) {
+            return this.getWidth() / mOriginalHolder.width;
         } else {
             return DEFAULT_FLOAT;
         }
     }
 
     @Override
-    public float setDefaultScaleValue(boolean isSetEnlarge) {
-        float scaleRate = 0f;
-        float[] defaultValues = null;
+    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge) {
+        float oldScaleRate = 0f;
+        float targetScaleRate = 0f;
         if (isSetEnlarge) {
-            defaultValues = mDefaultEnlargeHolder;
+            targetScaleRate = 3f;
         } else {
-            defaultValues = mDefaultReduceHolder;
+            targetScaleRate = 1f;
         }
-        scaleRate = defaultValues[0] / this.getWidth();
+        oldScaleRate = mOriginalHolder.width / this.getWidth();
 
-        this.setWidth(defaultValues[0], false);
-        this.setHeight(defaultValues[1], false);
-        this.mStageMarginTop = defaultValues[2];
-        this.mStageMarginBottom = defaultValues[3];
+        this.setWidth(mOriginalHolder.width * targetScaleRate, false);
+        this.setHeight(mOriginalHolder.height * targetScaleRate, false);
+        this.setRadius(mOriginalHolder.radius * targetScaleRate);
+        this.mStageMarginTop = mOriginalHolder.marginTop * targetScaleRate;
+        this.mStageMarginBottom = mOriginalHolder.marginBottom * targetScaleRate;
 
-        return scaleRate;
+        return oldScaleRate;
     }
 
     @Override
-    public void storeDefaultScaleValue() {
-        if (mDefaultEnlargeHolder == null) {
-            mDefaultEnlargeHolder = new float[4];
+    public void storeOriginalValues(Object copyObj) {
+        if (mOriginalHolder == null) {
+            mOriginalHolder = new OriginalValuesHolder();
         }
-        if (mDefaultReduceHolder == null) {
-            mDefaultReduceHolder = new float[4];
-        }
-        mDefaultEnlargeHolder[0] = this.getWidth() * 3;
-        mDefaultEnlargeHolder[1] = this.getHeight() * 3;
-        mDefaultEnlargeHolder[2] = this.mStageMarginTop * 3;
-        mDefaultEnlargeHolder[3] = this.mStageMarginBottom * 3;
+        if (copyObj == null) {
+            mOriginalHolder.width = this.getWidth();
+            mOriginalHolder.height = this.getHeight();
+            mOriginalHolder.radius = this.getRadius();
+            mOriginalHolder.marginTop = this.getStageMarginTop();
+            mOriginalHolder.marginBottom = this.getStageMarginBottom();
+        } else if (copyObj instanceof StageParams.OriginalValuesHolder) {
+            OriginalValuesHolder newHolder = (OriginalValuesHolder) copyObj;
 
-        mDefaultReduceHolder[0] = this.getWidth() * 1;
-        mDefaultReduceHolder[1] = this.getHeight() * 1;
-        mDefaultReduceHolder[2] = this.mStageMarginTop * 1;
-        mDefaultReduceHolder[3] = this.mStageMarginBottom * 1;
+            mOriginalHolder.width = newHolder.width;
+            mOriginalHolder.height = newHolder.height;
+            mOriginalHolder.radius = newHolder.radius;
+            mOriginalHolder.marginTop = newHolder.marginTop;
+            mOriginalHolder.marginBottom = newHolder.marginBottom;
+        } else {
+            throw new RuntimeException("参数类型出错,请根据注释提醒进行传参");
+        }
     }
 
+    @Override
+    public Object getOriginalValues() {
+        return mOriginalHolder;
+    }
+
+    @Override
+    public Object getClone() {
+        boolean isThumbnail = this.getIsDrawThumbnail();
+        this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);
+
+        StageParams newObj = new StageParams();
+        //获取默认原始值
+        OriginalValuesHolder holder = (OriginalValuesHolder) this.getOriginalValues();
+
+        newObj.storeOriginalValues(holder);
+        //设置当前值
+        newObj.setWidth(this.getWidth(), false);
+        newObj.setHeight(this.getHeight(), false);
+        newObj.setRadius(this.getRadius());
+        newObj.setStageMarginTop(this.getStageMarginTop());
+        newObj.setStageMarginBottom(this.getStageMarginBottom());
+
+        //设置其它的参数值
+        newObj.setIsDraw(this.getIsDraw());
+        newObj.setIsDrawThumbnail(isThumbnail, 0, 0);
+        newObj.setThumbnailRate(this.getThumbnailRate());
+        //设置图片资源
+        newObj.setImage(this.getImageId());
+        newObj.setImage(this.getImageBitmap());
+        //设置绘制方式
+        //此部分必须在最后设置,因为一旦设置了图片资源,则会默认将绘制方式修改为图片绘制模式
+        newObj.setDrawType(this.getDrawType(true));
+
+        this.setIsDrawThumbnail(isThumbnail, DEFAULT_INT, DEFAULT_INT);
+        return newObj;
+    }
+
+    /**
+     * 原始舞台数据的保存,此处的原始是指<font color="#ff9900"><b>舞台默认设定的宽高或者用户设定的宽高,即第一次运行并显示出来的界面即为原始界面;
+     * 当用户对宽高做修改时,也会重新记录此数据</b></font>
+     */
+    protected class OriginalValuesHolder {
+        public float width;
+        public float height;
+        public float radius;
+        public float marginTop;
+        public float marginBottom;
+    }
 }
