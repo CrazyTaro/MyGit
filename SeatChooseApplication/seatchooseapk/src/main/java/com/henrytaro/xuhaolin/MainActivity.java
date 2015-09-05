@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.entity.SeatMap;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
@@ -145,7 +145,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
-        ISeatHandleInterfaces seatDataHandle = mChooseview.getSeatHandleInterface();
+        ISeatDrawHandle seatDataHandle = mChooseview.getSeatHandleInterface();
         seatDataHandle.setIsShowLog(false, null);
         seatDataHandle.setSeatDrawMap(drawMap);
 

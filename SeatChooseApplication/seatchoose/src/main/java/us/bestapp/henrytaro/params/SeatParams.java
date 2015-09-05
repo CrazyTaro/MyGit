@@ -63,7 +63,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     /**
      * 座位默认基本类型,错误座位,即不存在的座位(可能是列表数据不存在,也可能是查询索引超过此列表数据等)
      */
-    public static final int SEAT_TYPE_ERRO = -1;
+    public static final int SEAT_TYPE_ERROR = -1;
     /**
      * 默认座位类型,分别为<font color="#ff9900"><b>可选,已选,已售</b></font>
      */

@@ -25,7 +25,7 @@ public interface ISeatChooseEvent {
     /**
      * 座位选中回调接口
      * <p><font color="#ff9900"><b>此方法处理的情况及可选范围较大，如果处理比较复杂的座位类型建议使用此方法,此方法必定会被调用（除非没单击到有效区域） </b></font></p>
-     * <p>当选中的位置出错或不存在座位时，返回座位错误类型{@link SeatParams#SEAT_TYPE_ERRO}</p>
+     * <p>当选中的位置出错或不存在座位时，返回座位错误类型{@link SeatParams#SEAT_TYPE_ERROR}</p>
      *
      * @param rowIndex    座位在列表中的行索引
      * @param columnIndex 列索引

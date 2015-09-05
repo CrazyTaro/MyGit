@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
 import us.bestapp.henrytaro.params.SeatParams;
@@ -44,7 +44,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
-    private ISeatHandleInterfaces mSeatHandleInterface = null;
+    private ISeatDrawHandle mSeatHandleInterface = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
@@ -119,7 +119,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
             mSeatChooseEvent.seatSeleted(rowIndex, columnIndex, seatType);
         }
 
-        if (seatType == SeatParams.SEAT_TYPE_UNSHOW || seatType == SeatParams.SEAT_TYPE_ERRO) {
+        if (seatType == SeatParams.SEAT_TYPE_UNSHOW || seatType == SeatParams.SEAT_TYPE_ERROR) {
             //选座出错或者未选中有效区域，选座位失败
             if (mSeatChooseEvent != null) {
                 mSeatChooseEvent.seletedFail();
@@ -160,7 +160,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public ISeatHandleInterfaces getSeatHandleInterface() {
+    public ISeatDrawHandle getSeatHandleInterface() {
         return mSeatHandleInterface;
     }
 

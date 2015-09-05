@@ -4,7 +4,7 @@ import android.graphics.Point;
 
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.view.SeatChooseView;
 
 /**
@@ -18,7 +18,7 @@ public interface ISeatViewInterface {
      *
      * @return
      */
-    public ISeatHandleInterfaces getSeatHandleInterface();
+    public ISeatDrawHandle getSeatHandleInterface();
 
     /**
      * 设置每次选座最多可以选择的座位个数

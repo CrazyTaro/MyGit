@@ -13,7 +13,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatHandleInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.params.BaseParams;
 import us.bestapp.henrytaro.params.ExportParams;
@@ -37,7 +37,7 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
  *          <br/>
  *          <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
-public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatHandleInterfaces {
+public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandle {
     private GlobleParams mGlobleParams = null;
     //座位参数
     private SeatParams mSeatParams = null;
@@ -178,7 +178,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatHandleInt
         if (mSeatMap != null && rowIndex < mSeatMap.length && columnIndex < mSeatMap[0].length) {
             return mSeatMap[rowIndex][columnIndex];
         } else {
-            return SeatParams.SEAT_TYPE_ERRO;
+            return SeatParams.SEAT_TYPE_ERROR;
         }
     }
 
@@ -2032,7 +2032,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatHandleInt
                         //获取当前选中区域的座位类型
                         int seatType = this.getSeatTypeInSeatMap(clickSeatPoint.x, clickSeatPoint.y);
                         //座位类型非不可显示或者错误类型则进行通知
-                        if (seatType != SeatParams.SEAT_TYPE_UNSHOW && seatType != SeatParams.SEAT_TYPE_ERRO && seatType != SeatParams.SEAT_DRAW_TYPE_NO) {
+                        if (seatType != SeatParams.SEAT_TYPE_UNSHOW && seatType != SeatParams.SEAT_TYPE_ERROR) {
                             mCurrentSeletedSeat = clickSeatPoint;
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
