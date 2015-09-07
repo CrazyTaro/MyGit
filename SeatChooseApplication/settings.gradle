@@ -1,1 +1,1 @@
-include ':seatchoose', ':seatchooseapk', ':textjar'
+include ':seatchooseapk', ':textjar', ':seatchoose'

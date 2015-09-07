@@ -4,9 +4,8 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
-import java.util.Arrays;
-
-import us.bestapp.henrytaro.entity.SeatMap;
+import us.bestapp.henrytaro.params.GlobleParams;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -14,6 +13,12 @@ import us.bestapp.henrytaro.entity.SeatMap;
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+    }
+
+    public void test() {
+        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParamsExport.ROW_NUMBER_FORMAT, "行/第", IGlobleParamsExport.COLUMN_NUMBER_FORMAT, "列");
+        String str = String.format(format, 1, 2);
+        Log.i("format", str);
     }
 
     public void testParseJsonStr() {
@@ -89,11 +94,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
                 "    \"source\": \"gewala\"\n" +
                 "}";
 
-        SeatMap map = SeatMap.objectFromJSONStr(jsonStr);
-        int[][] drawMap = SeatMap.getDrawMap(map);
-        for (int i = 0; i < drawMap.length; i++) {
-            Log.i("map_" + (i + 1), Arrays.toString(drawMap[i]));
-        }
     }
 
 }

@@ -1,6 +1,9 @@
 us.bestapp.henrytaro.draw.interfaces
 us.bestapp.henrytaro.draw.utils
+us.bestapp.henrytaro.entity
+us.bestapp.henrytaro.entity.interfaces
 us.bestapp.henrytaro.params
 us.bestapp.henrytaro.params.interfaces
+us.bestapp.henrytaro.utils
 us.bestapp.henrytaro.view
 us.bestapp.henrytaro.view.interfaces
