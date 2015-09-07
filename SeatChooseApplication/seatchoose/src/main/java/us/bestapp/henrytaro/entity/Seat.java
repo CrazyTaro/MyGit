@@ -11,11 +11,19 @@ import us.bestapp.henrytaro.utils.StringUtils;
  */
 public class Seat extends AbsSeat {
 
+    /**
+     * 获取新的实例,此方法会同时解析座位信息
+     *
+     * @param rowNumber 行号
+     * @param seatInfo  座位信息
+     * @return
+     */
     public static AbsSeat getNewInstance(int rowNumber, String seatInfo) {
         Seat newSeat = new Seat();
-        return newSeat.parseToSeat(rowNumber, seatInfo, newSeat);
+        return newSeat.parseToSeat(rowNumber, 0, seatInfo, newSeat);
     }
 
+    //私有构造函数
     private Seat() {
         this(0, 0, 0, false, null);
     }
@@ -25,12 +33,11 @@ public class Seat extends AbsSeat {
     }
 
     @Override
-    public AbsSeat parseToSeat(int rowNumber, String seatInfo, AbsSeat oldSeat) {
+    public AbsSeat parseToSeat(int rowNumber, int columnNumber, String seatInfo, AbsSeat oldSeat) {
         if (StringUtils.isNullOrEmpty(seatInfo)) {
             return null;
         } else {
             int type = SeatParams.SEAT_TYPE_UNSHOW;
-            int columnNumber = 0;
             boolean isCouple = false;
 
             //原始数据大致格式：ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0
@@ -40,7 +47,9 @@ public class Seat extends AbsSeat {
             if (!seatInfo.startsWith("ZL")) {
                 String[] infos = seatInfo.split("@");
                 if (infos != null) {
+                    //解析列号
                     columnNumber = Integer.parseInt(infos[0]);
+                    //解析情侣座
                     isCouple = Integer.parseInt(infos[2]) != 0 ? true : false;
                     switch (infos[1]) {
                         case "A":
@@ -58,6 +67,7 @@ public class Seat extends AbsSeat {
             if (oldSeat == null) {
                 return new Seat(rowNumber, columnNumber, type, isCouple, seatInfo);
             } else {
+                //使用原对象
                 oldSeat.mSeatInfo = seatInfo;
                 oldSeat.mIsCouple = isCouple;
                 oldSeat.mColumnNumber = columnNumber;
@@ -70,6 +80,7 @@ public class Seat extends AbsSeat {
 
     @Override
     public void resetSeat() {
-        parseToSeat(this.mRowNumber, this.mSeatInfo, this);
+        //通过解析原始的座位信息并设定到此对象本身来还原数据
+        parseToSeat(this.mRowNumber, 0, this.mSeatInfo, this);
     }
 }

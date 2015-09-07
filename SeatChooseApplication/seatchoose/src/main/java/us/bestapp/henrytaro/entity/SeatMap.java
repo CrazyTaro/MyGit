@@ -7,13 +7,14 @@ import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONObject;
 
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntityHandle;
+import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatMapHandle;
 import us.bestapp.henrytaro.params.SeatParams;
 
 /**
- * Author:
- * Description:
+ * Created by xuhaolin on 15/9/2.<br/>
+ * 座位列表对象,用于实现座位处理接口及处理JSON数据
  */
 public class SeatMap implements ISeatMapHandle {
     @SerializedName("success")
@@ -117,7 +118,7 @@ public class SeatMap implements ISeatMapHandle {
 
     @Override
     public int getSeatType(int mapRow, int mapColumn) {
-        ISeatEntityHandle seat = this.getSeatInfo(mapRow, mapColumn);
+        ISeatEntity seat = this.getSeatInfo(mapRow, mapColumn);
         if (seat != null) {
             return seat.getType();
         } else {
@@ -127,7 +128,7 @@ public class SeatMap implements ISeatMapHandle {
 
     @Override
     public boolean updateSeatType(int type, int mapRow, int mapColumn) {
-        ISeatEntityHandle seat = this.getSeatInfo(mapRow, mapColumn);
+        ISeatEntity seat = this.getSeatInfo(mapRow, mapColumn);
         seat.updateType(type);
         return true;
     }
@@ -138,9 +139,9 @@ public class SeatMap implements ISeatMapHandle {
     }
 
     @Override
-    public ISeatEntityHandle getSeatInfo(int mapRow, int mapColumn) {
+    public ISeatEntity getSeatInfo(int mapRow, int mapColumn) {
         try {
-            return this.getData().getRowList().get(mapRow).getSeatInfo(mapColumn);
+            return this.getData().getRowList().get(mapRow).getSeat(mapColumn);
         } catch (Exception e) {
             return null;
 //            throw new RuntimeException(e.getMessage());
@@ -172,34 +173,30 @@ public class SeatMap implements ISeatMapHandle {
 
     @Override
     public boolean getIsCouple(int mapRow, int mapColumn) {
-        ISeatEntityHandle seat = this.getSeatInfo(mapRow, mapColumn);
+        ISeatEntity seat = this.getSeatInfo(mapRow, mapColumn);
         if (seat != null) {
             return seat.getIsCouple();
         } else {
-            throw new RuntimeException("seat info was not existed");
+            return false;
+//            throw new RuntimeException("seat info was not existed");
         }
     }
 
     @Override
     public int getSeatColumnInRow(int mapRow, int mapColumn) {
-        ISeatEntityHandle seat = this.getSeatInfo(mapRow, mapColumn);
+        ISeatEntity seat = this.getSeatInfo(mapRow, mapColumn);
         if (seat != null) {
             return seat.getColumnNumber();
         } else {
-            throw new RuntimeException("seat info was not existed");
+            return -1;
+//            throw new RuntimeException("seat info was not existed");
         }
     }
 
     @Override
-    public int[] getSeatListInRow(int mapRow) {
+    public IRowEntity getSeatRowInMap(int mapRow) {
         if (this.getRowCount() > mapRow) {
-            int columnCount = this.getColumnCount(mapRow);
-            int[] seatList = new int[columnCount];
-            Row row = this.getData().getRowList().get(mapRow);
-            for (int i = 0; i < columnCount; i++) {
-                seatList[i] = row.getSeatInfo(i).getType();
-            }
-            return seatList;
+            return this.getData().getRowList().get(mapRow);
         } else {
             return null;
         }

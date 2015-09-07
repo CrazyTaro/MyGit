@@ -44,30 +44,32 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
-    private ISeatDrawHandle mSeatDrawInterface = null;
+    private ISeatDrawHandle mSeatHandleInterface = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
+    private Context mContext = null;
 
     public SeatChooseView(Context context) {
         super(context);
-        initial();
+        initial(context);
     }
 
     public SeatChooseView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initial();
+        initial(context);
     }
 
     //初始化
-    private void initial() {
+    private void initial(Context context) {
+        mContext = context.getApplicationContext();
         //创建绘制对象
-        mSeatDrawInterface = new SeatDrawUtils(this.getContext(), this);
+        mSeatHandleInterface = new SeatDrawUtils(this.getContext(), this);
 
         //不显示log
-        mSeatDrawInterface.setIsShowLog(false, null);
+        mSeatHandleInterface.setIsShowLog(false, null);
         //设置监听事件
-        mSeatDrawInterface.setSeatInformationListener(this);
+        mSeatHandleInterface.setSeatInformationListener(this);
         //创建选择座位的存储列表
         mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
     }
@@ -102,7 +104,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mSeatDrawInterface.drawCanvas(canvas);
+        mSeatHandleInterface.drawCanvas(canvas);
     }
 
 
@@ -113,7 +115,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     @Override
     public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap) {
         boolean isChoosen = false;
-        int seatType = mSeatDrawInterface.getSeatTypeInMap(rowIndexInMap, columnIndexInMap);
+        int seatType = mSeatHandleInterface.getSeatTypeInMap(rowIndexInMap, columnIndexInMap);
         //回调选座结果
         if (mSeatChooseEvent != null) {
             mSeatChooseEvent.seatSeleted(rowIndexInMap, columnIndexInMap, seatType);
@@ -126,13 +128,13 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
             }
         } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
-            mSeatDrawInterface.updateSeatIMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndexInMap, columnIndexInMap);
+            mSeatHandleInterface.updateSeatIMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndexInMap, columnIndexInMap);
             removeSeat(rowIndexInMap, columnIndexInMap);
             isChoosen = false;
         } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
-                mSeatDrawInterface.updateSeatIMap(SeatParams.SEAT_TYPE_SELETED, rowIndexInMap, columnIndexInMap);
+                mSeatHandleInterface.updateSeatIMap(SeatParams.SEAT_TYPE_SELETED, rowIndexInMap, columnIndexInMap);
                 addSeat(rowIndexInMap, columnIndexInMap);
                 isChoosen = true;
             } else {
@@ -151,22 +153,22 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
 
     @Override
     public void chooseSeatSuccess(int rowNumber, int columnNumber, int rowIndexInMap, int columnIndexInMap) {
-        Toast.makeText(getContext(), "当前座位:row/column = " + rowNumber + "/" + columnNumber, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "当前座位:row/column = " + rowNumber + "/" + columnNumber, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void chosseSeatFail() {
-        Toast.makeText(getContext(), "没有选中座位", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "没有选中座位", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void scaleMaximum() {
-        Toast.makeText(getContext(), "已缩放到极限值", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "已缩放到极限值", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public ISeatDrawHandle getSeatDrawInterface() {
-        return mSeatDrawInterface;
+        return mSeatHandleInterface;
     }
 
     /**

@@ -48,7 +48,7 @@ public interface ISeatMapHandle {
      *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
      * @return
      */
-    public ISeatEntityHandle getSeatInfo(int mapRow, int mapColumn);
+    public ISeatEntity getSeatInfo(int mapRow, int mapColumn);
 
     /**
      * 获取座位行数
@@ -73,7 +73,7 @@ public interface ISeatMapHandle {
     public int getMaxColumnCount();
 
     /**
-     * 获取map指定位置中的座位是否情侣座类型
+     * 获取map指定位置中的座位是否情侣座类型,<font color="#ff9900"><b>当座位不存在时,返回false</b></font>
      *
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
@@ -83,7 +83,7 @@ public interface ISeatMapHandle {
     public boolean getIsCouple(int mapRow, int mapColumn);
 
     /**
-     * 获取map中指定位置的座位的<font color="#ff9900"><b>真实座位列值</b></font>
+     * 获取map中指定位置的座位的<font color="#ff9900"><b>真实座位列值,当座位不存在时,返回-1</b></font>
      *
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
@@ -93,10 +93,10 @@ public interface ISeatMapHandle {
     public int getSeatColumnInRow(int mapRow, int mapColumn);
 
     /**
-     * 获取某行的所有座位类型数组形式,包含实际的座位与不显示出来的座位(即该map中的该行所有的列)
+     * 获取某行的所有座位类型数组形式,包含实际的座位与不显示出来的座位(即该map中的该行所有的列),
      *
      * @param mapRow map中的行
      * @return
      */
-    public int[] getSeatListInRow(int mapRow);
+    public IRowEntity getSeatRowInMap(int mapRow);
 }

@@ -15,7 +15,8 @@ import android.view.View;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntityHandle;
+import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatMapHandle;
 import us.bestapp.henrytaro.params.BaseParams;
 import us.bestapp.henrytaro.params.ExportParams;
@@ -26,7 +27,7 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 
 /**
  * @author xuhaolin
- * @version 4.1
+ * @version 5.0
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -449,7 +450,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(ISeatMapHandle)},
      * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
      * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
-     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int)}进行完成,
+     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)}进行完成,
      * 在绘制一行时,从中心位置开始向左右两端分别绘制,每一次调用{@code drawHorizontalSeatList}仅仅只绘制从中心到两端中某一端的部分,
      * 即只有半行,因此需要绘制两次</b></p>
      *
@@ -509,17 +510,24 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         }
 
         for (int i = 0; i < seatMap.getRowCount(); i++) {
-            //获取座位数据数组
-            int[] seatList = seatMap.getSeatListInRow(i);
-            //画左边的座位
-            //绘制的时候由start位置到end位置
-            //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
-            //即数组不可越界
-            drawHorizontalSeatList(canvas, paint, beginDrawLeftX, beginDrawY, seatList, leftBeginColumn, 0 - 1);
-            //画右边的座位
-            drawHorizontalSeatList(canvas, paint, beginDrawRightX, beginDrawY, seatList, rightBeginColumn, columnLength);
-            //增加Y轴的绘制高度
-            beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
+            //获取行数据对象接口
+            IRowEntity seatRow = seatMap.getSeatRowInMap(i);
+            //对行数据进行检测判断是否需要绘制
+            if (seatRow != null && seatRow.getIsDraw() && seatRow.getIsEmpty()) {
+                //当前行需要绘制但数据为空
+                //直接空出一行
+                beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
+            } else if (seatRow != null && seatRow.getIsDraw()) {
+                //画左边的座位
+                //绘制的时候由start位置到end位置
+                //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
+                //即数组不可越界
+                drawHorizontalSeatList(canvas, paint, beginDrawLeftX, beginDrawY, seatRow, leftBeginColumn, 0 - 1);
+                //画右边的座位
+                drawHorizontalSeatList(canvas, paint, beginDrawRightX, beginDrawY, seatRow, rightBeginColumn, columnLength);
+                //增加Y轴的绘制高度
+                beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
+            }
         }
 
         if (!mSeatParams.getIsDrawThumbnail()) {
@@ -665,7 +673,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     /**
-     * 在sellSeat第一行绘制列数,此处的绘制方式同{@link #drawHorizontalSeatList(Canvas, Paint, float, float, int[], int, int)},原理相同;<br/>
+     * 在sellSeat第一行绘制列数,此处的绘制方式同{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)},原理相同;<br/>
      * 绘制行数分为两部分,从中轴线开始向左右两边绘制,所以需要调用此方法两次;
      *
      * @param canvas        画板
@@ -724,35 +732,36 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param paint         画笔
      * @param drawPositionX 该行座位开始绘制的第一个座位中心X轴位置
      * @param drawPositionY 该行座位开始绘制的第一个座位中心Y轴位置
-     * @param seatList      单行座位列表
+     * @param seatRow       单行座位列表
      * @param start         座位列表中开始绘制的索引,<font color="#ff9900"><b>此索引位置的座位将被绘制</b></font>
      * @param end           座位列表中最后绘制的索引,<font color="#ff9900"><b>此索引位置的座位不被绘制</b></font>
+     * @return 若需要绘制行, 则返回true, 不需要绘制行, 返回false
      */
-    protected void drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, int[] seatList, int start, int end) {
-        if (seatList == null) {
-            return;
+    protected boolean drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, IRowEntity seatRow, int start, int end) {
+        if (seatRow == null || !seatRow.getIsDraw()) {
+            return false;
         }
         float beginDrawX = drawPositionX;
         //从大到小则为向左绘制,增量为负值-1
         //从小到大则为向右绘制,增量为正值+1
         int increment = (start - end) > 0 ? -1 : 1;
         //绘制座位
-        if (seatList != null && seatList.length > 0) {
+        if (!seatRow.getIsEmpty()) {
             try {
                 int seatType = 0;
                 int seatColor = SeatParams.DEFAULT_SEAT_COLOR;
                 int i = start;
                 do {
                     //尝试获取数据进行处理,若无法获取到数据则将位置计算到最后
-                    try {
-                        //获取对应位置座位的类型
-                        seatType = seatList[i];
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    //获取对应位置座位的类型
+                    ISeatEntity seat = seatRow.getSeat(i);
+                    if (seat == null) {
                         //计算下一个绘制座位的X轴位置
                         //由于此处绘制的座位是同一行的,所以仅X轴位置改变,Y轴位置不会改变
                         beginDrawX += Math.abs(i - end) * increment * (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval());
                         break;
                     }
+                    seatType = seat.getType();
                     //获取座位类型对应的颜色
                     seatColor = mSeatParams.getSeatColorByType(seatType);
                     //设置绘制座位的颜色
@@ -790,6 +799,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
                 ex.printStackTrace();
             }
         }
+        return true;
     }
 
     /**
@@ -1175,9 +1185,8 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
         //创建显示区域
         RectF showRectf = new RectF();
-        //当缩放到界面在整个可见高度内时
-        //则缩略图内显示框的起始高度直接调整为0
-        //否则显示框会超出缩略图的大小
+        //若当前的界面高度小于屏幕高度,即缩略图显示框完全显示缩略图
+        //将显示框起始高度设为0,保证显示框包含整个缩略图
         if (heightRate == 1) {
             showRectf.top = 0;
         } else {
@@ -2039,19 +2048,21 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
                     //通知选中map中的有效区域
                     mISeatInformationListener.chooseInMapSuccess(clickSeatPoint.x, clickSeatPoint.y);
                     //绘制选中座位通知显示
-                    if (mGlobleParams.getIsDrawSeletedRowColumnNotification()) {
-                        //获取当前选中区域的座位类型
-                        ISeatEntityHandle seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
-                        int seatType = SeatParams.SEAT_TYPE_ERROR;
-                        //判断当前的座位是否是实际有效座位
-                        if (seat != null) {
-                            seatType = seat.getType();
-                        }
-                        //座位类型非不可显示或者错误类型则进行通知
-                        if (seatType != SeatParams.SEAT_TYPE_UNSHOW && seatType != SeatParams.SEAT_TYPE_ERROR) {
-                            //通知选中实际的有效座位
-                            mISeatInformationListener.chooseSeatSuccess(seat.getRowNumber(), seat.getColumnNumber(), clickSeatPoint.x, clickSeatPoint.y);
-                            mCurrentSeletedSeat = clickSeatPoint;
+
+                    //获取当前选中区域的座位类型
+                    ISeatEntity seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
+                    int seatType = SeatParams.SEAT_TYPE_ERROR;
+                    //判断当前的座位是否是实际有效座位
+                    if (seat != null) {
+                        seatType = seat.getType();
+                    }
+                    //座位类型非不可显示或者错误类型则进行通知
+                    if (seatType != SeatParams.SEAT_TYPE_UNSHOW && seatType != SeatParams.SEAT_TYPE_ERROR) {
+                        //通知选中实际的有效座位
+                        mISeatInformationListener.chooseSeatSuccess(seat.getRowNumber(), seat.getColumnNumber(), clickSeatPoint.x, clickSeatPoint.y);
+                        mCurrentSeletedSeat = clickSeatPoint;
+                        //显示当前选中座位的通知
+                        if (mGlobleParams.getIsDrawSeletedRowColumnNotification()) {
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
                     }

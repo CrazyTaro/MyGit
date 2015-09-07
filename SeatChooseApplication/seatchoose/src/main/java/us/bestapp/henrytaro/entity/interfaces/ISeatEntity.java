@@ -4,7 +4,7 @@ package us.bestapp.henrytaro.entity.interfaces;
  * Created by xuhaolin on 15/9/6.<br/>
  * 座位相关的必须实现或存在的一些对外的接口方法
  */
-public interface ISeatEntityHandle {
+public interface ISeatEntity {
 
     /**
      * 是否情侣座位,暂时未使用到
