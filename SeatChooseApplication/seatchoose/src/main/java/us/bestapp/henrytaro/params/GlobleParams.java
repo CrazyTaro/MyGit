@@ -34,6 +34,10 @@ public class GlobleParams implements IGlobleParamsExport {
 
     //选中行列的提醒
     private boolean mIsDrawSeletedRowColumnNotification = false;
+    //提醒格式化字符串
+    private String mNotificationFormat = "%1$行/%2$列";
+    //格式化字符串时是否行显示在前
+    private boolean mIsRowFirst = true;
     //绘制列数
     private boolean mIsDrawColumnNumber = false;
     //绘制行数
@@ -220,8 +224,33 @@ public class GlobleParams implements IGlobleParamsExport {
     }
 
     @Override
-    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification) {
+    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, String notifyFormat) {
         this.mIsDrawSeletedRowColumnNotification = isDrawNotification;
+        this.mNotificationFormat = notifyFormat;
+    }
+
+    @Override
+    public String createNotificationFormat(boolean isRowFirst, String... params) {
+        if (params != null) {
+            this.mIsRowFirst = isRowFirst;
+            String format = "";
+            for (String str : params) {
+                format += str;
+            }
+            return format;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean getIsRowFirst() {
+        return this.mIsRowFirst;
+    }
+
+    @Override
+    public String getNotificationFormat() {
+        return this.mNotificationFormat;
     }
 
     @Override

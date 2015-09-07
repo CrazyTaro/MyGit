@@ -2,8 +2,8 @@ package us.bestapp.henrytaro.draw.interfaces;
 
 import android.graphics.Canvas;
 
+import us.bestapp.henrytaro.entity.interfaces.ISeatMapHandle;
 import us.bestapp.henrytaro.params.ExportParams;
-import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
 import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
@@ -23,41 +23,73 @@ public interface ISeatDrawHandle {
      */
     public void drawCanvas(Canvas canvas);
 
-
     /**
-     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="#ff9900"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改</b></font>，
-     * 或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据
-     * <p>此方法应该在View绘制前被调用,否则将获取不到绘制数据</p>
+     * 设置座位Map
      *
-     * @param seatMap 座位列表
+     * @param seatMap
      */
-    public void setSeatDrawMap(int[][] seatMap);
+    public void setSeatDrawMap(ISeatMapHandle seatMap);
 
     /**
-     * 更新座位列表中的数据
-     *
-     * @param seatType    座位类型
-     * @param rowIndex    行索引
-     * @param columnIndex 列索引
-     * @return 更新成功返回true, 否则返回false
-     */
-    public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex);
-
-    /**
-     * 获取座位列表中某行某列的座位类型数据,可能返回{@link SeatParams#SEAT_TYPE_ERROR}(无效值)
-     *
-     * @param rowIndex    座位行索引
-     * @param columnIndex 座位列索引
-     * @return 返回该位置的座位类型, 若无法获取返回-1
-     */
-    public int getSeatTypeInSeatMap(int rowIndex, int columnIndex);
-
-    /**
-     * 获取座位列表数据
+     * 获取当前绘制使用的座位表
      *
      * @return
      */
-    public int[][] getSeatDrawMap();
+    public ISeatMapHandle getSeatDrawMap();
+
+    /**
+     * 更新座位Map中的数据
+     *
+     * @param type             座位类型
+     * @param rowIndexInMap    map中的行索引
+     * @param columnIndexInMap map中的列索引
+     * @return
+     */
+    public boolean updateSeatIMap(int type, int rowIndexInMap, int columnIndexInMap);
+
+    /**
+     * 获取map指定位置中的区域内的座位类型(可能该位置不存在实际的座位)
+     *
+     * @param rowIndex    map中的行
+     * @param columnIndex map中的列
+     * @return
+     */
+    public int getSeatTypeInMap(int rowIndex, int columnIndex);
+
+//    /**
+//     * 设置座位绘制的数据,该二维表中的存放的应该为该位置的座位对应的座位类型,<font color="#ff9900"><b>此方法是将数据拷贝下来,修改数据请重新设置,不要在原引用数据上修改</b></font>，
+//     * 或者使用{@link #updateSeatTypeInMap(int, int, int)}方法更新数据
+//     * <p>此方法应该在View绘制前被调用,否则将获取不到绘制数据</p>
+//     *
+//     * @param seatMap 座位列表
+//     */
+//    public void setSeatDrawMap(int[][] seatMap);
+//
+//    /**
+//     * 更新座位列表中的数据
+//     *
+//     * @param seatType    座位类型
+//     * @param rowIndex    行索引
+//     * @param columnIndex 列索引
+//     * @return 更新成功返回true, 否则返回false
+//     */
+//    public boolean updateSeatTypeInMap(int seatType, int rowIndex, int columnIndex);
+//
+//    /**
+//     * 获取座位列表中某行某列的座位类型数据,可能返回{@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_ERROR}(无效值)
+//     *
+//     * @param rowIndex    座位行索引
+//     * @param columnIndex 座位列索引
+//     * @return 返回该位置的座位类型, 若无法获取返回-1
+//     */
+//    public int getSeatTypeInSeatMap(int rowIndex, int columnIndex);
+//
+//    /**
+//     * 获取座位列表数据
+//     *
+//     * @return
+//     */
+//    public int[][] getSeatDrawMap();
 
     /**
      * 设置座位信息监听事件

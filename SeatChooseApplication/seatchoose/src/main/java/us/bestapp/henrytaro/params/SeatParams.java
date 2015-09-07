@@ -97,6 +97,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParamsExport#DRAW_TYPE_NO}保持一致
      */
     public static int SEAT_TYPE_UNSHOW = IBaseParamsExport.DRAW_TYPE_NO;
+
     //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
     //次座位高度

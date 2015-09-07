@@ -26,7 +26,7 @@ public interface ISeatInformationListener {
      * <p>
      * {@link #STATUS_MOVE},座位移动中<br/>
      * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
-     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseSeatSuccess(int, int)}<br/>
+     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int)}<br/>
      * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
      * </p>
      *
@@ -35,13 +35,28 @@ public interface ISeatInformationListener {
     public void seatStatus(int status);
 
     /**
-     * 单击选中某个座位位置,此处的选中并不是真实的选中意思,指的是成功单击到一个座位的有效区域,
-     * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该座位的行列索引则,并不作任何的处理
+     * 单击选中map中某个位置,此处的选中并不是真实的选中意思,指的是成功单击到map中的有效区域,
+     * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该单击有效区域的行列索引则,并不作任何的处理<br/>
      *
-     * @param rowIndex    座位在列表中的行索引
-     * @param columnIndex 座位在列表中的列索引
+     * @param rowIndexInMap    座位在列表中的行索引,从0开始
+     * @param columnIndexInMap 座位在列表中的列索引,从0开始
      */
-    public void chooseSeatSuccess(int rowIndex, int columnIndex);
+    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap);
+
+    /**
+     * 单击选中座位,<font color="#ff9900"><b>此处指的是map中真正的座位,参数rowNumber/columnNubmer为该座位的实际行列值(从1开始)</b></font>,
+     * 当此方法有效时,{@link #chooseInMapSuccess(int, int)}必定也有返回,且两个方法返回的数据是不同的,行值是接近的(一个从0开始,一个从1开始),
+     * 但列值是不一定相同的,此方法中的是实际座位中的列数,而chooseInMapSuccess中的是有效区域中map的列值<br/>
+     * 如:<br/>
+     * chooseInMapSuccess(0,4);第一行,第五列
+     * chooseSeatSuccess(1,2,0,4);座位实际位置:第一行,第二列,位于map中第一行,第五列
+     *
+     * @param rowNumber        座位的实际行数,从1开始
+     * @param columnNumber     座位的实际列数,从1开始
+     * @param rowIndexInMap    当前座位在map中的行索引(从0开始)
+     * @param columnIndexInMap 当前座位在map中的列索引(从1开始)
+     */
+    public void chooseSeatSuccess(int rowNumber, int columnNumber, int rowIndexInMap, int columnIndexInMap);
 
     /**
      * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)

@@ -18,7 +18,7 @@ public interface ISeatViewInterface {
      *
      * @return
      */
-    public ISeatDrawHandle getSeatHandleInterface();
+    public ISeatDrawHandle getSeatDrawInterface();
 
     /**
      * 设置每次选座最多可以选择的座位个数

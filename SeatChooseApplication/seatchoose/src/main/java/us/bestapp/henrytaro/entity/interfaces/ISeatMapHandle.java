@@ -1,11 +1,10 @@
 package us.bestapp.henrytaro.entity.interfaces;
 
-import us.bestapp.henrytaro.entity.Seat;
-
 /**
- * Created by lenovo on 2015/9/5.
+ * Created by lenovo on 2015/9/5.<br/>
+ * 座位数据处理,座位处理的某些必须实现的方法
  */
-public interface ISeatDataHandle {
+public interface ISeatMapHandle {
     /**
      * 获取指定map指定位置中的座位类型<br/>
      * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSHOW}，不显示<br/>
@@ -23,12 +22,22 @@ public interface ISeatDataHandle {
     /**
      * 设置map指定位置中的座位类型，此方法用于修改数据
      *
+     * @param type      座位类型
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
      *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
      * @return
      */
-    public boolean setSeatType(int mapRow, int mapColumn);
+    public boolean updateSeatType(int type, int mapRow, int mapColumn);
+
+    /**
+     * 将座位状态重置为原始数据加载的状态
+     *
+     * @param mapRow     map中的行
+     * @param mapColumn  map中的列
+     * @param isResetAll 是否重置所有的数据
+     */
+    public void resetSeat(int mapRow, int mapColumn, boolean isResetAll);
 
     /**
      * 获取map指定位置中的座位信息，<font color="#ff9900"><b>此座位信息包含了该座位所有的信息，此接口中获取座位信息的
@@ -39,7 +48,7 @@ public interface ISeatDataHandle {
      *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
      * @return
      */
-    public Seat getSeatInfo(int mapRow, int mapColumn);
+    public ISeatEntityHandle getSeatInfo(int mapRow, int mapColumn);
 
     /**
      * 获取座位行数
@@ -49,12 +58,19 @@ public interface ISeatDataHandle {
     public int getRowCount();
 
     /**
-     * 获取某行中的座位列数，<font color="#ff9900"><b>此处的列数是指真正存在的座位列数，不同于map中的column</b></font>
+     * 获取map中某行的座位列数,<font color="#ff9900"><b>并不是map中所有行的列数相同,有一些行可能会比其它行短,
+     * 请注意(这部分是由实际的数据决定的,实际的数据并不以完整地二维表形式给出所有的数据,只提供了有效的数据)</b></font>
      *
-     * @param rowIndex map中的行
      * @return
      */
-    public int getColumnCountInRow(int rowIndex);
+    public int getColumnCount(int rowIndex);
+
+    /**
+     * 获取所有行中最大列的列数,整个二维表基于最大行数与列数进行绘制
+     *
+     * @return
+     */
+    public int getMaxColumnCount();
 
     /**
      * 获取map指定位置中的座位是否情侣座类型
@@ -75,4 +91,12 @@ public interface ISeatDataHandle {
      * @return
      */
     public int getSeatColumnInRow(int mapRow, int mapColumn);
+
+    /**
+     * 获取某行的所有座位类型数组形式,包含实际的座位与不显示出来的座位(即该map中的该行所有的列)
+     *
+     * @param mapRow map中的行
+     * @return
+     */
+    public int[] getSeatListInRow(int mapRow);
 }

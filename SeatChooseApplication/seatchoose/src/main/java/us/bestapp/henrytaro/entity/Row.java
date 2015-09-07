@@ -4,12 +4,13 @@ package us.bestapp.henrytaro.entity;/**
 
 import com.google.gson.annotations.SerializedName;
 
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntityHandle;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
- * Author:
- * Description:
+ * Created by xuhaolin on 15/9/2.<br/>
+ * 来自JSON数据中的对象
  */
 public class Row {
 
@@ -22,7 +23,7 @@ public class Row {
 
     private int mColumnCount = 0;
 
-    private Seat[] mColumnData = null;
+    private AbsSeat[] mColumnData = null;
 
     /**
      * 获取行数
@@ -47,7 +48,7 @@ public class Row {
      *
      * @return
      */
-    public Seat[] getDataColumnSeat() {
+    public AbsSeat[] getDataColumnSeat() {
         return this.mColumnData;
     }
 
@@ -75,25 +76,10 @@ public class Row {
      * @param columnIndex 行中的行索引（非真实座位列索引）
      * @return
      */
-    public Seat getSeatInfo(int columnIndex) {
+    public ISeatEntityHandle getSeatInfo(int columnIndex) {
         try {
             return this.mColumnData[columnIndex];
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    /**
-     * @return
-     */
-    public int[] getDrawColumnSeat() {
-        if (mColumnData != null) {
-            int[] drawColumn = new int[mColumnData.length];
-            for (int i = 0; i < mColumnData.length; i++) {
-                drawColumn[i] = mColumnData[i].getType();
-            }
-            return drawColumn;
-        } else {
             return null;
         }
     }
@@ -116,7 +102,7 @@ public class Row {
             if (mColumns != null) {
                 mColumnData = new Seat[columInfo.length];
                 for (int i = 0; i < columInfo.length; i++) {
-                    Seat newSeat = Seat.parseToSeat(columInfo[i]);
+                    AbsSeat newSeat = Seat.getNewInstance(mRowNum, columInfo[i]);
                     //座位解析
                     mColumnData[i] = newSeat;
                     if (newSeat != null && newSeat.getType() != SeatParams.SEAT_TYPE_UNSHOW) {

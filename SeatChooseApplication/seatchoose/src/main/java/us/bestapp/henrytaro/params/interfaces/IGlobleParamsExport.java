@@ -9,6 +9,8 @@ import android.graphics.Color;
  */
 public interface IGlobleParamsExport {
 
+    public static final String FORMAT_STR = "%s";
+
     /**
      * 设置是否绘制缩略图
      *
@@ -206,8 +208,36 @@ public interface IGlobleParamsExport {
      * 设置是否显示选中某行某列时的提醒
      *
      * @param isDrawNotification
+     * @param notifyFormat       用于格式化的通知文字内容,例:%1$s行/%2$s列,参数一将被替换为行号,参数二将被替换为列号,
+     *                           若不知道格式化规则可使用{@link #createNotificationFormat(boolean, String...)}创建格式化字符串
      */
-    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification);
+    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, String notifyFormat);
+
+    /**
+     * 创建用于通知的格式化字符串,创建规则如下:<br/>
+     * 将需要显示的字符串依次传入,在需要显示行/列号时分别使用{@link #FORMAT_STR}代替即可.如:<br/>
+     * 创建:createNotification(false,FORMAT_STR,"列/",FORMAT_STR,"行");
+     * 显示:2列/3行
+     *
+     * @param isRowFirst 是否行显示在前
+     * @param params     可变String参数
+     * @return
+     */
+    public String createNotificationFormat(boolean isRowFirst, String... params);
+
+    /**
+     * 是否行显示在前
+     *
+     * @return
+     */
+    public boolean getIsRowFirst();
+
+    /**
+     * 获取通知格式化字符串
+     *
+     * @return
+     */
+    public String getNotificationFormat();
 
     /**
      * 获取是否绘制选中某行某列提醒

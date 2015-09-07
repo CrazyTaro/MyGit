@@ -141,17 +141,16 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         setContentView(R.layout.activity_main);
 
         SeatMap dataMap = SeatMap.objectFromJSONStr(jsonStr);
-        int[][] drawMap = SeatMap.getDrawMap(dataMap);
 
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
-        ISeatDrawHandle seatDataHandle = mChooseview.getSeatHandleInterface();
+        ISeatDrawHandle seatDataHandle = mChooseview.getSeatDrawInterface();
         seatDataHandle.setIsShowLog(false, null);
-        seatDataHandle.setSeatDrawMap(drawMap);
+        seatDataHandle.setSeatDrawMap(dataMap);
 
         IGlobleParamsExport globleParams = seatDataHandle.getExportParams().getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
-        globleParams.setIsDrawSeletedRowColumnNotification(true);
+        globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParamsExport.FORMAT_STR, "行/第", IGlobleParamsExport.FORMAT_STR, "列"));
         globleParams.setIsDrawColumnNumber(true);
         globleParams.setIsDrawRowNumber(true);
         globleParams.setSeatTypeRowCount(2);
