@@ -5,7 +5,7 @@ import android.test.ApplicationTestCase;
 import android.util.Log;
 
 import us.bestapp.henrytaro.params.GlobleParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -16,7 +16,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void test() {
-        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParamsExport.ROW_NUMBER_FORMAT, "行/第", IGlobleParamsExport.COLUMN_NUMBER_FORMAT, "列");
+        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParams.ROW_NUMBER_FORMAT, "行/第", IGlobleParams.COLUMN_NUMBER_FORMAT, "列");
         String str = String.format(format, 1, 2);
         Log.i("format", str);
     }
