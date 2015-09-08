@@ -1,7 +1,10 @@
 package us.bestapp.henrytaro.params.interfaces;
 
 /**
- * Created by xuhaolin on 15/9/8.
+ * Created by xuhaolin on 15/9/8.<br/>
+ * 绘制参数接口的基本接口,定义了绘制方法中使用的通用方法,<font ="#ff9900"><b>继承绘制类{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils}自定义绘制方法时,
+ * 绘制座位/舞台需要的数据操作接口中通用的数据操作接口来自于此接口</b></font>
+ * <br/>{@since 一般不继承此接口, 通过继承其子接口 {@link IDrawSeatParams}/{@link IDrawStageParams}实现需要的方法}
  */
 public interface IDrawBaseParams extends IBaseParams {
     /**

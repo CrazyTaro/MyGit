@@ -2,7 +2,7 @@ package us.bestapp.henrytaro.entity.interfaces;
 
 /**
  * Created by xuhaolin on 15/9/6.<br/>
- * 座位相关的必须实现或存在的一些对外的接口方法
+ * 座位相关的必须实现或存在的一些对外的接口方法,该接口用于绘制中提供数据
  */
 public interface ISeatEntity {
 

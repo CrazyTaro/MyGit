@@ -134,11 +134,6 @@ public class SeatMap implements ISeatMapEntity {
     }
 
     @Override
-    public void resetSeat(int mapRow, int mapColumn, boolean isResetAll) {
-
-    }
-
-    @Override
     public ISeatEntity getSeatInfo(int mapRow, int mapColumn) {
         try {
             return this.getData().getRowList().get(mapRow).getSeat(mapColumn);

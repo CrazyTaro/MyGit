@@ -1,10 +1,9 @@
 package us.bestapp.henrytaro.params.interfaces;
 
-import us.bestapp.henrytaro.params.BaseParams;
-
 /**
  * Created by xuhaolin on 2015/8/24.
- * 基本参数设置接口,所有的接口来自于{@link BaseParams},且这一部分的接口为对外公开设置可用
+ * 基本参数设置接口,所有的接口为通用接口,分别为座位与舞台两种不同的数据设置而提供的通用接口,且这一部分的接口为对外公开设置可用
+ * <br/>{@since 一般不继承此接口, 通过继承其子接口 {@link ISeatParams}/{@link IStageParams}实现需要的方法}
  */
 public interface IBaseParams {
     /**

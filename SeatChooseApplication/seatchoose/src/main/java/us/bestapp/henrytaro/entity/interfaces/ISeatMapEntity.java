@@ -2,11 +2,11 @@ package us.bestapp.henrytaro.entity.interfaces;
 
 /**
  * Created by lenovo on 2015/9/5.<br/>
- * 座位数据处理,座位处理的某些必须实现的方法
+ * 座位数据处理,座位处理的某些必须实现的方法,提供绘制时需要的数据接口
  */
 public interface ISeatMapEntity {
     /**
-     * 获取指定map指定位置中的座位类型<br/>
+     * 获取指定map指定位置中的座位类型,以下类型为默认类型<br/>
      * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSHOW}，不显示<br/>
      * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSELETED}，可选<br/>
      * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_SELETED}，已选<br/>
@@ -30,14 +30,6 @@ public interface ISeatMapEntity {
      */
     public boolean updateSeatType(int type, int mapRow, int mapColumn);
 
-    /**
-     * 将座位状态重置为原始数据加载的状态
-     *
-     * @param mapRow     map中的行
-     * @param mapColumn  map中的列
-     * @param isResetAll 是否重置所有的数据
-     */
-    public void resetSeat(int mapRow, int mapColumn, boolean isResetAll);
 
     /**
      * 获取map指定位置中的座位信息，<font color="#ff9900"><b>此座位信息包含了该座位所有的信息，此接口中获取座位信息的

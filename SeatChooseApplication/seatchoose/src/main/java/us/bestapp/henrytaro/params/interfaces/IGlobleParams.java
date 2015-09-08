@@ -260,4 +260,19 @@ public interface IGlobleParams {
      */
     public boolean getIsEnabledDoubleClickScale();
 
+    /**
+     * 获取是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
+     *
+     * @return
+     */
+    public boolean getIsAllowDrawThumbnail();
+
+    /**
+     * 是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
+     *
+     * @param isForceToDraw 是否强制要求一定要绘制
+     * @return
+     */
+    public void setIsAllowDrawThumbnail(boolean isForceToDraw);
+
 }

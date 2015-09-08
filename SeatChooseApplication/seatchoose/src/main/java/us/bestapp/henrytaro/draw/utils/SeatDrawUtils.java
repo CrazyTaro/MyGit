@@ -44,7 +44,7 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  *          <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
 public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandle {
-    private GlobleParams mGlobleParams = null;
+    private IGlobleParams mGlobleParams = null;
     //座位参数
     private IDrawSeatParams mSeatParams = null;
     //舞台参数
@@ -117,7 +117,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param stage    舞台参数，可为null
      * @param globle   全局参数,此参数不可为null
      */
-    public SeatDrawUtils(Context context, View drawView, IDrawSeatParams seat, IDrawStageParams stage, GlobleParams globle) {
+    public SeatDrawUtils(Context context, View drawView, IDrawSeatParams seat, IDrawStageParams stage, IGlobleParams globle) {
         if (context == null || drawView == null || globle == null) {
             throw new RuntimeException("初始化中context及drawView,全局参数globle不可为null,该参数都是必需的");
         }
@@ -131,7 +131,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
     /**
      * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
-     * 同时使用默认的绘制参数进行绘制详见{@link #SeatDrawUtils(Context, View, IDrawSeatParams, IDrawStageParams, GlobleParams)}
+     * 同时使用默认的绘制参数进行绘制详见{@link #SeatDrawUtils(Context, View, IDrawSeatParams, IDrawStageParams, IGlobleParams)}
      *
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上

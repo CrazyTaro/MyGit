@@ -268,22 +268,13 @@ public class GlobleParams implements IGlobleParams {
         return this.mIsEnabledDoubleClickScale;
     }
 
-    /**
-     * 获取是否允许绘制缩略图,此方法不对外公开
-     *
-     * @return
-     */
+    @Override
     public boolean getIsAllowDrawThumbnail() {
         return this.mIsAllowDrawThumbnail;
     }
 
 
-    /**
-     * 是否允许绘制缩略图,此方法不对外公开
-     *
-     * @param isForceToDraw 是否强制要求一定要绘制
-     * @return
-     */
+    @Override
     public void setIsAllowDrawThumbnail(boolean isForceToDraw) {
         if (isForceToDraw) {
             this.mIsAllowDrawThumbnail = true;

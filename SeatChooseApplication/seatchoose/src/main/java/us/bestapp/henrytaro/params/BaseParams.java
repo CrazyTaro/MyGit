@@ -15,6 +15,8 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 /**
  * Created by xuhaolin on 2015/8/24.
  * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParams})及全局性的参数(开放设置接口为{@link IGlobleParams})</p>
+ * <br/><font color="#ff9900"><b>继承绘制类{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils}自定义绘制时,若需要使用自定义的参数,
+ * 请继承此类并实现对应的接口{@link us.bestapp.henrytaro.params.interfaces.IDrawSeatParams}/{@link us.bestapp.henrytaro.params.interfaces.IDrawStageParams}</b></font>
  */
 public abstract class BaseParams implements IDrawBaseParams {
 
