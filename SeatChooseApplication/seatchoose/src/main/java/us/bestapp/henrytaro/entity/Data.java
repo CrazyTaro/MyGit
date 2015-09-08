@@ -25,11 +25,15 @@ public class Data {
      * @return
      */
     public List<IRowEntity> getRowList() {
-        List<IRowEntity> newList = new ArrayList<IRowEntity>();
-        for (Row row : mRowList) {
-            newList.add(row);
+        if (mRowList != null && mRowList.size() > 0) {
+            List<IRowEntity> newList = new ArrayList<IRowEntity>();
+            for (Row row : mRowList) {
+                newList.add(row);
+            }
+            return newList;
+        } else {
+            return null;
         }
-        return newList;
     }
 
     /**
