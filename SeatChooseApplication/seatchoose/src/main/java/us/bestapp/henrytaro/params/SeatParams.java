@@ -7,15 +7,16 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
 
-import us.bestapp.henrytaro.params.interfaces.IBaseParamsExport;
-import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
+import us.bestapp.henrytaro.params.interfaces.IDrawSeatParams;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 /**
  * Created by xuhaolin on 2015/8/9.
  * <p>座位参数，包括座位绘制需要的各种参数;座位类型及其描述相关参数与在此类设置</p>
- * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link ISeatParamsExport}</p>
+ * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link ISeatParams}</p>
  */
-public final class SeatParams extends BaseParams implements ISeatParamsExport {
+public final class SeatParams extends BaseParams implements IDrawSeatParams {
     /**
      * 默认座位颜色值
      */
@@ -94,9 +95,9 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      */
     public static int SEAT_TYPE_UNSELETED = 1;
     /**
-     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParamsExport#DRAW_TYPE_NO}保持一致
+     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParams#DRAW_TYPE_NO}保持一致
      */
-    public static int SEAT_TYPE_UNSHOW = IBaseParamsExport.DRAW_TYPE_NO;
+    public static int SEAT_TYPE_UNSHOW = IBaseParams.DRAW_TYPE_NO;
 
     //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
     private float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
@@ -189,7 +190,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         SEAT_TYPE_SELETED = 2;
         SEAT_TYPE_UNSELETED = 1;
         SEAT_TYPE_DISABLE_SELETED = 3;
-        SEAT_TYPE_UNSHOW = IBaseParamsExport.DRAW_TYPE_NO;
+        SEAT_TYPE_UNSHOW = IBaseParams.DRAW_TYPE_NO;
     }
 
     @Override
@@ -469,6 +470,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      *
      * @param seatType 座位类型
      */
+    @Override
     public void setIsDraw(int seatType) {
         if (seatType == SEAT_TYPE_UNSHOW) {
             super.setIsDraw(false);
@@ -487,89 +489,88 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
     }
 
     @Override
-    public void setDefaultSeatType(int firstSeatType, int secondSeatType, int thirdSeatType) {
-        if (DEFAULT_SEAT_TYPE != null && DEFAULT_SEAT_TYPE.length == 3) {
-            DEFAULT_SEAT_TYPE[0] = firstSeatType;
-            DEFAULT_SEAT_TYPE[1] = secondSeatType;
-            DEFAULT_SEAT_TYPE[2] = thirdSeatType;
-        } else {
-            throw new RuntimeException("默认座位类型不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
-        }
-    }
-
-    @Override
     public void resetDefaultSeatParams() {
         DEFAULT_SEAT_TYPE = new int[]{1, 2, 3};
         DEFAULT_SEAT_TYPE_COLOR = new int[]{Color.BLACK, Color.RED, Color.YELLOW};
         DEFAULT_SEAT_TYPE_DESC = new String[]{"可选", "已选", "已售"};
     }
 
-    @Override
-    public void setDefaultSeatColor(int firstColor, int secondColor, int thirdColor) {
-        //确保座位类型回到默认状态
-        if (DEFAULT_SEAT_TYPE_COLOR != null && DEFAULT_SEAT_TYPE_COLOR.length == 3) {
-            DEFAULT_SEAT_TYPE_COLOR[0] = firstColor;
-            DEFAULT_SEAT_TYPE_COLOR[1] = secondColor;
-            DEFAULT_SEAT_TYPE_COLOR[2] = thirdColor;
-        } else {
-            throw new RuntimeException("默认座位类型颜色不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
-        }
-    }
-
-    @Override
-    public void setDefaultSeatTypeDescription(String firstDesc, String secondDesc, String thirdDesc) {
-        //确保座位类型回来默认状态
-        if (DEFAULT_SEAT_TYPE_DESC != null && DEFAULT_SEAT_TYPE_DESC.length == 3) {
-            DEFAULT_SEAT_TYPE_DESC[0] = firstDesc;
-            DEFAULT_SEAT_TYPE_DESC[1] = secondDesc;
-            DEFAULT_SEAT_TYPE_DESC[2] = thirdDesc;
-        } else {
-            throw new RuntimeException("默认座位描述变量不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
-        }
-    }
-
-    @Override
-    public void setExtraSeatTypeWithColor(int[] seatExtraTypeArr, int[] colorExtraArr, int[] thumbnailColorExtraArr, String[] seatTypeExtraDesc) {
-        if (seatExtraTypeArr != null && colorExtraArr != null && seatExtraTypeArr.length == colorExtraArr.length) {
-            if (thumbnailColorExtraArr != null && thumbnailColorExtraArr.length != seatExtraTypeArr.length) {
-                throw new RuntimeException("缩略图座位颜色thumbnailColorArr参数不为null时其length必须与座位类型length相同,\n否则请将该参数值置为null,则将引用colorExtraArr的作为其值");
-            }
-            if (seatTypeExtraDesc != null && seatTypeExtraDesc.length != seatExtraTypeArr.length) {
-                throw new RuntimeException("座位类型描述不可为null,设置额外的座位类型描述length应与额外的座位类型length一致");
-            }
-
-            //创建新数组
-            int[] newSeatTypeArr = new int[3 + seatExtraTypeArr.length];
-            int[] newSeatColorArr = new int[3 + seatExtraTypeArr.length];
-            int[] newThumbnailColorArr = new int[3 + seatExtraTypeArr.length];
-            String[] newSeatTypeDescription = new String[3 + seatExtraTypeArr.length];
-            //载入默认类型及颜色参数
-            System.arraycopy(DEFAULT_SEAT_TYPE, 0, newSeatTypeArr, 0, DEFAULT_SEAT_TYPE.length);
-            System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, newSeatColorArr, 0, DEFAULT_SEAT_TYPE_COLOR.length);
-            System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, newThumbnailColorArr, 0, DEFAULT_SEAT_TYPE_COLOR.length);
-            System.arraycopy(DEFAULT_SEAT_TYPE_DESC, 0, newSeatTypeDescription, 0, DEFAULT_SEAT_TYPE_DESC.length);
-
-            //添加新增额外的类型与颜色参数
-            for (int i = 3; i < newSeatTypeArr.length; i++) {
-                newSeatTypeArr[i] = seatExtraTypeArr[i - 3];
-                newSeatColorArr[i] = colorExtraArr[i - 3];
-                newThumbnailColorArr[i] = colorExtraArr[i - 3];
-                newSeatTypeDescription[i] = seatTypeExtraDesc[i - 3];
-            }
-            if (thumbnailColorExtraArr != null) {
-                for (int i = 3; i < newSeatTypeArr.length; i++) {
-                    newThumbnailColorArr[i] = thumbnailColorExtraArr[i - 3];
-                }
-            }
-
-            mSeatTypeArrary = newSeatTypeArr;
-            mSeatColorArrary = newSeatColorArr;
-            mThumbnailColorArray = newThumbnailColorArr;
-            mSeatTypeDescription = newSeatTypeDescription;
-        } else {
-            throw new RuntimeException("设置额外座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
-        }
-    }
+//    @Override
+//    public void setDefaultSeatType(int firstSeatType, int secondSeatType, int thirdSeatType) {
+//        if (DEFAULT_SEAT_TYPE != null && DEFAULT_SEAT_TYPE.length == 3) {
+//            DEFAULT_SEAT_TYPE[0] = firstSeatType;
+//            DEFAULT_SEAT_TYPE[1] = secondSeatType;
+//            DEFAULT_SEAT_TYPE[2] = thirdSeatType;
+//        } else {
+//            throw new RuntimeException("默认座位类型不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+//        }
+//    }
+//    @Override
+//    public void setDefaultSeatColor(int firstColor, int secondColor, int thirdColor) {
+//        //确保座位类型回到默认状态
+//        if (DEFAULT_SEAT_TYPE_COLOR != null && DEFAULT_SEAT_TYPE_COLOR.length == 3) {
+//            DEFAULT_SEAT_TYPE_COLOR[0] = firstColor;
+//            DEFAULT_SEAT_TYPE_COLOR[1] = secondColor;
+//            DEFAULT_SEAT_TYPE_COLOR[2] = thirdColor;
+//        } else {
+//            throw new RuntimeException("默认座位类型颜色不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+//        }
+//    }
+//
+//    @Override
+//    public void setDefaultSeatTypeDescription(String firstDesc, String secondDesc, String thirdDesc) {
+//        //确保座位类型回来默认状态
+//        if (DEFAULT_SEAT_TYPE_DESC != null && DEFAULT_SEAT_TYPE_DESC.length == 3) {
+//            DEFAULT_SEAT_TYPE_DESC[0] = firstDesc;
+//            DEFAULT_SEAT_TYPE_DESC[1] = secondDesc;
+//            DEFAULT_SEAT_TYPE_DESC[2] = thirdDesc;
+//        } else {
+//            throw new RuntimeException("默认座位描述变量不符合设置要求,请调用resetDefaultSeatParams()方法重置数据之后再尝试");
+//        }
+//    }
+//
+//    @Override
+//    public void setExtraSeatTypeWithColor(int[] seatExtraTypeArr, int[] colorExtraArr, int[] thumbnailColorExtraArr, String[] seatTypeExtraDesc) {
+//        if (seatExtraTypeArr != null && colorExtraArr != null && seatExtraTypeArr.length == colorExtraArr.length) {
+//            if (thumbnailColorExtraArr != null && thumbnailColorExtraArr.length != seatExtraTypeArr.length) {
+//                throw new RuntimeException("缩略图座位颜色thumbnailColorArr参数不为null时其length必须与座位类型length相同,\n否则请将该参数值置为null,则将引用colorExtraArr的作为其值");
+//            }
+//            if (seatTypeExtraDesc != null && seatTypeExtraDesc.length != seatExtraTypeArr.length) {
+//                throw new RuntimeException("座位类型描述不可为null,设置额外的座位类型描述length应与额外的座位类型length一致");
+//            }
+//
+//            //创建新数组
+//            int[] newSeatTypeArr = new int[3 + seatExtraTypeArr.length];
+//            int[] newSeatColorArr = new int[3 + seatExtraTypeArr.length];
+//            int[] newThumbnailColorArr = new int[3 + seatExtraTypeArr.length];
+//            String[] newSeatTypeDescription = new String[3 + seatExtraTypeArr.length];
+//            //载入默认类型及颜色参数
+//            System.arraycopy(DEFAULT_SEAT_TYPE, 0, newSeatTypeArr, 0, DEFAULT_SEAT_TYPE.length);
+//            System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, newSeatColorArr, 0, DEFAULT_SEAT_TYPE_COLOR.length);
+//            System.arraycopy(DEFAULT_SEAT_TYPE_COLOR, 0, newThumbnailColorArr, 0, DEFAULT_SEAT_TYPE_COLOR.length);
+//            System.arraycopy(DEFAULT_SEAT_TYPE_DESC, 0, newSeatTypeDescription, 0, DEFAULT_SEAT_TYPE_DESC.length);
+//
+//            //添加新增额外的类型与颜色参数
+//            for (int i = 3; i < newSeatTypeArr.length; i++) {
+//                newSeatTypeArr[i] = seatExtraTypeArr[i - 3];
+//                newSeatColorArr[i] = colorExtraArr[i - 3];
+//                newThumbnailColorArr[i] = colorExtraArr[i - 3];
+//                newSeatTypeDescription[i] = seatTypeExtraDesc[i - 3];
+//            }
+//            if (thumbnailColorExtraArr != null) {
+//                for (int i = 3; i < newSeatTypeArr.length; i++) {
+//                    newThumbnailColorArr[i] = thumbnailColorExtraArr[i - 3];
+//                }
+//            }
+//
+//            mSeatTypeArrary = newSeatTypeArr;
+//            mSeatColorArrary = newSeatColorArr;
+//            mThumbnailColorArray = newThumbnailColorArr;
+//            mSeatTypeDescription = newSeatTypeDescription;
+//        } else {
+//            throw new RuntimeException("设置额外座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
+//        }
+//    }
 
     @Override
     public void setSeatTypeWithImage(int[] seatTypeArr, int[] thumbnailColorArr, int[] imageID) {
@@ -647,12 +648,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         super.setDrawType(DRAW_TYPE_DEFAULT);
     }
 
-    /**
-     * 获取自动计算并分离的seatParams,用于座位类型的分批绘制
-     *
-     * @param seatTypeRowCount 座位类型绘制的行数
-     * @return
-     */
+    @Override
     public SeatParams[] getAutoSeparateParams(int seatTypeRowCount) {
         SeatParams[] seatTypeParams = null;
         //座位类型个数
@@ -791,6 +787,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
      *                 </p>
      * @return 返回对应的座位颜色, 若查询不到对应的座位类型颜色则返回默认颜色值 {@link #DEFAULT_SEAT_COLOR}
      */
+    @Override
     public int getSeatColorByType(int seatType) {
         int[] colorArr = null;
         if (this.getIsDrawThumbnail()) {
@@ -811,13 +808,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         }
     }
 
-    /**
-     * 根据座位类型获取座位绘制的图片
-     *
-     * @param context  上下文对象,用于加载图片
-     * @param seatType 座位类型
-     * @return 返回座位类型对应的图片, 可能为null
-     */
+    @Override
     public Bitmap getSeatBitmapByType(Context context, int seatType) {
         loadSeatImage(context, false);
         if (mSeatTypeArrary != null) {
@@ -848,14 +839,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         this.mSeatVerticalInterval = seatHeight * 0.8f;
     }
 
-    /**
-     * 获取计算后的图片绘制区域(即一个完整地座位占用的区域)
-     *
-     * @param imageRecft    图片绘制区域,可为null,用于重复利用
-     * @param drawPositionX 绘制的X轴中心位置
-     * @param drawPositionY 绘制的Y轴中心位置
-     * @return
-     */
+    @Override
     public RectF getSeatDrawImageRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
         if (imageRecft == null) {
             imageRecft = new RectF();
@@ -869,15 +853,7 @@ public final class SeatParams extends BaseParams implements ISeatParamsExport {
         return imageRecft;
     }
 
-    /**
-     * 获取主座位绘制矩形或者次座位绘制矩形
-     *
-     * @param seatRectf     座位绘制矩形对象
-     * @param drawPositionX 绘制座位的中心X轴位置
-     * @param drawPositionY 绘制座位的中心Y轴位置
-     * @param isMainSeat    true为获取主座位,false为获取次座位
-     * @return
-     */
+    @Override
     public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
         if (seatRectf == null) {
             seatRectf = new RectF();

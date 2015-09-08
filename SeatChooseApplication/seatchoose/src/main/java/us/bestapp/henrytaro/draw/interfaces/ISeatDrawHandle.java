@@ -2,11 +2,10 @@ package us.bestapp.henrytaro.draw.interfaces;
 
 import android.graphics.Canvas;
 
-import us.bestapp.henrytaro.entity.interfaces.ISeatMapHandle;
-import us.bestapp.henrytaro.params.ExportParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
-import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
-import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.entity.interfaces.ISeatMapEntity;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
+import us.bestapp.henrytaro.params.interfaces.IStageParams;
 
 /**
  * Created by xuhaolin on 15/9/1.
@@ -28,14 +27,14 @@ public interface ISeatDrawHandle {
      *
      * @param seatMap
      */
-    public void setSeatDrawMap(ISeatMapHandle seatMap);
+    public void setSeatDrawMap(ISeatMapEntity seatMap);
 
     /**
      * 获取当前绘制使用的座位表
      *
      * @return
      */
-    public ISeatMapHandle getSeatDrawMap();
+    public ISeatMapEntity getSeatDrawMap();
 
     /**
      * 更新座位Map中的数据
@@ -64,21 +63,36 @@ public interface ISeatDrawHandle {
      */
     public void setSeatInformationListener(ISeatInformationListener mInterface);
 
-
     /**
-     * 获取参数设置对象，可进行座位/舞台及全局参数设置
+     * 获取座位参数设置
      *
      * @return
      */
-    public ExportParams getExportParams();
+    public ISeatParams getSeatParams();
+
+    /**
+     * 获取舞台参数设置
+     *
+     * @return
+     */
+    public IStageParams getStageParams();
+
+    /**
+     * 获取全局参数设置
+     *
+     * @return
+     */
+    public IGlobleParams getGlobleParams();
+
 
     /**
      * 重置座位绘制使用的参数,使用默认参数值
-     * <p>(包括座位参数{@link ISeatParamsExport},<br/>
-     * 舞台参数{@link IStageParamsExport},<br/>
-     * 全局参数{@link IGlobleParamsExport})</p>
+     * (包括座位参数{@link ISeatParams},舞台参数{@link IStageParams},全局参数{@link IGlobleParams})
      * <p>此类中处理的座位参数及舞台参数是由内部管理的,不开放.
-     * 设置参数值可用方法{@link #getExportParams()}获取设置参数的对象进行设置</p>
+     * 设置参数值可通过获取设置参数的对象进行设置</p><br/>
+     * <li>{@link #getSeatParams()},座位设置</li><br/>
+     * <li>{@link #getStageParams()},舞台设置</li><br/>
+     * <li>{@link #getGlobleParams()},全局参数设置</li><br/>
      */
     public void resetParams();
 

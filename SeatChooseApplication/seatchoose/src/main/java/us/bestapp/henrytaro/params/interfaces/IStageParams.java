@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  * Created by xuhaolin on 2015/8/24.
  * 舞台参数设置接口,此接口用于公开可进行设置的参数方法,不允许访问和设置的方法没有在此接口公开(此接口仅仅相当于一个中间转换而已)
  */
-public interface IStageParamsExport extends IBaseParamsExport {
+public interface IStageParams extends IBaseParams {
     /**
      * 设置图片资源ID,该该法会默认将绘制方式设置为图片绘制方式,并且不检测资源ID的可用性,请尽可能保证ID可用
      *

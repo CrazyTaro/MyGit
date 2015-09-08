@@ -4,17 +4,17 @@ package us.bestapp.henrytaro.params;/**
 
 import android.graphics.Color;
 
-import us.bestapp.henrytaro.params.interfaces.IBaseParamsExport;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * created by xuhaolin at 2015/08/27
- * <p>实现了全局变量设置的接口{@link IGlobleParamsExport},提供对外的参数设置接口</p>
+ * <p>实现了全局变量设置的接口{@link IGlobleParams},提供对外的参数设置接口</p>
  * <p><font color="#ff9900"><b>此类很重要!!!此类是绘制工具{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils}基本所必须的,请必须保证此类为有效引用</b></font>,
  * 在所有接口中并不提供此类的替换接口或者是重新设置的接口,但可以通过方法获取到此类的引用,
  * 该方法是用于设置全局参数,但可能会被设置为null引用,此时会出错</p>
  */
-public class GlobleParams implements IGlobleParamsExport {
+public class GlobleParams implements IGlobleParams {
     //画布背景颜色
     private int mCanvasBackgroundColor = Color.LTGRAY;
     //缩略图背景色
@@ -61,11 +61,11 @@ public class GlobleParams implements IGlobleParamsExport {
 
     @Override
     public boolean setThumbnailBackgroundColorWithAlpha(int color, int alpha) {
-        if ((alpha < 0 || alpha > 255) && alpha != IBaseParamsExport.DEFAULT_INT) {
+        if ((alpha < 0 || alpha > 255) && alpha != IBaseParams.DEFAULT_INT) {
             return false;
         } else {
             mThumbnailColor = color;
-            if (alpha == IBaseParamsExport.DEFAULT_INT) {
+            if (alpha == IBaseParams.DEFAULT_INT) {
                 mThumbnailAlpha = 100;
             } else {
                 mThumbnailAlpha = alpha;
@@ -161,7 +161,7 @@ public class GlobleParams implements IGlobleParamsExport {
 
     @Override
     public void setRowNumberAlpha(int alpha) {
-        if (alpha == IBaseParamsExport.DEFAULT_INT) {
+        if (alpha == IBaseParams.DEFAULT_INT) {
             this.mRowNumberAlpha = 100;
         } else if (alpha >= 0 && alpha <= 255) {
             this.mRowNumberAlpha = alpha;
@@ -201,7 +201,7 @@ public class GlobleParams implements IGlobleParamsExport {
 
     @Override
     public void setColumnNumberAlpha(int alpha) {
-        if (alpha == IBaseParamsExport.DEFAULT_INT) {
+        if (alpha == IBaseParams.DEFAULT_INT) {
             this.mColumnNumberAlpha = 100;
         } else if (alpha >= 0 && alpha <= 255) {
             this.mColumnNumberAlpha = alpha;

@@ -44,7 +44,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
-    private ISeatDrawHandle mSeatHandleInterface = null;
+    private ISeatDrawHandle mSeatDrawHandle = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
@@ -64,12 +64,12 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     private void initial(Context context) {
         mContext = context.getApplicationContext();
         //创建绘制对象
-        mSeatHandleInterface = new SeatDrawUtils(this.getContext(), this);
+        mSeatDrawHandle = new SeatDrawUtils(this.getContext(), this);
 
         //不显示log
-        mSeatHandleInterface.setIsShowLog(false, null);
+        mSeatDrawHandle.setIsShowLog(false, null);
         //设置监听事件
-        mSeatHandleInterface.setSeatInformationListener(this);
+        mSeatDrawHandle.setSeatInformationListener(this);
         //创建选择座位的存储列表
         mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
     }
@@ -104,7 +104,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
 
     @Override
     protected void onDraw(Canvas canvas) {
-        mSeatHandleInterface.drawCanvas(canvas);
+        mSeatDrawHandle.drawCanvas(canvas);
     }
 
 
@@ -115,7 +115,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     @Override
     public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap) {
         boolean isChoosen = false;
-        int seatType = mSeatHandleInterface.getSeatTypeInMap(rowIndexInMap, columnIndexInMap);
+        int seatType = mSeatDrawHandle.getSeatTypeInMap(rowIndexInMap, columnIndexInMap);
         //回调选座结果
         if (mSeatChooseEvent != null) {
             mSeatChooseEvent.seatSeleted(rowIndexInMap, columnIndexInMap, seatType);
@@ -128,13 +128,13 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
             }
         } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
-            mSeatHandleInterface.updateSeatIMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndexInMap, columnIndexInMap);
+            mSeatDrawHandle.updateSeatIMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndexInMap, columnIndexInMap);
             removeSeat(rowIndexInMap, columnIndexInMap);
             isChoosen = false;
         } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
-                mSeatHandleInterface.updateSeatIMap(SeatParams.SEAT_TYPE_SELETED, rowIndexInMap, columnIndexInMap);
+                mSeatDrawHandle.updateSeatIMap(SeatParams.SEAT_TYPE_SELETED, rowIndexInMap, columnIndexInMap);
                 addSeat(rowIndexInMap, columnIndexInMap);
                 isChoosen = true;
             } else {
@@ -168,7 +168,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
 
     @Override
     public ISeatDrawHandle getSeatDrawInterface() {
-        return mSeatHandleInterface;
+        return mSeatDrawHandle;
     }
 
     /**

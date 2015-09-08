@@ -17,17 +17,20 @@ import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
-import us.bestapp.henrytaro.entity.interfaces.ISeatMapHandle;
+import us.bestapp.henrytaro.entity.interfaces.ISeatMapEntity;
 import us.bestapp.henrytaro.params.BaseParams;
-import us.bestapp.henrytaro.params.ExportParams;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IDrawSeatParams;
+import us.bestapp.henrytaro.params.interfaces.IDrawStageParams;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
+import us.bestapp.henrytaro.params.interfaces.IStageParams;
 
 /**
  * @author xuhaolin
- * @version 5.0
+ * @version 6.0
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -43,9 +46,9 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
 public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandle {
     private GlobleParams mGlobleParams = null;
     //座位参数
-    private SeatParams mSeatParams = null;
+    private IDrawSeatParams mSeatParams = null;
     //舞台参数
-    private StageParams mStageParams = null;
+    private IDrawStageParams mStageParams = null;
 
     private Paint mPaint = null;
     private PointF mWHPoint = null;
@@ -100,7 +103,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     //绑定的用于绘制界面的View
     private View mDrawView = null;
     //座位列表
-    private ISeatMapHandle mSeatDrawMap = null;
+    private ISeatMapEntity mSeatDrawMap = null;
 
     private boolean mIsDrawSeletedRowColumn = false;
 
@@ -114,7 +117,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param stage    舞台参数，可为null
      * @param globle   全局参数,此参数不可为null
      */
-    public SeatDrawUtils(Context context, View drawView, SeatParams seat, StageParams stage, GlobleParams globle) {
+    public SeatDrawUtils(Context context, View drawView, IDrawSeatParams seat, IDrawStageParams stage, GlobleParams globle) {
         if (context == null || drawView == null || globle == null) {
             throw new RuntimeException("初始化中context及drawView,全局参数globle不可为null,该参数都是必需的");
         }
@@ -128,7 +131,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
     /**
      * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
-     * 同时使用默认的绘制参数进行绘制详见{@link #SeatDrawUtils(Context, View, SeatParams, StageParams, GlobleParams)}
+     * 同时使用默认的绘制参数进行绘制详见{@link #SeatDrawUtils(Context, View, IDrawSeatParams, IDrawStageParams, GlobleParams)}
      *
      * @param context  上下文对象
      * @param drawView 需要进行绘制的View,用于绑定并将结果绘制在该View上
@@ -160,8 +163,18 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     @Override
-    public ExportParams getExportParams() {
-        return new ExportParams(this.mSeatParams, this.mStageParams, this.mGlobleParams);
+    public ISeatParams getSeatParams() {
+        return this.mSeatParams;
+    }
+
+    @Override
+    public IStageParams getStageParams() {
+        return this.mStageParams;
+    }
+
+    @Override
+    public IGlobleParams getGlobleParams() {
+        return this.mGlobleParams;
     }
 
     @Override
@@ -230,7 +243,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param seatType         座位类型
      * @param isDrawTextOfLeft 是否将文字绘制在座位的左边,<font color="#ff9900"><b>true为文字绘制在座位左边,false为文字绘制在座位右边</b></font>
      */
-    protected void drawSeatWithNearText(Canvas canvas, Paint paint, SeatParams params, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
+    protected void drawSeatWithNearText(Canvas canvas, Paint paint, IDrawSeatParams params, float drawXPosition, float drawYPosition, String text, float interval, int seatType, boolean isDrawTextOfLeft) {
         //座位绘制的中心X轴
         float seatCenterX = 0f;
         //座位绘制的中心Y轴
@@ -286,11 +299,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param canvas        画板
      * @param paint         画笔
      * @param params        座位绘制的参数
-     * @param drawPositionX 座位绘制的中心X轴位置,centerX(参数值意义同{@link #drawSeat(Canvas, Paint, SeatParams, float, float)})
-     * @param drawPositionY 座位绘制的中心Y轴位置,centerY(参数值意义同{@link #drawSeat(Canvas, Paint, SeatParams, float, float)})
+     * @param drawPositionX 座位绘制的中心X轴位置,centerX(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float)})
+     * @param drawPositionY 座位绘制的中心Y轴位置,centerY(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float)})
      * @param seatType      座位类型,用于区分使用的座位图片
      */
-    protected void drawImageSeat(Canvas canvas, Paint paint, SeatParams params, float drawPositionX, float drawPositionY, int seatType) {
+    protected void drawImageSeat(Canvas canvas, Paint paint, IDrawSeatParams params, float drawPositionX, float drawPositionY, int seatType) {
         if (params == null) {
             return;
         }
@@ -346,7 +359,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionX 座位绘制的中心X轴坐标
      * @param drawPositionY 座位绘制的中心Y轴坐标
      */
-    protected void drawSeat(Canvas canvas, Paint paint, SeatParams seatParams, float drawPositionX, float drawPositionY) {
+    protected void drawSeat(Canvas canvas, Paint paint, IDrawSeatParams seatParams, float drawPositionX, float drawPositionY) {
         if (seatParams == null || !seatParams.getIsDraw()) {
             return;
         }
@@ -447,7 +460,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     /**
-     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(ISeatMapHandle)},
+     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(ISeatMapEntity)},
      * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
      * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
      * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)}进行完成,
@@ -460,7 +473,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionX 开始绘制的中心X轴位置(第一行座位,中心绘制位置)
      * @param drawPositionY 开始绘制的中心Y轴位置(第一行座位,中心绘制位置)
      */
-    protected void drawSellSeats(Canvas canvas, Paint paint, ISeatMapHandle seatMap, float drawPositionX, float drawPositionY) {
+    protected void drawSellSeats(Canvas canvas, Paint paint, ISeatMapEntity seatMap, float drawPositionX, float drawPositionY) {
         if (seatMap == null || seatMap.getRowCount() <= 0) {
             return;
         }
@@ -608,7 +621,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionX 绘制列的中心X轴位置,通过方法{@link #getDrawCenterX(float)}获取最好
      * @param drawPositionY 绘制列的中心Y轴位置,若需要绘制则通过{@link #getSellSeatDrawCenterY(int, boolean)}获取<br/>
      *                      此处需要注意的是,列数的绘制与普通座位是统一的,在同一个绘制区域内,如果需要绘制列,则第一行座位不绘制,下移到第二行开始绘制,
-     *                      若不需要绘制列,则第一行绘制为座位而不是列数,此部分由{@link IGlobleParamsExport#getIsDrawColumnNumber()}设置
+     *                      若不需要绘制列,则第一行绘制为座位而不是列数,此部分由{@link IGlobleParams#getIsDrawColumnNumber()}设置
      * @param edgeX         X轴边界值,此处特指在左边可显示的最left值,<font color="#ff9900">此值往右的部分可显示</font>
      * @param columnCount   绘制列的数量
      * @param columnStyle   绘制列的类型,此处暂时未完善,此值暂时无用,保留//TODO
@@ -1105,7 +1118,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     /**
-     * 获取缩略图的宽,默认为屏幕宽的1/3,需要设置缩略图的宽请调用方法{@link IGlobleParamsExport#setThumbnailWidthRate(float)}
+     * 获取缩略图的宽,默认为屏幕宽的1/3,需要设置缩略图的宽请调用方法{@link IGlobleParams#setThumbnailWidthRate(float)}
      *
      * @return
      */
@@ -1306,7 +1319,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     @Override
-    public void setSeatDrawMap(ISeatMapHandle seatMap) {
+    public void setSeatDrawMap(ISeatMapEntity seatMap) {
         //设置新的座位列表
         this.mSeatDrawMap = seatMap;
         //重绘
@@ -1314,7 +1327,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     @Override
-    public ISeatMapHandle getSeatDrawMap() {
+    public ISeatMapEntity getSeatDrawMap() {
         return this.mSeatDrawMap;
     }
 
@@ -1502,7 +1515,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * 4.获取座位类型绘制的高度{@link #getSeatTypeDrawCenterY()}<br/>
      * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
      * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int, boolean)}<br/>
-     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, ISeatMapHandle, float, float)}<br/>
+     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)}<br/>
      * 8.绘制中心分界线{@link #getCenterDotLine(float, float)}<br/>
      * </p>
      *

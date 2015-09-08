@@ -4,14 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
+import us.bestapp.henrytaro.params.interfaces.IDrawStageParams;
+import us.bestapp.henrytaro.params.interfaces.IStageParams;
 
 /**
  * Created by xuhaolin on 2015/8/9.
  * <p>舞台参数，包括舞台绘制需要的所有参数</p>
- * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link IStageParamsExport}</p>
+ * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link IStageParams}</p>
  */
-public final class StageParams extends BaseParams implements IStageParamsExport {
+public final class StageParams extends BaseParams implements IDrawStageParams {
     /**
      * 默认舞台颜色
      */
@@ -44,8 +46,6 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
     private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
     private String mStageDescription = DEFAULT_STAGE_TEXT;
 
-    //    private float[] mDefaultEnlargeHolder = null;
-//    private float[] mDefaultReduceHolder = null;
     private OriginalValuesHolder mOriginalHolder = null;
     //用于缩放暂存舞台数据
     private float[] mValueHolder = null;
@@ -60,21 +60,13 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         this.storeOriginalValues(null);
     }
 
-    /**
-     * 设置图片资源ID,该该法会默认将绘制方式设置为图片绘制方式,并且不检测资源ID的可用性,请尽可能保证ID可用
-     *
-     * @param imageID
-     */
+    @Override
     public void setImage(int imageID) {
         this.mStageImageID = imageID;
         super.setDrawType(DRAW_TYPE_IMAGE);
     }
 
-    /**
-     * 设置图片资源,该方法会默认将绘制方式设置为图片绘制方式,参数可为null
-     *
-     * @param imageBitmap
-     */
+    @Override
     public void setImage(Bitmap imageBitmap) {
         if (imageBitmap != null) {
             this.mStageImageBitmap = imageBitmap;
@@ -85,7 +77,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
     }
 
     /**
-     * 获取图片资源ID,默认值为{@link us.bestapp.henrytaro.params.interfaces.IBaseParamsExport#DEFAULT_INT}
+     * 获取图片资源ID,默认值为{@link IBaseParams#DEFAULT_INT}
      *
      * @return
      */
@@ -102,12 +94,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         return this.mStageImageBitmap;
     }
 
-    /**
-     * stage中的imageID与bitmap（即图片资源ID与图片资源）是两个相互独立的部分，其中以资源ID为主（存在资源ID的情况下）。
-     * 当设置了资源ID获取的图片资源一般是由该ID生成的图片资源，但是如果资源ID还未被加载，此时获取的图片资源可能为null（在绘制舞台时如果资源ID未被加载会自动加载）
-     *
-     * @return
-     */
+    @Override
     public Bitmap getImage(Context context) {
         this.loadStageImage(context, false);
         return mStageImageBitmap;
@@ -152,24 +139,17 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         }
     }
 
-    /**
-     * 获取舞台描述文字
-     *
-     * @return
-     */
+    @Override
     public String getStageDescription() {
         return mStageDescription;
     }
 
-    /**
-     * 设置舞台描述文字
-     *
-     * @param text
-     */
+    @Override
     public void setStageDescription(String text) {
         this.mStageDescription = text;
     }
 
+    @Override
     public float getStageMarginTop() {
         if (super.getIsDrawThumbnail()) {
             return mStageMarginTop * super.getThumbnailRate();
@@ -178,11 +158,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         }
     }
 
-    /**
-     * 设置舞台上方顶端的高度，使用默认值请用{@link #DEFAULT_FLOAT}
-     *
-     * @param mStageMarginTop
-     */
+    @Override
     public void setStageMarginTop(float mStageMarginTop) {
         if (mStageMarginTop == DEFAULT_FLOAT) {
             this.mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
@@ -191,6 +167,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         }
     }
 
+    @Override
     public float getStageMarginBottom() {
         if (super.getIsDrawThumbnail()) {
             return mStageMarginBottom * super.getThumbnailRate();
@@ -199,11 +176,7 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         }
     }
 
-    /**
-     * 设置舞台与下方（座位）间隔的高度，，使用默认值请用{@link #DEFAULT_FLOAT}
-     *
-     * @param mStageMarginBottom
-     */
+    @Override
     public void setStageMarginBottom(float mStageMarginBottom) {
         if (mStageMarginBottom == DEFAULT_FLOAT) {
             this.mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
@@ -212,21 +185,9 @@ public final class StageParams extends BaseParams implements IStageParamsExport 
         }
     }
 
-    /**
-     * 获取舞台占用的高度，包括舞台距顶端的高度+舞台实际高度+舞台与下方（座位）间隔高度
-     *
-     * @return 返回舞台占用的高度
-     */
+    @Override
     public float getStageTotalHeight() {
         return this.getHeight() + this.getStageMarginBottom() + this.getStageMarginTop();
-    }
-
-    protected void autoCalculateParams(float widthPrecent, float viewWidth) {
-        if (widthPrecent == DEFAULT_FLOAT || widthPrecent < 0 || widthPrecent > 1) {
-            widthPrecent = 0.3f;
-        }
-        this.setWidth(viewWidth * widthPrecent, false);
-        this.setHeight(this.getWidth() * 1 / 5, false);
     }
 
     @Override

@@ -4,7 +4,7 @@ package us.bestapp.henrytaro.entity.interfaces;
  * Created by lenovo on 2015/9/5.<br/>
  * 座位数据处理,座位处理的某些必须实现的方法
  */
-public interface ISeatMapHandle {
+public interface ISeatMapEntity {
     /**
      * 获取指定map指定位置中的座位类型<br/>
      * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSHOW}，不显示<br/>

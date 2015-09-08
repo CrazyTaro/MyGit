@@ -7,9 +7,9 @@ import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.entity.SeatMap;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParamsExport;
-import us.bestapp.henrytaro.params.interfaces.ISeatParamsExport;
-import us.bestapp.henrytaro.params.interfaces.IStageParamsExport;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
+import us.bestapp.henrytaro.params.interfaces.IStageParams;
 import us.bestapp.henrytaro.view.SeatChooseView;
 import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 
@@ -54,19 +54,6 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
             {1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 3, 1, 1, 0, 0, 0, 3, 1, 0, 0, 3, 1, 1, 0, 3, 1, 1, 1, 0, 0, 3, 1, 0, 0, 3,},//34
             {1, 1, 0, 0, 1, 1, 0, 3, 1, 1, 3, 0, 0, 3, 1, 0, 0, 3, 1, 3, 0, 0, 0, 0, 0, 1, 3, 1, 3, 3, 1, 1, 0, 0, 0, 1,},//35
             {1, 1, 0, 0, 3, 1, 0, 3, 1, 1, 1, 0, 0, 3, 1, 0, 0, 3, 3, 1, 0, 0, 0, 0, 0, 3, 1, 1, 3, 1, 3, 1, 0, 0, 0, 1,},//36
-//            {1, 3, 0, 0, 0, 0, 0, 1, 3, 1, 3, 3, 1, 1, 0, 0, 0, 1,},//13
-//            {3, 1, 0, 0, 0, 0, 0, 3, 1, 1, 3, 1, 3, 1, 0, 0, 0, 1,},//14
-//            {1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 3, 1, 1, 0, 0, 0, 3,},//15
-//            {0, 0, 3, 1, 1, 1, 0, 3, 1, 1, 3, 0, 0, 3, 1, 0, 0, 3,},//16
-//            {0, 0, 3, 1, 3, 1, 0, 3, 1, 1, 1, 0, 0, 3, 1, 0, 0, 3,},//17
-//            {1, 3, 0, 0, 0, 0, 0, 1, 3, 1, 3, 3, 1, 1, 0, 0, 0, 1,},//18
-//            {3, 1, 0, 0, 0, 0, 0, 3, 1, 1, 3, 1, 3, 1, 0, 0, 0, 1,},//19
-//            {1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 3, 1, 1, 0, 0, 0, 3,},//20
-//            {1, 0, 0, 3, 1, 1, 0, 3, 1, 1, 3, 0, 0, 3, 1, 0, 0, 3,},//21
-//            {1, 0, 0, 3, 1, 1, 0, 3, 1, 1, 1, 0, 0, 3, 1, 0, 0, 3,},//22
-//            {1, 3, 0, 0, 0, 0, 0, 1, 3, 1, 3, 3, 1, 1, 0, 0, 0, 1,},//23
-//            {3, 1, 0, 0, 0, 0, 0, 3, 1, 1, 3, 1, 3, 1, 0, 0, 0, 1,},//24
-//            {1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 3, 1, 1, 0, 0, 0, 3,},//25
     };
 
     String jsonStr = "{\n" +
@@ -78,7 +65,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
             "            {\n" +
             "                \"rownum\": \"1\", \n" +
             "                \"rowid\": \"1\", \n" +
-            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n" +
+            "                \"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0\"\n" +
             "            }, \n" +
             "            {\n" +
             "                \"rownum\": \"2\", \n" +
@@ -148,18 +135,17 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         seatDataHandle.setIsShowLog(false, null);
         seatDataHandle.setSeatDrawMap(dataMap);
 
-        IGlobleParamsExport globleParams = seatDataHandle.getExportParams().getGlobleParams();
+        IGlobleParams globleParams = seatDataHandle.getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
-        globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParamsExport.FORMAT_STR, "行/第", IGlobleParamsExport.FORMAT_STR, "列"));
+        globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列"));
         globleParams.setIsDrawColumnNumber(true);
         globleParams.setIsDrawRowNumber(true);
         globleParams.setSeatTypeRowCount(2);
 
 
-        ISeatParamsExport seatParams = seatDataHandle.getExportParams().getSeatParams();
-        seatParams.setExtraSeatTypeWithColor(new int[]{7, 8, 9}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
-
-        IStageParamsExport stageParams = seatDataHandle.getExportParams().getStageParams();
+        ISeatParams seatParams = seatDataHandle.getSeatParams();
+        seatParams.setAllSeatTypeWithColor(new int[]{1, 2, 3}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
+        IStageParams stageParams = seatDataHandle.getStageParams();
     }
 
     @Override

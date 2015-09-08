@@ -6,7 +6,7 @@ import us.bestapp.henrytaro.params.BaseParams;
  * Created by xuhaolin on 2015/8/24.
  * 基本参数设置接口,所有的接口来自于{@link BaseParams},且这一部分的接口为对外公开设置可用
  */
-public interface IBaseParamsExport {
+public interface IBaseParams {
     /**
      * 默认整数值:-1
      */
@@ -76,8 +76,8 @@ public interface IBaseParamsExport {
      * 当设置为图片绘制模式但不存在图片时将会抛出异常;<br/>
      * <font color="#ff9900"><b>请确保在调用此方法设置为图片绘制模式时已经设置好了图片,但是设置绘制图片模式请尽量从其它方法切入</b><br/>
      * <br/>
-     * 设置座位图片绘制{@link ISeatParamsExport#setImage(int[])}<br/>
-     * 设置舞台图片绘制{@link IStageParamsExport#setImage(int)}<br/></font>
+     * 设置座位图片绘制{@link ISeatParams#setImage(int[])}<br/>
+     * 设置舞台图片绘制{@link IStageParams#setImage(int)}<br/></font>
      *
      * @param drawType 绘制方式
      *                 <p>
