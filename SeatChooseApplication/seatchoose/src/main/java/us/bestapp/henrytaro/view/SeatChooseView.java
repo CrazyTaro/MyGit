@@ -31,7 +31,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
- *          <p/>
+ *          <p>
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
@@ -181,9 +181,13 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
 
     @Override
     public List<Point> getSeletedSeats() {
-        List<Point> seletedSeatsList = new ArrayList<Point>(mCurrentSeletedSeats.size());
-        seletedSeatsList.addAll(mCurrentSeletedSeats);
-        return seletedSeatsList;
+        if (mCurrentSeletedSeats == null || mCurrentSeletedSeats.size() <= 0) {
+            return null;
+        } else {
+            List<Point> seletedSeatsList = new ArrayList<Point>(mCurrentSeletedSeats.size());
+            seletedSeatsList.addAll(mCurrentSeletedSeats);
+            return seletedSeatsList;
+        }
     }
 
     @Override

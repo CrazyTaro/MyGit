@@ -16,7 +16,7 @@ import us.bestapp.henrytaro.params.interfaces.ISeatParams;
  * <p>座位参数，包括座位绘制需要的各种参数;座位类型及其描述相关参数与在此类设置</p>
  * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link ISeatParams}</p>
  */
-public final class SeatParams extends BaseParams implements IDrawSeatParams {
+public class SeatParams extends BaseParams implements IDrawSeatParams {
     /**
      * 默认座位颜色值
      */
@@ -463,6 +463,16 @@ public final class SeatParams extends BaseParams implements IDrawSeatParams {
         }
     }
 
+
+    @Override
+    public boolean getIsCoupleDrawLeftToRight() {
+        return false;
+    }
+
+    @Override
+    public boolean getIsCouple(int seatType) {
+        return false;
+    }
 
     /**
      * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_TYPE_UNSHOW}时，不绘制该座位

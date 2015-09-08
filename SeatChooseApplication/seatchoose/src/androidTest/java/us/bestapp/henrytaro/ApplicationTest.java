@@ -16,7 +16,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void test() {
-        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParams.ROW_NUMBER_FORMAT, "行/第", IGlobleParams.COLUMN_NUMBER_FORMAT, "列");
+        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列");
         String str = String.format(format, 1, 2);
         Log.i("format", str);
     }

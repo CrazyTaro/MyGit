@@ -289,7 +289,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             drawImageSeat(canvas, paint, mSeatParams, seatCenterX, seatCenterY, seatType);
         } else {
             //绘制普通座位
-            drawSeat(canvas, paint, params, seatCenterX, seatCenterY);
+            drawSeat(canvas, paint, params, seatCenterX, seatCenterY, seatType);
         }
     }
 
@@ -299,14 +299,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param canvas        画板
      * @param paint         画笔
      * @param params        座位绘制的参数
-     * @param drawPositionX 座位绘制的中心X轴位置,centerX(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float)})
-     * @param drawPositionY 座位绘制的中心Y轴位置,centerY(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float)})
+     * @param drawPositionX 座位绘制的中心X轴位置,centerX(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float, int)})
+     * @param drawPositionY 座位绘制的中心Y轴位置,centerY(参数值意义同{@link #drawSeat(Canvas, Paint, IDrawSeatParams, float, float, int)})
      * @param seatType      座位类型,用于区分使用的座位图片
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected void drawImageSeat(Canvas canvas, Paint paint, IDrawSeatParams params, float drawPositionX, float drawPositionY, int seatType) {
-        if (params == null) {
-            return;
-        }
         mImageRectf = params.getSeatDrawImageRecf(mImageRectf, drawPositionX, drawPositionY);
         //当图片范围可见时才进行绘制
         if (isRectfCanSeen(mImageRectf)) {
@@ -350,49 +348,103 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     /**
-     * 默认方式绘制座位
-     * <p><font color="#ff9900"><b>该方法绘制座位时会根据seatParams确定是否需要对该座位进行绘制，请注意</b></font></p>
+     * 绘制缩略图座位
      *
      * @param canvas        画板
      * @param paint         画笔
-     * @param seatParams
+     * @param seatParams    绘制参数
      * @param drawPositionX 座位绘制的中心X轴坐标
      * @param drawPositionY 座位绘制的中心Y轴坐标
+     * @param seatType      座位类型
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
-    protected void drawSeat(Canvas canvas, Paint paint, IDrawSeatParams seatParams, float drawPositionX, float drawPositionY) {
-        if (seatParams == null || !seatParams.getIsDraw()) {
-            return;
-        }
+    protected void drawThumbnailSeat(Canvas canvas, Paint paint, IDrawSeatParams seatParams, float drawPositionX, float drawPositionY, int seatType) {
+        //绘制单个座位
         //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
-        if (seatParams.getDrawType(false) == BaseParams.DRAW_TYPE_THUMBNAIL) {
-            //获取绘制的区域
-            mImageRectf = seatParams.getSeatDrawImageRecf(mImageRectf, drawPositionX, drawPositionY);
-            paint.setStyle(Paint.Style.FILL);
-            //填充颜色
-            paint.setColor(seatParams.getColor());
+        //获取座位类型对应的颜色
+        int seatColor = seatParams.getSeatColorByType(seatType);
+        //设置绘制座位的颜色
+        seatParams.setColor(seatColor);
+
+        //获取绘制的区域
+        mImageRectf = seatParams.getSeatDrawImageRecf(mImageRectf, drawPositionX, drawPositionY);
+        paint.setStyle(Paint.Style.FILL);
+        //填充颜色
+        paint.setColor(seatParams.getColor());
+        if (isRectfCanSeen(mImageRectf)) {
             //绘制圆角矩形
             canvas.drawRoundRect(mImageRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+        }
+    }
+
+    /**
+     * 绘制普通座位
+     *
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param seatParams    绘制参数
+     * @param drawPositionX 座位绘制的中心X轴坐标
+     * @param drawPositionY 座位绘制的中心Y轴坐标
+     * @param seatType      座位类型
+     * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
+     */
+    protected void drawNormalSeat(Canvas canvas, Paint paint, IDrawSeatParams seatParams, float drawPositionX, float drawPositionY, int seatType) {
+        int seatColor = seatParams.getSeatColorByType(seatType);
+        //设置绘制座位的颜色
+        seatParams.setColor(seatColor);
+
+        //座位的占拒的总高度(两部分座位)
+        mMainSeatRectf = seatParams.getSeatDrawDefaultRectf(mMainSeatRectf, drawPositionX, drawPositionY, true);
+        mMinorSeatRectf = seatParams.getSeatDrawDefaultRectf(mMinorSeatRectf, drawPositionX, drawPositionY, false);
+
+        //填充座位并绘制
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(seatParams.getColor());
+
+
+        //默认的绘制方式
+        //当该绘制图像有显示在画布上的部分时才进行绘制
+        //所有的坐标都不在画布的有效显示范围则不进行绘制
+        if (isRectfCanSeen(mMainSeatRectf)) {
+            canvas.drawRoundRect(mMainSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+        }
+        //当该绘制图像有显示在画布上的部分时才进行绘制
+        //所有的坐标都不在画布的有效显示范围则不进行绘制
+        if (isRectfCanSeen(mMainSeatRectf)) {
+            canvas.drawRoundRect(mMinorSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+        }
+    }
+
+    /**
+     * 默认方式绘制座位
+     * <p><font color="#ff9900"><b>该方法绘制座位时会根据seatParams及seatType确定是否需要对该座位进行绘制，请注意</b></font></p>
+     *
+     * @param canvas        画板
+     * @param paint         画笔
+     * @param seatParams    绘制参数
+     * @param drawPositionX 座位绘制的中心X轴坐标
+     * @param drawPositionY 座位绘制的中心Y轴坐标
+     * @param seatType      座位类型
+     */
+    protected void drawSeat(Canvas canvas, Paint paint, IDrawSeatParams seatParams, float drawPositionX, float drawPositionY, int seatType) {
+        if (seatParams == null) {
+            return;
+        }
+        seatParams.setIsDraw(seatType);
+        if (!seatParams.getIsDraw()) {
+            return;
+        }
+
+        if (mSeatParams.getDrawType(false) == BaseParams.DRAW_TYPE_IMAGE) {
+            //绘制图片类型
+            drawImageSeat(canvas, paint, mSeatParams, drawPositionX, drawPositionY, seatType);
+        } else if (seatParams.getDrawType(false) == BaseParams.DRAW_TYPE_THUMBNAIL) {
+            //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
+            //绘制缩略图
+            drawThumbnailSeat(canvas, paint, seatParams, drawPositionX, drawPositionY, seatType);
         } else {
-            //座位的占拒的总高度(两部分座位)
-            mMainSeatRectf = seatParams.getSeatDrawDefaultRectf(mMainSeatRectf, drawPositionX, drawPositionY, true);
-            mMinorSeatRectf = seatParams.getSeatDrawDefaultRectf(mMinorSeatRectf, drawPositionX, drawPositionY, false);
-
-            //填充座位并绘制
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(seatParams.getColor());
-
-
-            //默认的绘制方式
-            //当该绘制图像有显示在画布上的部分时才进行绘制
-            //所有的坐标都不在画布的有效显示范围则不进行绘制
-            if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMainSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-            }
-            //当该绘制图像有显示在画布上的部分时才进行绘制
-            //所有的坐标都不在画布的有效显示范围则不进行绘制
-            if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-            }
+            //绘制普通座位
+            drawNormalSeat(canvas, paint, seatParams, drawPositionX, drawPositionY, seatType);
         }
     }
 
@@ -762,7 +814,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         if (!seatRow.getIsEmpty()) {
             try {
                 int seatType = 0;
-                int seatColor = SeatParams.DEFAULT_SEAT_COLOR;
                 int i = start;
                 do {
                     //尝试获取数据进行处理,若无法获取到数据则将位置计算到最后
@@ -775,18 +826,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
                         break;
                     }
                     seatType = seat.getType();
-                    //获取座位类型对应的颜色
-                    seatColor = mSeatParams.getSeatColorByType(seatType);
-                    //设置绘制座位的颜色
-                    mSeatParams.setColor(seatColor);
                     //设置座位是否需要被绘制
                     mSeatParams.setIsDraw(seatType);
                     //绘制单个座位
-                    if (mSeatParams.getDrawType(false) == BaseParams.DRAW_TYPE_IMAGE) {
-                        drawImageSeat(canvas, paint, mSeatParams, beginDrawX, drawPositionY, seatType);
-                    } else {
-                        drawSeat(canvas, paint, mSeatParams, beginDrawX, drawPositionY);
-                    }
+                    drawSeat(canvas, paint, mSeatParams, beginDrawX, drawPositionY, seatType);
                     //计算下一个绘制座位的X轴位置
                     //由于此处绘制的座位是同一行的,所以仅X轴位置改变,Y轴位置不会改变
                     beginDrawX += increment * (mSeatParams.getWidth() + mSeatParams.getSeatHorizontalInterval());
@@ -837,9 +880,6 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         String text = null;
         for (int i = 0; i < seatTypeCount; i++) {
             int seatType = mSeatParams.getSeatTypeArrary()[i];
-            int seatColor = mSeatParams.getSeatColorByType(seatType);
-            mSeatParams.setIsDraw(seatType);
-            mSeatParams.setColor(seatColor);
             if (seatTypeDesc != null) {
                 text = mSeatParams.getSeatTypeDescription()[i];
             } else {

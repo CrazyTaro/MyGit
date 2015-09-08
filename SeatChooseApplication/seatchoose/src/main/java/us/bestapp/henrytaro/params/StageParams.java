@@ -13,7 +13,7 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  * <p>舞台参数，包括舞台绘制需要的所有参数</p>
  * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link IStageParams}</p>
  */
-public final class StageParams extends BaseParams implements IDrawStageParams {
+public class StageParams extends BaseParams implements IDrawStageParams {
     /**
      * 默认舞台颜色
      */

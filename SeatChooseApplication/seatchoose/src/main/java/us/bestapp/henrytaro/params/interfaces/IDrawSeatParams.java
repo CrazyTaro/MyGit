@@ -13,6 +13,10 @@ import us.bestapp.henrytaro.params.SeatParams;
  */
 public interface IDrawSeatParams extends ISeatParams, IDrawBaseParams {
 
+    public boolean getIsCoupleDrawLeftToRight();
+
+    public boolean getIsCouple(int seatType);
+
     /**
      * 根据座位类型来确定座位是否需要绘制
      *
