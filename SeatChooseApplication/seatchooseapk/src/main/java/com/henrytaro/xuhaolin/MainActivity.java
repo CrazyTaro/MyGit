@@ -1,7 +1,6 @@
 package com.henrytaro.xuhaolin;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -139,14 +138,13 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         IGlobleParams globleParams = seatDataHandle.getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
         globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列"));
-        globleParams.setIsDrawColumnNumber(true);
         globleParams.setIsDrawRowNumber(true);
-        globleParams.setSeatTypeRowCount(2);
-
 
         ISeatParams seatParams = seatDataHandle.getSeatParams();
-        seatParams.setAllSeatTypeWithColor(new int[]{1, 2, 3}, new int[]{Color.parseColor("#ff9900"), Color.parseColor("#7ed321"), Color.parseColor("#0000ff")}, null, new String[]{"预定", "不售", "情侣"});
+        seatParams.setIsDrawSeatType(false);
+
         IStageParams stageParams = seatDataHandle.getStageParams();
+        stageParams.setStageDescription("深圳橙天嘉禾影城万象城店 6号厅");
     }
 
     @Override

@@ -22,7 +22,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
 
 /**
  * @author xuhaolin
- * @version 4.0
+ * @version 5.0
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
