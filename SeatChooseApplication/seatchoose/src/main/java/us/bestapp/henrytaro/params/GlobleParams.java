@@ -16,7 +16,9 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
  */
 public class GlobleParams implements IGlobleParams {
     //画布背景颜色
-    private int mCanvasBackgroundColor = Color.LTGRAY;
+    private int mCanvasBackgroundColor = Color.parseColor("#E0E0E0");
+    //中心虚线的颜色值
+    private int mDotLineColor = Color.BLACK;
     //缩略图背景色
     private int mThumbnailColor = Color.BLACK;
     //缩略图背景透明度
@@ -266,6 +268,16 @@ public class GlobleParams implements IGlobleParams {
     @Override
     public boolean isEnabledDoubleClickScale() {
         return this.mIsEnabledDoubleClickScale;
+    }
+
+    @Override
+    public void setCenterDotLineColor(int color) {
+        this.mDotLineColor = color;
+    }
+
+    @Override
+    public int getCenterDotLineColor() {
+        return this.mDotLineColor;
     }
 
     @Override

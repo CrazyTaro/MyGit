@@ -261,6 +261,20 @@ public interface IGlobleParams {
     public boolean isEnabledDoubleClickScale();
 
     /**
+     * 设置中心的虚线颜色
+     *
+     * @param color
+     */
+    public void setCenterDotLineColor(int color);
+
+    /**
+     * 获取中心虚线颜色
+     *
+     * @return
+     */
+    public int getCenterDotLineColor();
+
+    /**
      * 获取是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
      *
      * @return
