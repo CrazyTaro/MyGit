@@ -249,6 +249,11 @@ public class StageParams extends BaseParams implements IDrawStageParams {
     }
 
     @Override
+    public int getType(String typeTag) {
+        return IBaseParams.TYPE_ERROR;
+    }
+
+    @Override
     public Object getClone() {
         boolean isThumbnail = this.isDrawThumbnail();
         this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);

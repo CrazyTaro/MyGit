@@ -175,14 +175,6 @@ public interface ISeatParams extends IBaseParams {
     public int getUnseletedType();
 
     /**
-     * 获取未显示座位状态类型,<font color="#ff9900"><b>此处的未显示座位类型是指不该位置不需要绘制的座位,不管该座位是否真实存在,
-     * 只要不需要绘制,则使用此状态类型.</b></font>绘制时是否显示是根据此方法,所以不需要处理时"未显示座位"时,请妥善处理好此方法
-     *
-     * @return
-     */
-    public int getUnshowType();
-
-    /**
      * 判断是否是不合法类型(错误或者是未显示类型的座位状态)
      *
      * @param type

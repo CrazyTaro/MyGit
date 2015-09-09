@@ -405,23 +405,22 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
         return SeatParams.SEAT_TYPE_UNSELETED;
     }
 
-    /**
-     * 此处返回的为{@link #SEAT_TYPE_UNSHOW}
-     * <p><font color="#ff9900"><b>{@link #SEAT_TYPE_UNSHOW}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
-     *
-     * @return
-     */
-    @Override
-    public int getUnshowType() {
-        return SeatParams.SEAT_TYPE_UNSHOW;
-    }
 
     @Override
     public boolean isErrorOrUnshowType(int type) {
-        if (type == this.getUnshowType() || type == IBaseParams.TYPE_ERROR) {
+        if (type == this.getType("unshow") || type == IBaseParams.TYPE_ERROR) {
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public int getType(String typeTag) {
+        if (typeTag.equals("unshow")) {
+            return SeatParams.SEAT_TYPE_UNSHOW;
+        } else {
+            return IBaseParams.TYPE_ERROR;
         }
     }
 

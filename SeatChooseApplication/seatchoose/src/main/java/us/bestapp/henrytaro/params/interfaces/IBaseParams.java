@@ -38,6 +38,15 @@ public interface IBaseParams {
     public static final int TYPE_ERROR = -1;
 
     /**
+     * 根据类型标识获取对应的类型,此处的类型标识由子类自己确定,返回的类型也由子类自己确定,此方法仅仅提供一个获取指定类型的途径<br/>
+     * 建议默认返回{@link #TYPE_ERROR}
+     *
+     * @param typeTag 类型标识
+     * @return
+     */
+    public int getType(String typeTag);
+
+    /**
      * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
      * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
      *

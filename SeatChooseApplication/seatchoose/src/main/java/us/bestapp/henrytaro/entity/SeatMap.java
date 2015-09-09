@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatMapEntity;
-import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
  * Created by xuhaolin on 15/9/2.<br/>
@@ -122,7 +122,7 @@ public class SeatMap implements ISeatMapEntity {
         if (seat != null) {
             return seat.getType();
         } else {
-            return SeatParams.SEAT_TYPE_ERROR;
+            return IBaseParams.TYPE_ERROR;
         }
     }
 
