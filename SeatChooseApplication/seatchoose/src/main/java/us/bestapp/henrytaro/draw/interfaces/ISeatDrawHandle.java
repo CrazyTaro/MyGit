@@ -90,9 +90,9 @@ public interface ISeatDrawHandle {
      * (包括座位参数{@link ISeatParams},舞台参数{@link IStageParams},全局参数{@link IGlobleParams})
      * <p>此类中处理的座位参数及舞台参数是由内部管理的,不开放.
      * 设置参数值可通过获取设置参数的对象进行设置</p><br/>
-     * <li>{@link #getSeatParams()},座位设置</li><br/>
-     * <li>{@link #getStageParams()},舞台设置</li><br/>
-     * <li>{@link #getGlobleParams()},全局参数设置</li><br/>
+     * {@link #getSeatParams()},座位设置<br/>
+     * {@link #getStageParams()},舞台设置<br/>
+     * {@link #getGlobleParams()},全局参数设置<br/>
      */
     public void resetParams();
 
