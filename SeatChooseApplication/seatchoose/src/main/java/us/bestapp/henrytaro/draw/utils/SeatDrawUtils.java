@@ -106,8 +106,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     private View mDrawView = null;
     //座位列表
     private ISeatMapEntity mSeatDrawMap = null;
-
+    //是否绘制选中行列通知界面
     private boolean mIsDrawSeletedRowColumn = false;
+    //是否已通知过达到缩放极限
+    private boolean mIsNotifyScaleMaxnium = false;
 
     /**
      * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
@@ -1866,8 +1868,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             newScaleRate = mLastScaleRate;
             mLastScaleRate = 1;
         } else {
-            if (mISeatInformationListener != null) {
+            //若为抬起缩放事件,则不管是否已经通知过,必定再通知一次
+            if (mISeatInformationListener != null && (!mIsNotifyScaleMaxnium || invalidateAction == MotionEvent.ACTION_UP)) {
                 mISeatInformationListener.scaleMaximum();
+                //标志已通知缩放到极限
+                //此处是为了防止反复地回调此函数
+                mIsNotifyScaleMaxnium = true;
             }
             return;
         }
@@ -1901,6 +1907,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         }
         //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, invalidateAction));
+
+        //取消通知缩放到极限的标志
+        mIsNotifyScaleMaxnium = false;
     }
 
     /**
