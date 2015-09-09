@@ -3,6 +3,7 @@ package us.bestapp.henrytaro.entity;/**
  */
 
 import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
@@ -37,7 +38,7 @@ public class Seat extends AbsSeat {
         if (StringUtils.isNullOrEmpty(seatInfo)) {
             return null;
         } else {
-            int type = SeatParams.SEAT_TYPE_UNSHOW;
+            int type = IBaseParams.TYPE_ERROR;
             boolean isCouple = false;
 
             //原始数据大致格式：ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0

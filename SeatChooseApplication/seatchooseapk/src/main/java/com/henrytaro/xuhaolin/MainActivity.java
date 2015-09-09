@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.entity.SeatMap;
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
@@ -149,12 +150,12 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     }
 
     @Override
-    public void seatSeleted(int rowIndex, int columnIndex, boolean isChosen) {
+    public void selectedSeatSuccess(int rowIndexInMap, int columnIndexInMap, boolean isChosen) {
 
     }
 
     @Override
-    public void seatSeleted(int rowIndex, int columnIndex, int seatType) {
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int rowColumn, ISeatEntity seatEntity) {
 
     }
 

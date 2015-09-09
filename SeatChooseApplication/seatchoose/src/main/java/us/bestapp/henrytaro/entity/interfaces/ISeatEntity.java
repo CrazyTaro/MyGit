@@ -11,7 +11,7 @@ public interface ISeatEntity {
      *
      * @return
      */
-    public boolean getIsCouple();
+    public boolean isCouple();
 
     /**
      * 获取当前座位所在的实际行号,从1开始

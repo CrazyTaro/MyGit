@@ -32,6 +32,12 @@ public interface IBaseParams {
     public static final int DRAW_TYPE_NO = 0;
 
     /**
+     * 错误类型,包括座位或者舞台或者任何继承或实现此接口的类都可以使用<br/>
+     * TYPE_ERROR = {@value}
+     */
+    public static final int TYPE_ERROR = -1;
+
+    /**
      * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
      * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
      *

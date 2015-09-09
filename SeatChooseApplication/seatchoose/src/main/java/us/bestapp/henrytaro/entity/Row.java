@@ -116,12 +116,12 @@ public class Row implements IRowEntity {
     }
 
     @Override
-    public boolean getIsDraw() {
+    public boolean isDraw() {
         return this.mIsDraw;
     }
 
     @Override
-    public boolean getIsEmpty() {
+    public boolean isEmpty() {
         return this.mIsEmpty;
     }
 

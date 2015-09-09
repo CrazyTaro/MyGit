@@ -1,5 +1,7 @@
 package us.bestapp.henrytaro.draw.interfaces;
 
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+
 /**
  * Created by xuhaolin on 15/9/1.座位信息监听接口
  */
@@ -26,7 +28,7 @@ public interface ISeatInformationListener {
      * <p>
      * {@link #STATUS_MOVE},座位移动中<br/>
      * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
-     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int)}<br/>
+     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int, ISeatEntity)}<br/>
      * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
      * </p>
      *
@@ -40,28 +42,34 @@ public interface ISeatInformationListener {
      *
      * @param rowIndexInMap    座位在列表中的行索引,从0开始
      * @param columnIndexInMap 座位在列表中的列索引,从0开始
+     * @param seatEntity       座位接口,可能为null
      */
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap);
+    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, ISeatEntity seatEntity);
 
-    /**
-     * 单击选中座位,<font color="#ff9900"><b>此处指的是map中真正的座位,参数rowNumber/columnNubmer为该座位的实际行列值(从1开始)</b></font>,
-     * 当此方法有效时,{@link #chooseInMapSuccess(int, int)}必定也有返回,且两个方法返回的数据是不同的,行值是接近的(一个从0开始,一个从1开始),
-     * 但列值是不一定相同的,此方法中的是实际座位中的列数,而chooseInMapSuccess中的是有效区域中map的列值<br/>
-     * 如:<br/>
-     * chooseInMapSuccess(0,4);第一行,第五列
-     * chooseSeatSuccess(1,2,0,4);座位实际位置:第一行,第二列,位于map中第一行,第五列
-     *
-     * @param rowNumber        座位的实际行数,从1开始
-     * @param columnNumber     座位的实际列数,从1开始
-     * @param rowIndexInMap    当前座位在map中的行索引(从0开始)
-     * @param columnIndexInMap 当前座位在map中的列索引(从1开始)
-     */
-    public void chooseSeatSuccess(int rowNumber, int columnNumber, int rowIndexInMap, int columnIndexInMap);
+//    /**
+//     * 单击选中座位,此方法回调是在单击到有效的实际座位时回调,座位的状态是不确定的,可能被选中了,也可能未被选中,可根据座位接口中的类型进行处理.
+//     * <font color="#ff9900"><b>此处指的是map中真正的座位,参数rowNumber/columnNubmer为该座位的实际行列值(从1开始)</b></font>,
+//     * 当此方法有效时,{@link #chooseInMapSuccess(int, int, ISeatEntity)}必定也有返回,且两个方法返回的数据是不同的,行值是接近的(一个从0开始,一个从1开始),
+//     * 但列值是不一定相同的,此方法中的是实际座位中的列数,而chooseInMapSuccess中的是有效区域中map的列值<br/>
+//     * 如:<br/>
+//     * chooseInMapSuccess(0,4);第一行,第五列
+//     * chooseSeatSuccess(1,2,0,4);座位实际位置:第一行,第二列,位于map中第一行,第五列
+//     *
+//     * @param rowNumber    座位的实际行数,从1开始
+//     * @param columnNumber 座位的实际列数,从1开始
+//     * @param seatEntity   座位接口,此处必定为实际座位,不可能为null
+//     */
+//    public void chooseSeatSuccess(int rowNumber, int columnNumber, ISeatEntity seatEntity);
 
     /**
      * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
      */
-    public void chosseSeatFail();
+    public void chosseInMapFail();
+
+
+    public void chooseSeatSuccess(int rowIndexInMap,int columnIndexInMap,int rowNumber,int columnNumber,ISeatEntity seatEntity);
+
+    public void chooseSeatFail();
 
     /**
      * 缩放达到最大限度(已达到最小值或者最大值)

@@ -138,7 +138,7 @@ public abstract class BaseParams implements IDrawBaseParams {
     }
 
     @Override
-    public boolean getIsDrawThumbnail() {
+    public boolean isDrawThumbnail() {
         return this.mIsDrawThumbnail;
     }
 
@@ -235,7 +235,7 @@ public abstract class BaseParams implements IDrawBaseParams {
     }
 
     @Override
-    public boolean getIsDraw() {
+    public boolean isDraw() {
         return mIsDraw;
     }
 

@@ -72,7 +72,7 @@ public interface ISeatMapEntity {
      *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
      * @return
      */
-    public boolean getIsCouple(int mapRow, int mapColumn);
+    public boolean isCouple(int mapRow, int mapColumn);
 
     /**
      * 获取map中指定位置的座位的<font color="#ff9900"><b>真实座位列值,当座位不存在时,返回-1</b></font>

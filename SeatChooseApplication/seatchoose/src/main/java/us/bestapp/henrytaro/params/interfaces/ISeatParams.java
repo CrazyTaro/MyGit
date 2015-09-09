@@ -59,7 +59,7 @@ public interface ISeatParams extends IBaseParams {
     public void setIsDrawSeatType(boolean isDrawSeatType);
 
     /**
-     * 获取座位类型是否进行绘制
+     * 获取座位类型是否进行绘制,此方法只针对座位类型的绘制,与{@link IDrawSeatParams#isDraw()}是不同的方法(该方法只用于对座位的绘制判断)
      *
      * @return
      */
@@ -160,45 +160,35 @@ public interface ISeatParams extends IBaseParams {
      */
     public int getSeatTypeLength();
 
-//    /**
-//     * 设置自定义默认的座位类型
-//     * <p>设置全新的默认座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int)},方便数据处理及以防出错</p>
-//     *
-//     * @param firstSeatType  第一个座位类型
-//     * @param secondSeatType 第二个座位类型
-//     * @param thirdSeatType  第三个座位类型
-//     */
-//    public void setDefaultSeatType(int firstSeatType, int secondSeatType, int thirdSeatType);
-//
-//    /**
-//     * 设置默认座位类型对应的颜色
-//     *
-//     * @param firstColor  可选座位
-//     * @param secondColor 已选座位
-//     * @param thirdColor  已售座位
-//     */
-//    public void setDefaultSeatColor(int firstColor, int secondColor, int thirdColor);
-//
-//    /**
-//     * 设置默认座位类型的描述
-//     *
-//     * @param firstDesc  可选座位描述
-//     * @param secondDesc 已选座位描述
-//     * @param thirdDesc  已售座位描述
-//     */
-//    public void setDefaultSeatTypeDescription(String firstDesc, String secondDesc, String thirdDesc);
-//
-//
-//    /**
-//     * 设置/添加额外的座位类型、颜色及其类型对应的描述
-//     * <p><font color="#ff9900"><b>该方法保留了默认的座位类型及颜色参数,只是在其基础上添加了其它的类型与参数</b></font></p>
-//     *
-//     * @param seatExtraTypeArr       新增的座位类型，不可为null
-//     * @param colorExtraArr          新增的座位类型对应的颜色，不可为null
-//     * @param thumbnailColorExtraArr 新增的缩略图对应的座位颜色,此参数值可为null,当该参数值为null时,引用colorExtraArr作为值
-//     * @param seatTypeExtraDesc      新增的座位类型对应的描述，可为null
-//     */
-//    public void setExtraSeatTypeWithColor(int[] seatExtraTypeArr, int[] colorExtraArr, int[] thumbnailColorExtraArr, String[] seatTypeExtraDesc);
+    /**
+     * 获取选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型
+     *
+     * @return
+     */
+    public int getSeletedType();
+
+    /**
+     * 获取未选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型
+     *
+     * @return
+     */
+    public int getUnseletedType();
+
+    /**
+     * 获取未显示座位状态类型,<font color="#ff9900"><b>此处的未显示座位类型是指不该位置不需要绘制的座位,不管该座位是否真实存在,
+     * 只要不需要绘制,则使用此状态类型.</b></font>绘制时是否显示是根据此方法,所以不需要处理时"未显示座位"时,请妥善处理好此方法
+     *
+     * @return
+     */
+    public int getUnshowType();
+
+    /**
+     * 判断是否是不合法类型(错误或者是未显示类型的座位状态)
+     *
+     * @param type
+     * @return
+     */
+    public boolean isErrorOrUnshowType(int type);
 
     /**
      * 设置座位类型及其图片,此处的座位类型将替换原来的座位类型,图片同理

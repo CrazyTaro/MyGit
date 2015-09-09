@@ -82,7 +82,7 @@ public interface IGlobleParams {
      *
      * @return
      */
-    public boolean getIsDrawThumbnail();
+    public boolean isDrawThumbnail();
 
 
     /**
@@ -90,7 +90,7 @@ public interface IGlobleParams {
      *
      * @return
      */
-    public boolean getIsShowThumbnailAlways();
+    public boolean isShowThumbnailAlways();
 
     /**
      * 设置座位类型需要自动绘制成几行
@@ -118,7 +118,7 @@ public interface IGlobleParams {
     /**
      * 获取是否绘制行号
      */
-    public boolean getIsDrawRowNumber();
+    public boolean isDrawRowNumber();
 
     /**
      * 设置行数绘制的背景色及文本颜色
@@ -166,7 +166,7 @@ public interface IGlobleParams {
     /**
      * 获取是否绘制列号
      */
-    public boolean getIsDrawColumnNumber();
+    public boolean isDrawColumnNumber();
 
     /**
      * 设置列数背景颜色及文本颜色
@@ -230,7 +230,7 @@ public interface IGlobleParams {
      *
      * @return
      */
-    public boolean getIsRowFirst();
+    public boolean isRowFirst();
 
     /**
      * 获取通知格式化字符串
@@ -244,7 +244,7 @@ public interface IGlobleParams {
      *
      * @return
      */
-    public boolean getIsDrawSeletedRowColumnNotification();
+    public boolean isDrawSeletedRowColumnNotification();
 
     /**
      * 设置是否允许双击同一地方放大或者缩小界面
@@ -258,14 +258,14 @@ public interface IGlobleParams {
      *
      * @return
      */
-    public boolean getIsEnabledDoubleClickScale();
+    public boolean isEnabledDoubleClickScale();
 
     /**
      * 获取是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
      *
      * @return
      */
-    public boolean getIsAllowDrawThumbnail();
+    public boolean isAllowDrawThumbnail();
 
     /**
      * 是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)

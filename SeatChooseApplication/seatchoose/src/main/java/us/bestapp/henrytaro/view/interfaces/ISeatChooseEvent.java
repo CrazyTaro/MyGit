@@ -1,7 +1,6 @@
 package us.bestapp.henrytaro.view.interfaces;
 
-import us.bestapp.henrytaro.params.SeatParams;
-import us.bestapp.henrytaro.params.interfaces.ISeatParams;
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 
 /**
  * Created by lenovo on 2015/8/24.
@@ -9,37 +8,33 @@ import us.bestapp.henrytaro.params.interfaces.ISeatParams;
  */
 public interface ISeatChooseEvent {
     /**
-     * s
-     * 座位选中回调接口，此方法不一定会被调用，当单击在有效区域内时才会回调
-     * <p><font color="#ff9900"><b>此方法实际上是对{@link #seatSeleted(int, int, int)}方法的简单处理并返回结果</b></font>，
-     * 使用此方法请注意如果所有参数使用默认值则没有问题，如果座位类型有进行了自定义或者是全部替换默认的座位类型，
-     * 请注意是否有重新设置座位参数中的默认座位处理类型{@link ISeatParams#setSeatTypeConstant(int, int, int, int)},
-     * 此方法的简单处理依赖于上述方法中设置的静态变量{@link SeatParams#SEAT_TYPE_SELETED}用于判断当前座位是否被选中</p>
+     * 座位选中成功回调,<font color="@ff9900"><b>此方法只有在实际座位被单击选中的情况下才会被调用</b></font>,
+     * 此方法被调用时{@link #selectedSeatSuccess(int, int, int, int, ISeatEntity)}必定会被回调<br/>
      *
-     * @param rowIndex    座位在列表中的行索引
-     * @param columnIndex 列索引
-     * @param isChosen    当前座位是否在操作后被选中，true为选中，false为未选中或者不能选中或者不存在座位等任何不可能选中该座位的状态
+     * @param rowNumber    选中座位的行号
+     * @param columnNumber 选中座位的列号
+     * @param isChoosen    <font color="@ff9900"><b>座位被选中后的状态改变,</b></font>true为该座位当前已被选中,false为该座位当前未被选中(或被取消选中)
      */
-    public void seatSeleted(int rowIndex, int columnIndex, boolean isChosen);
+    public void selectedSeatSuccess(int rowNumber, int columnNumber, boolean isChoosen);
 
     /**
-     * 座位选中回调接口
-     * <p><font color="#ff9900"><b>此方法处理的情况及可选范围较大，如果处理比较复杂的座位类型建议使用此方法,此方法必定会被调用（除非没单击到有效区域） </b></font></p>
-     * <p>当选中的位置出错或不存在座位时，返回座位错误类型{@link SeatParams#SEAT_TYPE_ERROR}</p>
+     * 座位选中成功回调,<font color="@ff9900"><b>此方法只有在实际座位被单击选中的情况下才会被调用</b></font>
      *
-     * @param rowIndex    座位在列表中的行索引
-     * @param columnIndex 列索引
-     * @param seatType    当前座位在操作前的座位类型
+     * @param rowInMap    座位在列表中的行索引,<font color="@ff9900"><b>此处的行列值为map中的索引,不是实际该座位的行列号</b></font>
+     * @param columnInMap 座位在列表中的列索引,<font color="@ff9900"><b>此处的行列值为map中的索引,不是实际该座位的行列号</b></font>
+     * @param rowNumber   座位<font color="@ff9900"><b>实际行号</b></font>
+     * @param rowColumn   座位<font color="@ff9900"><b>实际列行号</b></font>
+     * @param seatEntity  座位接口
      */
-    public void seatSeleted(int rowIndex, int columnIndex, int seatType);
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int rowColumn, ISeatEntity seatEntity);
 
     /**
-     * 当前选座失败，可能是没有选中座位，可能是选中位置的座位出错
+     * 当前选座失败，可能是没有选中座位，可能是选中位置的座位出错,或者单击的位置在空白区域,不能选中有效的实际座位
      */
     public void seletedFail();
 
     /**
-     * 当前选中座位数已达到上限
+     * 当前选中座位数已达到上限,设置选座上限请通过{@link ISeatViewInterface#setMostSeletedCount(int)}
      */
     public void seletedFull();
 }

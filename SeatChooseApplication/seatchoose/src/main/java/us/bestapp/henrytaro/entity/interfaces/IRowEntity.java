@@ -39,14 +39,14 @@ public interface IRowEntity {
      *
      * @return
      */
-    public boolean getIsDraw();
+    public boolean isDraw();
 
     /**
      * 获取该行是否不存在数据,为空(当需要绘制该行且该行为空时,则空出一行)
      *
      * @return
      */
-    public boolean getIsEmpty();
+    public boolean isEmpty();
 
     /**
      * 获取行中某个列位置对应的座位信息

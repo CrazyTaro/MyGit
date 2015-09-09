@@ -28,7 +28,7 @@ public interface ISeatViewInterface {
     public void setMostSeletedCount(int mostCount);
 
     /**
-     * 获取当前已经被选择的座位数量
+     * 获取当前已经被选择的座位数量,当不存在选中座位时,返回null
      * <p>其中point对象中，x为该选中座位的行索引值,y为该选中座位的列索引值</p>
      */
     public List<Point> getSeletedSeats();

@@ -22,7 +22,7 @@ public interface IDrawBaseParams extends IBaseParams {
      *
      * @return
      */
-    public boolean getIsDrawThumbnail();
+    public boolean isDrawThumbnail();
 
 
     /**
@@ -72,7 +72,7 @@ public interface IDrawBaseParams extends IBaseParams {
      *
      * @return 返回true绘制, 返回false不绘制
      */
-    public boolean getIsDraw();
+    public boolean isDraw();
 
     /**
      * 获取当前绘制的颜色

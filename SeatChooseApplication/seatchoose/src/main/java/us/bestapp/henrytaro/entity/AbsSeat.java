@@ -49,7 +49,7 @@ public abstract class AbsSeat implements ISeatEntity {
     }
 
     @Override
-    public boolean getIsCouple() {
+    public boolean isCouple() {
         return this.mIsCouple;
     }
 

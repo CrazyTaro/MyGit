@@ -22,6 +22,7 @@ import us.bestapp.henrytaro.params.BaseParams;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IDrawSeatParams;
 import us.bestapp.henrytaro.params.interfaces.IDrawStageParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
@@ -431,7 +432,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             return;
         }
         seatParams.setIsDraw(seatType);
-        if (!seatParams.getIsDraw()) {
+        if (!seatParams.isDraw()) {
             return;
         }
 
@@ -457,7 +458,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionY 舞台绘制位置的中心Y轴
      */
     protected void drawStage(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY) {
-        if (mStageParams == null || !mStageParams.getIsDraw()) {
+        if (mStageParams == null || !mStageParams.isDraw()) {
             return;
         }
         RectF stageRectf = new RectF();
@@ -569,7 +570,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
         //开始绘制
         beginDrawY = drawPositionY;
-        if (mGlobleParams.getIsDrawColumnNumber()) {
+        if (mGlobleParams.isDrawColumnNumber()) {
             //下移一行,实际需要绘制的座位,空出的一行为列数绘制需要
             beginDrawY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
         }
@@ -578,11 +579,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             //获取行数据对象接口
             IRowEntity seatRow = seatMap.getSeatRowInMap(i);
             //对行数据进行检测判断是否需要绘制
-            if (seatRow != null && seatRow.getIsDraw() && seatRow.getIsEmpty()) {
+            if (seatRow != null && seatRow.isDraw() && seatRow.isEmpty()) {
                 //当前行需要绘制但数据为空
                 //直接空出一行
                 beginDrawY += mSeatParams.getSeatVerticalInterval() + mSeatParams.getHeight();
-            } else if (seatRow != null && seatRow.getIsDraw()) {
+            } else if (seatRow != null && seatRow.isDraw()) {
                 //画左边的座位
                 //绘制的时候由start位置到end位置
                 //从start到end每一个位置都会绘制,所以要保证start位置的数据在数组中,end位置的数据不会被绘制
@@ -595,7 +596,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             }
         }
 
-        if (!mSeatParams.getIsDrawThumbnail()) {
+        if (!mSeatParams.isDrawThumbnail()) {
             //记录界面高度值
             mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mGlobleParams.getSeatTypeRowCount())
                     //附加部分,用于边界的空白
@@ -673,7 +674,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionX 绘制列的中心X轴位置,通过方法{@link #getDrawCenterX(float)}获取最好
      * @param drawPositionY 绘制列的中心Y轴位置,若需要绘制则通过{@link #getSellSeatDrawCenterY(int, boolean)}获取<br/>
      *                      此处需要注意的是,列数的绘制与普通座位是统一的,在同一个绘制区域内,如果需要绘制列,则第一行座位不绘制,下移到第二行开始绘制,
-     *                      若不需要绘制列,则第一行绘制为座位而不是列数,此部分由{@link IGlobleParams#getIsDrawColumnNumber()}设置
+     *                      若不需要绘制列,则第一行绘制为座位而不是列数,此部分由{@link IGlobleParams#isDrawColumnNumber()}设置
      * @param edgeX         X轴边界值,此处特指在左边可显示的最left值,<font color="#ff9900">此值往右的部分可显示</font>
      * @param columnCount   绘制列的数量
      * @param columnStyle   绘制列的类型,此处暂时未完善,此值暂时无用,保留//TODO
@@ -803,7 +804,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @return 若需要绘制行, 则返回true, 不需要绘制行, 返回false
      */
     protected boolean drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, IRowEntity seatRow, int start, int end) {
-        if (seatRow == null || !seatRow.getIsDraw()) {
+        if (seatRow == null || !seatRow.isDraw()) {
             return false;
         }
         float beginDrawX = drawPositionX;
@@ -811,7 +812,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         //从小到大则为向右绘制,增量为正值+1
         int increment = (start - end) > 0 ? -1 : 1;
         //绘制座位
-        if (!seatRow.getIsEmpty()) {
+        if (!seatRow.isEmpty()) {
             try {
                 int seatType = 0;
                 int i = start;
@@ -838,7 +839,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
                 } while (i != end);
 
                 //若需要绘制行数,则将每行的左右边界多留一个座位宽度的空白
-                if (mGlobleParams.getIsDrawRowNumber()) {
+                if (mGlobleParams.isDrawRowNumber()) {
                     beginDrawX += increment * mSeatParams.getHeight() * 1.5f;
                 }
 
@@ -901,7 +902,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      */
 
     protected void drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
-        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.getIsDraw()) {
+        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.isDrawSeatType()) {
             return;
         }
 
@@ -1019,7 +1020,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      */
     protected float getFirstSellSeatDrawCenterY(int seatTypeCount) {
         float drawCenterY = this.getSellSeatDrawCenterY(seatTypeCount, false);
-        if (mGlobleParams.getIsDrawColumnNumber()) {
+        if (mGlobleParams.isDrawColumnNumber()) {
             drawCenterY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
         }
         return drawCenterY;
@@ -1036,15 +1037,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
                 + mBeginDrawOffsetY;
-        if (mSeatParams.getIsDrawThumbnail()) {
+        if (mSeatParams.isDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
-        if (mStageParams.getIsDraw()) {
+        if (mStageParams.isDraw()) {
             beginDrawCenterY += mStageParams.getStageTotalHeight();
         } else {
             beginDrawCenterY += mStageParams.getStageMarginBottom();
         }
-        if (mSeatParams.getIsDraw()) {
+        if (mSeatParams.isDrawSeatType()) {
             beginDrawCenterY += mStageParams.getHeight() / 2;
         }
         return beginDrawCenterY;
@@ -1073,15 +1074,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             beginDrawCenterY = 0f;
         }
 
-        if (mSeatParams.getIsDrawThumbnail()) {
+        if (mSeatParams.isDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
-        if (mStageParams.getIsDraw()) {
+        if (mStageParams.isDraw()) {
             beginDrawCenterY += mStageParams.getStageTotalHeight();
         } else {
             beginDrawCenterY += mStageParams.getStageMarginBottom();
         }
-        if (mSeatParams.getIsDraw()) {
+        if (mSeatParams.isDrawSeatType()) {
             beginDrawCenterY += (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
         }
         beginDrawCenterY += mSeatParams.getHeight() / 2;
@@ -1104,10 +1105,10 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         //所以不需要任何的原始偏移量或者是用户产生的偏移量
         //用户的偏移量影响不在缩略图上表现出来
         //而是在缩略图的显示区域中表现出来
-        if (mSeatParams.getIsDrawThumbnail()) {
+        if (mSeatParams.isDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
-        if (mStageParams.getIsDraw()) {
+        if (mStageParams.isDraw()) {
             //舞台与顶端的距离
             beginDrawCenterY += mStageParams.getStageMarginTop()
                     //舞台的自身高度一半
@@ -1134,7 +1135,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     protected float getSellSeatDrawBeginY(int seatTypeRowCount) {
         float beginY = this.getSellSeatDrawCenterY(seatTypeRowCount, false) - mSeatParams.getHeight() / 2;
         //绘制列数再下移一行
-        if (mGlobleParams.getIsDrawColumnNumber()) {
+        if (mGlobleParams.isDrawColumnNumber()) {
             beginY += mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval();
         }
         return beginY;
@@ -1148,9 +1149,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getCanvasDrawBeginY(int seatTypeRowCount) {
-        if (mStageParams.getIsDraw()) {
+        if (mStageParams.isDraw()) {
             return this.getStageDrawCenterY() - mStageParams.getHeight() / 2 - mStageParams.getStageMarginTop();
-        } else if (mSeatParams.getIsDraw()) {
+        } else if (mSeatParams.isDrawSeatType()) {
             return this.getSeatTypeDrawCenterY() - mSeatParams.getHeight() / 2 - mStageParams.getStageMarginBottom();
         } else {
             return this.getSellSeatDrawBeginY(seatTypeRowCount);
@@ -1301,7 +1302,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected float getDrawCenterX(float viewWidth) {
-        if (mSeatParams.getIsDrawThumbnail()) {
+        if (mSeatParams.isDrawThumbnail()) {
             return this.getThumbnailWidth() / 2;
         } else {
             return mOriginalOffsetX + mBeginDrawOffsetX + viewWidth / 2;
@@ -1446,11 +1447,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         float edgeX = drawCenterX + mSeatParams.getHeight() / 2;
         //列数绘制的右边界值,防止行列的叠加
         float edgeY = drawCenterY + mSeatParams.getHeight() / 2;
-        if (mGlobleParams.getIsDrawColumnNumber()) {
+        if (mGlobleParams.isDrawColumnNumber()) {
             //绘制列数
             this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
         }
-        if (mGlobleParams.getIsDrawRowNumber()) {
+        if (mGlobleParams.isDrawRowNumber()) {
             //绘制行数
             this.drawFloatTitleRowNumber(canvas, paint, drawCenterX, this.getFirstSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount()), edgeY, rowCount);
         }
@@ -1474,7 +1475,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             throw new RuntimeException("格式化字符串为null的情况下不可显示选中区域的提醒");
         }
         //绘制的文字
-        if (mGlobleParams.getIsRowFirst()) {
+        if (mGlobleParams.isRowFirst()) {
             //行显示在前
             firstNumber = rowIndex + 1;
             secondNumber = columnIndex + 1;
@@ -1524,7 +1525,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      */
     protected float[] getCenterDotLine(float centerX, float height) {
         //判断是否绘制缩略图,是则将线段长缩短为1/10
-        float lineLength = mSeatParams.getIsDrawThumbnail() ? 2f : 20f;
+        float lineLength = mSeatParams.isDrawThumbnail() ? 2f : 20f;
         //计算需要的线段数
         int lineCount = ((int) (height / lineLength) + 1) / 2;
         //线段偏移量(即没有绘制的线段总长度)
@@ -1597,7 +1598,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         //若不需要绘制缩略图,则不绘制
         //移动过程中会强制要求显示重绘缩略图
         //因此需要获取是否需要绘制缩略图以判断是否确实需要绘制
-        if (!mGlobleParams.getIsDrawThumbnail() || !mGlobleParams.getIsAllowDrawThumbnail()) {
+        if (!mGlobleParams.isDrawThumbnail() || !mGlobleParams.isAllowDrawThumbnail()) {
             return;
         }
         RectF thumbnailRectf = this.beginDrawThumbnail(originalCanvasWidth, originalCanvasHeight);
@@ -2023,7 +2024,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      */
     private void doubleClickScale() {
         //若不允许双击放大缩小,则直接返回
-        if (!mGlobleParams.getIsEnabledDoubleClickScale()) {
+        if (!mGlobleParams.isEnabledDoubleClickScale()) {
             return;
         }
 
@@ -2096,41 +2097,42 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             //列索引应该<=列表列数
             if (clickSeatPoint != null && clickSeatPoint.x < mSeatDrawMap.getRowCount() && clickSeatPoint.y < mSeatDrawMap.getColumnCount(clickSeatPoint.x)) {
                 if (mISeatInformationListener != null) {
+                    //获取当前选中区域的座位类型
+                    ISeatEntity seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
                     //更新座位状态
                     mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_SEAT);
                     //通知选中map中的有效区域
-                    mISeatInformationListener.chooseInMapSuccess(clickSeatPoint.x, clickSeatPoint.y);
-                    //绘制选中座位通知显示
+                    mISeatInformationListener.chooseInMapSuccess(clickSeatPoint.x, clickSeatPoint.y, seat);
 
-                    //获取当前选中区域的座位类型
-                    ISeatEntity seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
-                    int seatType = SeatParams.SEAT_TYPE_ERROR;
+                    int seatType = IBaseParams.TYPE_ERROR;
                     //判断当前的座位是否是实际有效座位
                     if (seat != null) {
                         seatType = seat.getType();
                     }
                     //座位类型非不可显示或者错误类型则进行通知
-                    if (seatType != SeatParams.SEAT_TYPE_UNSHOW && seatType != SeatParams.SEAT_TYPE_ERROR) {
+                    if (!mSeatParams.isErrorOrUnshowType(seatType)) {
                         //通知选中实际的有效座位
-                        mISeatInformationListener.chooseSeatSuccess(seat.getRowNumber(), seat.getColumnNumber(), clickSeatPoint.x, clickSeatPoint.y);
+                        mISeatInformationListener.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y, seat.getRowNumber(), seat.getColumnNumber(), seat);
                         mCurrentSeletedSeat = clickSeatPoint;
                         //显示当前选中座位的通知
-                        if (mGlobleParams.getIsDrawSeletedRowColumnNotification()) {
+                        if (mGlobleParams.isDrawSeletedRowColumnNotification()) {
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
+                    } else {
+                        mISeatInformationListener.chooseSeatFail();
                     }
                 }
             } else {
                 if (mISeatInformationListener != null) {
                     mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
-                    mISeatInformationListener.chosseSeatFail();
+                    mISeatInformationListener.chosseInMapFail();
                 }
             }
         } else {
             //列表数据不合法,直接返回失败
             if (mISeatInformationListener != null) {
                 mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_NOTHING);
-                mISeatInformationListener.chosseSeatFail();
+                mISeatInformationListener.chosseInMapFail();
             }
         }
     }

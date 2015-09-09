@@ -61,10 +61,10 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
      * 默认座位圆角度
      */
     public static final float DEFAULT_SEAT_RADIUS = DEFAULT_SEAT_HEIGHT * 0.1f;
-    /**
-     * 座位默认基本类型,错误座位,即不存在的座位(可能是列表数据不存在,也可能是查询索引超过此列表数据等)
-     */
-    public static final int SEAT_TYPE_ERROR = -1;
+//    /**
+//     * 座位默认基本类型,错误座位,即不存在的座位(可能是列表数据不存在,也可能是查询索引超过此列表数据等)
+//     */
+//    public static final int SEAT_TYPE_ERROR = -1;
     /**
      * 默认座位类型,分别为<font color="#ff9900"><b>可选,已选,已售</b></font>
      */
@@ -255,7 +255,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
 
     @Override
     public float getSeatHorizontalInterval() {
-        if (this.getIsDrawThumbnail()) {
+        if (this.isDrawThumbnail()) {
             return mSeatHorizontalInterval * this.getThumbnailRate();
         } else {
             return mSeatHorizontalInterval;
@@ -273,7 +273,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
 
     @Override
     public float getSeatVerticalInterval() {
-        if (this.getIsDrawThumbnail()) {
+        if (this.isDrawThumbnail()) {
             return mSeatVerticalInterval * this.getThumbnailRate();
         } else {
             return mSeatVerticalInterval;
@@ -291,7 +291,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
 
     @Override
     public float getSeatTypeDescInterval() {
-        if (this.getIsDrawThumbnail()) {
+        if (this.isDrawThumbnail()) {
             return mSeatTypeDescInterval * this.getThumbnailRate();
         } else {
             return mSeatTypeDescInterval;
@@ -300,7 +300,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
 
     @Override
     public float getSeatTypeInterval() {
-        if (this.getIsDrawThumbnail()) {
+        if (this.isDrawThumbnail()) {
             return mSeatTypeInterval * this.getThumbnailRate();
         } else {
             return mSeatTypeInterval;
@@ -395,6 +395,36 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
         }
     }
 
+    @Override
+    public int getSeletedType() {
+        return SeatParams.SEAT_TYPE_SELETED;
+    }
+
+    @Override
+    public int getUnseletedType() {
+        return SeatParams.SEAT_TYPE_UNSELETED;
+    }
+
+    /**
+     * 此处返回的为{@link #SEAT_TYPE_UNSHOW}
+     * <p><font color="#ff9900"><b>{@link #SEAT_TYPE_UNSHOW}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
+     *
+     * @return
+     */
+    @Override
+    public int getUnshowType() {
+        return SeatParams.SEAT_TYPE_UNSHOW;
+    }
+
+    @Override
+    public boolean isErrorOrUnshowType(int type) {
+        if (type == this.getUnshowType() || type == IBaseParams.TYPE_ERROR) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * 设置绘制类型,<font color="#ff9900"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>,设置此方法前应该先设置图片资源ID{@link #setImage(int[])}或图片对象{@link #setImage(Bitmap[])}
      * <p>
@@ -465,24 +495,23 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
 
 
     @Override
-    public boolean getIsCoupleDrawLeftToRight() {
+    public boolean isCoupleDrawLeftToRight() {
         return false;
     }
 
     @Override
-    public boolean getIsCouple(int seatType) {
+    public boolean isCouple(int seatType) {
         return false;
     }
 
     /**
-     * 根据座位类型来确定座位是否需要绘制，当座位类型为{@link #SEAT_TYPE_UNSHOW}时，不绘制该座位
-     * <p><font color="#ff9900"><b>{@link #SEAT_TYPE_UNSHOW}该静态变量可改变设置,默认0为不绘制类型,可自定义设置</b></font></p>
+     * 根据座位类型来确定座位是否需要绘制，当座位类型不合法时{@link #isErrorOrUnshowType(int)}，不绘制该座位
      *
      * @param seatType 座位类型
      */
     @Override
     public void setIsDraw(int seatType) {
-        if (seatType == SEAT_TYPE_UNSHOW) {
+        if (this.isErrorOrUnshowType(seatType)) {
             super.setIsDraw(false);
         } else {
             super.setIsDraw(true);
@@ -738,7 +767,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
      */
     protected Object getSelectableClone(int[] seatTypeArr, int[] seatColorArr, int[] thumbnailColorArr, String[] descArr, int[] imageIDArr, Bitmap[] bitmapArr) {
         //记录原始的缩略图绘制标志
-        boolean isThumbnail = this.getIsDrawThumbnail();
+        boolean isThumbnail = this.isDrawThumbnail();
         //将缩略图绘制状态恢复默认
         //当缩略图状态为true时,获取的数据将不是原始数据
         this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);
@@ -760,7 +789,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
         newObj.setSeatTypeDescInterval(this.getSeatTypeDescInterval());
 
         //设置其它的参数值
-        newObj.setIsDraw(this.getIsDraw());
+        newObj.setIsDraw(this.isDraw());
         newObj.setIsDrawThumbnail(isThumbnail, 0, 0);
         newObj.setThumbnailRate(this.getThumbnailRate());
         newObj.setAllSeatTypeWithColor(seatTypeArr, seatColorArr, thumbnailColorArr, descArr);
@@ -800,7 +829,7 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
     @Override
     public int getSeatColorByType(int seatType) {
         int[] colorArr = null;
-        if (this.getIsDrawThumbnail()) {
+        if (this.isDrawThumbnail()) {
             colorArr = mThumbnailColorArray;
         } else {
             colorArr = mSeatColorArrary;

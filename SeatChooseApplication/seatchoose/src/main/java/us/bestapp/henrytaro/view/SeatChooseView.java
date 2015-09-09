@@ -15,7 +15,8 @@ import java.util.List;
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
-import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
 
@@ -31,7 +32,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
- *          <p>
+ *          <p/>
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
@@ -46,6 +47,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
     private ISeatDrawHandle mSeatDrawHandle = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
+    private ISeatParams mSeatParams = null;
     private int mMostSeletedCount = 5;
     private List<Point> mCurrentSeletedSeats = null;
     private Context mContext = null;
@@ -65,6 +67,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
         mContext = context.getApplicationContext();
         //创建绘制对象
         mSeatDrawHandle = new SeatDrawUtils(this.getContext(), this);
+        mSeatParams = mSeatDrawHandle.getSeatParams();
 
         //不显示log
         mSeatDrawHandle.setIsShowLog(false, null);
@@ -113,52 +116,61 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap) {
-        boolean isChoosen = false;
-        int seatType = mSeatDrawHandle.getSeatTypeInMap(rowIndexInMap, columnIndexInMap);
-        //回调选座结果
+    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, ISeatEntity seatEntity) {
+    }
+
+
+    @Override
+    public void chosseInMapFail() {
         if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.seatSeleted(rowIndexInMap, columnIndexInMap, seatType);
+            mSeatChooseEvent.seletedFail();
+        }
+    }
+
+    @Override
+    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity) {
+        //通知选中事件
+        if (mSeatChooseEvent != null) {
+            mSeatChooseEvent.selectedSeatSuccess(rowIndexInMap, columnIndexInMap, rowNumber, columnNumber, seatEntity);
         }
 
-        if (seatType == SeatParams.SEAT_TYPE_UNSHOW || seatType == SeatParams.SEAT_TYPE_ERROR) {
-            //选座出错或者未选中有效区域，选座位失败
-            if (mSeatChooseEvent != null) {
-                mSeatChooseEvent.seletedFail();
-            }
-        } else if (seatType == SeatParams.SEAT_TYPE_SELETED) {
+        //是否被选中状态
+        boolean isChoosen = false;
+        int selectedType = mSeatParams.getSeletedType();
+        int unselectedType = mSeatParams.getUnseletedType();
+
+        int seatType = seatEntity.getType();
+        if (seatType == selectedType) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
-            mSeatDrawHandle.updateSeatIMap(SeatParams.SEAT_TYPE_UNSELETED, rowIndexInMap, columnIndexInMap);
+            mSeatDrawHandle.updateSeatIMap(unselectedType, rowIndexInMap, columnIndexInMap);
             removeSeat(rowIndexInMap, columnIndexInMap);
             isChoosen = false;
-        } else if (seatType == SeatParams.SEAT_TYPE_UNSELETED) {
+        } else if (seatType == unselectedType) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
-                mSeatDrawHandle.updateSeatIMap(SeatParams.SEAT_TYPE_SELETED, rowIndexInMap, columnIndexInMap);
+                mSeatDrawHandle.updateSeatIMap(selectedType, rowIndexInMap, columnIndexInMap);
                 addSeat(rowIndexInMap, columnIndexInMap);
                 isChoosen = true;
             } else {
                 //当前选中座位数已达上限，回调接口，不将座位加入选中列表中
                 if (mSeatChooseEvent != null) {
                     mSeatChooseEvent.seletedFull();
+                    return;
                 }
-                return;
             }
         }
+
         if (mSeatChooseEvent != null) {
             //若座位有效且未满，则回调选中座位结果
-            mSeatChooseEvent.seatSeleted(rowIndexInMap, columnIndexInMap, isChoosen);
+            mSeatChooseEvent.selectedSeatSuccess(seatEntity.getRowNumber(), seatEntity.getColumnNumber(), isChoosen);
         }
     }
 
     @Override
-    public void chooseSeatSuccess(int rowNumber, int columnNumber, int rowIndexInMap, int columnIndexInMap) {
-        Toast.makeText(mContext, "当前座位:row/column = " + rowNumber + "/" + columnNumber, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void chosseSeatFail() {
-        Toast.makeText(mContext, "没有选中座位", Toast.LENGTH_SHORT).show();
+    public void chooseSeatFail() {
+        if (mSeatChooseEvent != null) {
+            mSeatChooseEvent.seletedFail();
+        }
     }
 
     @Override

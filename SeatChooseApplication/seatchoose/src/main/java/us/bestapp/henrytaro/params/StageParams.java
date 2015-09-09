@@ -151,7 +151,7 @@ public class StageParams extends BaseParams implements IDrawStageParams {
 
     @Override
     public float getStageMarginTop() {
-        if (super.getIsDrawThumbnail()) {
+        if (super.isDrawThumbnail()) {
             return mStageMarginTop * super.getThumbnailRate();
         } else {
             return mStageMarginTop;
@@ -169,7 +169,7 @@ public class StageParams extends BaseParams implements IDrawStageParams {
 
     @Override
     public float getStageMarginBottom() {
-        if (super.getIsDrawThumbnail()) {
+        if (super.isDrawThumbnail()) {
             return mStageMarginBottom * super.getThumbnailRate();
         } else {
             return mStageMarginBottom;
@@ -250,7 +250,7 @@ public class StageParams extends BaseParams implements IDrawStageParams {
 
     @Override
     public Object getClone() {
-        boolean isThumbnail = this.getIsDrawThumbnail();
+        boolean isThumbnail = this.isDrawThumbnail();
         this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);
 
         StageParams newObj = new StageParams();
@@ -266,7 +266,7 @@ public class StageParams extends BaseParams implements IDrawStageParams {
         newObj.setStageMarginBottom(this.getStageMarginBottom());
 
         //设置其它的参数值
-        newObj.setIsDraw(this.getIsDraw());
+        newObj.setIsDraw(this.isDraw());
         newObj.setIsDrawThumbnail(isThumbnail, 0, 0);
         newObj.setThumbnailRate(this.getThumbnailRate());
         //设置图片资源

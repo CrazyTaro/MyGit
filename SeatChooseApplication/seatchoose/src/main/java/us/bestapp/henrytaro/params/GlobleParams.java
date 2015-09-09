@@ -109,7 +109,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsDrawThumbnail() {
+    public boolean isDrawThumbnail() {
         return this.mIsDrawThumbnail;
     }
 
@@ -119,7 +119,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsShowThumbnailAlways() {
+    public boolean isShowThumbnailAlways() {
         return this.mIsShowThumbnailAlways;
     }
 
@@ -149,7 +149,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsDrawRowNumber() {
+    public boolean isDrawRowNumber() {
         return this.mIsDrawRowNumber;
     }
 
@@ -189,7 +189,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsDrawColumnNumber() {
+    public boolean isDrawColumnNumber() {
         return this.mIsDrawColumnNumber;
     }
 
@@ -244,7 +244,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsRowFirst() {
+    public boolean isRowFirst() {
         return this.mIsRowFirst;
     }
 
@@ -254,7 +254,7 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsDrawSeletedRowColumnNotification() {
+    public boolean isDrawSeletedRowColumnNotification() {
         return this.mIsDrawSeletedRowColumnNotification;
     }
 
@@ -264,12 +264,12 @@ public class GlobleParams implements IGlobleParams {
     }
 
     @Override
-    public boolean getIsEnabledDoubleClickScale() {
+    public boolean isEnabledDoubleClickScale() {
         return this.mIsEnabledDoubleClickScale;
     }
 
     @Override
-    public boolean getIsAllowDrawThumbnail() {
+    public boolean isAllowDrawThumbnail() {
         return this.mIsAllowDrawThumbnail;
     }
 

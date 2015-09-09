@@ -36,7 +36,7 @@ public class SeatMap implements ISeatMapEntity {
      *
      * @return
      */
-    public boolean getIsSucceed() {
+    public boolean isSucceed() {
         return this.mIsSucceed;
     }
 
@@ -167,10 +167,10 @@ public class SeatMap implements ISeatMapEntity {
     }
 
     @Override
-    public boolean getIsCouple(int mapRow, int mapColumn) {
+    public boolean isCouple(int mapRow, int mapColumn) {
         ISeatEntity seat = this.getSeatInfo(mapRow, mapColumn);
         if (seat != null) {
-            return seat.getIsCouple();
+            return seat.isCouple();
         } else {
             return false;
 //            throw new RuntimeException("seat info was not existed");
