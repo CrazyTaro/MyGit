@@ -97,12 +97,12 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
             case MotionEvent.ACTION_POINTER_DOWN:
                 //若在确认进入多点单击之前没有任何移动操作
                 //则认为是触发多点单击事件
-                if (!mIsInMotionMove) {
+//                if (!mIsInMotionMove) {
                     //开始多点单击事件
                     mIsMultiPoint = true;
                     showMsg("多点触控 down");
                     this.onMultiTouchEventHandle(event, MOTION_EVENT_NOTHING);
-                }
+//                }
                 mIsMultiDown = true;
                 break;
             case MotionEvent.ACTION_UP:
@@ -217,11 +217,15 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                     mIsSingleMove = true;
                 } else if (mIsSingleMove && mIsMultiDown) {
                     //当前用户已经移动了界面并且又增加了触控点
-                    //此时按当前的位置处理移动完的界面(即设为在此时结束移动操作),且不进行后续任何操作
+                    //此时按当前的位置处理移动完的界面(即设为在此时结束移动操作)
                     showMsg("单击 move 结束");
                     this.onSingleTouchEventHandle(event, MotionEvent.ACTION_UP);
+                    showMsg("多点触控 move 尝试进行");
+                    //同时处理多点操作
+                    this.onMultiTouchEventHandle(event,MOTION_EVENT_NOTHING);
                     mIsSingleMove = false;
                 } else if (mIsMultiPoint && mIsMultiDown) {
+                    //正常直接多点操作
                     showMsg("多点触控 move");
                     this.onMultiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 }
