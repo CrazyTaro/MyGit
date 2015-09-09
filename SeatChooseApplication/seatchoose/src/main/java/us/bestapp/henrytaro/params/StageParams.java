@@ -3,10 +3,13 @@ package us.bestapp.henrytaro.params;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.PointF;
 
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IDrawStageParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
+import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
  * Created by xuhaolin on 2015/8/9.
@@ -17,15 +20,15 @@ public class StageParams extends BaseParams implements IDrawStageParams {
     /**
      * 默认舞台颜色
      */
-    public static final int DEFAULT_STAGE_COLOR = Color.GREEN;
+    public static final int DEFAULT_STAGE_COLOR = Color.WHITE;
     /**
      * 默认舞台宽度
      */
-    public static final float DEFAULT_STAGE_WIDTH = 500f;
+    public static final float DEFAULT_STAGE_WIDTH = 600f;
     /**
      * 默认舞台高度
      */
-    public static final float DEFAULT_STAGE_HEIGHT = 80f;
+    public static final float DEFAULT_STAGE_HEIGHT = 60f;
     /**
      * 默认舞台圆角度
      */
@@ -37,7 +40,7 @@ public class StageParams extends BaseParams implements IDrawStageParams {
     /**
      * 默认舞台下方空白高度（与座位的间隔）
      */
-    public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 30f;
+    public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 50f;
     /**
      * 默认舞台文字
      */
@@ -113,6 +116,48 @@ public class StageParams extends BaseParams implements IDrawStageParams {
         super.loadSeatImage(context, imageID, imageBitmap, (int) this.getWidth(), (int) this.getHeight(), isReload);
     }
 
+    @Override
+    public boolean isCanScale(float scaleRate) {
+        //保存原值
+        float oldHeight = this.getHeight();
+        float oldWidth = this.getWidth();
+
+        //计算新值
+        float newHeight = oldHeight * scaleRate;
+        float newWidth = oldWidth * scaleRate;
+
+        //设置暂时性的新值
+        this.setHeight(newHeight, false);
+        this.setWidth(newWidth, false);
+
+        //计算新的文字大小,若其值大于880,则不允许进行缩放
+        float textSize = this.getDescriptionSize();
+        this.setHeight(oldHeight, false);
+        this.setWidth(oldWidth, false);
+        //图形不可大于此值
+        if (newWidth > 4096 || newHeight > 4096 || textSize > 880 || !super.isCanScale(scaleRate)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public float getDescriptionSize() {
+        if (StringUtils.isNullOrEmpty(this.getStageDescription())) {
+            return 0;
+        } else {
+            //计算理论字体大小,以舞台宽度为标准
+            float theoryTextLength = this.getWidth() - 2 * this.getHeight();
+            float textSize = theoryTextLength / this.getStageDescription().length();
+            //理论值大于舞台高度时,以舞台高度为标准
+            if (textSize > this.getHeight()) {
+                return this.getHeight() * 0.8f;
+            } else {
+                return textSize;
+            }
+        }
+    }
 
     @Override
     public void setScaleRate(float scaleRate, boolean isTrueSet) {
@@ -188,6 +233,61 @@ public class StageParams extends BaseParams implements IDrawStageParams {
     @Override
     public float getStageTotalHeight() {
         return this.getHeight() + this.getStageMarginBottom() + this.getStageMarginTop();
+    }
+
+    @Override
+    public Path getStageDrawPath(float drawCenterX, float drawCenterY, boolean isClosedPath) {
+        Path stagePath = new Path();
+        PointF[] points = this.getStagePathPoint(drawCenterX, drawCenterY);
+        for (int i = 0; i < points.length; i++) {
+            PointF p = points[i];
+            if (i == 0) {
+                //移动到第一个点
+                stagePath.moveTo(p.x, p.y);
+            } else {
+                //连接到其它点
+                stagePath.lineTo(p.x, p.y);
+            }
+        }
+        if (isClosedPath) {
+            //闭合路径
+            stagePath.close();
+        }
+        return stagePath;
+    }
+
+
+    /**
+     * 获取舞台绘制的路径
+     *
+     * @param drawCenterX 舞台绘制位置的中心X轴坐标
+     * @param drawCenterY 舞台绘制位置的中心Y轴坐标
+     * @return
+     */
+    private PointF[] getStagePathPoint(float drawCenterX, float drawCenterY) {
+        PointF[] points = new PointF[4];
+
+        for (int i = 0; i < 4; i++) {
+            points[i] = new PointF();
+        }
+
+        //左上角
+        points[0].x = drawCenterX - this.getWidth() / 2;
+        points[0].y = drawCenterY - this.getHeight() / 2;
+
+        //左下角
+        points[1].x = points[0].x + this.getHeight();
+        points[1].y = points[0].y + this.getHeight();
+
+        //右下角
+        points[2].x = drawCenterX + this.getWidth() / 2 - this.getHeight();
+        points[2].y = points[1].y;
+
+        //右上角
+        points[3].x = points[2].x + this.getHeight();
+        points[3].y = points[2].y - this.getHeight();
+
+        return points;
     }
 
     @Override
