@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -31,7 +32,7 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
 
 /**
  * @author xuhaolin
- * @version 6.0
+ * @version 7.0
  *          <p/>
  *          Created by xuhaolin in 2015-08-07
  *          <p/>
@@ -155,6 +156,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
         //设置监听事件,实际事件分配来自于抽象父类
         mDrawView.setOnTouchListener(this);
+
     }
 
 
@@ -489,11 +491,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
             //绘制默认舞台
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(mStageParams.getColor());
-            //当该绘制图像有显示在画布上的部分时才进行绘制
-            //所有的坐标都不在画布的有效显示范围则不进行绘制
-            if (stageRectf.left > 0 || stageRectf.right > 0 || stageRectf.top > 0 || stageRectf.bottom > 0) {
-                canvas.drawRoundRect(stageRectf, mStageParams.getRadius(), mStageParams.getRadius(), paint);
-            }
+            //不规则舞台绘制
+            Path stagePath = mStageParams.getStageDrawPath(drawPositionX, drawPositionY, true);
+            canvas.drawPath(stagePath, paint);
         }
 
         //绘制舞台文字
@@ -598,9 +598,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
 
         if (!mSeatParams.isDrawThumbnail()) {
             //记录界面高度值
-            mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mGlobleParams.getSeatTypeRowCount())
-                    //附加部分,用于边界的空白
-                    + mSeatParams.getHeight();
+            mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mGlobleParams.getSeatTypeRowCount());
+//                    //附加部分,用于边界的空白
+//                    + mSeatParams.getHeight();
         }
     }
 
@@ -1338,7 +1338,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         this.beginDraw(canvas, mPaint);
 
         //绘制正常实际的界面
-        drawNormalCanvas(canvas, mPaint, mWHPoint.y);
+        drawNormalCanvas(canvas, mPaint, -1);
         if (mSeatDrawMap != null && mSeatDrawMap.getRowCount() > 0) {
             //绘制行列显示条
             drawColumnAndRowNumber(canvas, mPaint, mCanvasWidth, mSeatDrawMap.getMaxColumnCount(), mSeatDrawMap.getRowCount());
@@ -1444,9 +1444,11 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         }
 
         //行数绘制的左边界值,防止行列的叠加
-        float edgeX = drawCenterX + mSeatParams.getHeight() / 2;
+        //不绘制行数则不限制列绘制的边界值
+        float edgeX = mGlobleParams.isDrawRowNumber() ? (drawCenterX + mSeatParams.getHeight() / 2) : 0;
         //列数绘制的右边界值,防止行列的叠加
-        float edgeY = drawCenterY + mSeatParams.getHeight() / 2;
+        //不绘制列数则不限制行绘制的边界值
+        float edgeY = mGlobleParams.isDrawColumnNumber() ? (drawCenterY + mSeatParams.getHeight() / 2) : 0;
         if (mGlobleParams.isDrawColumnNumber()) {
             //绘制列数
             this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
@@ -1519,11 +1521,12 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     /**
      * 获取绘制中心轴虚线的坐标线点
      *
-     * @param centerX 中心X轴位置
-     * @param height  此次绘制区域的高度,对实际界面而言是屏幕,对缩略图而言是缩略图的高度
+     * @param centerX    中心X轴位置
+     * @param height     此次绘制区域的高度,对实际界面而言是屏幕,对缩略图而言是缩略图的高度
+     * @param beginDrawY 虚线开始绘制的高度
      * @return
      */
-    protected float[] getCenterDotLine(float centerX, float height) {
+    protected float[] getCenterDotLine(float centerX, float height, float beginDrawY) {
         //判断是否绘制缩略图,是则将线段长缩短为1/10
         float lineLength = mSeatParams.isDrawThumbnail() ? 2f : 20f;
         //计算需要的线段数
@@ -1534,9 +1537,9 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         //动态创建绘制点
         for (int i = 0; i < lineCount; i++) {
             dotLine[4 * i + 0] = centerX;
-            dotLine[4 * i + 1] = offsetDistance + i * lineLength;
+            dotLine[4 * i + 1] = beginDrawY + offsetDistance + i * lineLength;
             dotLine[4 * i + 2] = centerX;
-            dotLine[4 * i + 3] = offsetDistance + (i + 1) * lineLength;
+            dotLine[4 * i + 3] = beginDrawY + offsetDistance + (i + 1) * lineLength;
             offsetDistance += lineLength;
         }
         return dotLine;
@@ -1557,15 +1560,15 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
      * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int, boolean)}<br/>
      * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)}<br/>
-     * 8.绘制中心分界线{@link #getCenterDotLine(float, float)}<br/>
+     * 8.绘制中心分界线{@link #getCenterDotLine(float, float, float)}<br/>
      * </p>
      *
-     * @param canvas     画板
-     * @param paint      画笔
-     * @param viewHeight 绘制界面的高度(主要用于绘制中心轴虚线可用),实际绘制界面高度为屏幕高度
+     * @param canvas           画板
+     * @param paint            画笔
+     * @param canvasDrawHeight 虚线绘制的高度(主要用于绘制中心轴虚线可用),实际绘制界面高度为屏幕高度
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
-    protected void drawNormalCanvas(Canvas canvas, Paint paint, float viewHeight) {
+    protected void drawNormalCanvas(Canvas canvas, Paint paint, float canvasDrawHeight) {
         float drawX = 0f;
         float drawY = 0f;
         //开始绘制舞台
@@ -1579,8 +1582,14 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
         drawY = this.getSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount(), false);
         drawSellSeats(canvas, paint, mSeatDrawMap, drawX, drawY);
 
-        float[] dotline = this.getCenterDotLine(drawX, viewHeight);
-        paint.setColor(Color.RED);
+        if (canvasDrawHeight == -1) {
+            canvasDrawHeight = mCanvasHeight;
+        }
+        float dotLineDrawHeight = canvasDrawHeight - (this.getSellSeatDrawBeginY(mGlobleParams.getSeatTypeRowCount()) - this.getCanvasDrawBeginY(mGlobleParams.getSeatTypeRowCount()));
+        float dotLineBeginDrawY = this.getSellSeatDrawBeginY(mGlobleParams.getSeatTypeRowCount()) - mSeatParams.getSeatHorizontalInterval();
+
+        float[] dotline = this.getCenterDotLine(drawX, dotLineDrawHeight, dotLineBeginDrawY);
+        paint.setColor(mGlobleParams.getCenterDotLineColor());
         //根据界面要求高度绘制虚线
         canvas.drawLines(dotline, paint);
     }
