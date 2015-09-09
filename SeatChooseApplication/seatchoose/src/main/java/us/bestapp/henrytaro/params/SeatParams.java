@@ -74,10 +74,10 @@ public class SeatParams extends BaseParams implements IDrawSeatParams {
      * <p>
      * 可选=<font color="white"><b>白色</b></font><br/>
      * 已选=<font color="red"><b>红色</b></font><br/>
-     * 已售=<font color="#yellow"><b>黄色</b></font><br/>
+     * 已售=<font color="#A9A9A9"><b>灰色</b></font><br/>
      * </p>
      */
-    public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.WHITE, Color.RED, Color.YELLOW};
+    public static int[] DEFAULT_SEAT_TYPE_COLOR = {Color.WHITE, Color.RED, Color.parseColor("#A9A9A9")};
     /**
      * 默认座位类型描述,"可选,已选,已售"
      */
