@@ -9,14 +9,14 @@ import org.json.JSONObject;
 
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
-import us.bestapp.henrytaro.entity.interfaces.ISeatMapEntity;
+import us.bestapp.henrytaro.entity.interfaces.IMapEntity;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
  * Created by xuhaolin on 15/9/2.<br/>
  * 座位列表对象,用于实现座位处理接口及处理JSON数据
  */
-public class SeatMap implements ISeatMapEntity {
+public class  SeatMap implements IMapEntity {
     @SerializedName("success")
     private boolean mIsSucceed;
     @SerializedName("error_code")
@@ -30,6 +30,7 @@ public class SeatMap implements ISeatMapEntity {
 
     private SeatMap() {
     }
+
 
     /**
      * 获取成功状态
@@ -115,6 +116,7 @@ public class SeatMap implements ISeatMapEntity {
         }
         return map;
     }
+
 
     @Override
     public int getSeatType(int mapRow, int mapColumn) {

@@ -16,9 +16,9 @@ import android.view.View;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
+import us.bestapp.henrytaro.entity.interfaces.IMapEntity;
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
-import us.bestapp.henrytaro.entity.interfaces.ISeatMapEntity;
 import us.bestapp.henrytaro.params.BaseParams;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
@@ -105,7 +105,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     //绑定的用于绘制界面的View
     private View mDrawView = null;
     //座位列表
-    private ISeatMapEntity mSeatDrawMap = null;
+    private IMapEntity mSeatDrawMap = null;
     //是否绘制选中行列通知界面
     private boolean mIsDrawSeletedRowColumn = false;
     //是否已通知过达到缩放极限
@@ -515,7 +515,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     /**
-     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(ISeatMapEntity)},
+     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(IMapEntity)},
      * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
      * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
      * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)}进行完成,
@@ -528,7 +528,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * @param drawPositionX 开始绘制的中心X轴位置(第一行座位,中心绘制位置)
      * @param drawPositionY 开始绘制的中心Y轴位置(第一行座位,中心绘制位置)
      */
-    protected void drawSellSeats(Canvas canvas, Paint paint, ISeatMapEntity seatMap, float drawPositionX, float drawPositionY) {
+    protected void drawSellSeats(Canvas canvas, Paint paint, IMapEntity seatMap, float drawPositionX, float drawPositionY) {
         if (seatMap == null || seatMap.getRowCount() <= 0) {
             return;
         }
@@ -1362,7 +1362,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     @Override
-    public void setSeatDrawMap(ISeatMapEntity seatMap) {
+    public void setSeatDrawMap(IMapEntity seatMap) {
         //设置新的座位列表
         this.mSeatDrawMap = seatMap;
         //重绘
@@ -1370,7 +1370,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
     }
 
     @Override
-    public ISeatMapEntity getSeatDrawMap() {
+    public IMapEntity getSeatDrawMap() {
         return this.mSeatDrawMap;
     }
 
@@ -1561,7 +1561,7 @@ public class SeatDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandl
      * 4.获取座位类型绘制的高度{@link #getSeatTypeDrawCenterY()}<br/>
      * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
      * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int, boolean)}<br/>
-     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)}<br/>
+     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, IMapEntity, float, float)}<br/>
      * 8.绘制中心分界线{@link #getCenterDotLine(float, float, float)}<br/>
      * </p>
      *
