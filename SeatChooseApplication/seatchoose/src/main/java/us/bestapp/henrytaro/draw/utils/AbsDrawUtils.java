@@ -1320,6 +1320,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param canvas 画板
      */
     protected void beginDraw(Canvas canvas, Paint paint) {
+        if (mWHPoint == null) {
+            mWHPoint = getWidthAndHeight();
+        }
         //重置界面绘制的宽高
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
@@ -1336,9 +1339,6 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
     @Override
     public void drawCanvas(Canvas canvas) {
-        if (mWHPoint == null) {
-            mWHPoint = getWidthAndHeight();
-        }
         //初始化绘制工作
         this.beginDraw(canvas, mPaint);
 
@@ -1357,7 +1357,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         }
 
         //绘制选中提醒界面
-        if (mIsDrawSeletedRowColumn) {
+        if (mIsDrawSeletedRowColumn && mCurrentSeletedSeat != null) {
             drawSeletedRowColumnToast(canvas, mPaint, mCurrentSeletedSeat.x, mCurrentSeletedSeat.y);
         }
 
@@ -2095,6 +2095,15 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
     }
 
+
+    /**
+     * 更新需要通知的行列信息
+     *
+     * @param notifyPoint 参数为当前选中有效座位在map中的位置,x为行索引,y为列索引
+     * @return 返回的位置为更新后需要通知的行列信息
+     */
+    protected abstract Point updateNotifyRowWithColumn(Point notifyPoint);
+
     /**
      * 单击选择座位事件
      *
@@ -2137,6 +2146,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                         mCurrentSeletedSeat = clickSeatPoint;
                         //显示当前选中座位的通知
                         if (mGlobleParams.isDrawSeletedRowColumnNotification()) {
+                            this.updateNotifyRowWithColumn(mCurrentSeletedSeat);
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
                     } else {

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.view.View;
 
@@ -120,4 +121,10 @@ public class SeatDrawUtils extends AbsDrawUtils {
             canvas.drawText(stageText, textBeginDrawX, textBeginDrawY, paint);
         }
     }
+
+    @Override
+    protected Point updateNotifyRowWithColumn(Point notifyPoint) {
+        return notifyPoint;
+    }
+
 }
