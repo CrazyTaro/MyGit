@@ -40,47 +40,34 @@
 -keep public class * extends android.view.View
 
 
+-keepparameternames
 #不混淆某个包下的类
 -keep class us.bestapp.henrytaro.draw.interfaces.** {*;}
+-keep class us.bestapp.henrytaro.entity.interfaces.**{*;}
+-keep class us.bestapp.henrytaro.params.interfaces.**{*;}
+-keep class us.bestapp.henrytaro.view.interfaces.**{*;}
+-keep class us.bestapp.henrytaro.entity.**{*;}
+-keep class us.bestapp.henrytaro.params.**{*;}
+-keep class us.bestapp.henrytaro.utils.**{*;}
 
--keep class us.bestapp.henrytaro.draw.params.**{
+#-keepparameternames class us.bestapp.henrytaro.draw.interfaces.** {*;}
+#-keepparameternames class us.bestapp.henrytaro.entity.interfaces.**{*;}
+#-keepparameternames class us.bestapp.henrytaro.params.interfaces.**{*;}
+#-keepparameternames class us.bestapp.henrytaro.view.interfaces.**{*;}
+#-keepparameternames class us.bestapp.henrytaro.entity.**{*;}
+#-keepparameternames class us.bestapp.henrytaro.params.**{*;}
+#-keepparameternames class us.bestapp.henrytaro.utils.**{*;}
+#
+#-keepparameternames class us.bestapp.henrytaro.draw.utils.SeatDrawUtils
+#-keepparameternames class us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle
+
+-keepclasseswithmembernames class us.bestapp.henrytaro.draw.utils.SeatDrawUtils{
     public <fields>;
     public <methods>;
+    protected <methods>;
 }
 
--keepclasseswithmembers class us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent{
-    public <fields>;
-    public <methods>;
-}
-
--keepclasseswithmembers class us.bestapp.henrytaro.view.interfaces.ISeatViewInterface{
-    public <fields>;
-    public <methods>;
-}
-
--keep class us.bestapp.henrytaro.view.interfaces.ISeatViewInterface$*{
-#    public <fields>;
-#    public <methods>;
-*;
-}
-
--keepclasseswithmembers class ExportParams{
-    public <fields>;
-    public <methods>;
-}
-
--keepclasseswithmembers class us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle{
-    public <fields>;
-    public <methods>;
-}
-
--keep class us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle$*{
-#    public <fields>;
-#    public <methods>;
-*;
-}
-
--keep class us.bestapp.henrytaro.draw.utils.SeatDrawUtils{
+-keepclasseswithmembernames class us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle{
     public <fields>;
     public <methods>;
     protected <methods>;

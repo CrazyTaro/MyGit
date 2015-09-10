@@ -22,7 +22,8 @@ public interface ISeatParams extends IBaseParams {
     public int[] getImageID();
 
     /**
-     * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已
+     * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已<br/>
+     * 使用此方法对未选中类型及选中类型进行设置,也可以调用方法{@link #setBaseTypes(int, int, int[])}实现类似的功能
      *
      * @param seleted        已选座位
      * @param unSeleted      未选座位
@@ -161,26 +162,40 @@ public interface ISeatParams extends IBaseParams {
     public int getSeatTypeLength();
 
     /**
-     * 获取选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型
+     * 获取选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
+     * <font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,当自定义选中类型时,
+     * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
      *
      * @return
      */
     public int getSeletedType();
 
     /**
-     * 获取未选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型
+     * 获取未选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
+     * <font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,当自定义未选中类型时,
+     * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
      *
      * @return
      */
     public int getUnseletedType();
 
     /**
-     * 判断是否是不合法类型(错误或者是未显示类型的座位状态)
+     * 判断是否是不合法类型(错误或者是未显示类型的座位状态),<font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,
+     * 需要设置自定义的错误类型时应该调用该方法</b></font>
      *
      * @param type
      * @return
      */
     public boolean isErrorOrUnshowType(int type);
+
+    /**
+     * 设置基本的类型数据
+     *
+     * @param selectedType   选中类型,详见{@link #getSeletedType()}
+     * @param unselectedType 未选中类型,详见{@link #getUnseletedType()}
+     * @param errorType      错误类型,错误类型可不止一种,详见{@link #isErrorOrUnshowType(int)}
+     */
+    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType);
 
     /**
      * 设置座位类型及其图片,此处的座位类型将替换原来的座位类型,图片同理

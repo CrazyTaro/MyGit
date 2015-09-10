@@ -37,4 +37,9 @@ public interface ISeatChooseEvent {
      * 当前选中座位数已达到上限,设置选座上限请通过{@link ISeatViewInterface#setMostSeletedCount(int)}
      */
     public void seletedFull();
+
+    /**
+     * 缩放到极限值(最大或最小值)
+     */
+    public void scaleMaximum();
 }
