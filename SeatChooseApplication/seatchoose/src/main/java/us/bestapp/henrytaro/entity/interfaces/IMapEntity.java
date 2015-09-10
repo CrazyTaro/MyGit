@@ -7,10 +7,10 @@ package us.bestapp.henrytaro.entity.interfaces;
 public interface IMapEntity {
     /**
      * 获取指定map指定位置中的座位类型,以下类型为默认类型<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSHOW}，不显示<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_UNSELETED}，可选<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_SELETED}，已选<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#SEAT_TYPE_DISABLE_SELETED}，不可选<br/>
+     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_unshow}，不显示<br/>
+     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_unselected}，可选<br/>
+     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_selected}，已选<br/>
+     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_disable_selected}，不可选<br/>
      *
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，

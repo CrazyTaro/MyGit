@@ -147,6 +147,6 @@ public interface IBaseParams {
      *
      * @return
      */
-    public Object getClone();
+    public Object getClone(Object newObj);
 
 }

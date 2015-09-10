@@ -140,9 +140,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         IGlobleParams globleParams = seatDataHandle.getGlobleParams();
         globleParams.setIsDrawThumbnail(true);
 //        globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列"));
-//        globleParams.setIsDrawRowNumber(true);
-        globleParams.setIsDrawColumnNumber(true);
-        globleParams.setIsShowThumbnailAlways(true);
+        globleParams.setIsDrawRowNumber(true);
+//        globleParams.setIsDrawColumnNumber(true);
 
         ISeatParams seatParams = seatDataHandle.getSeatParams();
         seatParams.setIsDrawSeatType(false);

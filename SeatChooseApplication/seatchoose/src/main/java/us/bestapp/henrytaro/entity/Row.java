@@ -82,7 +82,7 @@ public class Row implements IRowEntity {
                     AbsSeat newSeat = Seat.getNewInstance(mRowNum, columInfo[i]);
                     //座位解析
                     mColumnData[i] = newSeat;
-                    if (newSeat != null && newSeat.getType() != SeatParams.SEAT_TYPE_UNSHOW) {
+                    if (newSeat != null && newSeat.getType() != SeatParams.seat_type_unshow) {
                         mColumnCount++;
                     }
                 }

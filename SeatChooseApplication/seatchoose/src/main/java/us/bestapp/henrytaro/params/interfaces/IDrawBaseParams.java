@@ -96,40 +96,40 @@ public interface IDrawBaseParams extends IBaseParams {
      */
     public boolean isCanScale(float scaleRate);
 
-    /**
-     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
-     *
-     * @param scaleRate 新的缩放比
-     * @param isTrueSet 是否将此次缩放结果记录为永久结果
-     */
-    public void setScaleRate(float scaleRate, boolean isTrueSet);
-
-    /**
-     * 获取当前的绘制界面与原始(最初设定的界面)的比例,当前界面/原始界面
-     *
-     * @return
-     */
-    public float getScaleRateCompareToOriginal();
-
-    /**
-     * 设置预设的缩放比为当前值(只用于双击缩放)
-     *
-     * @param isSetEnlarge 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
-     * @return
-     */
-    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge);
-
-    /**
-     * 存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例
-     *
-     * @param copyObj 用于拷贝的存储对象,此参数可为null,若不为null则以此参数为源拷贝值
-     */
-    public void storeOriginalValues(Object copyObj);
-
-    /**
-     * 获取存储的原始座位数据,返回的数据类型由子类自身确定(子类通过创建内部类用于存储的方式进行数据存储)
-     *
-     * @return
-     */
-    public Object getOriginalValues();
+//    /**
+//     * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+//     *
+//     * @param scaleRate 新的缩放比
+//     * @param isTrueSet 是否将此次缩放结果记录为永久结果
+//     */
+//    public void setScaleRate(float scaleRate, boolean isTrueSet);
+//
+//    /**
+//     * 获取当前的绘制界面与原始(最初设定的界面)的比例,当前界面/原始界面
+//     *
+//     * @return
+//     */
+//    public float getScaleRateCompareToOriginal();
+//
+//    /**
+//     * 设置预设的缩放比为当前值(只用于双击缩放)
+//     *
+//     * @param isSetEnlarge 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
+//     * @return
+//     */
+//    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge);
+//
+//    /**
+//     * 存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例
+//     *
+//     * @param copyObj 用于拷贝的存储对象,此参数可为null,若不为null则以此参数为源拷贝值
+//     */
+//    public void storeOriginalValues(Object copyObj);
+//
+//    /**
+//     * 获取存储的原始座位数据,返回的数据类型由子类自身确定(子类通过创建内部类用于存储的方式进行数据存储)
+//     *
+//     * @return
+//     */
+//    public Object getOriginalValues();
 }

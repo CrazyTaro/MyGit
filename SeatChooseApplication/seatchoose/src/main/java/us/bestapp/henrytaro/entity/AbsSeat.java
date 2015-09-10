@@ -11,7 +11,7 @@ import us.bestapp.henrytaro.params.SeatParams;
  */
 public abstract class AbsSeat implements ISeatEntity {
     protected int mRowNumber = 0;
-    protected int mType = SeatParams.SEAT_TYPE_UNSHOW;
+    protected int mType = SeatParams.seat_type_unshow;
     protected int mColumnNumber = 0;
     protected boolean mIsCouple = false;
     protected String mSeatInfo = null;

@@ -55,11 +55,11 @@ public class Seat extends AbsSeat {
                     switch (infos[1]) {
                         case "A":
                             //可选座位
-                            type = SeatParams.SEAT_TYPE_UNSELETED;
+                            type = SeatParams.seat_type_unselected;
                             break;
                         case "LK":
                             //锁定座位
-                            type = SeatParams.SEAT_TYPE_DISABLE_SELETED;
+                            type = SeatParams.seat_type_disable_selected;
                             break;
                     }
                 }

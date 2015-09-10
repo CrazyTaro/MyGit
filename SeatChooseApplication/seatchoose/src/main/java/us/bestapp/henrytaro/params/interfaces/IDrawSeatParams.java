@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
-import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
 
 /**
  * Created by xuhaolin on 15/9/8.<br/>
@@ -31,7 +31,7 @@ public interface IDrawSeatParams extends ISeatParams, IDrawBaseParams {
      * @param seatTypeRowCount 座位类型绘制的行数
      * @return
      */
-    public SeatParams[] getAutoSeparateParams(int seatTypeRowCount);
+    public BaseSeatParams[] getAutoSeparateParams(int seatTypeRowCount);
 
 
     /**
@@ -64,17 +64,17 @@ public interface IDrawSeatParams extends ISeatParams, IDrawBaseParams {
      * @param drawPositionY 绘制的Y轴中心位置
      * @return
      */
-    public RectF getSeatDrawImageRecf(RectF imageRecft, float drawPositionX, float drawPositionY);
-
-
-    /**
-     * 获取主座位绘制矩形或者次座位绘制矩形
-     *
-     * @param seatRectf     座位绘制矩形对象
-     * @param drawPositionX 绘制座位的中心X轴位置
-     * @param drawPositionY 绘制座位的中心Y轴位置
-     * @param isMainSeat    true为获取主座位,false为获取次座位
-     * @return
-     */
-    public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat);
+    public RectF getSeatDrawRecf(RectF imageRecft, float drawPositionX, float drawPositionY);
+//
+//
+//    /**
+//     * 获取主座位绘制矩形或者次座位绘制矩形
+//     *
+//     * @param seatRectf     座位绘制矩形对象
+//     * @param drawPositionX 绘制座位的中心X轴位置
+//     * @param drawPositionY 绘制座位的中心Y轴位置
+//     * @param isMainSeat    true为获取主座位,false为获取次座位
+//     * @return
+//     */
+//    public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat);
 }
