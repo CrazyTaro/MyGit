@@ -2146,7 +2146,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                         mCurrentSeletedSeat = clickSeatPoint;
                         //显示当前选中座位的通知
                         if (mGlobleParams.isDrawSeletedRowColumnNotification()) {
-                            this.updateNotifyRowWithColumn(mCurrentSeletedSeat);
+                            mCurrentSeletedSeat = this.updateNotifyRowWithColumn(mCurrentSeletedSeat);
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
                     } else {
