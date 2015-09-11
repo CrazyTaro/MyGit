@@ -38,7 +38,7 @@ public interface IStageParams extends IBaseParams {
     public String getStageDescription();
 
     /**
-     * 设置舞台描述文字
+     * 设置舞台描述文字,设置时请注意文字的大小是由舞台的和长宽和
      *
      * @param text
      */

@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.entity.SeatMap;
-import us.bestapp.henrytaro.entity.example.EgSeatMap;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
@@ -141,6 +140,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         globleParams.setIsDrawThumbnail(true);
 //        globleParams.setIsDrawSeletedRowColumnNotification(true, globleParams.createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列"));
         globleParams.setIsDrawRowNumber(true);
+        globleParams.setSeatTypeRowCount(2);
+        globleParams.setIsShowThumbnailAlways(true);
 //        globleParams.setIsDrawColumnNumber(true);
 
         ISeatParams seatParams = seatDataHandle.getSeatParams();

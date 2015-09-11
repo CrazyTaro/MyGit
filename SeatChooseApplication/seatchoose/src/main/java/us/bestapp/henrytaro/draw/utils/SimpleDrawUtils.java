@@ -13,9 +13,9 @@ import android.view.View;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
+import us.bestapp.henrytaro.params.absparams.BaseGlobleParams;
 import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.absparams.BaseStageParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * Created by xuhaolin on 15/8/6.<br/>
@@ -35,7 +35,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
 
     @Override
-    protected void initial(BaseSeatParams seat, BaseStageParams stage, IGlobleParams globle) {
+    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
         super.initial(seat, stage, globle);
         mSeatParams = new SeatParams();
         mStageParams = new StageParams();

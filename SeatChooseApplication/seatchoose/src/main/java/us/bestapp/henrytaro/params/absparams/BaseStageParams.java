@@ -149,7 +149,7 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
             return 0;
         } else {
             //计算理论字体大小,以舞台宽度为标准
-            float theoryTextLength = this.getWidth() - 2 * this.getHeight();
+            float theoryTextLength = this.getWidth() - this.getWidth() * 0.2f;
             float textSize = theoryTextLength / this.getStageDescription().length();
             //理论值大于舞台高度时,以舞台高度为标准
             if (textSize > this.getHeight()) {

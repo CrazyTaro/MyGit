@@ -21,6 +21,7 @@ import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
+import us.bestapp.henrytaro.params.absparams.BaseGlobleParams;
 import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.absparams.BaseStageParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
@@ -52,7 +53,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     /**
      * 全局参数,所需要用到的全局性参数均来自此接口,如背景色/是否绘制缩略图/是否绘制行列号等
      */
-    protected IGlobleParams mGlobleParams = null;
+    protected BaseGlobleParams mGlobleParams = null;
     /**
      * 座位参数,座位类型及绘制座位需要的参数,详见{@link BaseSeatParams}
      */
@@ -144,7 +145,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param stage    舞台参数，可为null
      * @param globle   全局参数,此参数不可为null
      */
-    public AbsDrawUtils(Context context, View drawView, BaseSeatParams seat, BaseStageParams stage, IGlobleParams globle) {
+    public AbsDrawUtils(Context context, View drawView, BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
         if (context == null || drawView == null || globle == null) {
             throw new RuntimeException("初始化中context及drawView,全局参数globle不可为null,该参数都是必需的");
         }
@@ -165,7 +166,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
 
     //初始化数据
-    protected void initial(BaseSeatParams seat, BaseStageParams stage, IGlobleParams globle) {
+    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
         if (globle == null) {
             throw new RuntimeException("初始化中全局参数globle不可为null,该参数都是必需的");
         }
@@ -188,7 +189,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param stageParams  舞台参数
      * @param globleParams 全局参数,若不替换原始的全局参数,此参数可设置为null,若不为null则替换原始的全局参数
      */
-    protected void setParams(BaseSeatParams seatParams, BaseStageParams stageParams, IGlobleParams globleParams) {
+    protected void setParams(BaseSeatParams seatParams, BaseStageParams stageParams, BaseGlobleParams globleParams) {
         if (globleParams == null && mGlobleParams != null) {
             mSeatParams = seatParams;
             mStageParams = stageParams;
@@ -1327,8 +1328,12 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //计算缩放比
         float thumbnailRate = targetWidth / originalCanvasWidth;
         //设置绘制缩略图标志
-        mSeatParams.setIsDrawThumbnail(true, originalCanvasWidth, targetWidth);
-        mStageParams.setIsDrawThumbnail(true, originalCanvasWidth, targetWidth);
+        if (mSeatParams != null) {
+            mSeatParams.setIsDrawThumbnail(true, originalCanvasWidth, targetWidth);
+        }
+        if (mStageParams != null) {
+            mStageParams.setIsDrawThumbnail(true, originalCanvasWidth, targetWidth);
+        }
         //创建缩略图绘制区域
         RectF thumbnailRectf = new RectF();
         thumbnailRectf.top = 0;
@@ -1344,8 +1349,12 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     protected void finishDrawThumbnail() {
         //取消缩略图的绘制标志
         //防止下一次更新界面无法绘制出正常的界面
-        mSeatParams.setIsDrawThumbnail(false, IBaseParams.DEFAULT_FLOAT, IBaseParams.DEFAULT_FLOAT);
-        mStageParams.setIsDrawThumbnail(false, StageParams.DEFAULT_FLOAT, StageParams.DEFAULT_FLOAT);
+        if (mSeatParams != null) {
+            mSeatParams.setIsDrawThumbnail(false, IBaseParams.DEFAULT_FLOAT, IBaseParams.DEFAULT_FLOAT);
+        }
+        if (mStageParams != null) {
+            mStageParams.setIsDrawThumbnail(false, StageParams.DEFAULT_FLOAT, StageParams.DEFAULT_FLOAT);
+        }
     }
 
     /**
@@ -1399,11 +1408,19 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             drawColumnAndRowNumber(canvas, mPaint, mCanvasWidth, mSeatDrawMap.getMaxColumnCount(), mSeatDrawMap.getRowCount());
         }
 
+        //尝试绘制缩略图
         //判断当前是否需要显示缩略图
-        //当界面基本在当前屏幕范围内时,不显示缩略图
-        if (mCanvasWidth > (mWHPoint.x + 30f) || mCanvasHeight > (mWHPoint.y + 30f)) {
-            //当界面在移动中时显示缩略图,否则不显示缩略图
+        //判断当前显示界面是否在屏幕范围内,若是则不显示缩略图(因为全图已经显示了)
+        if ((mCanvasWidth <= (mWHPoint.x + 30f) && mCanvasHeight <= (mWHPoint.y + 30f)) ||
+                //若不需要绘制缩略图,则不绘制
+                //移动过程中会强制要求显示重绘缩略图
+                //因此需要获取是否需要绘制缩略图以判断是否确实需要绘制
+                (!mGlobleParams.isDrawThumbnail() || !mGlobleParams.isAllowDrawThumbnail())) {
+            //记录当前缩略图未显示
+            mGlobleParams.setIsThumbnailShowing(false);
+        } else {
             drawThumbnail(canvas, mPaint, mCanvasWidth, mCanvasHeight);
+            mGlobleParams.setIsThumbnailShowing(true);
         }
 
 
@@ -1430,7 +1447,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
     @Override
     public boolean updateSeatIMap(int type, int rowIndexInMap, int columnIndexInMap) {
-        return this.mSeatDrawMap.updateSeatType(type, rowIndexInMap, columnIndexInMap);
+        boolean isSuccess = this.mSeatDrawMap.updateSeatType(type, rowIndexInMap, columnIndexInMap);
+        mDrawView.postInvalidate();
+        return isSuccess;
     }
 
     @Override
@@ -1673,12 +1692,6 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      */
     protected void drawThumbnail(Canvas canvas, Paint paint, float originalCanvasWidth, float originalCanvasHeight) {
 
-        //若不需要绘制缩略图,则不绘制
-        //移动过程中会强制要求显示重绘缩略图
-        //因此需要获取是否需要绘制缩略图以判断是否确实需要绘制
-        if (!mGlobleParams.isDrawThumbnail() || !mGlobleParams.isAllowDrawThumbnail()) {
-            return;
-        }
         RectF thumbnailRectf = this.beginDrawThumbnail(originalCanvasWidth, originalCanvasHeight);
         RectF showRecf = this.getShowRectfInThumbnail(originalCanvasWidth, originalCanvasHeight);
 
@@ -1699,6 +1712,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
         this.finishDrawThumbnail();
     }
+
 
     /**
      * 获取单击位置的座位索引值
@@ -2169,6 +2183,94 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     protected abstract Point updateNotifyRowWithColumn(Point notifyPoint);
 
     /**
+     * 判断是否单击点在指定的区域内
+     *
+     * @param clickX         单击点的X轴坐标
+     * @param clickY         单击点的Y轴坐标
+     * @param containerRectf 指定区域
+     * @return
+     */
+    private boolean isClickInRectf(float clickX, float clickY, RectF containerRectf) {
+        if (containerRectf == null) {
+            return false;
+        } else {
+            //X单击位置在宽内
+            if ((clickX >= containerRectf.left && clickX <= containerRectf.right) &&
+                    //Y单击位置在高内
+                    (clickY >= containerRectf.top && clickY <= containerRectf.bottom)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * 单击缩略图切换位置功能
+     *
+     * @param event
+     * @return
+     */
+    private boolean singleClickThumbnail(MotionEvent event) {
+        if (!mGlobleParams.isThumbnailShowing()) {
+            return false;
+        }
+
+        //当前单击的位置
+        float clickPositionX = event.getX();
+        float clickPositionY = event.getY();
+        //设置开始绘制缩略图的标志
+        RectF thumbnailRectf = this.beginDrawThumbnail(mCanvasWidth, mCanvasHeight);
+        if (!isClickInRectf(clickPositionX, clickPositionY, thumbnailRectf)) {
+            //结束绘制缩略图的结束
+            this.finishDrawThumbnail();
+            return false;
+        } else {
+            //获取缩略图实际绘制的宽度
+            float targetWidth = this.getThumbnailWidth();
+            //计算缩放比
+            float thumbnailRate = targetWidth / mCanvasWidth;
+            //获取当前缩略图显示框
+            RectF showAreaRectf = this.getShowRectfInThumbnail(mCanvasWidth, mCanvasHeight);
+            //记录当前缩略图显示框的中心位置
+            PointF currentCenterPoint = new PointF(showAreaRectf.centerX(), showAreaRectf.centerY());
+            //目标位置在缩略图中到顶端的距离
+            float targetYDistacneInThumbnail = clickPositionY - 0;
+            //目标位置在缩略图中到左端的距离
+            float targetXDistanceInThumbnail = clickPositionX - 0;
+
+            if (targetYDistacneInThumbnail < showAreaRectf.height() / 2) {
+                targetYDistacneInThumbnail = showAreaRectf.height() / 2;
+            }
+            if (targetXDistanceInThumbnail < showAreaRectf.width() / 2) {
+                targetXDistanceInThumbnail = showAreaRectf.width() / 2;
+            }
+
+            //在缩略图中,当前位置与目标位置的Y轴偏移量
+            float offsetYInThumbnail = targetYDistacneInThumbnail - currentCenterPoint.y;
+            //在缩略衅中,当前位置与目标位置的X轴偏移量
+            float offsetXInThumbnail = targetXDistanceInThumbnail - currentCenterPoint.x;
+            //结束缩略衅绘制的标志
+            this.finishDrawThumbnail();
+
+
+            //在实际界面中,X轴的偏移量
+            float offsetYInCanvas = offsetYInThumbnail / thumbnailRate;
+            //在实际界面中,Y轴的偏移量
+            float offsetXInCanvas = offsetXInThumbnail / thumbnailRate;
+            //增加X/Y轴的偏移量
+            //偏移量是反方向的，所以当前的偏移值应该增加为其负值
+            mBeginDrawOffsetX -= offsetXInCanvas;
+            mBeginDrawOffsetY -= offsetYInCanvas;
+
+            //尝试重绘
+            mDrawView.postInvalidate();
+
+            return true;
+        }
+    }
+
+    /**
      * 单击选择座位事件
      *
      * @param event
@@ -2291,7 +2393,11 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      */
     @Override
     public void onSingleClickByDistance(MotionEvent event) {
-        this.singleClickChooseSeat(event);
+        if (this.singleClickThumbnail(event)) {
+            return;
+        } else {
+            this.singleClickChooseSeat(event);
+        }
     }
 
     @Override

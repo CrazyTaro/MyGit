@@ -4,6 +4,7 @@ import android.graphics.PointF;
 
 import us.bestapp.henrytaro.params.absparams.BaseStageParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
+import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
  * Created by xuhaolin on 2015/8/9.
@@ -11,6 +12,24 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  * <p>所有{@code protected}方法及部分{@code public}都是绘制时需要的,对外公开可以进行设置的方法只允许从接口中进行设置,详见{@link IStageParams}</p>
  */
 public class StageParams extends BaseStageParams {
+
+    @Override
+    public float getDescriptionSize() {
+        if (StringUtils.isNullOrEmpty(this.getStageDescription())) {
+            return 0;
+        } else {
+            //计算理论字体大小,以舞台宽度为标准
+            //此处由于舞台是不规则的,以舞台最短的宽设为文字的最大长度(底边<顶边)
+            float theoryTextLength = this.getWidth() - 2 * this.getHeight();
+            float textSize = theoryTextLength / this.getStageDescription().length();
+            //理论值大于舞台高度时,以舞台高度为标准
+            if (textSize > this.getHeight()) {
+                return this.getHeight() * 0.8f;
+            } else {
+                return textSize;
+            }
+        }
+    }
 
     /**
      * 更改舞台默认形状
