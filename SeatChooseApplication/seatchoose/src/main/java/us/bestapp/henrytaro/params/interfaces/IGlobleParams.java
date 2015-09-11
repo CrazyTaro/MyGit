@@ -274,6 +274,20 @@ public interface IGlobleParams {
      */
     public int getCenterDotLineColor();
 
+    /**
+     * 设置是否启用通过单击缩略图快速显示某个区域的功能
+     *
+     * @param isEnabled
+     */
+    public void setIsEnabledQuickShowByClickOnThumbnail(boolean isEnabled);
+
+    /**
+     * 获取是否启用通过单击缩略图快速显示某个区域的功能
+     *
+     * @return
+     */
+    public boolean isEnabledQuickShowByClickOnThumbnail();
+
 //    /**
 //     * 获取是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
 //     *

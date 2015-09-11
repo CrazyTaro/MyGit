@@ -2393,9 +2393,17 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      */
     @Override
     public void onSingleClickByDistance(MotionEvent event) {
-        if (this.singleClickThumbnail(event)) {
-            return;
-        } else {
+        boolean isQuickClickThumbnail = false;
+        //判断是否启用快速显示区域功能
+        if (mGlobleParams.isEnabledQuickShowByClickOnThumbnail()) {
+            //获取是否成功显示
+            isQuickClickThumbnail = this.singleClickThumbnail(event);
+        }
+        //若显示成功,则不处理其它事件(座位的选中事件)
+        //否则则处理座位选中事件
+        //这是由于单击在缩略图上时,若处理了显示事件,又处理座位选中事件
+        //可能导致无意选中某个座位
+        if (!isQuickClickThumbnail) {
             this.singleClickChooseSeat(event);
         }
     }

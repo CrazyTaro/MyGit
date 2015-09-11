@@ -37,6 +37,8 @@ public class BaseGlobleParams implements IGlobleParams {
     private boolean mIsThumbnailShowing = false;
     //是否允许双击放大缩小界面
     private boolean mIsEnabledDoubleClickScale = true;
+    //是否允许通过单击缩略图快速显示区域
+    private boolean mIsEnabledQuickShowByClickThumbnail = true;
 
     //选中行列的提醒
     private boolean mIsDrawSeletedRowColumnNotification = false;
@@ -282,6 +284,16 @@ public class BaseGlobleParams implements IGlobleParams {
     @Override
     public int getCenterDotLineColor() {
         return this.mDotLineColor;
+    }
+
+    @Override
+    public void setIsEnabledQuickShowByClickOnThumbnail(boolean isEnabled) {
+        this.mIsEnabledQuickShowByClickThumbnail = isEnabled;
+    }
+
+    @Override
+    public boolean isEnabledQuickShowByClickOnThumbnail() {
+        return this.mIsEnabledQuickShowByClickThumbnail;
     }
 
     /**
