@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatInterfaces;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.view.SeatChooseView;
 
 
@@ -32,7 +33,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         view = (SeatChooseView) findViewById(R.id.view_choose);
-        ISeatInterfaces seatInterface = view.getSeatHandleInterface();
+        ISeatDrawHandle seatInterface = view.getSeatDrawInterface();
+        ISeatParams params = seatInterface.getSeatParams();
     }
 
     @Override
