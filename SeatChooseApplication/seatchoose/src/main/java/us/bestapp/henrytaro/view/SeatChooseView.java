@@ -13,7 +13,7 @@ import java.util.List;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
-import us.bestapp.henrytaro.draw.utils.SeatDrawUtils;
+import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
@@ -25,7 +25,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          <p/>
  *          created by xuhaolin at 2015/08/10
  *          <p>可以自定义view并使用已有的绘制参数类进行处理,会更加灵活</p>
- *          <p>使用自定义View时需要创建内部对象{@link SeatDrawUtils},此类是处理所有绘制方法的重要类,必须使用该类才能完成绘制功能,
+ *          <p>使用自定义View时需要创建内部对象{@link SimpleDrawUtils},此类是处理所有绘制方法的重要类,必须使用该类才能完成绘制功能,
  *          同时需要重写view的onDraw事件,通过调用seatDrawUtil.drawCanvas()完成绘制.</p>
  *          <p>如果需要处理选座事件,请实现接口{@link ISeatInformationListener},
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
@@ -65,7 +65,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     private void initial(Context context) {
         mContext = context.getApplicationContext();
         //创建绘制对象
-        mSeatDrawHandle = new SeatDrawUtils(this.getContext(), this);
+        mSeatDrawHandle = new SimpleDrawUtils(this.getContext(), this);
         mSeatParams = mSeatDrawHandle.getSeatParams();
 
         //不显示log

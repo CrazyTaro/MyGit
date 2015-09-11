@@ -29,42 +29,67 @@ import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
 
 /**
+ * Created by xuhaolin in 2015-08-07
+ * <p/>
+ * <p>座位绘制抽象工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件.<b>此抽象类已经做好基本的绘制处理,通过继承此类,
+ * 实现对普通座位与舞台的自定义绘制即可;若不需要特别的处理或者只需要少量的修改,可以考虑使用默认绘制类{@link SimpleDrawUtils}</b>,
+ * 此抽象类已继承触摸事件并实现所有方法(包括空方法),若需要自定义处理某些事件请直接重写,事件详见{@link AbsTouchEventHandle}</p>
+ * <p>
+ * <p><font color="#ff9900"><b>此抽象类已经做好基本的绘制处理,通过继承此类,通过组合提供的{@code protected}绘制方法可以更加灵活地处理</b></font>,
+ * 如果通过继承此类完成定制的绘制时,需要注意重写部分方法以达到正确的绘制结果;建议重写{@link #drawNormalCanvas(Canvas, Paint, float)}</p>
+ * <p>
+ * <p><b>此类默认的绘制流程如下:使用参数{@link StageParams}在顶端中心位置绘制舞台,并以舞台为起点,依次向下绘制座位类型{@code seatType}及普通座位{@code sellSeat};
+ * 基本座位类型及普通座位参数均来自于{@link SeatParams}</b>,
+ * 当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @since}标注</font></p>
+ * <br/>
+ * <p>
+ * <p><font color="#ff9900"><b>所有{@code protected} 方法都是绘制时需要的,对外公开可以进行设置的方法只允许从实现接口{@link ISeatDrawHandle}方法中进行设置</b></font></p>
+ *
  * @author xuhaolin
  * @version 7.0
- *          <p/>
- *          Created by xuhaolin in 2015-08-07
- *          <p/>
- *          <p>座位绘制工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件</p>
- *          <p><font color="#ff9900"><b>如果需要定制特殊的绘制,可以继承此类,通过组合提供的{@code protected}绘制方法可以更加灵活地处理</b></font>,
- *          如果通过继承此类完成定制的绘制时,需要注意重写部分方法以达到正确的绘制结果</p>
- *          <p><b>此类默认的绘制流程如下:使用参数{@link StageParams}在顶端中心位置绘制舞台,并以舞台为起点,依次向下绘制座位类型{@code seatType}及普通座位{@code sellSeat};
- *          基本座位类型及普通座位参数均来自于{@link SeatParams}</b>,
- *          当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @since}标注</font></p>
- *          <br/>
- *          <p>所有{@code protected}方法都是绘制时需要的,对外公开可以进行设置的方法只允许从{@code public}方法中进行设置</p>
  */
 public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandle {
-    private IGlobleParams mGlobleParams = null;
-    //座位参数
-    private BaseSeatParams mSeatParams = null;
-    //舞台参数
-    private BaseStageParams mStageParams = null;
+    /**
+     * 全局参数,所需要用到的全局性参数均来自此接口,如背景色/是否绘制缩略图/是否绘制行列号等
+     */
+    protected IGlobleParams mGlobleParams = null;
+    /**
+     * 座位参数,座位类型及绘制座位需要的参数,详见{@link BaseSeatParams}
+     */
+    protected BaseSeatParams mSeatParams = null;
+    /**
+     * 舞台参数,舞台类型及绘制舞台需要的参数,详见{@link BaseStageParams}
+     */
+    protected BaseStageParams mStageParams = null;
 
     protected Paint mPaint = null;
+    /**
+     * 用于保存当前view的宽高,可调用方法{@link #getWidthAndHeight()}获取,请注意当view未加载时可能返回值是0
+     */
     protected PointF mWHPoint = null;
-    //图片座位位置
+    /**
+     * 图片绘制区域,此对象仅为暂存绘制区域,可用于座位或者舞台(通用变量)
+     */
     protected RectF mImageRectf = null;
     protected ISeatInformationListener mISeatInformationListener = null;
 
-    //实际界面绘制的高度
+    /**
+     * 实际界面绘制的高度
+     */
     protected float mCanvasHeight = 0f;
-    //实际界面绘制的宽度
+    /**
+     * 实际界面绘制的宽度
+     */
     protected float mCanvasWidth = 0f;
-    //原始偏移量
+    /**
+     * 原始偏移量
+     */
     protected float mOriginalOffsetX = 0f;
     protected float mOriginalOffsetY = 0f;
-    //用户触摸偏移量
     private boolean mIsScaleRedraw = true;
+    /**
+     * 用户触摸偏移量
+     */
     protected float mBeginDrawOffsetY = 0f;
     protected float mBeginDrawOffsetX = 0f;
 
@@ -96,9 +121,13 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     private boolean mIsMoved = false;
 
     protected Context mContext = null;
-    //绑定的用于绘制界面的View
+    /**
+     * 绑定的用于绘制界面的View
+     */
     protected View mDrawView = null;
-    //座位列表
+    /**
+     * 座位列表
+     */
     protected IMapEntity mSeatDrawMap = null;
     //是否绘制选中行列通知界面
     private boolean mIsDrawSeletedRowColumn = false;
@@ -1552,8 +1581,17 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
     /**
      * 绘制正常的界面,缩略图的绘制{@link #drawThumbnail(Canvas, Paint, float, float)}本身是依赖于此方法的,
-     * <b>此若需要自定义绘制类,通过继承此类后修改绘制流程则基本必须重写此类</b>
+     * 此方法实现了一次界面完整绘制的功能,{@link #drawCanvas(Canvas)}为总的绘制处理方法,<br/>
+     * <b><font color="#ff9900">若需要自定义绘制的流程,建议重写此方法,此类仅更改绘制流程,若需要修改绘制的具体内容
+     * 请重写对应的方法:</font><br/>
+     * 重写普通座位绘制: {@link #drawNormalSeat(Canvas, Paint, BaseSeatParams, float, float, int)}<br/>
+     * 重写图片座位绘制: {@link #drawImageSeat(Canvas, Paint, BaseSeatParams, float, float, int)}<br/>
+     * 重写缩略图座位绘制: {@link #drawThumbnailSeat(Canvas, Paint, BaseSeatParams, float, float, int)}<br/>
+     * 重写普通舞台绘制: {@link #drawNormalStage(Canvas, Paint, BaseStageParams, float, float)}<br/>
+     * 重写图片舞台绘制: {@link #drawImageStage(Canvas, Paint, BaseStageParams, float, float)}<br/>
+     * 重写缩略图舞台绘制: {@link #drawThumbnailStage(Canvas, Paint, BaseStageParams, float, float)}</b>
      * <br/>
+     * <p>
      * <br/>
      * <p>此方法的绘制流程大致如下:
      * <br/>

@@ -134,8 +134,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         mChooseview.setISeatChooseEvent(this);
         ISeatDrawHandle seatDataHandle = mChooseview.getSeatDrawInterface();
         seatDataHandle.setIsShowLog(false, null);
-//        seatDataHandle.setSeatDrawMap(dataMap);
-        seatDataHandle.setSeatDrawMap(new EgSeatMap(mSeatMap));
+        seatDataHandle.setSeatDrawMap(dataMap);
+//        seatDataHandle.setSeatDrawMap(new EgSeatMap(mSeatMap));
 
         IGlobleParams globleParams = seatDataHandle.getGlobleParams();
         globleParams.setIsDrawThumbnail(true);

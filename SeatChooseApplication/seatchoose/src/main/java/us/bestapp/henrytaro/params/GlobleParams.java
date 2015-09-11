@@ -4,13 +4,14 @@ package us.bestapp.henrytaro.params;/**
 
 import android.graphics.Color;
 
+import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * created by xuhaolin at 2015/08/27
  * <p>实现了全局变量设置的接口{@link IGlobleParams},提供对外的参数设置接口</p>
- * <p><font color="#ff9900"><b>此类很重要!!!此类是绘制工具{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils}基本所必须的,请必须保证此类为有效引用</b></font>,
+ * <p><font color="#ff9900"><b>此类很重要!!!此类是绘制工具{@link SimpleDrawUtils}基本所必须的,请必须保证此类为有效引用</b></font>,
  * 在所有接口中并不提供此类的替换接口或者是重新设置的接口,但可以通过方法获取到此类的引用,
  * 该方法是用于设置全局参数,但可能会被设置为null引用,此时会出错</p>
  */

@@ -13,7 +13,9 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
- * Created by xuhaolin on 15/9/10.
+ * Created by xuhaolin on 15/9/10.<br/>
+ * 舞台绘制参数基本类,该类继承了对外公开接口{@link IStageParams},此接口所有的方法用于对外公开提供给用户调用;
+ * 其余此类中的 {@code public} 方法均是用于提供给绘制时使用的方法,需要自定义参数类时请继承此方法重写部分方法即可
  */
 public class BaseStageParams extends AbsBaseParams implements IStageParams {
     /**
@@ -229,12 +231,23 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         }
     }
 
-
+    /**
+     * 获取舞台占用的高度，包括舞台距顶端的高度+舞台实际高度+舞台与下方（座位）间隔高度
+     *
+     * @return 返回舞台占用的高度
+     */
     public float getStageTotalHeight() {
         return this.getHeight() + this.getStageMarginBottom() + this.getStageMarginTop();
     }
 
-
+    /**
+     * 获取舞台绘制的路径
+     *
+     * @param drawCenterX  舞台绘制位置的X轴中心
+     * @param drawCenterY  舞台绘制位置的Y轴中心
+     * @param isClosedPath 是否闭合路径
+     * @return
+     */
     public Path getStageDrawPath(float drawCenterX, float drawCenterY, boolean isClosedPath) {
         Path stagePath = new Path();
         PointF[] points = this.getStagePathPoint(drawCenterX, drawCenterY);
@@ -257,7 +270,7 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
 
 
     /**
-     * 获取舞台绘制的路径,默认是长方形
+     * 获取舞台绘制的路径,默认是长方形,<font color="#ff9900"><b>若需要更改舞台的绘制形状,覆盖此方法即可</b></font>
      *
      * @param drawCenterX 舞台绘制位置的中心X轴坐标
      * @param drawCenterY 舞台绘制位置的中心Y轴坐标

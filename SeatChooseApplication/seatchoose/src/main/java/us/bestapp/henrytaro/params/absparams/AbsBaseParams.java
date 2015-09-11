@@ -9,14 +9,12 @@ import android.graphics.RectF;
 import java.io.InputStream;
 
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 
 /**
  * Created by xuhaolin on 2015/8/24.
- * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParams})及全局性的参数(开放设置接口为{@link IGlobleParams})</p>
- * <br/><font color="#ff9900"><b>继承绘制类{@link us.bestapp.henrytaro.draw.utils.SeatDrawUtils}自定义绘制时,若需要使用自定义的参数,
- * 请继承此类</b></font>
+ * <p>创建参数类型对应的基本类,此类包括子类参数需要的共同的参数(开放设置接口为{@link IBaseParams})</p>
+ * <br/><font color="#ff9900"><b>此类是舞台与座位参数类的基类,自定义参数时请尽量继承{@link BaseStageParams}/{@link BaseSeatParams}</b></font>
  */
 public abstract class AbsBaseParams implements IBaseParams {
 
@@ -129,6 +127,14 @@ public abstract class AbsBaseParams implements IBaseParams {
         this.storeOriginalValues(null);
     }
 
+    /**
+     * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的<br/>
+     * <font color="#ff9900"><b>只有当设置为true时,后面两个参数才有效,否则无效</b></font>
+     *
+     * @param isDrawThumbnail 是否绘制缩略图,<font color="#ff9900"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
+     * @param originalWidth   实际绘制界面的宽度
+     * @param targetWidth     目标缩略图的宽度
+     */
     public void setIsDrawThumbnail(boolean isDrawThumbnail, float originalWidth, float targetWidth) {
         this.mIsDrawThumbnail = isDrawThumbnail;
         if (originalWidth != DEFAULT_FLOAT && targetWidth != DEFAULT_FLOAT && isDrawThumbnail) {
@@ -136,6 +142,11 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
+    /**
+     * 获取是否绘制缩略图
+     *
+     * @return
+     */
     public boolean isDrawThumbnail() {
         return this.mIsDrawThumbnail;
     }
@@ -159,6 +170,13 @@ public abstract class AbsBaseParams implements IBaseParams {
     }
 
 
+    /**
+     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParams#DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
+     * <p>该缩放倍数是以默认高度为基数</p>
+     *
+     * @param large 放大倍数
+     * @return 设置成功返回true, 否则返回false, 不改变原值
+     */
     public boolean setLargeScaleRate(int large) {
         if (large == DEFAULT_INT) {
             this.mLargeScaleRate = 24;
@@ -171,7 +189,13 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    /**
+     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParams#DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
+     * <p>该缩放倍数是以默认高度为基数</p>
+     *
+     * @param small 缩小比例
+     * @return 设置成功返回true, 否则返回false
+     */
     public boolean setSmallScaleRate(float small) {
         if (small == DEFAULT_INT) {
             this.mSmallScaleRate = 0.5f;
@@ -184,12 +208,20 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    /**
+     * 获取最大的高度
+     *
+     * @return
+     */
     public float getLargestHeight() {
         return this.mHeight * mLargeScaleRate;
     }
 
-
+    /**
+     * 获取最小的高度
+     *
+     * @return
+     */
     public float getSmallestHeight() {
         return this.mHeight * mSmallScaleRate;
     }
@@ -209,7 +241,7 @@ public abstract class AbsBaseParams implements IBaseParams {
         return this.getHeight() * 0.8f;
     }
 
-
+    @Override
     public void setDrawType(int drawType) {
         if (drawType == DEFAULT_INT) {
             this.mDrawType = DRAW_TYPE_DEFAULT;
@@ -218,7 +250,7 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    @Override
     public int getDrawType(boolean isGetOriginalDrawType) {
         if (mIsDrawThumbnail && !isGetOriginalDrawType) {
             return DRAW_TYPE_THUMBNAIL;
@@ -227,12 +259,20 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    /**
+     * 设置是否进行对象绘制
+     *
+     * @param isDraw
+     */
     public void setIsDraw(boolean isDraw) {
         this.mIsDraw = isDraw;
     }
 
-
+    /**
+     * 是否绘制对象
+     *
+     * @return 返回true绘制, 返回false不绘制
+     */
     public boolean isDraw() {
         return mIsDraw;
     }
@@ -360,7 +400,7 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    @Override
     public void setWidth(float width) {
         this.setWidth(width, true);
     }
@@ -390,6 +430,7 @@ public abstract class AbsBaseParams implements IBaseParams {
      *
      * @return
      */
+    @Override
     public float getHeight() {
         if (mIsDrawThumbnail) {
             return mHeight * mThumbnailRate;
@@ -399,6 +440,7 @@ public abstract class AbsBaseParams implements IBaseParams {
     }
 
 
+    @Override
     public void setHeight(float height) {
         this.setHeight(height, true);
     }
@@ -428,6 +470,7 @@ public abstract class AbsBaseParams implements IBaseParams {
      *
      * @return
      */
+    @Override
     public float getRadius() {
         if (mIsDrawThumbnail) {
             return mRadius * mThumbnailRate;
@@ -436,6 +479,7 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
+    @Override
     public void setRadius(float radius) {
         if (radius == DEFAULT_FLOAT) {
             this.mRadius = DEFAULT_RADIUS;
@@ -444,17 +488,30 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-
+    /**
+     * 获取当前绘制的颜色
+     *
+     * @return
+     */
     public int getColor() {
         return mColor;
     }
 
-
+    /**
+     * 设置当前的绘制颜色值
+     *
+     * @param color
+     */
     public void setColor(int color) {
         this.mColor = color;
     }
 
-
+    /**
+     * 是否可以进行缩放,用于检测当前比例是否允许进行缩放,<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
+     *
+     * @param scaleRate 新的缩放比例
+     * @return 可以缩放返回true, 否则返回false
+     */
     public boolean isCanScale(float scaleRate) {
         float newHeight = this.mHeight * scaleRate;
         //由于座位的宽度是决定座位对应的文字
@@ -470,6 +527,15 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
+
+    /**
+     * 获取当前对象绘制的区域,区域的宽高以对象本身的宽高为准,且必须为长方形
+     *
+     * @param imageRecft    绘制区域
+     * @param drawPositionX 对象绘制的中心X
+     * @param drawPositionY 对象绘制的中心Y
+     * @return
+     */
     public RectF getDrawRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
         if (imageRecft == null) {
             imageRecft = new RectF();

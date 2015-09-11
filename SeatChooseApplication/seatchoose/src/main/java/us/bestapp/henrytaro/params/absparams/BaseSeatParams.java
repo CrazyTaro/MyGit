@@ -5,13 +5,14 @@ package us.bestapp.henrytaro.params.absparams;/**
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.RectF;
 
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 /**
- * Created by xuhaolin on 15/9/10.
+ * Created by xuhaolin on 15/9/10.<br/>
+ * 座位绘制参数基本类,该类继承了对外公开接口{@link ISeatParams},此接口所有的方法用于对外公开提供给用户调用;
+ * 其余此类中的 {@code public} 方法均是用于提供给绘制时使用的方法,需要自定义参数类时请继承此方法重写部分方法即可
  */
 public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     /**
@@ -26,18 +27,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 默认座位高度
      */
     public static final float DEFAULT_SEAT_HEIGHT = 50f;
-//    /**
-//     * 默认主座位高度
-//     */
-//    public static final float DEFAULT_SEAT_MAIN_HEIGHT = DEFAULT_SEAT_HEIGHT * 0.75f;
-//    /**
-//     * 默认次座位高度
-//     */
-//    public static final float DEFAULT_SEAT_MINOR_HEIGHT = DEFAULT_SEAT_HEIGHT * 0.2f;
-//    /**
-//     * 默认主次座位间隔高度
-//     */
-//    public static final float DEFAULT_SEAT_HEIGHT_INTERVAL = DEFAULT_SEAT_HEIGHT * 0.05f;
     /**
      * 默认座位列表中座位间的水平间隔宽度
      */
@@ -91,13 +80,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParams#DRAW_TYPE_NO}保持一致
      */
     public static int seat_type_unshow = IBaseParams.DRAW_TYPE_NO;
-
-//    //主座位高度, 与次座位一起绘制显示为一个座位,显得好看一点,此参数不对外公开
-//    protected float mMainSeatHeight = DEFAULT_SEAT_MAIN_HEIGHT;
-//    //次座位高度
-//    protected float mMinorSeatHeight = DEFAULT_SEAT_MINOR_HEIGHT;
-//    //主次座位之间的间隔
-//    protected float mSeatHeightInterval = DEFAULT_SEAT_HEIGHT_INTERVAL;
 
     //座位间水平间隔
     protected float mSeatHorizontalInterval = DEFAULT_SEAT_HORIZONTAL_INTERVAL;
@@ -614,6 +596,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
 
+    /**
+     * 获取自动计算并分离的seatParams,用于座位类型的分批绘制
+     *
+     * @param seatTypeRowCount 座位类型绘制的行数
+     * @return
+     */
     public BaseSeatParams[] getAutoSeparateParams(int seatTypeRowCount) {
         BaseSeatParams[] seatTypeParams = null;
         //座位类型个数
@@ -695,7 +683,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * @param bitmapArr         座位图片资源Bitmap
      * @return
      */
-
     protected BaseSeatParams getSelectableClone(BaseSeatParams newObj, int[] seatTypeArr, int[] seatColorArr, int[] thumbnailColorArr, String[] descArr, int[] imageIDArr, Bitmap[] bitmapArr) {
         //记录原始的缩略图绘制标志
         boolean isThumbnail = this.isDrawThumbnail();
@@ -778,6 +765,13 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         }
     }
 
+    /**
+     * 根据座位类型获取座位绘制的图片
+     *
+     * @param context  上下文对象,用于加载图片
+     * @param seatType 座位类型
+     * @return 返回座位类型对应的图片, 可能为null
+     */
     public Bitmap getSeatBitmapByType(Context context, int seatType) {
         loadSeatImage(context, false);
         if (mSeatTypeArrary != null) {

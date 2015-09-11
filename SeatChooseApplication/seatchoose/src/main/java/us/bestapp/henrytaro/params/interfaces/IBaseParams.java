@@ -145,6 +145,9 @@ public interface IBaseParams {
     /**
      * 获取此实例的自我复制
      *
+     * @param newObj 用于存储拷贝数据的新的对象,若该对象为null会尝试创建一个新对象进行处理,<font color="#ff9900"><b>
+     *               但创建的对象是基于基类,拷贝的数据也仅限于基类,同时若需要对继承子类的特有数据做更改则需要重写此类.</b></font>
+     *               建议重写此类,创建一个子类的对象并作为参数传递进去即可
      * @return
      */
     public Object getClone(Object newObj);

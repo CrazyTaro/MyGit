@@ -16,14 +16,17 @@ import us.bestapp.henrytaro.params.StageParams;
 import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.absparams.BaseStageParams;
 
-
-public class SeatDrawUtils extends AbsDrawUtils {
+/**
+ * Created by xuhaolin on 15/8/6.<br/>
+ * 默认实现的简单绘制工具类,可直接从此类扩展,若需要自定义则从基类扩展{@link AbsDrawUtils}
+ */
+public class SimpleDrawUtils extends AbsDrawUtils {
     //主座位,两者结合让座位看起来比较好看而已...
     private RectF mMainSeatRectf = null;
     //次座位,两者结合让座位看起来比较好看而已...
     private RectF mMinorSeatRectf = null;
 
-    public SeatDrawUtils(Context context, View drawView) {
+    public SimpleDrawUtils(Context context, View drawView) {
         super(context, drawView, new SeatParams(), new StageParams(), new GlobleParams());
     }
 
