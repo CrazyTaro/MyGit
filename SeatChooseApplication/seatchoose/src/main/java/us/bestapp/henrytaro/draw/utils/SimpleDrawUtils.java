@@ -15,25 +15,32 @@ import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
 import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.absparams.BaseStageParams;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * Created by xuhaolin on 15/8/6.<br/>
  * 默认实现的简单绘制工具类,可直接从此类扩展,若需要自定义则从基类扩展{@link AbsDrawUtils}
  */
 public class SimpleDrawUtils extends AbsDrawUtils {
+    private SeatParams mSeatParams = null;
+    private StageParams mStageParams = null;
     //主座位,两者结合让座位看起来比较好看而已...
     private RectF mMainSeatRectf = null;
     //次座位,两者结合让座位看起来比较好看而已...
     private RectF mMinorSeatRectf = null;
 
     public SimpleDrawUtils(Context context, View drawView) {
-        super(context, drawView, new SeatParams(), new StageParams(), new GlobleParams());
+        super(context, drawView);
     }
 
 
     @Override
-    protected void initial() {
-        super.initial();
+    protected void initial(BaseSeatParams seat, BaseStageParams stage, IGlobleParams globle) {
+        super.initial(seat, stage, globle);
+        mSeatParams = new SeatParams();
+        mStageParams = new StageParams();
+
+        this.setParams(mSeatParams, mStageParams, globle);
         //创建主座位与次要座位
         //此部分仅仅是让座位看起来比较好看而已....
         mMainSeatRectf = new RectF();
@@ -130,4 +137,8 @@ public class SimpleDrawUtils extends AbsDrawUtils {
         return notifyPoint;
     }
 
+    @Override
+    public void resetParams() {
+        this.setParams(new SeatParams(), new StageParams(), new GlobleParams());
+    }
 }

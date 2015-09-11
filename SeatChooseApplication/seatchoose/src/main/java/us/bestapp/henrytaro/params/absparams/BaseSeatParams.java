@@ -595,6 +595,20 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         super.setDrawType(DRAW_TYPE_DEFAULT);
     }
 
+    /**
+     * 获取指定类型的对象
+     *
+     * @param T 继承自BaseSeatParams
+     * @return
+     */
+    private BaseSeatParams getClassObject(Class<? extends BaseSeatParams> T) {
+        try {
+            return T.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("当前参数类型无法正常创建对象或者不存在默认构造函数");
+        }
+    }
+
 
     /**
      * 获取自动计算并分离的seatParams,用于座位类型的分批绘制
@@ -602,7 +616,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * @param seatTypeRowCount 座位类型绘制的行数
      * @return
      */
-    public BaseSeatParams[] getAutoSeparateParams(int seatTypeRowCount) {
+    public BaseSeatParams[] getAutoSeparateParams(Class<? extends BaseSeatParams> T, int seatTypeRowCount) {
         BaseSeatParams[] seatTypeParams = null;
         //座位类型个数
         int seatTypeLength = this.getSeatTypeLength();
@@ -612,7 +626,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         //取消分离情况,按一行绘制
         if (seatTypeRowCount <= 0) {
             seatTypeParams = new BaseSeatParams[1];
-            seatTypeParams[0] = this;
+            //创建当前变量类型的对象
+            seatTypeParams[0] = this.getSelectableClone(this,
+                    //座位类型/座位颜色/缩略图颜色/座位类型描述
+                    this.mSeatTypeArrary, this.mSeatColorArrary, this.mThumbnailColorArray, this.mSeatTypeDescription,
+                    //座位图片资源
+                    this.mSeatImageID, this.mSeatImageBitmaps);
         } else {
             //正常分行
             //创建分离的行数的参数对象
@@ -654,7 +673,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
                 }
 
                 //按提供参数进行克隆
-                seatTypeParams[i] = this.getSelectableClone(new BaseSeatParams(), seatTypeArr, colorArr, thumbnailColorArr, descArr, imageIDArr, bitmapArr);
+                seatTypeParams[i] = this.getSelectableClone(getClassObject(T), seatTypeArr, colorArr, thumbnailColorArr, descArr, imageIDArr, bitmapArr);
             }
         }
 

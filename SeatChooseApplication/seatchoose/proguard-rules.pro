@@ -58,10 +58,10 @@
 #-keepparameternames class us.bestapp.henrytaro.params.**{*;}
 #-keepparameternames class us.bestapp.henrytaro.utils.**{*;}
 #
-#-keepparameternames class us.bestapp.henrytaro.draw.utils.SeatDrawUtils
+#-keepparameternames class us.bestapp.henrytaro.draw.utils.SimpleSeatDrawUtilswUtils
 #-keepparameternames class us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle
 
--keepclasseswithmembernames class us.bestapp.henrytaro.draw.utils.SeatDrawUtils{
+-keepclasseswithmembernames class us.bestapp.henrytaro.draw.utils.SimpleDrawUtils{
     public <fields>;
     public <methods>;
     protected <methods>;

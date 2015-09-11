@@ -51,10 +51,20 @@ public class SeatParams extends BaseSeatParams {
     }
 
 
+    /**
+     * 获取默认的座位绘制区域,自定义座位使用
+     *
+     * @param seatRectf     座位区域
+     * @param drawPositionX 座位绘制的中心X
+     * @param drawPositionY 座位绘制的中心Y
+     * @param isMainSeat    是否主座位(不是主座位即为次座位)
+     * @return
+     */
     public RectF getSeatDrawDefaultRectf(RectF seatRectf, float drawPositionX, float drawPositionY, boolean isMainSeat) {
         if (seatRectf == null) {
             seatRectf = new RectF();
         }
+        //创建主座位
         seatRectf.left = drawPositionX - this.getWidth() / 2;
         seatRectf.right = seatRectf.left + this.getWidth();
 
@@ -62,6 +72,7 @@ public class SeatParams extends BaseSeatParams {
         seatRectf.bottom = seatRectf.top + this.mMainSeatHeight;
 
         if (!isMainSeat) {
+            //若不是主座位,则更改上下座位坐标(左右是一致的)
             seatRectf.top = seatRectf.bottom + this.mSeatHeightInterval + this.mMinorSeatHeight / 2;
             seatRectf.bottom = seatRectf.top + this.mMinorSeatHeight;
         }
@@ -91,8 +102,12 @@ public class SeatParams extends BaseSeatParams {
 
     @Override
     protected BaseSeatParams getSelectableClone(BaseSeatParams newObj, int[] seatTypeArr, int[] seatColorArr, int[] thumbnailColorArr, String[] descArr, int[] imageIDArr, Bitmap[] bitmapArr) {
+        //获取新的座位参数
         newObj = super.getSelectableClone(newObj, seatTypeArr, seatColorArr, thumbnailColorArr, descArr, imageIDArr, bitmapArr);
-        this.autoCalculateSeatShapeHeight(this.getHeight());
+        //将当前的座位参数转成当前类
+        SeatParams newParams = (SeatParams) newObj;
+        //自动计算当前的座位各值的高度
+        newParams.autoCalculateSeatShapeHeight(this.getHeight());
         return newObj;
     }
 }

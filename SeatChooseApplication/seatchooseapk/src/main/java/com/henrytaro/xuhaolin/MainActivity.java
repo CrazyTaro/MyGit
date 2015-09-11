@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
         ISeatDrawHandle seatDataHandle = mChooseview.getSeatDrawInterface();
-        seatDataHandle.setIsShowLog(false, null);
+        seatDataHandle.setIsShowLog(true, null);
         seatDataHandle.setSeatDrawMap(dataMap);
 //        seatDataHandle.setSeatDrawMap(new EgSeatMap(mSeatMap));
 
@@ -144,7 +144,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 //        globleParams.setIsDrawColumnNumber(true);
 
         ISeatParams seatParams = seatDataHandle.getSeatParams();
-        seatParams.setIsDrawSeatType(false);
+        seatParams.setIsDrawSeatType(true);
 //        seatParams.setAllSeatTypeWithColor(new int[]{1, 8, 3}, seatParams.getSeatColorArrary(), seatParams.getThumbnailColorArrary(), seatParams.getSeatTypeDescription());
 //        seatParams.setSeatTypeConstant(8, 1, 0, 3);
 //        seatParams.setImage(new int[]{R.drawable.icon_bg, R.drawable.zuowei_selected, R.drawable.zuowei_disabled});
