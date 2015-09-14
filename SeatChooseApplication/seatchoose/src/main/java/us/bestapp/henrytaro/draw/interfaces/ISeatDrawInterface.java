@@ -2,7 +2,7 @@ package us.bestapp.henrytaro.draw.interfaces;
 
 import android.graphics.Canvas;
 
-import us.bestapp.henrytaro.entity.interfaces.IMapEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
@@ -27,14 +27,14 @@ public interface ISeatDrawInterface {
      *
      * @param seatMap
      */
-    public void setSeatDrawMap(IMapEntity seatMap);
+    public void setSeatDrawMap(AbsMapEntity seatMap);
 
     /**
      * 获取当前绘制使用的座位表
      *
      * @return
      */
-    public IMapEntity getSeatDrawMap();
+    public AbsMapEntity getSeatDrawMap();
 
     /**
      * 更新座位Map中的数据

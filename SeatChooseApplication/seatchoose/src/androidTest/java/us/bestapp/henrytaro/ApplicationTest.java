@@ -25,7 +25,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 //            String str =
 //                    "{\"rownum\": \"1\", \n\"rowid\": \"1\", \n\"columns\": \"ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0\"\n}";
 //            Gson gson = new Gson();
-//            Row row = gson.fromJson(str, Row.class);
+//            FilmRow row = gson.fromJson(str, FilmRow.class);
 //            String rowStr = row.toString();
 
         String jsonStr = "{\n" +

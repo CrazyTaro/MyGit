@@ -15,9 +15,9 @@ import android.view.View;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
-import us.bestapp.henrytaro.entity.interfaces.IMapEntity;
-import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
@@ -129,7 +129,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     /**
      * 座位列表
      */
-    protected IMapEntity mSeatDrawMap = null;
+    protected AbsMapEntity mSeatDrawMap = null;
     //是否绘制选中行列通知界面
     private boolean mIsDrawSeletedRowColumn = false;
     //是否已通知过达到缩放极限
@@ -568,10 +568,10 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     }
 
     /**
-     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(IMapEntity)},
+     * 绘制售票的座位,此方法绘制的座位来源于{@link #setSeatDrawMap(AbsMapEntity)},
      * 通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过{@link SeatParams}参数提前设置.
      * <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
-     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)}进行完成,
+     * 其中每一行的绘制调用了两次方法{@link #drawHorizontalSeatList(Canvas, Paint, float, float, AbsRowEntity, int, int)}进行完成,
      * 在绘制一行时,从中心位置开始向左右两端分别绘制,每一次调用{@code drawHorizontalSeatList}仅仅只绘制从中心到两端中某一端的部分,
      * 即只有半行,因此需要绘制两次</b></p>
      *
@@ -581,7 +581,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param drawPositionX 开始绘制的中心X轴位置(第一行座位,中心绘制位置)
      * @param drawPositionY 开始绘制的中心Y轴位置(第一行座位,中心绘制位置)
      */
-    protected void drawSellSeats(Canvas canvas, Paint paint, IMapEntity seatMap, float drawPositionX, float drawPositionY) {
+    protected void drawSellSeats(Canvas canvas, Paint paint, AbsMapEntity seatMap, float drawPositionX, float drawPositionY) {
         if (seatMap == null || seatMap.getRowCount() <= 0 || mSeatParams == null) {
             return;
         }
@@ -632,7 +632,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
         for (int i = 0; i < seatMap.getRowCount(); i++) {
             //获取行数据对象接口
-            IRowEntity seatRow = seatMap.getSeatRowInMap(i);
+            AbsRowEntity seatRow = seatMap.getSeatRowInMap(i);
             //对行数据进行检测判断是否需要绘制
             if (seatRow != null && seatRow.isDraw() && seatRow.isEmpty()) {
                 //当前行需要绘制但数据为空
@@ -794,7 +794,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     }
 
     /**
-     * 在sellSeat第一行绘制列数,此处的绘制方式同{@link #drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)},原理相同;<br/>
+     * 在sellSeat第一行绘制列数,此处的绘制方式同{@link #drawHorizontalSeatList(Canvas, Paint, float, float, AbsRowEntity, int, int)},原理相同;<br/>
      * 绘制行数分为两部分,从中轴线开始向左右两边绘制,所以需要调用此方法两次;
      *
      * @param canvas        画板
@@ -858,7 +858,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param end           座位列表中最后绘制的索引,<font color="#ff9900"><b>此索引位置的座位不被绘制</b></font>
      * @return 若需要绘制行, 则返回true, 不需要绘制行, 返回false
      */
-    protected boolean drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, IRowEntity seatRow, int start, int end) {
+    protected boolean drawHorizontalSeatList(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, AbsRowEntity seatRow, int start, int end) {
         if (seatRow == null || !seatRow.isDraw()) {
             return false;
         }
@@ -874,7 +874,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                 do {
                     //尝试获取数据进行处理,若无法获取到数据则将位置计算到最后
                     //获取对应位置座位的类型
-                    ISeatEntity seat = seatRow.getSeat(i);
+                    AbsSeatEntity seat = seatRow.getSeatEntity(i);
                     if (seat == null) {
                         //计算下一个绘制座位的X轴位置
                         //由于此处绘制的座位是同一行的,所以仅X轴位置改变,Y轴位置不会改变
@@ -1433,7 +1433,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     }
 
     @Override
-    public void setSeatDrawMap(IMapEntity seatMap) {
+    public void setSeatDrawMap(AbsMapEntity seatMap) {
         //设置新的座位列表
         this.mSeatDrawMap = seatMap;
         //重绘
@@ -1441,7 +1441,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     }
 
     @Override
-    public IMapEntity getSeatDrawMap() {
+    public AbsMapEntity getSeatDrawMap() {
         return this.mSeatDrawMap;
     }
 
@@ -1643,7 +1643,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * 4.获取座位类型绘制的高度{@link #getSeatTypeDrawCenterY()}<br/>
      * 5.绘制座位类型{@link #drawSeatTypeByAuto(Canvas, Paint, float, int)}<br/>
      * 6.获取普通座位绘制的高度{@link #getSellSeatDrawCenterY(int, boolean)}<br/>
-     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, IMapEntity, float, float)}<br/>
+     * 7.绘制普通座位{@link #drawSellSeats(Canvas, Paint, AbsMapEntity, float, float)}<br/>
      * 8.绘制中心分界线{@link #getCenterDotLine(float, float, float)}<br/>
      * </p>
      *
@@ -2295,7 +2295,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                     clickSeatPoint.y < mSeatDrawMap.getColumnCount(clickSeatPoint.x)) {
                 if (mISeatInformationListener != null) {
                     //获取当前选中区域的座位类型
-                    ISeatEntity seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
+                    AbsSeatEntity seat = mSeatDrawMap.getSeatEntity(clickSeatPoint.x, clickSeatPoint.y);
                     //更新座位状态
                     mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_SEAT);
                     //通知选中map中的有效区域

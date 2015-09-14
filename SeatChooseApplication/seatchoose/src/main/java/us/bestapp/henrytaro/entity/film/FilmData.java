@@ -7,15 +7,15 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 
 /**
  * Created by xuhaolin on 15/9/2.<br/>
  * 来自JSON数据中的对象
  */
-public class Data {
+public class FilmData {
     @SerializedName("row")
-    private List<Row> mRowList;
+    private List<FilmRow> mRowList;
 
     private int mMaxColumnCount = 0;
 
@@ -24,10 +24,10 @@ public class Data {
      *
      * @return
      */
-    public List<IRowEntity> getRowList() {
+    public List<AbsRowEntity> getRowList() {
         if (mRowList != null && mRowList.size() > 0) {
-            List<IRowEntity> newList = new ArrayList<IRowEntity>();
-            for (Row row : mRowList) {
+            List<AbsRowEntity> newList = new ArrayList<AbsRowEntity>();
+            for (FilmRow row : mRowList) {
                 newList.add(row);
             }
             return newList;
@@ -53,12 +53,13 @@ public class Data {
             int lastRowNumber = 0;
             int currentRowNumber = 0;
             for (int i = 0; i < mRowList.size(); i++) {
-                Row row = mRowList.get(i);
-                row.parseJson();
+                FilmRow row = mRowList.get(i);
+                row.parseData();
                 //记录每行中最大的列数,因为不是每一行的列数都相同
                 mMaxColumnCount = mMaxColumnCount < row.getColumnCount() ? row.getColumnCount() : mMaxColumnCount;
                 //解析第一行数据记录第一行的行号
-                if (i == 0) {
+                //第一行行号必须从1开始,若未从1开始则将之前的几行空行补充完整
+                if (i == 0 && row.getRowNumber() == 1) {
                     lastRowNumber = row.getRowNumber();
                 } else {
                     //当前行的行号
@@ -68,7 +69,7 @@ public class Data {
                         int tempIndex = i;
                         //在不连续的两行之间补充空行
                         for (int j = lastRowNumber + 1; j < currentRowNumber; j++) {
-                            mRowList.add(tempIndex, new Row(j, null, true, true));
+                            mRowList.add(tempIndex, new FilmRow(j, null, true, true));
                         }
                         //重新计算补充后的索引
                         i += currentRowNumber - lastRowNumber - 1;

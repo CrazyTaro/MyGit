@@ -4,9 +4,8 @@ package us.bestapp.henrytaro.entity.film;/**
 
 import com.google.gson.annotations.SerializedName;
 
-import us.bestapp.henrytaro.entity.AbsSeat;
-import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
@@ -14,7 +13,7 @@ import us.bestapp.henrytaro.utils.StringUtils;
  * Created by xuhaolin on 15/9/2.<br/>
  * 来自JSON数据中的对象
  */
-public class Row implements IRowEntity {
+public class FilmRow extends AbsRowEntity {
 
     @SerializedName("rownum")
     private int mRowNum;
@@ -23,31 +22,24 @@ public class Row implements IRowEntity {
     @SerializedName("columns")
     private String mColumns;
 
-    private int mColumnCount = 0;
-    private boolean mIsDraw = false;
-    private boolean mIsEmpty = true;
+    private int mExsitColumnCount = 0;
 
-    private AbsSeat[] mColumnData = null;
-
-    public Row() {
-    }
+    private AbsSeatEntity[] mColumnData = null;
 
 
     /**
      * 构造函数,设置行对象的基本数据,<font color="#ff9900"><b>解析列数据时会自动计算当前行是否需要绘制及数据是否为空,
-     * 但在此处是否绘制及数据是否为空将由参数3/4决定,此构造函数不自动进行解析列信息,需要解析请调用方法{@link #parseJson()}</b></font>
+     * 但在此处是否绘制及数据是否为空将由参数3/4决定,此构造函数不自动进行解析列信息,需要解析请调用方法{@link #parseData()}</b></font>
      *
      * @param rowNumber  行号
      * @param columnInfo 列数据信息
      * @param isDraw     是否绘制此行
      * @param isEmpty    此行数据是否为空
      */
-    public Row(int rowNumber, String columnInfo, boolean isDraw, boolean isEmpty) {
+    public FilmRow(int rowNumber, String columnInfo, boolean isDraw, boolean isEmpty) {
+        super(rowNumber, isDraw, isEmpty);
         this.mRowNum = rowNumber;
         this.mColumns = columnInfo;
-        //记录当前行的绘制与数据空满
-        this.mIsDraw = isDraw;
-        this.mIsEmpty = isEmpty;
     }
 
 
@@ -65,11 +57,13 @@ public class Row implements IRowEntity {
      *
      * @return
      */
-    public boolean parseJson() {
+    @Override
+    public void parseData() {
+        this.mRowNumber = this.mRowNum;
+
         if (StringUtils.isNullOrEmpty(mColumns)) {
             this.mIsDraw = false;
             this.mIsEmpty = true;
-            return false;
         } else {
             //原始数据大致格式：ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0
             //ZL表示走廊，无座位
@@ -78,18 +72,18 @@ public class Row implements IRowEntity {
             //1级分离数据类型
             String[] columInfo = mColumns.split(",");
             if (mColumns != null) {
-                mColumnData = new Seat[columInfo.length];
+                mColumnData = new FilmSeat[columInfo.length];
                 for (int i = 0; i < columInfo.length; i++) {
-                    AbsSeat newSeat = Seat.getNewInstance(mRowNum, columInfo[i]);
+                    AbsSeatEntity newSeat = new FilmSeat(this.getRowNumber(), columInfo[i]);
+                    newSeat.parseData();
                     //座位解析
                     mColumnData[i] = newSeat;
                     if (newSeat != null && newSeat.getType() != SeatParams.seat_type_unshow) {
-                        mColumnCount++;
+                        mExsitColumnCount++;
                     }
                 }
                 this.mIsDraw = true;
                 this.mIsEmpty = false;
-                return true;
             } else {
                 throw new RuntimeException("column info is unable");
             }
@@ -97,8 +91,8 @@ public class Row implements IRowEntity {
     }
 
     @Override
-    public int getRealColumnCount() {
-        return this.mColumnCount;
+    public int getExsitColumnCount() {
+        return this.mExsitColumnCount;
     }
 
     @Override
@@ -106,29 +100,9 @@ public class Row implements IRowEntity {
         return this.mColumnData.length;
     }
 
-    @Override
-    public int getRowNumber() {
-        return this.mRowNum;
-    }
 
     @Override
-    public void setIsDraw(boolean isDraw) {
-        this.mIsDraw = isDraw;
-    }
-
-    @Override
-    public boolean isDraw() {
-        return this.mIsDraw;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return this.mIsEmpty;
-    }
-
-
-    @Override
-    public ISeatEntity getSeat(int columnIndex) {
+    public AbsSeatEntity getSeatEntity(int columnIndex) {
         try {
             return this.mColumnData[columnIndex];
         } catch (ArrayIndexOutOfBoundsException e) {

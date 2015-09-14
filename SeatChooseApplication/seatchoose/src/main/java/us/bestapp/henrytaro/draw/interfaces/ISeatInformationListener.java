@@ -1,6 +1,6 @@
 package us.bestapp.henrytaro.draw.interfaces;
 
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 
 /**
  * Created by xuhaolin on 15/9/1.座位信息监听接口
@@ -28,7 +28,7 @@ public interface ISeatInformationListener {
      * <p>
      * {@link #STATUS_MOVE},座位移动中<br/>
      * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
-     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int, ISeatEntity)}<br/>
+     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int, AbsSeatEntity)}<br/>
      * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
      * </p>
      *
@@ -44,7 +44,7 @@ public interface ISeatInformationListener {
      * @param columnIndexInMap 座位在列表中的列索引,从0开始
      * @param seatEntity       座位接口,可能为null
      */
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, ISeatEntity seatEntity);
+    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity);
 
     /**
      * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
@@ -60,7 +60,7 @@ public interface ISeatInformationListener {
      * @param columnNumber     当前座位的实际列号,从1开始
      * @param seatEntity       座位数据接口
      */
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity);
+    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, AbsSeatEntity seatEntity);
 
     /**
      * 选中座位失败，此处可能是选中的座位无效(座位类型错误或不能显示等...)

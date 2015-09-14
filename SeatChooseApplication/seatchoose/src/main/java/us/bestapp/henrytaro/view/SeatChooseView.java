@@ -14,7 +14,7 @@ import java.util.List;
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
@@ -115,7 +115,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, ISeatEntity seatEntity) {
+    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
     }
 
 
@@ -127,7 +127,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity) {
+    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, AbsSeatEntity seatEntity) {
         //通知选中事件
         if (mSeatChooseEvent != null) {
             mSeatChooseEvent.selectedSeatSuccess(rowIndexInMap, columnIndexInMap, rowNumber, columnNumber, seatEntity);

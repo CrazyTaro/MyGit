@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
-import us.bestapp.henrytaro.entity.film.SeatMap;
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
+import us.bestapp.henrytaro.entity.film.FilmSeatMap;
+import us.bestapp.henrytaro.entity.show.ShowSeatMap;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
@@ -56,7 +57,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
             {1, 1, 0, 0, 3, 1, 0, 3, 1, 1, 1, 0, 0, 3, 1, 0, 0, 3, 3, 1, 0, 0, 0, 0, 0, 3, 1, 1, 3, 1, 3, 1, 0, 0, 0, 1,},//36
     };
 
-    String jsonStr = "{\n" +
+    String filmJsonStr = "{\n" +
             "    \"success\": true, \n" +
             "    \"error_code\": \"0\", \n" +
             "    \"message\": \"请求成功\", \n" +
@@ -122,17 +123,58 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
             "    \"source\": \"gewala\"\n" +
             "}";
 
+
+    String showJsonStr = "{\n" +
+            "  'success' : true,\n" +
+            "  'error_code': 0,\n" +
+            "  'message':\"请求成功\",\n" +
+            "  'data':[\n" +
+            "   {\"row\":1,\n" +
+            "    \"column\":1,\n" +
+            "    \"name\":\"1排10座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"avaliable\"},\n" +
+            "   {\"row\":1,\n" +
+            "    \"column\":2,\n" +
+            "    \"name\":\"1排9座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"locked\"},\n" +
+            "   {\"row\":1,\n" +
+            "    \"column\":3,\n" +
+            "    \"name\":\"1排8座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"avaliable\"},\n" +
+            "   {\"row\":2,\n" +
+            "    \"column\":1,\n" +
+            "    \"name\":\"1排10座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"locked\"},\n" +
+            "   {\"row\":2,\n" +
+            "    \"column\":2,\n" +
+            "    \"name\":\"1排9座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"unused\"},\n" +
+            "   {\"row\":2,\n" +
+            "    \"column\":3,\n" +
+            "    \"name\":\"1排8座\",\n" +
+            "    \"price\":1.0,\n" +
+            "    \"status\":\"avaliable\"}\n" +
+            "   ]\n" +
+            "}";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SeatMap dataMap = SeatMap.objectFromJSONStr(jsonStr);
+        FilmSeatMap dataMap = FilmSeatMap.objectFromJsonStr(filmJsonStr);
+        ShowSeatMap showMap = ShowSeatMap.objectFromJsonStr(showJsonStr);
 
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
         ISeatDrawInterface seatDataHandle = mChooseview.getSeatDrawInterface();
         seatDataHandle.setIsShowLog(true, null);
+//        seatDataHandle.setSeatDrawMap(showMap);
         seatDataHandle.setSeatDrawMap(dataMap);
 //        seatDataHandle.setSeatDrawMap(new EgSeatMap(mSeatMap));
 
@@ -161,7 +203,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     }
 
     @Override
-    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity) {
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int rowColumn, AbsSeatEntity seatEntity) {
 
     }
 

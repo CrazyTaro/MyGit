@@ -2,13 +2,13 @@ package us.bestapp.henrytaro.entity.example;/**
  * Created by xuhaolin on 15/9/10.
  */
 
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
  * Created by xuhaolin on 15/9/10.
  */
-public class EgSeat implements ISeatEntity {
+public class EgSeat extends AbsSeatEntity {
     private int mType = IBaseParams.TYPE_ERROR;
     private int mRowNumber = 0;
     private int mColumnNumber = 0;
@@ -20,23 +20,28 @@ public class EgSeat implements ISeatEntity {
     }
 
     @Override
+    public void parseData() {
+
+    }
+
+    @Override
     public boolean isCouple() {
         return false;
     }
 
     @Override
     public int getRowNumber() {
-        return this.mRowNumber;
+        return mRowNumber;
     }
 
     @Override
     public int getColumnNumber() {
-        return this.mColumnNumber;
+        return mColumnNumber;
     }
 
     @Override
     public int getType() {
-        return this.mType;
+        return mType;
     }
 
     @Override

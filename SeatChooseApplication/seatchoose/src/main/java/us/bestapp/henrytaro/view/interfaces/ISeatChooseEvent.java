@@ -1,6 +1,6 @@
 package us.bestapp.henrytaro.view.interfaces;
 
-import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 
 /**
  * Created by lenovo on 2015/8/24.
@@ -9,7 +9,7 @@ import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 public interface ISeatChooseEvent {
     /**
      * 座位选中成功回调,<font color="@ff9900"><b>此方法只有在实际座位被单击选中的情况下才会被调用</b></font>,
-     * 此方法被调用时{@link #selectedSeatSuccess(int, int, int, int, ISeatEntity)}必定会被回调<br/>
+     * 此方法被调用时{@link #selectedSeatSuccess(int, int, int, int, AbsSeatEntity)}必定会被回调<br/>
      *
      * @param rowNumber    选中座位的行号
      * @param columnNumber 选中座位的列号
@@ -26,7 +26,7 @@ public interface ISeatChooseEvent {
      * @param columnNumber   座位<font color="@ff9900"><b>实际列行号</b></font>
      * @param seatEntity  座位接口
      */
-    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity);
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int columnNumber, AbsSeatEntity seatEntity);
 
     /**
      * 当前选座失败，可能是没有选中座位，可能是选中位置的座位出错,或者单击的位置在空白区域,不能选中有效的实际座位
