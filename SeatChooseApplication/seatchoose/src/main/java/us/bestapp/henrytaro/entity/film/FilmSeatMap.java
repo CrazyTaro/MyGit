@@ -87,6 +87,12 @@ public class FilmSeatMap extends AbsMapEntity {
     }
 
 
+    /**
+     * 解析JSON数据
+     *
+     * @param jsonStr
+     * @return
+     */
     public static FilmSeatMap objectFromJsonStr(String jsonStr) {
         try {
             FilmSeatMap map = null;
