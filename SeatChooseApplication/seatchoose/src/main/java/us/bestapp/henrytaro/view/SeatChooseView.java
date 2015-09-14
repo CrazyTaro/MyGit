@@ -11,7 +11,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
@@ -44,7 +44,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          7.默认可选座位最大值为5<br/>
  */
 public class SeatChooseView extends View implements ISeatInformationListener, ISeatViewInterface {
-    private ISeatDrawHandle mSeatDrawHandle = null;
+    private ISeatDrawInterface mSeatDrawHandle = null;
     private ISeatChooseEvent mSeatChooseEvent = null;
     private ISeatParams mSeatParams = null;
     private int mMostSeletedCount = 5;
@@ -180,7 +180,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public ISeatDrawHandle getSeatDrawInterface() {
+    public ISeatDrawInterface getSeatDrawInterface() {
         return mSeatDrawHandle;
     }
 

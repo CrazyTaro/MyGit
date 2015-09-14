@@ -1,7 +1,8 @@
-package us.bestapp.henrytaro.entity;/**
+package us.bestapp.henrytaro.entity.film;/**
  * Created by xuhaolin on 15/9/2.
  */
 
+import us.bestapp.henrytaro.entity.AbsSeat;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.utils.StringUtils;

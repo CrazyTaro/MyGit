@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.params.absparams;/**
+package us.bestapp.henrytaro.params.baseparams;/**
  * Created by xuhaolin on 15/9/11.
  */
 

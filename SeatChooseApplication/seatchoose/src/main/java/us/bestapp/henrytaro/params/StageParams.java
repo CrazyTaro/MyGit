@@ -2,7 +2,7 @@ package us.bestapp.henrytaro.params;
 
 import android.graphics.PointF;
 
-import us.bestapp.henrytaro.params.absparams.BaseStageParams;
+import us.bestapp.henrytaro.params.baseparams.BaseStageParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 

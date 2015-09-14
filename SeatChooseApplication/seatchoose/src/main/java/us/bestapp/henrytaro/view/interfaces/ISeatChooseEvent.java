@@ -23,10 +23,10 @@ public interface ISeatChooseEvent {
      * @param rowInMap    座位在列表中的行索引,<font color="@ff9900"><b>此处的行列值为map中的索引,不是实际该座位的行列号</b></font>
      * @param columnInMap 座位在列表中的列索引,<font color="@ff9900"><b>此处的行列值为map中的索引,不是实际该座位的行列号</b></font>
      * @param rowNumber   座位<font color="@ff9900"><b>实际行号</b></font>
-     * @param rowColumn   座位<font color="@ff9900"><b>实际列行号</b></font>
+     * @param columnNumber   座位<font color="@ff9900"><b>实际列行号</b></font>
      * @param seatEntity  座位接口
      */
-    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int rowColumn, ISeatEntity seatEntity);
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity);
 
     /**
      * 当前选座失败，可能是没有选中座位，可能是选中位置的座位出错,或者单击的位置在空白区域,不能选中有效的实际座位

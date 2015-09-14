@@ -5,7 +5,7 @@ package us.bestapp.henrytaro.params;/**
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
-import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 /**

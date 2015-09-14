@@ -11,7 +11,7 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  * Created by xuhaolin on 15/9/1.
  * 座位绘制与数据处理接口
  */
-public interface ISeatDrawHandle {
+public interface ISeatDrawInterface {
 
     /**
      * 界面绘制,该方法提供给View调用,view.invalidate()本身也是重新调用此方法进行绘制

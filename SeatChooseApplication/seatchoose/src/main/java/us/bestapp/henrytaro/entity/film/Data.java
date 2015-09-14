@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.entity;/**
+package us.bestapp.henrytaro.entity.film;/**
  * Created by xuhaolin on 15/9/2.
  */
 

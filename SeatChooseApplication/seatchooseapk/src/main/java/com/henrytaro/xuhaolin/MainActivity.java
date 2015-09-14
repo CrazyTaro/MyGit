@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
-import us.bestapp.henrytaro.entity.SeatMap;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
+import us.bestapp.henrytaro.entity.film.SeatMap;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
-        ISeatDrawHandle seatDataHandle = mChooseview.getSeatDrawInterface();
+        ISeatDrawInterface seatDataHandle = mChooseview.getSeatDrawInterface();
         seatDataHandle.setIsShowLog(true, null);
         seatDataHandle.setSeatDrawMap(dataMap);
 //        seatDataHandle.setSeatDrawMap(new EgSeatMap(mSeatMap));
@@ -142,6 +142,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         globleParams.setIsDrawRowNumber(true);
         globleParams.setSeatTypeRowCount(2);
         globleParams.setIsShowThumbnailAlways(true);
+        globleParams.setIsEnabledQuickShowByClickOnThumbnail(false);
 //        globleParams.setIsDrawColumnNumber(true);
 
         ISeatParams seatParams = seatDataHandle.getSeatParams();
@@ -160,7 +161,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     }
 
     @Override
-    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int rowColumn, ISeatEntity seatEntity) {
+    public void selectedSeatSuccess(int rowInMap, int columnInMap, int rowNumber, int columnNumber, ISeatEntity seatEntity) {
 
     }
 

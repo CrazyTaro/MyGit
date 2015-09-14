@@ -1,9 +1,10 @@
-package us.bestapp.henrytaro.entity;/**
+package us.bestapp.henrytaro.entity.film;/**
  * Created by xuhaolin on 15/9/2.
  */
 
 import com.google.gson.annotations.SerializedName;
 
+import us.bestapp.henrytaro.entity.AbsSeat;
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
 import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.SeatParams;

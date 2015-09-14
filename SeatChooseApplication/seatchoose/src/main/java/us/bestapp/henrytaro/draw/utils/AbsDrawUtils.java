@@ -13,7 +13,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatDrawHandle;
+import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.entity.interfaces.IMapEntity;
 import us.bestapp.henrytaro.entity.interfaces.IRowEntity;
@@ -21,9 +21,9 @@ import us.bestapp.henrytaro.entity.interfaces.ISeatEntity;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
-import us.bestapp.henrytaro.params.absparams.BaseGlobleParams;
-import us.bestapp.henrytaro.params.absparams.BaseSeatParams;
-import us.bestapp.henrytaro.params.absparams.BaseStageParams;
+import us.bestapp.henrytaro.params.baseparams.BaseGlobleParams;
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
+import us.bestapp.henrytaro.params.baseparams.BaseStageParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
@@ -44,12 +44,12 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  * 当自定义绘制时需要更改舞台及座位绘制流程等时,请注意重写部分方法,<font color="#ff9900">此类型方法将以{@code @since}标注</font></p>
  * <br/>
  * <p>
- * <p><font color="#ff9900"><b>所有{@code protected} 方法都是绘制时需要的,对外公开可以进行设置的方法只允许从实现接口{@link ISeatDrawHandle}方法中进行设置</b></font></p>
+ * <p><font color="#ff9900"><b>所有{@code protected} 方法都是绘制时需要的,对外公开可以进行设置的方法只允许从实现接口{@link ISeatDrawInterface}方法中进行设置</b></font></p>
  *
  * @author xuhaolin
  * @version 7.0
  */
-public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatDrawHandle {
+public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatDrawInterface {
     /**
      * 全局参数,所需要用到的全局性参数均来自此接口,如背景色/是否绘制缩略图/是否绘制行列号等
      */
@@ -2275,7 +2275,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      *
      * @param event
      */
-    private void singleClickChooseSeat(MotionEvent event) {
+    private boolean singleClickChooseSeat(MotionEvent event) {
         if (mISeatInformationListener != null) {
             mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CLICK);
         }
@@ -2291,7 +2291,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             //计算得到的座位索引值在有效范围内
             //行索引应该<=列表行数
             //列索引应该<=列表列数
-            if (clickSeatPoint != null && clickSeatPoint.x < mSeatDrawMap.getRowCount() && clickSeatPoint.y < mSeatDrawMap.getColumnCount(clickSeatPoint.x)) {
+            if (clickSeatPoint != null && clickSeatPoint.x < mSeatDrawMap.getRowCount() &&
+                    clickSeatPoint.y < mSeatDrawMap.getColumnCount(clickSeatPoint.x)) {
                 if (mISeatInformationListener != null) {
                     //获取当前选中区域的座位类型
                     ISeatEntity seat = mSeatDrawMap.getSeatInfo(clickSeatPoint.x, clickSeatPoint.y);
@@ -2315,6 +2316,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                             mCurrentSeletedSeat = this.updateNotifyRowWithColumn(mCurrentSeletedSeat);
                             mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MASK));
                         }
+                        return true;
                     } else {
                         mISeatInformationListener.chooseSeatFail();
                     }
@@ -2332,6 +2334,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                 mISeatInformationListener.chosseInMapFail();
             }
         }
+        return false;
     }
 
     @Override

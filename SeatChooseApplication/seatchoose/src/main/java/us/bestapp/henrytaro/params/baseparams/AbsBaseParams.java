@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.params.absparams;
+package us.bestapp.henrytaro.params.baseparams;
 
 import android.content.Context;
 import android.graphics.Bitmap;
