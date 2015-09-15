@@ -19,21 +19,22 @@ public abstract class AbsSeatEntity {
     public abstract boolean isCouple();
 
     /**
-     * 获取当前座位所在的实际行号,从1开始
+     * 获取当前座位所在的实际行号,从1开始,类似{@link #getColumnNumber()},<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */
     public abstract int getRowNumber();
 
     /**
-     * 获取当前座位所在的实际列号,从1开始
+     * 获取当前座位所在的实际列号,从1开始,该方法仅提供一个更加方便的数据返回接口,用于处理座位行列号与其所在列表中位置不统一的情况,
+     * 若不需要处理此情况或者座位行列号与其位置统一,可按实际情况覆盖此方法;<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */
     public abstract int getColumnNumber();
 
     /**
-     * 获取当前座位的座位类型
+     * 获取当前座位的座位类型,<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */

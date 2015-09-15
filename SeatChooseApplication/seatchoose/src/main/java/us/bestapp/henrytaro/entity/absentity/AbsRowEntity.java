@@ -83,7 +83,7 @@ public abstract class AbsRowEntity {
 
 
     /**
-     * 获取行中某个列位置对应的座位信息
+     * 获取行中某个列位置对应的座位信息,<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @param columnIndex 行中的行索引（非真实座位列索引）
      * @return
@@ -109,7 +109,7 @@ public abstract class AbsRowEntity {
     }
 
     /**
-     * 获取是否绘制该行
+     * 获取是否绘制该行,<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */
@@ -129,7 +129,8 @@ public abstract class AbsRowEntity {
 
     /**
      * 获取该行是否不存在数据,为空(当需要绘制该行且该行为空时,则空出一行),此情况与该行需要绘制但每个座位都不存在是相同的,
-     * 只是省略了一些工作与处理
+     * 只是省略了一些工作与处理,若不想处理是否为空选项,设置isDraw为true且所有座位类型为错误类型或不需要绘制也可以达到相同的效果<br/>
+     * <font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */

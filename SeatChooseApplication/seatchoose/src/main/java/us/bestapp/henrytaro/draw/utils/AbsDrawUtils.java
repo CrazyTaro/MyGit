@@ -16,8 +16,8 @@ import android.view.View;
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
-import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
@@ -47,7 +47,7 @@ import us.bestapp.henrytaro.params.interfaces.IStageParams;
  * <p><font color="#ff9900"><b>所有{@code protected} 方法都是绘制时需要的,对外公开可以进行设置的方法只允许从实现接口{@link ISeatDrawInterface}方法中进行设置</b></font></p>
  *
  * @author xuhaolin
- * @version 7.0
+ * @version 7.2
  */
 public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatDrawInterface {
     /**
@@ -2239,9 +2239,12 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             //目标位置在缩略图中到左端的距离
             float targetXDistanceInThumbnail = clickPositionX - 0;
 
+            //当前缩略图上的单击点在显示框的高度一半之上,若按此重绘显示框将超过缩略图
+            //因此修改其单击点位置,最上情况为显示框顶端与缩略图顶端重合
             if (targetYDistacneInThumbnail < showAreaRectf.height() / 2) {
                 targetYDistacneInThumbnail = showAreaRectf.height() / 2;
             }
+            //原理同上,但局限于左边界
             if (targetXDistanceInThumbnail < showAreaRectf.width() / 2) {
                 targetXDistanceInThumbnail = showAreaRectf.width() / 2;
             }

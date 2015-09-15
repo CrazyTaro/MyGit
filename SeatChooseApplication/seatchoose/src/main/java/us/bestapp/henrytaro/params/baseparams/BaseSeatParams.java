@@ -13,6 +13,17 @@ import us.bestapp.henrytaro.params.interfaces.ISeatParams;
  * Created by xuhaolin on 15/9/10.<br/>
  * 座位绘制参数基本类,该类继承了对外公开接口{@link ISeatParams},此接口所有的方法用于对外公开提供给用户调用;
  * 其余此类中的 {@code public} 方法均是用于提供给绘制时使用的方法,需要自定义参数类时请继承此方法重写部分方法即可
+ * <br/>
+ * <br/>
+ * <font color="#ff9900"><b>需要自定义类型时,请务必考虑是否需要设置默认的静态类型变量,缩略图颜色,座位颜色设置等</b></font>
+ * <br/>
+ * <b>
+ * {@link #setAllSeatTypeWithColor(int[], int[], int[], String[])} 设置/替换全部的类型/颜色/缩略图颜色/描述<br/>
+ * {@link #setSeatTypeConstant(int, int, int, int, int[])} 设置表态类型变量,用于方便处理数据,<font color="#ff9900">当默认类型被替换时,必须调用此方法修改默认静态处理类型</font><br/>
+ * {@link #setImage(int[])} 设置图片,图片数量应该与类型数量相同<br/>
+ * {@link #setSeatTypeWithImage(int[], int[], int[])} 同时设置类型与图片,用于图片绘制模式,此时应该调用{@link #setThumbnailSeatColor(int[])}设置缩略图的颜色<br/>
+ * <p>
+ * </b>
  */
 public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     /**
@@ -170,11 +181,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted) {
+    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted, int[] errorType) {
         seat_type_selected = seleted;
         seat_type_unselected = unSeleted;
         seat_type_unshow = unShow;
         seat_type_disable_selected = disableSeleted;
+        this.mErrorTypes = errorType;
     }
 
     @Override
@@ -183,6 +195,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         seat_type_unselected = 1;
         seat_type_disable_selected = 3;
         seat_type_unshow = IBaseParams.DRAW_TYPE_NO;
+        this.mErrorTypes = null;
     }
 
     @Override
@@ -407,12 +420,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         return false;
     }
 
-    @Override
-    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType) {
-        BaseSeatParams.seat_type_selected = selectedType;
-        BaseSeatParams.seat_type_unselected = unselectedType;
-        this.mErrorTypes = errorType;
-    }
+//    @Override
+//    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType) {
+//        BaseSeatParams.seat_type_selected = selectedType;
+//        BaseSeatParams.seat_type_unselected = unselectedType;
+//        this.mErrorTypes = errorType;
+//    }
 
     @Override
     public int getType(String typeTag) {

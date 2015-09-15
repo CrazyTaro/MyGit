@@ -84,7 +84,7 @@ public abstract class AbsMapEntity {
     }
 
     /**
-     * 获取座位行数
+     * 获取座位行数,<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */
@@ -145,7 +145,7 @@ public abstract class AbsMapEntity {
     }
 
     /**
-     * 获取某行的所有座位类型数组形式,包含实际的座位与不显示出来的座位(即该map中的该行所有的列),
+     * 获取某行的所有座位类型数组形式,包含实际的座位与不显示出来的座位(即该map中的该行所有的列),<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @param mapRow map中的行
      * @return
@@ -161,7 +161,8 @@ public abstract class AbsMapEntity {
 
     /**
      * 获取map指定位置中的座位信息，<font color="#ff9900"><b>此座位信息包含了该座位所有的信息，此接口中获取座位信息的
-     * 接口数据也都是来自于此处返回的座位信息</b></font>
+     * 接口数据也都是来自于此处返回的座位信息</b></font><br/>
+     * <font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
@@ -171,7 +172,7 @@ public abstract class AbsMapEntity {
     public abstract AbsSeatEntity getSeatEntity(int mapRow, int mapColumn);
 
     /**
-     * 获取所有行中最大列的列数,整个二维表基于最大行数与列数进行绘制
+     * 获取所有行中最大列的列数,整个二维表基于最大行数与列数进行绘制,<font color="#ff9900"><b>绘制必须方法</b></font>
      *
      * @return
      */

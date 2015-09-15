@@ -2,6 +2,8 @@ package us.bestapp.henrytaro.params.interfaces;
 
 import android.graphics.Bitmap;
 
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
+
 /**
  * Created by xuhaolin on 2015/8/24.
  * 座位参数设置接口,此接口用于公开可进行设置的参数方法,不允许访问和设置的方法没有在此接口公开(此接口仅仅相当于一个中间转换而已)
@@ -23,14 +25,15 @@ public interface ISeatParams extends IBaseParams {
 
     /**
      * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已<br/>
-     * 使用此方法对未选中类型及选中类型进行设置,也可以调用方法{@link #setBaseTypes(int, int, int[])}实现类似的功能
+     * 使用此方法对未选中类型及选中类型进行设置
      *
      * @param seleted        已选座位
      * @param unSeleted      未选座位
      * @param unShow         不显示座位(不可见,即未绘制出来)
      * @param disableSeleted 不可选座位(可见)
+     * @param errorType      错误类型
      */
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted);
+    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted, int[] errorType);
 
     /**
      * 重置所有的座位基本类型为原始状态
@@ -60,7 +63,7 @@ public interface ISeatParams extends IBaseParams {
     public void setIsDrawSeatType(boolean isDrawSeatType);
 
     /**
-     * 获取座位类型是否进行绘制,此方法只针对座位类型的绘制,与{@link IDrawSeatParams#isDraw()}是不同的方法(该方法只用于对座位的绘制判断)
+     * 获取座位类型是否进行绘制,此方法只针对座位类型的绘制,与{@link BaseSeatParams#isDraw()}是不同的方法(该方法只用于对座位的绘制判断)
      *
      * @return
      */
@@ -163,7 +166,7 @@ public interface ISeatParams extends IBaseParams {
 
     /**
      * 获取选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
-     * <font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,当自定义选中类型时,
+     * <font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])} 相关,当自定义选中类型时,
      * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
      *
      * @return
@@ -172,7 +175,7 @@ public interface ISeatParams extends IBaseParams {
 
     /**
      * 获取未选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
-     * <font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,当自定义未选中类型时,
+     * <font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])}相关,当自定义未选中类型时,
      * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
      *
      * @return
@@ -180,7 +183,7 @@ public interface ISeatParams extends IBaseParams {
     public int getUnseletedType();
 
     /**
-     * 判断是否是不合法类型(错误或者是未显示类型的座位状态),<font color="#ff9900"><b>此方法与{@link #setBaseTypes(int, int, int[])}相关,
+     * 判断是否是不合法类型(错误或者是未显示类型的座位状态),<font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])}相关,
      * 需要设置自定义的错误类型时应该调用该方法</b></font>
      *
      * @param type
@@ -188,14 +191,14 @@ public interface ISeatParams extends IBaseParams {
      */
     public boolean isErrorOrUnshowType(int type);
 
-    /**
-     * 设置基本的类型数据
-     *
-     * @param selectedType   选中类型,详见{@link #getSeletedType()}
-     * @param unselectedType 未选中类型,详见{@link #getUnseletedType()}
-     * @param errorType      错误类型,错误类型可不止一种,详见{@link #isErrorOrUnshowType(int)}
-     */
-    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType);
+//    /**
+//     * 设置基本的类型数据
+//     *
+//     * @param selectedType   选中类型,详见{@link #getSeletedType()}
+//     * @param unselectedType 未选中类型,详见{@link #getUnseletedType()}
+//     * @param errorType      错误类型,错误类型可不止一种,详见{@link #isErrorOrUnshowType(int)}
+//     */
+//    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType);
 
     /**
      * 设置座位类型及其图片,此处的座位类型将替换原来的座位类型,图片同理
@@ -217,7 +220,7 @@ public interface ISeatParams extends IBaseParams {
 
     /**
      * 设置所有座位的类型，颜色及其描述,<font color="#ff9900"><b>该方法会替换所有的座位对应的默认参数</b></font>
-     * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int)},方便数据处理及以防出错</p>
+     * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int, int[])},方便数据处理及以防出错</p>
      *
      * @param seatTypeArr       新的座位类型
      * @param colorArr          新的座位类型对应的颜色
