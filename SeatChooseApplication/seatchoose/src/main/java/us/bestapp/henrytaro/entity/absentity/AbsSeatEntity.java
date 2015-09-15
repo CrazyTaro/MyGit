@@ -18,6 +18,11 @@ public abstract class AbsSeatEntity {
      */
     public abstract boolean isCouple();
 
+
+    public boolean isCoupleToRight() {
+        return true;
+    }
+
     /**
      * 获取当前座位所在的实际行号,从1开始,类似{@link #getColumnNumber()},<font color="#ff9900"><b>绘制必须方法</b></font>
      *

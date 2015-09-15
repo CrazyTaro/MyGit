@@ -10,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.view.View;
 
+import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.GlobleParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
@@ -48,7 +49,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
     }
 
     @Override
-    protected void drawNormalSeat(Canvas canvas, Paint paint, BaseSeatParams seatParams, float drawPositionX, float drawPositionY, int seatType) {
+    protected void drawNormalSingleSeat(Canvas canvas, Paint paint, BaseSeatParams seatParams, float drawPositionX, float drawPositionY, int seatType) {
         SeatParams extendSeatParams = (SeatParams) seatParams;
 
         int seatColor = seatParams.getSeatColorByType(seatType);
@@ -88,7 +89,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
         seatParams.setColor(seatColor);
 
         //获取绘制的区域
-        mImageRectf = seatParams.getDrawRecf(mImageRectf, drawPositionX, drawPositionY);
+        mImageRectf = seatParams.getNormalDrawRecf(mImageRectf, drawPositionX, drawPositionY);
         paint.setStyle(Paint.Style.FILL);
         //填充颜色
         paint.setColor(seatParams.getColor());
@@ -133,7 +134,9 @@ public class SimpleDrawUtils extends AbsDrawUtils {
     }
 
     @Override
-    protected Point updateNotifyRowWithColumn(Point notifyPoint) {
+    protected Point updateNotifyRowWithColumn(Point notifyPoint, AbsSeatEntity seatEntity) {
+        notifyPoint.x = seatEntity.getRowNumber();
+        notifyPoint.y = seatEntity.getColumnNumber();
         return notifyPoint;
     }
 

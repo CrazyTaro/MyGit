@@ -5,6 +5,7 @@ package us.bestapp.henrytaro.params.baseparams;/**
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.RectF;
 
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
@@ -493,13 +494,45 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         }
     }
 
+    /**
+     * 获取用于绘制情侣座的绘制区域,暂时未使用,每个情侣座为两个座位合并在一起
+     *
+     * @param coupleRectf   区域对象
+     * @param drawPositionX 绘制中心X轴
+     * @param drawPositionY 绘制中心Y轴
+     * @return
+     */
+    public RectF getCoupleDrawRecf(RectF coupleRectf, float drawPositionX, float drawPositionY) {
+        if (coupleRectf == null) {
+            coupleRectf = new RectF();
+        }
 
-    public boolean isCoupleDrawLeftToRight() {
+        float coupleWidth = this.getWidth() * 2 + this.getSeatHorizontalInterval();
+        float coupleHeight = this.getHeight();
+        coupleRectf.left = drawPositionX - coupleWidth / 2;
+        coupleRectf.top = drawPositionY - coupleHeight / 2;
+        coupleRectf.right = coupleRectf.left + coupleWidth;
+        coupleRectf.bottom = coupleRectf.top + coupleHeight;
+
+        return coupleRectf;
+    }
+
+
+    public boolean isCoupleLeftToRight(int seatType) {
+        if (seatType == 4) {
+            return true;
+        } else if (seatType == 5) {
+            return false;
+        }
         return false;
     }
 
     public boolean isCouple(int seatType) {
-        return false;
+        if (seatType == 4 || seatType == 5) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

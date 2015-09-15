@@ -536,7 +536,7 @@ public abstract class AbsBaseParams implements IBaseParams {
      * @param drawPositionY 对象绘制的中心Y
      * @return
      */
-    public RectF getDrawRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
+    public RectF getNormalDrawRecf(RectF imageRecft, float drawPositionX, float drawPositionY) {
         if (imageRecft == null) {
             imageRecft = new RectF();
         }
