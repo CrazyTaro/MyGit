@@ -298,13 +298,13 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
                           int&nbsp;from,
                           int&nbsp;to,
                           boolean&nbsp;isLeftToRight)</code>
-<div class="block">在sellSeat第一行绘制列数,此处的绘制方式同<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.IRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>,原理相同;<br/>
+<div class="block">在sellSeat第一行绘制列数,此处的绘制方式同<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.AbsRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>,原理相同;<br/>
  绘制行数分为两部分,从中轴线开始向左右两边绘制,所以需要调用此方法两次;</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.IRowEntity-int-int-">drawHorizontalSeatList</a></span>(Canvas&nbsp;canvas,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.AbsRowEntity-int-int-">drawHorizontalSeatList</a></span>(Canvas&nbsp;canvas,
                       Paint&nbsp;paint,
                       float&nbsp;drawPositionX,
                       float&nbsp;drawPositionY,
@@ -346,7 +346,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
  4.获取座位类型绘制的高度<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getSeatTypeDrawCenterY--"><code>getSeatTypeDrawCenterY()</code></a><br/>
  5.绘制座位类型<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSeatTypeByAuto-Canvas-Paint-float-int-"><code>drawSeatTypeByAuto(Canvas, Paint, float, int)</code></a><br/>
  6.获取普通座位绘制的高度<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getSellSeatDrawCenterY-int-boolean-"><code>getSellSeatDrawCenterY(int, boolean)</code></a><br/>
- 7.绘制普通座位<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.IMapEntity-float-float-"><code>drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)</code></a><br/>
+ 7.绘制普通座位<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-float-float-"><code>drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)</code></a><br/>
  8.绘制中心分界线<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getCenterDotLine-float-float-float-"><code>getCenterDotLine(float, float, float)</code></a><br/>
  </div>
 </td>
@@ -409,12 +409,12 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.IMapEntity-float-float-">drawSellSeats</a></span>(Canvas&nbsp;canvas,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-float-float-">drawSellSeats</a></span>(Canvas&nbsp;canvas,
              Paint&nbsp;paint,
              <a href="../../../../../us/bestapp/henrytaro/entity/interfaces/ISeatMapEntity.html" title="us.bestapp.henrytaro.entity.interfaces中的接口">ISeatMapEntity</a>&nbsp;seatMap,
              float&nbsp;drawPositionX,
              float&nbsp;drawPositionY)</code>
-<div class="block">绘制售票的座位,此方法绘制的座位来源于<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-"><code>setSeatDrawMap(ISeatMapEntity)</code></a>,
+<div class="block">绘制售票的座位,此方法绘制的座位来源于<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-"><code>setSeatDrawMap(ISeatMapEntity)</code></a>,
  通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过<a href="../../../../../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类"><code>SeatParams</code></a>参数提前设置.</div>
 </td>
 </tr>
@@ -688,7 +688,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
 </tr>
 <tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-">setSeatDrawMap</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/interfaces/ISeatMapEntity.html" title="us.bestapp.henrytaro.entity.interfaces中的接口">ISeatMapEntity</a>&nbsp;seatMap)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-">setSeatDrawMap</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/interfaces/ISeatMapEntity.html" title="us.bestapp.henrytaro.entity.interfaces中的接口">ISeatMapEntity</a>&nbsp;seatMap)</code>
 <div class="block">设置座位Map</div>
 </td>
 </tr>
@@ -1106,7 +1106,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
 </dl>
 </li>
 </ul>
-<a name="drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.IMapEntity-float-float-">
+<a name="drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-float-float-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1117,10 +1117,10 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
                              <a href="../../../../../us/bestapp/henrytaro/entity/interfaces/ISeatMapEntity.html" title="us.bestapp.henrytaro.entity.interfaces中的接口">ISeatMapEntity</a>&nbsp;seatMap,
                              float&nbsp;drawPositionX,
                              float&nbsp;drawPositionY)</pre>
-<div class="block">绘制售票的座位,此方法绘制的座位来源于<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-"><code>setSeatDrawMap(ISeatMapEntity)</code></a>,
+<div class="block">绘制售票的座位,此方法绘制的座位来源于<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-"><code>setSeatDrawMap(ISeatMapEntity)</code></a>,
  通过二维表中的座位类型参数进行绘制,座位绘制使用的参数请通过<a href="../../../../../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类"><code>SeatParams</code></a>参数提前设置.
  <p><b>座位的绘制方式是从X轴正中心的位置(Y轴自定义)开始绘制,按map列表中提供的数据一行一行向下进行绘制,
- 其中每一行的绘制调用了两次方法<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.IRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>进行完成,
+ 其中每一行的绘制调用了两次方法<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.AbsRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>进行完成,
  在绘制一行时,从中心位置开始向左右两端分别绘制,每一次调用<code>drawHorizontalSeatList</code>仅仅只绘制从中心到两端中某一端的部分,
  即只有半行,因此需要绘制两次</b></p></div>
 <dl>
@@ -1199,7 +1199,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
                                           int&nbsp;from,
                                           int&nbsp;to,
                                           boolean&nbsp;isLeftToRight)</pre>
-<div class="block">在sellSeat第一行绘制列数,此处的绘制方式同<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.IRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>,原理相同;<br/>
+<div class="block">在sellSeat第一行绘制列数,此处的绘制方式同<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.AbsRowEntity-int-int-"><code>drawHorizontalSeatList(Canvas, Paint, float, float, IRowEntity, int, int)</code></a>,原理相同;<br/>
  绘制行数分为两部分,从中轴线开始向左右两边绘制,所以需要调用此方法两次;</div>
 <dl>
 <dt><span class="paramLabel">参数:</span></dt>
@@ -1214,7 +1214,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
 </dl>
 </li>
 </ul>
-<a name="drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.IRowEntity-int-int-">
+<a name="drawHorizontalSeatList-Canvas-Paint-float-float-us.bestapp.henrytaro.entity.interfaces.AbsRowEntity-int-int-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -1568,18 +1568,18 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
 </dl>
 </li>
 </ul>
-<a name="setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-">
+<a name="setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setSeatDrawMap</h4>
 <pre>public&nbsp;void&nbsp;setSeatDrawMap(<a href="../../../../../us/bestapp/henrytaro/entity/interfaces/ISeatMapEntity.html" title="us.bestapp.henrytaro.entity.interfaces中的接口">ISeatMapEntity</a>&nbsp;seatMap)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-">ISeatDrawHandle</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-">ISeatDrawHandle</a></code></span></div>
 <div class="block">设置座位Map</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.IMapEntity-">setSeatDrawMap</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawHandle</a></code></dd>
+<dd><code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html#setSeatDrawMap-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-">setSeatDrawMap</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDrawHandle.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawHandle</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -1724,7 +1724,7 @@ implements <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatDra
  4.获取座位类型绘制的高度<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getSeatTypeDrawCenterY--"><code>getSeatTypeDrawCenterY()</code></a><br/>
  5.绘制座位类型<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSeatTypeByAuto-Canvas-Paint-float-int-"><code>drawSeatTypeByAuto(Canvas, Paint, float, int)</code></a><br/>
  6.获取普通座位绘制的高度<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getSellSeatDrawCenterY-int-boolean-"><code>getSellSeatDrawCenterY(int, boolean)</code></a><br/>
- 7.绘制普通座位<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.IMapEntity-float-float-"><code>drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)</code></a><br/>
+ 7.绘制普通座位<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#drawSellSeats-Canvas-Paint-us.bestapp.henrytaro.entity.interfaces.AbsMapEntity-float-float-"><code>drawSellSeats(Canvas, Paint, ISeatMapEntity, float, float)</code></a><br/>
  8.绘制中心分界线<a href="../../../../../us/bestapp/henrytaro/draw/utils/SeatDrawUtils.html#getCenterDotLine-float-float-float-"><code>getCenterDotLine(float, float, float)</code></a><br/>
  </p></div>
 <dl>

@@ -1,10 +1,12 @@
+us.bestapp.henrytaro
 us.bestapp.henrytaro.draw.interfaces
 us.bestapp.henrytaro.draw.utils
-us.bestapp.henrytaro.entity
+us.bestapp.henrytaro.entity.absentity
 us.bestapp.henrytaro.entity.example
-us.bestapp.henrytaro.entity.interfaces
+us.bestapp.henrytaro.entity.film
+us.bestapp.henrytaro.entity.show
 us.bestapp.henrytaro.params
-us.bestapp.henrytaro.params.absparams
+us.bestapp.henrytaro.params.baseparams
 us.bestapp.henrytaro.params.interfaces
 us.bestapp.henrytaro.utils
 us.bestapp.henrytaro.view
