@@ -57,7 +57,8 @@ public interface IGlobleParams {
     public void setThumbnailWidthRate(float widthRate);
 
     /**
-     * 设置背景色
+     * 设置背景色,默认透明,此处设置的背景色实际上并不是设置canvas,而是设置了view的背景色;
+     * 由于没有办法直接设置canvas为透明,只能通过view间接实现
      *
      * @param bgColor
      */

@@ -569,6 +569,22 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         return oldScaleRate;
     }
 
+    /**
+     * 未使用
+     *
+     * @param targetScaleRate
+     */
+    public void setNewParamsValues(float targetScaleRate) {
+        this.setWidth(mOriginalHolder.width * targetScaleRate, false);
+        this.setHeight(mOriginalHolder.height * targetScaleRate, false);
+        this.setRadius(mOriginalHolder.radius * targetScaleRate);
+        this.mSeatHorizontalInterval = mOriginalHolder.horizontalInterval * targetScaleRate;
+        this.mSeatVerticalInterval = mOriginalHolder.verticalInterval * targetScaleRate;
+        this.mDrawStyleInterval = mOriginalHolder.typeInterval * targetScaleRate;
+        this.mDrawStyleDescInterval = mOriginalHolder.descInterval * targetScaleRate;
+        this.mDescriptionSize = mOriginalHolder.descSize * targetScaleRate;
+    }
+
 
     @Override
     public void storeOriginalValues(Object copyObj) {
@@ -619,34 +635,4 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         public float descSize = 0f;
     }
 
-
-//    public class SeatDrawParamsInfo {
-//        public boolean isDraw = true;
-//        public int drawColor = DEFAULT_SEAT_COLOR;
-//        public int thumbnailColor = DEFAULT_SEAT_COLOR;
-//        public String description = null;
-//        public int imageID = DEFAULT_INT;
-//        public Bitmap bitmap = null;
-//
-//        public SeatDrawParamsInfo() {
-//        }
-//
-//        public SeatDrawParamsInfo(boolean isDraw, int drawColor, int thumbnailColor, String description, int imageID, Bitmap bitmap) {
-//            this.isDraw = isDraw;
-//            this.drawColor = drawColor;
-//            this.thumbnailColor = thumbnailColor;
-//            this.description = description;
-//            this.imageID = imageID;
-//            this.bitmap = bitmap;
-//        }
-//
-//        public void setParams(boolean isDraw, int drawColor, int thumbnailColor, String description, int imageID, Bitmap bitmap) {
-//            this.isDraw = isDraw;
-//            this.drawColor = drawColor;
-//            this.thumbnailColor = thumbnailColor;
-//            this.description = description;
-//            this.imageID = imageID;
-//            this.bitmap = bitmap;
-//        }
-//    }
 }

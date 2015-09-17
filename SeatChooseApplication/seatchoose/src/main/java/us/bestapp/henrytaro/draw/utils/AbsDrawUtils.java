@@ -138,6 +138,64 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     //是否已通知过达到缩放极限
     private boolean mIsNotifyScaleMaxnium = false;
 
+//    尝试实现绘制缩放动画,效果不佳
+//    private Handler mUpdateScaleHandle = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//
+//            super.handleMessage(msg);
+//            switch (msg.what) {
+//                case 0x1:
+//                    Bundle data = msg.getData();
+//                    float targetRate = data.getFloat("target_rate");
+//                    float scaleRate = data.getFloat("scale_rate");
+//                    float unitRate = data.getFloat("unit_rate");
+//                    float newScaleRate = scaleRate + unitRate;
+//
+////                    //存放移动前的偏移数据
+////                    //相对当前屏幕中心的X轴偏移量
+////                    mOffsetPoint.x = mBeginDrawOffsetX;
+////                    //相对当前屏幕中心的Y轴偏移量
+////                    //原来的偏移量是以Y轴顶端为偏移值
+////                    mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+//
+//
+//                    //根据缩放比计算新的偏移值
+//                    mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x;
+//                    //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
+//                    mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+//
+//                    if ((unitRate > 0 && newScaleRate <= targetRate) || (unitRate < 0 && newScaleRate >= targetRate)) {
+//                        mSeatParams.setScaleRate(newScaleRate, false);
+//                        mStageParams.setScaleRate(newScaleRate, false);
+//                        //重绘工作
+//                        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_MOVE));
+//                        data.putFloat("scale_rate", newScaleRate);
+//                        data.putFloat("unit_rate", unitRate);
+//                        data.putFloat("target_rate", targetRate);
+//                        msg = obtainMessage();
+//                        msg.setData(data);
+//                        msg.what = 0x1;
+//                        mUpdateScaleHandle.sendMessageDelayed(msg, 20);
+//                    } else {
+//                        //是否进行up事件,是保存数据当前计算的最后数据
+//                        mOffsetPoint.x = mBeginDrawOffsetX;
+//                        mOffsetPoint.y = mBeginDrawOffsetY;
+//
+//                        mSeatParams.setScaleRate(newScaleRate, true);
+//                        mStageParams.setScaleRate(newScaleRate, true);
+//
+//                        mSeatParams.setNewParamsValues(targetRate);
+//                        mStageParams.setNewParamsValues(targetRate);
+//                        //重绘工作
+//                        mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+//                    }
+//
+//                    break;
+//            }
+//        }
+//    };
+
     /**
      * 构造函数,设置此绘制类绑定的view并设置用于绘制的座位参数及舞台参数对象;
      * 当参数seat/stage为null时,会尝试创建默认的参数作为初始参数使用
@@ -1371,7 +1429,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         this.mCanvasWidth = 0f;
         this.mCanvasHeight = 0f;
         //绘制背景色
-        canvas.drawColor(mGlobleParams.getCanvasBackgroundColor());
+        mDrawView.setBackgroundColor(mGlobleParams.getCanvasBackgroundColor());
     }
 
     /**
@@ -2175,6 +2233,45 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
         //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
+
+        //当双击事件触发后,取消双击事件,否则可能再次造成触发
+        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
+
+//        尝试绘制缩放动画,效果不佳
+//        //当前缩放比,当前的界面相对原始界面的比例
+//        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
+//        //新的缩放比,用于处理偏移量
+//        float newScaleRate = 0f;
+//        //当前缩放比大于3,比默认最大缩放值大了,缩放到默认最大缩放值
+//        if (currentScaleRate > 2) {
+//            newScaleRate = 2f;
+//        } else {
+//            //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
+//            if (currentScaleRate >= 1 && currentScaleRate < 1.8f) {
+//                newScaleRate = 2f;
+//            } else {
+//                newScaleRate = 1f;
+//            }
+//        }
+//
+//        float unitScaleRate = (newScaleRate - currentScaleRate) / 25;
+//
+//        //存放移动前的偏移数据
+//        //相对当前屏幕中心的X轴偏移量
+//        mOffsetPoint.x = mBeginDrawOffsetX;
+//        //相对当前屏幕中心的Y轴偏移量
+//        //原来的偏移量是以Y轴顶端为偏移值
+//        mOffsetPoint.y = mBeginDrawOffsetY - mWHPoint.y / 2;
+//
+//        Message msg = new Message();
+//        Bundle data = new Bundle();
+//        data.putFloat("scale_rate", currentScaleRate);
+//        data.putFloat("unit_rate", unitScaleRate);
+//        data.putFloat("target_rate", newScaleRate);
+//        msg.setData(data);
+//        msg.what = 0x1;
+//
+//        mUpdateScaleHandle.sendMessage(msg);
 
         //当双击事件触发后,取消双击事件,否则可能再次造成触发
         this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);

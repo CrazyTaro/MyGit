@@ -264,11 +264,11 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         float oldScaleRate = 0f;
         float targetScaleRate = 0f;
         if (isSetEnlarge) {
-            targetScaleRate = 3f;
+            targetScaleRate = 2f;
         } else {
             targetScaleRate = 1f;
         }
-        oldScaleRate = mOriginalHolder.width / this.getWidth();
+        oldScaleRate = mOriginalHolder.width * targetScaleRate / this.getWidth();
 
         this.setWidth(mOriginalHolder.width * targetScaleRate, false);
         this.setHeight(mOriginalHolder.height * targetScaleRate, false);
@@ -277,6 +277,18 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         this.mStageMarginBottom = mOriginalHolder.marginBottom * targetScaleRate;
 
         return oldScaleRate;
+    }
+
+    /**
+     * 未使用
+     * @param targetScaleRate
+     */
+    public void setNewParamsValues(float targetScaleRate) {
+        this.setWidth(mOriginalHolder.width * targetScaleRate, false);
+        this.setHeight(mOriginalHolder.height * targetScaleRate, false);
+        this.setRadius(mOriginalHolder.radius * targetScaleRate);
+        this.mStageMarginTop = mOriginalHolder.marginTop * targetScaleRate;
+        this.mStageMarginBottom = mOriginalHolder.marginBottom * targetScaleRate;
     }
 
     @Override

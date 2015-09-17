@@ -18,7 +18,7 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 public class BaseGlobleParams implements IGlobleParams {
 
     //画布背景颜色
-    private int mCanvasBackgroundColor = Color.rgb(239, 239, 244);
+    private int mCanvasBackgroundColor = Color.argb(0,0,0,0);
     //中心虚线的颜色值
     private int mDotLineColor = Color.BLACK;
     //缩略图背景色
