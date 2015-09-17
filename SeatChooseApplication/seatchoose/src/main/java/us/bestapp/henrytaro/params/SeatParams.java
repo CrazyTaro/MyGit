@@ -2,9 +2,11 @@ package us.bestapp.henrytaro.params;/**
  * Created by xuhaolin on 15/8/7.
  */
 
-import android.graphics.Bitmap;
 import android.graphics.RectF;
 
+import java.util.Map;
+
+import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
@@ -101,13 +103,9 @@ public class SeatParams extends BaseSeatParams {
     }
 
     @Override
-    protected BaseSeatParams getSelectableClone(BaseSeatParams newObj, int[] seatTypeArr, int[] seatColorArr, int[] thumbnailColorArr, String[] descArr, int[] imageIDArr, Bitmap[] bitmapArr) {
-        //获取新的座位参数
-        newObj = super.getSelectableClone(newObj, seatTypeArr, seatColorArr, thumbnailColorArr, descArr, imageIDArr, bitmapArr);
-        //将当前的座位参数转成当前类
-        SeatParams newParams = (SeatParams) newObj;
-        //自动计算当前的座位各值的高度
-        newParams.autoCalculateSeatShapeHeight(this.getHeight());
+    protected BaseSeatParams getSelectableClone(BaseSeatParams newParams, Map<String, BaseDrawStyle> styleMap) {
+        SeatParams newObj = (SeatParams) super.getSelectableClone(newParams, styleMap);
+        newObj.autoCalculateSeatShapeHeight(newObj.getHeight());
         return newObj;
     }
 }

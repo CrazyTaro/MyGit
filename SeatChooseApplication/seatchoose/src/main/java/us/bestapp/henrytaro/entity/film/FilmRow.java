@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 
 import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
@@ -78,7 +77,7 @@ public class FilmRow extends AbsRowEntity {
                     newSeat.parseData();
                     //座位解析
                     mColumnData[i] = newSeat;
-                    if (newSeat != null && newSeat.getType() != SeatParams.seat_type_unshow) {
+                    if (newSeat != null && newSeat.isExsit()) {
                         mExsitColumnCount++;
                     }
                 }

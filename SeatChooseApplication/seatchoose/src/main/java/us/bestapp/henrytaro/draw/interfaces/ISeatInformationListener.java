@@ -56,11 +56,9 @@ public interface ISeatInformationListener {
      *
      * @param rowIndexInMap    当前座位在map中的行索引,从0开始
      * @param columnIndexInMap 当前座位在map中的列索引,从0开始
-     * @param rowNumber        当前座位的实际行号,从1开始
-     * @param columnNumber     当前座位的实际列号,从1开始
      * @param seatEntity       座位数据接口
      */
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, AbsSeatEntity seatEntity);
+    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity);
 
     /**
      * 选中座位失败，此处可能是选中的座位无效(座位类型错误或不能显示等...)

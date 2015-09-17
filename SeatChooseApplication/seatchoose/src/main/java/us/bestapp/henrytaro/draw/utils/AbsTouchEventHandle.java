@@ -86,24 +86,20 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 //进入单点单击处理
-                this.onSingleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 showMsg("单击 down ");
                 mIsSingleDownAtTime = true;
-                mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_DOWN_AT_TIME, 500);
+                mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_DOWN_AT_TIME, 250);
 
                 mDownX = event.getX();
                 mDownY = event.getY();
+                this.onSingleTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                //若在确认进入多点单击之前没有任何移动操作
-                //则认为是触发多点单击事件
-//                if (!mIsInMotionMove) {
-                    //开始多点单击事件
-                    mIsMultiPoint = true;
-                    showMsg("多点触控 down");
-                    this.onMultiTouchEventHandle(event, MOTION_EVENT_NOTHING);
-//                }
+                //开始多点单击事件
+                mIsMultiPoint = true;
+                showMsg("多点触控 down");
                 mIsMultiDown = true;
+                this.onMultiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                 break;
             case MotionEvent.ACTION_UP:
                 //移动距离单击处理事件
@@ -123,10 +119,10 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                             break;
                         } else {
                             showMsg("单击事件(距离) single");
-                            this.onSingleClickByDistance(event);
                             mIsSingleClickAtDistance = true;
-                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_DISTANCE, 500);
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_DISTANCE, 250);
                             mHandle.removeMessages(HANDLE_SINGLE_DOWN_AT_TIME);
+                            this.onSingleClickByDistance(event);
                         }
                     }
                 }
@@ -145,10 +141,10 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                             this.onDoubleClickByTime();
                         } else {
                             showMsg("单击事件 single");
-                            this.onSingleClickByTime(event);
                             mIsSingleClickAtTime = true;
-                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_TIME, 500);
+                            mHandle.sendEmptyMessageDelayed(HANDLE_SINGLE_CLICK_AT_TIME, 250);
                             mHandle.removeMessages(HANDLE_SINGLE_DOWN_AT_TIME);
+                            this.onSingleClickByTime(event);
                         }
 
                     }
@@ -222,7 +218,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
                     this.onSingleTouchEventHandle(event, MotionEvent.ACTION_UP);
                     showMsg("多点触控 move 尝试进行");
                     //同时处理多点操作
-                    this.onMultiTouchEventHandle(event,MOTION_EVENT_NOTHING);
+                    this.onMultiTouchEventHandle(event, MOTION_EVENT_NOTHING);
                     mIsSingleMove = false;
                 } else if (mIsMultiPoint && mIsMultiDown) {
                     //正常直接多点操作
@@ -240,15 +236,6 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
         }
         return true;
     }
-
-//    /**
-//     * 设置此类处理的触摸事件的实现接口
-//     *
-//     * @param listener {@link AbsTouchEventHandle.ITouchEventListener} 自定义事件触摸接口
-//     */
-//    public void setTouchEventListener(ITouchEventListener listener) {
-//        this.mItouchEventListener = listener;
-//    }
 
     /**
      * 设置在触发单击事件时是否同时触发单点触摸事件;默认触发

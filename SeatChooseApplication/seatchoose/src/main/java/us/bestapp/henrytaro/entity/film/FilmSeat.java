@@ -3,7 +3,7 @@ package us.bestapp.henrytaro.entity.film;/**
  */
 
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
@@ -14,8 +14,8 @@ import us.bestapp.henrytaro.utils.StringUtils;
 public class FilmSeat extends AbsSeatEntity {
     private int mRowNumber = 0;
     private int mColumnNumber = 0;
-    private int mType = IBaseParams.TYPE_ERROR;
-    private boolean mIsCouple = false;
+    private int mType = 0;
+    private String mTypeStr = null;
     private String mSeatInfo = null;
 
     /**
@@ -30,53 +30,11 @@ public class FilmSeat extends AbsSeatEntity {
         this.mSeatInfo = seatInfo;
     }
 
-//    @Override
-//    public AbsSeat parseToSeat(int rowNumber, int columnNumber, String seatInfo, AbsSeat oldSeat) {
-//        if (StringUtils.isNullOrEmpty(seatInfo)) {
-//            return null;
-//        } else {
-//            int type = IBaseParams.TYPE_ERROR;
-//            boolean isCouple = false;
-//
-//            //原始数据大致格式：ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0
-//            //ZL表示走廊，无座位
-//            //01@A0，表示第1行，A表示可选座位，LK表示锁定座位（不可选）
-//            //0表示座位类型，普通座位，1/2组成情侣座，情侣座不可单选，必须两个座位一起选
-//            if (!seatInfo.startsWith("ZL")) {
-//                String[] infos = seatInfo.split("@");
-//                if (infos != null) {
-//                    //解析列号
-//                    columnNumber = Integer.parseInt(infos[0]);
-//                    //解析情侣座
-//                    isCouple = Integer.parseInt(infos[2]) != 0 ? true : false;
-//                    switch (infos[1]) {
-//                        case "A":
-//                            //可选座位
-//                            type = SeatParams.seat_type_unselected;
-//                            break;
-//                        case "LK":
-//                            //锁定座位
-//                            type = SeatParams.seat_type_disable_selected;
-//                            break;
-//                    }
-//                }
-//            }
-//            //设置座位信息
-//            if (oldSeat == null) {
-//                return new FilmSeat(rowNumber, columnNumber, type, isCouple, seatInfo);
-//            } else {
-//                //使用原对象
-//                oldSeat.setParams(rowNumber, columnNumber, type, isCouple, seatInfo);
-//                return oldSeat;
-//            }
-//        }
-//    }
 
-    public void setParams(int rowNumber, int columnNumber, int type, boolean isCouple, String seatInfo) {
+    public void setParams(int rowNumber, int columnNumber, int type, String seatInfo) {
         this.mRowNumber = rowNumber;
         this.mColumnNumber = columnNumber;
         this.mType = type;
-        this.mIsCouple = isCouple;
         this.mSeatInfo = seatInfo;
     }
 
@@ -84,8 +42,6 @@ public class FilmSeat extends AbsSeatEntity {
     @Override
     public void parseData() {
         if (!StringUtils.isNullOrEmpty(mSeatInfo)) {
-            int type = IBaseParams.TYPE_ERROR;
-            boolean isCouple = false;
 
             //原始数据大致格式：ZL,01@A@0,02@A@0,03@A@0,04@A@0,05@A@0,06@A@0,07@A@0,08@A@0,09@A@0,10@A@0,11@A@0,12@A@0
             //ZL表示走廊，无座位
@@ -97,27 +53,53 @@ public class FilmSeat extends AbsSeatEntity {
                     //解析列号
                     mColumnNumber = Integer.parseInt(infos[0]);
                     //解析情侣座
-                    isCouple = Integer.parseInt(infos[2]) != 0 ? true : false;
-                    switch (infos[1]) {
-                        case "A":
-                            //可选座位
-                            type = SeatParams.seat_type_unselected;
-                            break;
-                        case "LK":
-                            //锁定座位
-                            type = SeatParams.seat_type_disable_selected;
-                            break;
-                    }
+                    mType = Integer.parseInt(infos[2]);
+                    mTypeStr = infos[1];
                 }
+            } else {
+                mTypeStr = mSeatInfo;
             }
-            this.mType = type;
-            this.mIsCouple = isCouple;
+        }
+    }
+
+    @Override
+    public String getDrawStyleTag() {
+        if (mTypeStr == null) {
+            return BaseSeatParams.TAG_ERROR_SEAT;
+        } else {
+            switch (mTypeStr) {
+                case "A":
+                    if (this.isCouple()) {
+                        return BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT;
+                    } else {
+                        return BaseSeatParams.TAG_OPTIONAL_SEAT;
+                    }
+                case "LK":
+                    return BaseSeatParams.TAG_LOCK_SEAT;
+                case "SL":
+                    return BaseSeatParams.TAG_SELECTE_SEAT;
+                default:
+                    return BaseSeatParams.TAG_UNSHOW_SEAT;
+            }
         }
     }
 
     @Override
     public boolean isCouple() {
-        return mIsCouple;
+        if (mType == 1 || mType == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isCoupleLeftToRight() {
+        if (mType == 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -131,12 +113,34 @@ public class FilmSeat extends AbsSeatEntity {
     }
 
     @Override
-    public int getType() {
-        return mType;
+    public boolean isExsit() {
+        if(mTypeStr.equals("ZL")){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+
+    @Override
+    public void updateData(int updateTag) {
+        if (!this.mTypeStr.equals("LK")) {
+            if (updateTag > 0) {
+                this.mTypeStr = "SL";
+            } else {
+                this.mTypeStr = "A";
+            }
+        }
     }
 
     @Override
-    public void updateType(int newType) {
-        this.mType = newType;
+    public int isChosen() {
+        if (this.mTypeStr.equals("SL")) {
+            return 1;
+        } else if (this.mTypeStr.equals("A")) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

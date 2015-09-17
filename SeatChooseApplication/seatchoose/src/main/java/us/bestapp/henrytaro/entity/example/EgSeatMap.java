@@ -34,7 +34,6 @@ public class EgSeatMap extends AbsMapEntity {
         }
     }
 
-
     @Override
     public int getMaxColumnCount() {
         return this.getColumnCount(0);

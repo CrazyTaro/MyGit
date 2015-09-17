@@ -43,42 +43,19 @@ public abstract class AbsMapEntity {
         }
     }
 
-    /**
-     * 获取指定map指定位置中的座位类型,以下类型为默认类型<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_unshow}，不显示<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_unselected}，可选<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_selected}，已选<br/>
-     * {@link us.bestapp.henrytaro.params.SeatParams#seat_type_disable_selected}，不可选<br/>
-     *
-     * @param mapRow    map中的行
-     * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
-     *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
-     * @return
-     */
-    public int getSeatType(int mapRow, int mapColumn) {
-        AbsSeatEntity absSeat = this.getSeatEntity(mapRow, mapColumn);
-        if (absSeat == null) {
-            return IBaseParams.TYPE_ERROR;
-        } else {
-            return absSeat.getType();
-        }
-    }
 
     /**
      * 设置map指定位置中的座位类型，此方法用于修改数据
-     *
-     * @param newType   座位类型
+     *  @param updateTag
      * @param mapRow    map中的行
      * @param mapColumn map中的列，<font color="#ff9900"><b>此处的列并不一定是实际座位中的列数，只是在此map中的列，
-     *                  因为map中的列并不都会显示出来，当不显示时，则该列数就不存在</b></font>
-     * @return
      */
-    public boolean updateSeatType(int newType, int mapRow, int mapColumn) {
+    public boolean updateData(int updateTag, int mapRow, int mapColumn) {
         AbsSeatEntity absSeat = this.getSeatEntity(mapRow, mapColumn);
         if (absSeat == null) {
             return false;
         } else {
-            absSeat.updateType(newType);
+            absSeat.updateData(updateTag);
             return true;
         }
     }

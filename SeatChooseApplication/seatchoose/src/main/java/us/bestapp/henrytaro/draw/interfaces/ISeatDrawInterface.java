@@ -38,22 +38,11 @@ public interface ISeatDrawInterface {
 
     /**
      * 更新座位Map中的数据
-     *
-     * @param type             座位类型
+     *  @param updateTag
      * @param rowIndexInMap    map中的行索引
-     * @param columnIndexInMap map中的列索引
-     * @return
+     * @param columnIndexInMap map中的列索引   @return
      */
-    public boolean updateSeatIMap(int type, int rowIndexInMap, int columnIndexInMap);
-
-    /**
-     * 获取map指定位置中的区域内的座位类型(可能该位置不存在实际的座位)
-     *
-     * @param rowIndex    map中的行
-     * @param columnIndex map中的列
-     * @return
-     */
-    public int getSeatTypeInMap(int rowIndex, int columnIndex);
+    public boolean updateSeatInMap(int updateTag, int rowIndexInMap, int columnIndexInMap);
 
 
     /**

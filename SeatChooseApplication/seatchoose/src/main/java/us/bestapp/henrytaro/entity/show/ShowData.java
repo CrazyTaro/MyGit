@@ -5,8 +5,7 @@ package us.bestapp.henrytaro.entity.show;/**
 import com.google.gson.annotations.SerializedName;
 
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.params.SeatParams;
-import us.bestapp.henrytaro.params.interfaces.IBaseParams;
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 
 /**
  * Created by xuhaolin on 15/9/14.
@@ -23,30 +22,38 @@ public class ShowData extends AbsSeatEntity {
     @SerializedName("status")
     private String mStatus;
 
-    private int mType = IBaseParams.TYPE_ERROR;
 
     @Override
     public void parseData() {
+    }
+
+    @Override
+    public String getDrawStyleTag() {
         if (mStatus != null) {
             switch (mStatus) {
                 case "avaliable":
-                    mType = SeatParams.seat_type_unselected;
-                    break;
+                    return BaseSeatParams.TAG_OPTIONAL_SEAT;
                 case "locked":
-                    mType = SeatParams.seat_type_disable_selected;
-                    break;
+                    return BaseSeatParams.TAG_LOCK_SEAT;
                 case "unused":
-                    mType = IBaseParams.TYPE_ERROR;
-                    break;
+                    return BaseSeatParams.TAG_UNSHOW_SEAT;
+                case "selected":
+                    return BaseSeatParams.TAG_SELECTE_SEAT;
                 default:
-                    mType = IBaseParams.TYPE_ERROR;
-                    break;
+                    return BaseSeatParams.TAG_ERROR_SEAT;
             }
+        } else {
+            return BaseSeatParams.TAG_ERROR_SEAT;
         }
     }
 
     @Override
     public boolean isCouple() {
+        return false;
+    }
+
+    @Override
+    public boolean isCoupleLeftToRight() {
         return false;
     }
 
@@ -61,12 +68,32 @@ public class ShowData extends AbsSeatEntity {
     }
 
     @Override
-    public int getType() {
-        return this.mType;
+    public boolean isExsit() {
+        if (mStatus.equals("unused")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    @Override
+    public void updateData(int updateTag) {
+        if (updateTag > 0) {
+            this.mStatus = "selected";
+        } else {
+            this.mStatus = "avaliable";
+        }
     }
 
     @Override
-    public void updateType(int newType) {
-        this.mType = newType;
+    public int isChosen() {
+        if (this.mStatus.equals("avaliable")) {
+            return -1;
+        } else if (this.mStatus.equals("selected")) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

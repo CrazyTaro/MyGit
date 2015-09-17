@@ -39,6 +39,11 @@ public class BaseGlobleParams implements IGlobleParams {
     private boolean mIsEnabledDoubleClickScale = true;
     //是否允许通过单击缩略图快速显示区域
     private boolean mIsEnabledQuickShowByClickThumbnail = true;
+    //是否缩小时,界面自动适应屏幕大小
+    private boolean mIsAutoScaleToScreen = true;
+
+    //是否绘制座位类型
+    private boolean mIsDrawSeatType = false;
 
     //选中行列的提醒
     private boolean mIsDrawSeletedRowColumnNotification = false;
@@ -119,6 +124,16 @@ public class BaseGlobleParams implements IGlobleParams {
     @Override
     public boolean isDrawThumbnail() {
         return this.mIsDrawThumbnail;
+    }
+
+    @Override
+    public void setIsAutoScaleToScreen(boolean isAutoScale) {
+        this.mIsAutoScaleToScreen = isAutoScale;
+    }
+
+    @Override
+    public boolean isAutoScaleToScreen() {
+        return this.mIsAutoScaleToScreen;
     }
 
     @Override
@@ -336,4 +351,5 @@ public class BaseGlobleParams implements IGlobleParams {
     public void setIsThumbnailShowing(boolean isShowing) {
         this.mIsThumbnailShowing = isShowing;
     }
+
 }

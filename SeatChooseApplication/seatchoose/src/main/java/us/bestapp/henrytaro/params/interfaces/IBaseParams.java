@@ -17,11 +17,11 @@ public interface IBaseParams {
     /**
      * 绘制方式,默认方式,使用颜色及图形绘制
      */
-    public static final int DRAW_TYPE_DEFAULT = 0;
+    public static final int DRAW_TYPE_DEFAULT = -1;
     /**
      * 绘制方式,使用图片填充
      */
-    public static final int DRAW_TYPE_IMAGE = -1;
+    public static final int DRAW_TYPE_IMAGE = -2;
     /**
      * 绘制方式,缩略图模式
      */
@@ -38,22 +38,13 @@ public interface IBaseParams {
     public static final int TYPE_ERROR = -1;
 
     /**
-     * 根据类型标识获取对应的类型,此处的类型标识由子类自己确定,返回的类型也由子类自己确定,此方法仅仅提供一个获取指定类型的途径<br/>
-     * 建议默认返回{@link #TYPE_ERROR}
-     *
-     * @param typeTag 类型标识
-     * @return
-     */
-    public int getType(String typeTag);
-
-    /**
      * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
      * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
      *
      * @param large 放大倍数
      * @return 设置成功返回true, 否则返回false, 不改变原值
      */
-    public boolean setLargeScaleRate(int large);
+    public boolean setLargeScaleRate(float large);
 
     /**
      * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
@@ -64,18 +55,18 @@ public interface IBaseParams {
      */
     public boolean setSmallScaleRate(float small);
 
-    /**
-     * 设置描述文字的颜色,此颜色是用于绘制时使用的(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
-     * <p>设置座位描述文字时请勿使用此方法</p>
-     *
-     * @param color
-     */
-    public void setDescriptionColor(int color);
-
-    /**
-     * 获取描述文字的颜色(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
-     */
-    public int getDescriptionColor();
+//    /**
+//     * 设置描述文字的颜色,此颜色是用于绘制时使用的(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
+//     * <p>设置座位描述文字时请勿使用此方法</p>
+//     *
+//     * @param color
+//     */
+//    public void setDescriptionColor(int color);
+//
+//    /**
+//     * 获取描述文字的颜色(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
+//     */
+//    public int getDescriptionColor();
 
     /**
      * 获取自动计算的描述文字字体大小，此值由当前参数height所决定，使字体的大小心保证与参数高度统一
@@ -88,10 +79,8 @@ public interface IBaseParams {
      * 设置绘制方式,使用此方法时必须注意,在设置图片之后可以通过此方法设置为默认的绘制模式;<br/>
      * 同样的也可以在绘制默认模式下设置为图片绘制模式;但这种方法存在一定的危险性;<br/>
      * 当设置为图片绘制模式但不存在图片时将会抛出异常;<br/>
-     * <font color="#ff9900"><b>请确保在调用此方法设置为图片绘制模式时已经设置好了图片,但是设置绘制图片模式请尽量从其它方法切入</b><br/>
+     * <font color="#ff9900"><b>请确保在调用此方法设置为图片绘制模式时已经设置好了图片</b><br/>
      * <br/>
-     * 设置座位图片绘制{@link ISeatParams#setImage(int[])}<br/>
-     * 设置舞台图片绘制{@link IStageParams#setImage(int)}<br/></font>
      *
      * @param drawType 绘制方式
      *                 <p>

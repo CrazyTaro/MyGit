@@ -31,7 +31,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatViewInterface;
  *          并为seatDrawUtil设置该接口对应的监听事件</p>
  *          <br/>
  *          <p>不需要自定义view实现,仅使用此控件的话,请实现{@link ISeatChooseEvent}接口,以处理此控件事件处理后的回调</p>
- *          <p>
+ *          <p/>
  *          <br/>
  *          <br/>
  *          此view初始化情况下使用的参数值全部都是默认值及默认设置<br/>
@@ -122,38 +122,177 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     @Override
     public void chosseInMapFail() {
         if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.seletedFail();
+            mSeatChooseEvent.seletedFail(ISeatChooseEvent.FAIL_IN_CLICK_MAP);
         }
     }
 
     @Override
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, int rowNumber, int columnNumber, AbsSeatEntity seatEntity) {
+    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
+        if (updateCoupleSeat(rowIndexInMap, columnIndexInMap, seatEntity)) {
+            return;
+        } else {
+            updateSingleSeat(rowIndexInMap, columnIndexInMap, seatEntity);
+        }
+//        //通知选中事件
+//        if (mSeatChooseEvent != null) {
+//            mSeatChooseEvent.selectedSeatSuccess(rowIndexInMap, columnIndexInMap, rowNumber, columnNumber, seatEntity);
+//        }
+//
+//        //是否被选中状态
+//        boolean isChoosen = false;
+//        int selectedType = mSeatParams.getSeletedType();
+//        int unselectedType = mSeatParams.getUnseletedType();
+//
+//        int seatType = seatEntity.getType();
+//        if (mSeatParams.isCouple(seatType)) {
+//            int coupleColumnIndex = 0;
+//            if (mSeatParams.isCoupleLeftToRight(seatType)) {
+//                coupleColumnIndex = columnIndexInMap + 1;
+//            } else {
+//                coupleColumnIndex = columnIndexInMap - 1;
+//            }
+//            AbsSeatEntity coupleSeat = mSeatDrawHandle.getSeatDrawMap().getSeatEntity(rowIndexInMap, coupleColumnIndex);
+//            int coupleSeatType = coupleSeat.getType();
+//            if (coupleSeat != null && mSeatParams.isCouple(coupleSeatType)) {
+//                if ((seatType == selectedType) == (coupleSeatType == selectedType)) {
+//                    if (seatType == selectedType) {
+//                        mSeatDrawHandle.updateSeatInMap(unselectedType, rowIndexInMap, columnIndexInMap);
+//                        mSeatDrawHandle.updateSeatInMap(unselectedType, rowIndexInMap, coupleColumnIndex);
+//                        removeSeat(rowIndexInMap, columnIndexInMap);
+//                        removeSeat(rowIndexInMap, coupleColumnIndex);
+//                        isChoosen = false;
+//                    }
+//                } else if ((seatType == unselectedType) == (coupleSeatType == unselectedType)) {
+//                    if (seatType == unselectedType) {
+//                        if ((mCurrentSeletedSeats.size() + 2) <= mMostSeletedCount) {
+//                            mSeatDrawHandle.updateSeatInMap(selectedType, rowIndexInMap, columnIndexInMap);
+//                            mSeatDrawHandle.updateSeatInMap(selectedType, rowIndexInMap, coupleColumnIndex);
+//                            addSeat(rowIndexInMap, columnIndexInMap);
+//                            addSeat(rowIndexInMap, coupleColumnIndex);
+//                            isChoosen = true;
+//                        } else {
+//                            if (mSeatChooseEvent != null) {
+//                                mSeatChooseEvent.seletedFull();
+//                                return;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        if (seatType == selectedType) {
+//            //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
+//            mSeatDrawHandle.updateSeatInMap(unselectedType, rowIndexInMap, columnIndexInMap);
+//            removeSeat(rowIndexInMap, columnIndexInMap);
+//            isChoosen = false;
+//        } else if (seatType == unselectedType) {
+//            if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
+//                //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
+//                mSeatDrawHandle.updateSeatInMap(selectedType, rowIndexInMap, columnIndexInMap);
+//                addSeat(rowIndexInMap, columnIndexInMap);
+//                isChoosen = true;
+//            } else {
+//                //当前选中座位数已达上限，回调接口，不将座位加入选中列表中
+//                if (mSeatChooseEvent != null) {
+//                    mSeatChooseEvent.seletedFull();
+//                    return;
+//                }
+//            }
+//        }
+//
+//        if (mSeatChooseEvent != null) {
+//            //若座位有效且未满，则回调选中座位结果
+//            mSeatChooseEvent.selectedSeatSuccess(seatEntity.getRowNumber(), seatEntity.getColumnNumber(), isChoosen);
+//        }
+    }
+
+    protected boolean updateCoupleSeat(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
         //通知选中事件
         if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.selectedSeatSuccess(rowIndexInMap, columnIndexInMap, rowNumber, columnNumber, seatEntity);
+            mSeatChooseEvent.clickSeatSuccess(rowIndexInMap, columnIndexInMap, seatEntity);
         }
 
         //是否被选中状态
         boolean isChoosen = false;
-        int selectedType = mSeatParams.getSeletedType();
-        int unselectedType = mSeatParams.getUnseletedType();
+        boolean isHandle = false;
 
-        int seatType = seatEntity.getType();
-        if (seatType == selectedType) {
+        if (seatEntity.isCouple()) {
+            int coupleColumnIndex = 0;
+            if (seatEntity.isCoupleLeftToRight()) {
+                coupleColumnIndex = columnIndexInMap + 1;
+            } else {
+                coupleColumnIndex = columnIndexInMap - 1;
+            }
+            AbsSeatEntity coupleSeat = mSeatDrawHandle.getSeatDrawMap().getSeatEntity(rowIndexInMap, coupleColumnIndex);
+            if (coupleSeat == null) {
+                isHandle = false;
+                if (mSeatChooseEvent != null) {
+                    mSeatChooseEvent.seletedFail(ISeatChooseEvent.FAIL_IN_CHOOSE_SEAT);
+                }
+            } else {
+                isHandle = true;
+                if (seatEntity.isChosen() == coupleSeat.isChosen()) {
+                    if (seatEntity.isChosen() > 0) {
+                        mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, columnIndexInMap);
+                        mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, coupleColumnIndex);
+                        removeSeat(rowIndexInMap, columnIndexInMap);
+                        removeSeat(rowIndexInMap, coupleColumnIndex);
+                        isChoosen = true;
+                    } else if (seatEntity.isChosen() < 0) {
+                        if ((mCurrentSeletedSeats.size() + 2) <= mMostSeletedCount) {
+                            mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, columnIndexInMap);
+                            mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, coupleColumnIndex);
+                            addSeat(rowIndexInMap, columnIndexInMap);
+                            addSeat(rowIndexInMap, coupleColumnIndex);
+                            isChoosen = true;
+                        } else {
+                            isChoosen = false;
+                            if (mSeatChooseEvent != null) {
+                                mSeatChooseEvent.seletedFull(true);
+                            }
+                        }
+                    }
+                }
+
+                if (mSeatChooseEvent != null) {
+                    if (isChoosen) {
+                        mSeatChooseEvent.selectedCoupleSuccess(rowIndexInMap, columnIndexInMap, rowIndexInMap, coupleColumnIndex, new AbsSeatEntity[]{seatEntity, coupleSeat});
+                    } else {
+                        mSeatChooseEvent.selectedCoupleFail(rowIndexInMap, columnIndexInMap, rowIndexInMap, coupleColumnIndex);
+                    }
+                }
+            }
+        } else {
+            isHandle = false;
+        }
+        return isHandle;
+    }
+
+    protected void updateSingleSeat(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
+        //通知选中事件
+        if (mSeatChooseEvent != null) {
+            mSeatChooseEvent.clickSeatSuccess(rowIndexInMap, columnIndexInMap, seatEntity);
+        }
+
+        //是否被选中状态
+        boolean isChoosen = false;
+
+        if (seatEntity.isChosen() > 0) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
-            mSeatDrawHandle.updateSeatIMap(unselectedType, rowIndexInMap, columnIndexInMap);
+            mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, columnIndexInMap);
             removeSeat(rowIndexInMap, columnIndexInMap);
             isChoosen = false;
-        } else if (seatType == unselectedType) {
+        } else if (seatEntity.isChosen() < 0) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
-                mSeatDrawHandle.updateSeatIMap(selectedType, rowIndexInMap, columnIndexInMap);
+                mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, columnIndexInMap);
                 addSeat(rowIndexInMap, columnIndexInMap);
                 isChoosen = true;
             } else {
                 //当前选中座位数已达上限，回调接口，不将座位加入选中列表中
                 if (mSeatChooseEvent != null) {
-                    mSeatChooseEvent.seletedFull();
+                    mSeatChooseEvent.seletedFull(false);
                     return;
                 }
             }
@@ -168,7 +307,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     @Override
     public void chooseSeatFail() {
         if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.seletedFail();
+            mSeatChooseEvent.seletedFail(ISeatChooseEvent.FAIL_IN_CHOOSE_SEAT);
         }
     }
 

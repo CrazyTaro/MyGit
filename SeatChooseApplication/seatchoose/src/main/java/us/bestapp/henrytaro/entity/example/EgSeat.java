@@ -3,6 +3,7 @@ package us.bestapp.henrytaro.entity.example;/**
  */
 
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
@@ -25,8 +26,40 @@ public class EgSeat extends AbsSeatEntity {
     }
 
     @Override
+    public String getDrawStyleTag() {
+        switch (mType) {
+            case 1:
+                return BaseSeatParams.TAG_OPTIONAL_SEAT;
+            case -4:
+            case -5:
+            case 2:
+                return BaseSeatParams.TAG_SELECTE_SEAT;
+            case 3:
+                return BaseSeatParams.TAG_LOCK_SEAT;
+            case 4:
+            case 5:
+                return BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT;
+            default:
+                return BaseSeatParams.TAG_ERROR_SEAT;
+        }
+    }
+
+    @Override
     public boolean isCouple() {
-        return false;
+        if (mType == 4 || mType == 5 || mType == -4 || mType == -5) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isCoupleLeftToRight() {
+        if (mType == 4 || mType == -4) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -40,12 +73,56 @@ public class EgSeat extends AbsSeatEntity {
     }
 
     @Override
-    public int getType() {
-        return mType;
+    public boolean isExsit() {
+        if(mType==0){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     @Override
-    public void updateType(int newType) {
-        this.mType = newType;
+    public void updateData(int updateTag) {
+        if (updateTag > 0) {
+            switch (mType) {
+                case 1:
+                    this.mType = 2;
+                    break;
+                case 4:
+                    this.mType = -4;
+                    break;
+                case 5:
+                    this.mType = -5;
+                    break;
+            }
+        } else {
+            switch (mType) {
+                case 2:
+                    this.mType = 1;
+                    break;
+                case -4:
+                    this.mType = 4;
+                    break;
+                case -5:
+                    this.mType = 5;
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public int isChosen() {
+        switch (mType) {
+            case 1:
+            case 4:
+            case 5:
+                return -1;
+            case 2:
+            case -4:
+            case -5:
+                return 1;
+            default:
+                return 0;
+        }
     }
 }

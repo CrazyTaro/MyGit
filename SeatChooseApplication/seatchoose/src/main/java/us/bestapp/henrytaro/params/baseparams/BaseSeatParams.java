@@ -2,31 +2,36 @@ package us.bestapp.henrytaro.params.baseparams;/**
  * Created by xuhaolin on 15/9/10.
  */
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
 
-import us.bestapp.henrytaro.params.interfaces.IBaseParams;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 /**
  * Created by xuhaolin on 15/9/10.<br/>
- * 座位绘制参数基本类,该类继承了对外公开接口{@link ISeatParams},此接口所有的方法用于对外公开提供给用户调用;
+ * 座位绘制参数基本类,该类继承了{@link AbsBaseParams}及对外公开接口{@link ISeatParams},此接口所有的方法用于对外公开提供给用户调用;
  * 其余此类中的 {@code public} 方法均是用于提供给绘制时使用的方法,需要自定义参数类时请继承此方法重写部分方法即可
  * <br/>
+ * <font color="#ff9900"><b>需要自定义类型时,请务必考虑是否需要清除原有的样式或者添加新的样式</b></font>
  * <br/>
- * <font color="#ff9900"><b>需要自定义类型时,请务必考虑是否需要设置默认的静态类型变量,缩略图颜色,座位颜色设置等</b></font>
  * <br/>
- * <b>
- * {@link #setAllSeatTypeWithColor(int[], int[], int[], String[])} 设置/替换全部的类型/颜色/缩略图颜色/描述<br/>
- * {@link #setSeatTypeConstant(int, int, int, int, int[])} 设置表态类型变量,用于方便处理数据,<font color="#ff9900">当默认类型被替换时,必须调用此方法修改默认静态处理类型</font><br/>
- * {@link #setImage(int[])} 设置图片,图片数量应该与类型数量相同<br/>
- * {@link #setSeatTypeWithImage(int[], int[], int[])} 同时设置类型与图片,用于图片绘制模式,此时应该调用{@link #setThumbnailSeatColor(int[])}设置缩略图的颜色<br/>
- * <p>
- * </b>
+ * <font color="#ff9900"><b>关于标签及样式的设定,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
+ * 其中包括<br/>
+ * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
+ * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
+ * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
+ * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+ * <br/>
+ * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+ * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
  */
 public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
+
     /**
      * 默认座位颜色值
      */
@@ -59,64 +64,25 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 默认座位圆角度
      */
     public static final float DEFAULT_SEAT_RADIUS = DEFAULT_SEAT_HEIGHT * 0.1f;
-    /**
-     * 默认座位类型,分别为<font color="#ff9900"><b>可选,已选,已售</b></font>
-     */
-    public static int[] default_seat_type = {1, 2, 3};
-    /**
-     * 默认座位类型对应的颜色,分别为<br/>
-     * <p>
-     * 可选=<font color="white"><b>白色</b></font><br/>
-     * 已选=<font color="red"><b>红色</b></font><br/>
-     * 已售=<font color="#A9A9A9"><b>灰色</b></font><br/>
-     * </p>
-     */
-    public static int[] default_seat_type_color = {Color.WHITE, Color.rgb(228, 24, 99), Color.rgb(196, 195, 196)};
-    /**
-     * 默认座位类型描述,"可选,已选,已售"
-     */
-    public static String[] default_seat_type_desc = {"可选", "已选", "已售"};
-    /**
-     * 座位默认基本类型,不可选(可见),<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
-     */
-    public static int seat_type_disable_selected = 3;
-    /**
-     * 座位默认基本类型,已选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
-     */
-    public static int seat_type_selected = 2;
-    /**
-     * 座位默认基本类型,未选,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>
-     */
-    public static int seat_type_unselected = 1;
-    /**
-     * 座位默认基本类型,不可见,<font color="#ff9900"><b>此方法与座位的类型并没有直接关系,该静态变量(非常量)仅是方便用于处理数据而已,可修改</b></font>,其值与{@link IBaseParams#DRAW_TYPE_NO}保持一致
-     */
-    public static int seat_type_unshow = IBaseParams.DRAW_TYPE_NO;
 
     //座位间水平间隔
     protected float mSeatHorizontalInterval = DEFAULT_SEAT_HORIZONTAL_INTERVAL;
     //座位间垂直间隔
     protected float mSeatVerticalInterval = DEFAULT_SEAT_VERTICAL_INTERVAL;
     //座位与描述文字之间的间隔
-    protected float mSeatTypeDescInterval = DEFAULT_SEAT_TEXT_INTERVAL;
+    protected float mDrawStyleDescInterval = DEFAULT_SEAT_TEXT_INTERVAL;
     //座位类型之间的间隔
-    protected float mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
+    protected float mDrawStyleInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
 
-    //错误类型数组
-    protected int[] mErrorTypes = null;
+    private Map<String, BaseDrawStyle> mDrawStyles = null;
+
+    //是否按指定顺序绘制座位类型
+    protected boolean mIsDrawSeatStyleInOrder = false;
+    //座位类型指定顺序
+    protected List<String> mTagInOrder = null;
     //是否绘制座位类型
-    protected boolean mIsDrawSeatType = true;
-    //座位类型数组
-    protected int[] mSeatTypeArrary = null;
-    //座位类型对应的颜色数组
-    protected int[] mSeatColorArrary = null;
-    protected int[] mThumbnailColorArray = null;
-    //座位类型对应的描述文字
-    protected String[] mSeatTypeDescription = null;
-    //座位类型对应的资源图片ID
-    protected int[] mSeatImageID = null;
-    protected Bitmap[] mSeatImageBitmaps = null;
+    protected boolean mIsDrawSeatDrawStyle = true;
 
     protected float mDescriptionSize = DEFAULT_DESCRIPTION_SIZE;
     //移动缩放时用于暂时存放缩放前的数据(以便于正常使用比例缩放)
@@ -150,63 +116,25 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 初始化
      */
     protected void initial() {
-        super.setLargeScaleRate(16);
-        super.setSmallScaleRate(0.2f);
-        resetSeatTypeWithColor();
-        mSeatTypeDescription = default_seat_type_desc;
+        super.setLargeScaleRate(3);
+        super.setSmallScaleRate(0.5f);
         this.storeOriginalValues(null);
-    }
 
-    @Override
-    public Bitmap[] getImageBitmap() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mSeatImageBitmaps != null) {
-            Bitmap[] newArr = new Bitmap[mSeatImageBitmaps.length];
-            System.arraycopy(mSeatImageBitmaps, 0, newArr, 0, mSeatImageBitmaps.length);
-            return newArr;
-        } else {
-            return null;
-        }
-    }
+        int selectColor = Color.rgb(228, 24, 99);
+        int optionalColor = Color.WHITE;
+        int lockColor = Color.rgb(196, 195, 196);
+        int coupleColor = Color.rgb(243, 115, 162);
 
-    @Override
-    public int[] getImageID() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mSeatImageID != null) {
-            int[] newArr = new int[mSeatImageID.length];
-            System.arraycopy(mSeatImageID, 0, newArr, 0, mSeatImageID.length);
-            return newArr;
-        } else {
-            return null;
-        }
-    }
+        mDrawStyles = new HashMap<>();
+        BaseDrawStyle selectInfo = new BaseDrawStyle(TAG_SELECTE_SEAT, true, selectColor, selectColor, Color.BLACK, "已选", DEFAULT_INT, null);
+        BaseDrawStyle optionalInfo = new BaseDrawStyle(TAG_OPTIONAL_SEAT, true, optionalColor, optionalColor, Color.BLACK, "可选", DEFAULT_INT, null);
+        BaseDrawStyle lockInfo = new BaseDrawStyle(TAG_LOCK_SEAT, true, lockColor, lockColor, Color.BLACK, "已售", DEFAULT_INT, null);
+        BaseDrawStyle coupleInfo = new BaseDrawStyle(TAG_COUPLE_OPTIONAL_SEAT, true, coupleColor, coupleColor, Color.BLACK, "情侣", DEFAULT_INT, null);
 
-    @Override
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted, int[] errorType) {
-        seat_type_selected = seleted;
-        seat_type_unselected = unSeleted;
-        seat_type_unshow = unShow;
-        seat_type_disable_selected = disableSeleted;
-        this.mErrorTypes = errorType;
-    }
-
-    @Override
-    public void resetSeatTypeConstant() {
-        seat_type_selected = 2;
-        seat_type_unselected = 1;
-        seat_type_disable_selected = 3;
-        seat_type_unshow = IBaseParams.DRAW_TYPE_NO;
-        this.mErrorTypes = null;
-    }
-
-    @Override
-    public void setIsDrawSeatType(boolean isDrawSeatType) {
-        this.mIsDrawSeatType = isDrawSeatType;
-    }
-
-    @Override
-    public boolean isDrawSeatType() {
-        return mIsDrawSeatType;
+        mDrawStyles.put(TAG_SELECTE_SEAT, selectInfo);
+        mDrawStyles.put(TAG_OPTIONAL_SEAT, optionalInfo);
+        mDrawStyles.put(TAG_LOCK_SEAT, lockInfo);
+        mDrawStyles.put(TAG_COUPLE_OPTIONAL_SEAT, coupleInfo);
     }
 
     /**
@@ -227,8 +155,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
             mValueHolder[0] = this.getWidth();
             mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mSeatVerticalInterval;
-            mValueHolder[3] = this.mSeatTypeDescInterval;
-            mValueHolder[4] = this.mSeatTypeInterval;
+            mValueHolder[3] = this.mDrawStyleDescInterval;
+            mValueHolder[4] = this.mDrawStyleInterval;
             mValueHolder[5] = this.mDescriptionSize;
             mIsValueHold = true;
         }
@@ -236,8 +164,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         this.setWidth(mValueHolder[0] * scaleRate, false);
         this.setHeight(mValueHolder[1] * scaleRate, false);
         this.mSeatVerticalInterval = mValueHolder[2] * scaleRate;
-        this.mSeatTypeDescInterval = mValueHolder[3] * scaleRate;
-        this.mSeatTypeInterval = mValueHolder[4] * scaleRate;
+        this.mDrawStyleDescInterval = mValueHolder[3] * scaleRate;
+        this.mDrawStyleInterval = mValueHolder[4] * scaleRate;
         this.mDescriptionSize = mValueHolder[5] * scaleRate;
 
         //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
@@ -245,8 +173,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
             mValueHolder[0] = this.getWidth();
             mValueHolder[1] = this.getHeight();
             mValueHolder[2] = this.mSeatVerticalInterval;
-            mValueHolder[3] = this.mSeatTypeDescInterval;
-            mValueHolder[4] = this.mSeatTypeInterval;
+            mValueHolder[3] = this.mDrawStyleDescInterval;
+            mValueHolder[4] = this.mDrawStyleInterval;
             mValueHolder[5] = this.mDescriptionSize;
             //重置记录标志
             mIsValueHold = false;
@@ -291,29 +219,29 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    public float getSeatTypeDescInterval() {
+    public float getDrawStyleDescInterval() {
         if (this.isDrawThumbnail()) {
-            return mSeatTypeDescInterval * this.getThumbnailRate();
+            return mDrawStyleDescInterval * this.getThumbnailRate();
         } else {
-            return mSeatTypeDescInterval;
+            return mDrawStyleDescInterval;
         }
     }
 
     @Override
-    public float getSeatTypeInterval() {
+    public float getDrawStyleInterval() {
         if (this.isDrawThumbnail()) {
-            return mSeatTypeInterval * this.getThumbnailRate();
+            return mDrawStyleInterval * this.getThumbnailRate();
         } else {
-            return mSeatTypeInterval;
+            return mDrawStyleInterval;
         }
     }
 
     @Override
-    public void setSeatTypeInterval(float mSeatTypeInterval) {
-        if (mSeatTypeInterval == DEFAULT_FLOAT) {
-            this.mSeatTypeInterval = DEFAULT_SEAT_TYPE_INTERVAL;
+    public void setDrawStyleInterval(float drawStyleInterval) {
+        if (drawStyleInterval == DEFAULT_FLOAT) {
+            this.mDrawStyleInterval = DEFAULT_SEAT_TYPE_INTERVAL;
         } else {
-            this.mSeatTypeInterval = mSeatTypeInterval;
+            this.mDrawStyleInterval = drawStyleInterval;
         }
     }
 
@@ -339,158 +267,28 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         super.setColor(seatColor);
     }
 
+
     @Override
-    public int[] getSeatTypeArrary() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mSeatTypeArrary != null) {
-            int[] newArr = new int[mSeatTypeArrary.length];
-            System.arraycopy(mSeatTypeArrary, 0, newArr, 0, mSeatTypeArrary.length);
-            return newArr;
-        } else {
-            return null;
-        }
+    public int getDrawStyleLength() {
+        return mDrawStyles.size();
     }
 
     @Override
-    public int[] getSeatColorArrary() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mSeatColorArrary != null) {
-            int[] newArr = new int[mSeatColorArrary.length];
-            System.arraycopy(mSeatColorArrary, 0, newArr, 0, mSeatColorArrary.length);
-            return newArr;
-        } else {
-            return null;
-        }
+    public void setIsDrawDrawStyle(boolean isDraw) {
+        this.mIsDrawSeatDrawStyle = isDraw;
     }
 
     @Override
-    public int[] getThumbnailColorArrary() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mThumbnailColorArray != null) {
-            int[] newArr = new int[mThumbnailColorArray.length];
-            System.arraycopy(mThumbnailColorArray, 0, newArr, 0, mThumbnailColorArray.length);
-            return newArr;
-        } else {
-            return null;
-        }
+    public boolean isDrawDrawStyle() {
+        return this.mIsDrawSeatDrawStyle;
     }
 
     @Override
-    public String[] getSeatTypeDescription() {
-        //引用类型的参数返回值为复制的新对象返回,而不是原引用返回
-        if (mSeatTypeDescription != null) {
-            String[] newArr = new String[mSeatTypeDescription.length];
-            System.arraycopy(mSeatTypeDescription, 0, newArr, 0, mSeatTypeDescription.length);
-            return newArr;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public int getSeatTypeLength() {
-        if (mSeatTypeArrary != null) {
-            return mSeatTypeArrary.length;
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public int getSeletedType() {
-        return BaseSeatParams.seat_type_selected;
-    }
-
-    @Override
-    public int getUnseletedType() {
-        return BaseSeatParams.seat_type_unselected;
-    }
-
-
-    @Override
-    public boolean isErrorOrUnshowType(int type) {
-        if (type == this.getType("unshow") || type == IBaseParams.TYPE_ERROR) {
-            return true;
-        } else if (mErrorTypes != null) {
-            for (int error : mErrorTypes) {
-                if (type == error) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-//    @Override
-//    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType) {
-//        BaseSeatParams.seat_type_selected = selectedType;
-//        BaseSeatParams.seat_type_unselected = unselectedType;
-//        this.mErrorTypes = errorType;
-//    }
-
-    @Override
-    public int getType(String typeTag) {
-        if (typeTag.equals("unshow")) {
-            return BaseSeatParams.seat_type_unshow;
-        } else {
-            return IBaseParams.TYPE_ERROR;
-        }
-    }
-
-    /**
-     * 设置绘制类型,<font color="#ff9900"><b>设置绘制方式为图像类型时,必须存在图片资源或者图像资源,否则抛出异常</b></font>,设置此方法前应该先设置图片资源ID{@link #setImage(int[])}或图片对象{@link #setImage(Bitmap[])}
-     * <p>
-     * {@link #DRAW_TYPE_DEFAULT},默认绘制方式,使用图形及颜色<br/>
-     * {@link #DRAW_TYPE_IMAGE},图片绘制方式,使用图片进行填充<br/>
-     * </p>
-     *
-     * @param drawType
-     */
-    @Override
-    public void setDrawType(int drawType) {
-        if (drawType == DRAW_TYPE_IMAGE && (mSeatImageID == null || mSeatImageBitmaps == null)) {
-            throw new RuntimeException("设置绘制方式为图像类型时,必须存在图片资源或者图像资源!");
-        } else {
-            super.setDrawType(drawType);
-        }
-    }
-
-    @Override
-    public void setImage(int[] imageID) {
-        if (mSeatTypeArrary == null) {
-            throw new RuntimeException("座位类型数组不可为null，请调用方法设置座位类型数组seatTypeArr");
-        }
-        mSeatImageID = super.setImage(imageID, mSeatTypeArrary.length, mSeatImageID);
-    }
-
-
-    @Override
-    public void setImage(Bitmap[] imageBitmap) {
-        if (mSeatTypeArrary == null) {
-            throw new RuntimeException("座位类型数组不可为null，请调用方法设置座位类型数组seatTypeArr");
-        }
-        mSeatImageBitmaps = super.setImage(imageBitmap, mSeatTypeArrary.length, mSeatImageBitmaps);
-    }
-
-    @Override
-    public void setThumbnailSeatColor(int[] colorArr) {
-        if (mSeatTypeArrary == null) {
-            throw new RuntimeException("座位类型数组不可为null，请调用方法设置座位类型数组seatTypeArr");
-        }
-        if (colorArr == null && mSeatTypeArrary.length != colorArr.length) {
-            throw new RuntimeException("参数不可为null,且参数值的length必须与座位类型length相同,可通过方法getSeatTypeLength()获取");
-        }
-        mThumbnailColorArray = new int[colorArr.length];
-        System.arraycopy(colorArr, 0, mThumbnailColorArray, 0, colorArr.length);
-    }
-
-
-    @Override
-    public void setSeatTypeDescInterval(float mSeatTextInterval) {
+    public void setDrawStyleDescInterval(float mSeatTextInterval) {
         if (mSeatTextInterval == DEFAULT_FLOAT) {
-            this.mSeatTypeDescInterval = DEFAULT_SEAT_TEXT_INTERVAL;
+            this.mDrawStyleDescInterval = DEFAULT_SEAT_TEXT_INTERVAL;
         } else {
-            this.mSeatTypeDescInterval = mSeatTextInterval;
+            this.mDrawStyleDescInterval = mSeatTextInterval;
         }
     }
 
@@ -517,128 +315,94 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         return coupleRectf;
     }
 
-
-    public boolean isCoupleLeftToRight(int seatType) {
-        if (seatType == 4) {
-            return true;
-        } else if (seatType == 5) {
-            return false;
+    @Override
+    public List<String> getDrawStyleTags() {
+        List<String> tagList = new ArrayList<>();
+        for (String tag : mDrawStyles.keySet()) {
+            tagList.add(tag);
         }
-        return false;
+        return tagList;
     }
 
-    public boolean isCouple(int seatType) {
-        if (seatType == 4 || seatType == 5) {
-            return true;
+    @Override
+    public BaseDrawStyle getDrawStyle(String typeTag) {
+        return mDrawStyles.get(typeTag);
+    }
+
+    @Override
+    public BaseDrawStyle addNewDrawStyle(String typeTag, BaseDrawStyle newStyle) {
+        return mDrawStyles.put(typeTag, newStyle);
+    }
+
+    @Override
+    public BaseDrawStyle removeDrawStyle(String typeTag) {
+        return mDrawStyles.remove(typeTag);
+    }
+
+    @Override
+    public void clearDrawStyles() {
+        mDrawStyles.clear();
+    }
+
+    @Override
+    public void setIsDrawStyleByOrder(boolean isInOrder, List<String> tagInOrder) {
+        this.mIsDrawSeatStyleInOrder = isInOrder;
+        if (isInOrder) {
+            this.mTagInOrder = tagInOrder;
         } else {
-            return false;
+            this.mTagInOrder = null;
+        }
+    }
+
+    @Override
+    public boolean isDrawStyleByOrder() {
+        return this.mIsDrawSeatStyleInOrder;
+    }
+
+    @Override
+    public List<BaseDrawStyle> getDrawStyles(boolean isInOrder) {
+        if (isInOrder) {
+            if (this.mIsDrawSeatStyleInOrder && this.mTagInOrder != null) {
+                List<BaseDrawStyle> orderStyleList = new ArrayList<>();
+                for (String tag : mTagInOrder) {
+                    orderStyleList.add(mDrawStyles.get(tag));
+                }
+
+                return orderStyleList;
+            } else {
+                return null;
+            }
+        } else {
+            List<BaseDrawStyle> orderStyleList = new ArrayList<>();
+            orderStyleList.addAll(mDrawStyles.values());
+            return orderStyleList;
         }
     }
 
     /**
-     * 根据座位类型来确定座位是否需要绘制，当座位类型不合法时{@link #isErrorOrUnshowType(int)}，不绘制该座位
+     * 获取座位类型样式的所有文本
      *
-     * @param seatType 座位类型
+     * @param isInOrder 是否按顺序加载,若使用此功能必须是先设定{@link #setIsDrawStyleByOrder(boolean, List)}
+     * @return
      */
-    public void setIsDraw(int seatType) {
-        if (this.isErrorOrUnshowType(seatType)) {
-            super.setIsDraw(false);
-        } else {
-            super.setIsDraw(true);
-        }
-    }
-
-    /**
-     * <p><b>通常情况不建议使用该方法,座位是否绘制由座位的类型决定(存在不可绘制{@link #seat_type_unshow}的座位类型),
-     * 是否绘制一般由座位的类型决定,通过{@link #setIsDraw(int)}决定座位是否绘制</b></p>
-     */
-    @Override
-    public void setIsDraw(boolean isDraw) {
-        super.setIsDraw(isDraw);
-    }
-
-    @Override
-    public void resetDefaultSeatParams() {
-        default_seat_type = new int[]{1, 2, 3};
-        default_seat_type_color = new int[]{Color.WHITE, Color.rgb(228, 24, 99), Color.rgb(196, 195, 196)};
-        default_seat_type_desc = new String[]{"可选", "已选", "已售"};
-    }
-
-    @Override
-    public void setSeatTypeWithImage(int[] seatTypeArr, int[] thumbnailColorArr, int[] imageID) {
-        if (seatTypeArr != null && thumbnailColorArr != null && seatTypeArr.length == thumbnailColorArr.length) {
-            mSeatTypeArrary = new int[seatTypeArr.length];
-            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
-
-            mThumbnailColorArray = new int[thumbnailColorArr.length];
-            System.arraycopy(thumbnailColorArr, 0, mThumbnailColorArray, 0, thumbnailColorArr.length);
-            super.setImage(imageID, seatTypeArr.length, mSeatImageID);
-        } else {
-            throw new RuntimeException("设置新座位类型及图片ID失败,请确认参数不可为null及缩略图座位颜色thumbnailColorArr参数的length与座位类型length相同");
-        }
-    }
-
-    @Override
-    public void setSeatTypeWithImage(int[] seatTypeArr, int[] thumbnailColorArr, Bitmap[] imageBitmap) {
-
-        if (seatTypeArr != null && thumbnailColorArr != null && seatTypeArr.length == thumbnailColorArr.length) {
-            mSeatTypeArrary = new int[seatTypeArr.length];
-            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
-
-            mThumbnailColorArray = new int[thumbnailColorArr.length];
-            System.arraycopy(thumbnailColorArr, 0, mThumbnailColorArray, 0, thumbnailColorArr.length);
-            super.setImage(imageBitmap, seatTypeArr.length, mSeatImageBitmaps);
-        } else {
-            throw new RuntimeException("设置新座位类型及图片ID失败,请确认参数不可为null及缩略图座位颜色thumbnailColorArr参数的length与座位类型length相同");
-        }
-    }
-
-    @Override
-    public void setAllSeatTypeWithColor(int[] seatTypeArr, int[] colorArr, int[] thumbnailColorArr, String[] seatTypeDesc) {
-        if (seatTypeArr != null && colorArr != null && seatTypeArr.length == colorArr.length) {
-            mSeatTypeArrary = new int[seatTypeArr.length];
-            System.arraycopy(seatTypeArr, 0, mSeatTypeArrary, 0, seatTypeArr.length);
-            mSeatColorArrary = new int[colorArr.length];
-            System.arraycopy(colorArr, 0, mSeatColorArrary, 0, colorArr.length);
-
-            //缩略图颜色值不为null且长度与座位类型相同
-            if (thumbnailColorArr != null && thumbnailColorArr.length == seatTypeArr.length) {
-                //设置独立的缩略图座位颜色
-                mThumbnailColorArray = new int[thumbnailColorArr.length];
-                System.arraycopy(thumbnailColorArr, 0, mThumbnailColorArray, 0, thumbnailColorArr.length);
-            } else if (thumbnailColorArr == null) {
-                //缩略图座位颜色为null,以colorArr作为其值
-                mThumbnailColorArray = new int[colorArr.length];
-                System.arraycopy(colorArr, 0, mThumbnailColorArray, 0, colorArr.length);
+    public List<String> getDrawStyleDescription(boolean isInOrder) {
+        if (isInOrder) {
+            if (mIsDrawSeatStyleInOrder && mTagInOrder != null) {
+                List<String> typeDescList = new ArrayList<>();
+                for (String tag : mTagInOrder) {
+                    typeDescList.add(mDrawStyles.get(tag).description);
+                }
+                return typeDescList;
             } else {
-                throw new RuntimeException("缩略图座位颜色不为null时,其length必须与新设置的seatTypeArr的length一致;\n否则请将此参数值设置为null,则将引用colorArr作为缩略图座位的颜色值");
+                return null;
             }
-
-            if ((seatTypeDesc != null && seatTypeDesc.length == seatTypeArr.length)) {
-                mSeatTypeDescription = new String[seatTypeDesc.length];
-                System.arraycopy(seatTypeDesc, 0, mSeatTypeDescription, 0, seatTypeDesc.length);
-            } else {
-                throw new RuntimeException("座位类型描述不可为null,设置座位类型描述length应与座位类型length一致");
-            }
-
-            super.setDrawType(DRAW_TYPE_DEFAULT);
         } else {
-            throw new RuntimeException("设置新座位类型及颜色失败,请确认参数不可为null且参数值的length必须相同");
+            List<String> typeDescList = new ArrayList<>();
+            for (BaseDrawStyle style : mDrawStyles.values()) {
+                typeDescList.add(style.description);
+            }
+            return typeDescList;
         }
-    }
-
-    @Override
-    public void resetSeatTypeWithColor() {
-        resetDefaultSeatParams();
-        //载入默认类型及颜色参数
-        mSeatTypeArrary = new int[default_seat_type.length];
-        mSeatColorArrary = new int[default_seat_type_color.length];
-        mThumbnailColorArray = new int[default_seat_type_color.length];
-        System.arraycopy(default_seat_type, 0, mSeatTypeArrary, 0, default_seat_type.length);
-        System.arraycopy(default_seat_type_color, 0, mSeatColorArrary, 0, default_seat_type_color.length);
-        System.arraycopy(default_seat_type_color, 0, mThumbnailColorArray, 0, default_seat_type_color.length);
-
-        super.setDrawType(DRAW_TYPE_DEFAULT);
     }
 
     /**
@@ -647,6 +411,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * @param T 继承自BaseSeatParams
      * @return
      */
+
     private BaseSeatParams getClassObject(Class<? extends BaseSeatParams> T) {
         try {
             return T.newInstance();
@@ -665,7 +430,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     public BaseSeatParams[] getAutoSeparateParams(Class<? extends BaseSeatParams> T, int seatTypeRowCount) {
         BaseSeatParams[] seatTypeParams = null;
         //座位类型个数
-        int seatTypeLength = this.getSeatTypeLength();
+        int seatTypeLength = this.getDrawStyleLength();
         //每行个数
         int eachRowCount = seatTypeLength / seatTypeRowCount;
         //判断特别情况,当前座位类型个数不能分离成指定行数(行数远超过座位类型个数)
@@ -673,56 +438,34 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         if (seatTypeRowCount <= 0) {
             seatTypeParams = new BaseSeatParams[1];
             //创建当前变量类型的对象
-            seatTypeParams[0] = this.getSelectableClone(this,
-                    //座位类型/座位颜色/缩略图颜色/座位类型描述
-                    this.mSeatTypeArrary, this.mSeatColorArrary, this.mThumbnailColorArray, this.mSeatTypeDescription,
-                    //座位图片资源
-                    this.mSeatImageID, this.mSeatImageBitmaps);
+            seatTypeParams[0] = this.getSelectableClone(this, this.mDrawStyles);
         } else {
             //正常分行
             //创建分离的行数的参数对象
             seatTypeParams = new BaseSeatParams[seatTypeRowCount];
+            List<String> originalTagList = null;
+            if (mIsDrawSeatStyleInOrder) {
+                originalTagList = mTagInOrder;
+            } else {
+                originalTagList = new ArrayList<>();
+                originalTagList.addAll(this.mDrawStyles.keySet());
+            }
 
             for (int i = 0; i < seatTypeRowCount; i++) {
+                Map<String, BaseDrawStyle> newStyleMap = new HashMap<>();
                 //计算当前行需要处理的座位类型个数
                 //当最后一行时,座位个数不是按计算出来每行个数进行处理
                 //而是所有的座位数减去前面N行已处理的座位类型个数,剩下的就是最后一行的座位类型个数
                 //此部分保证了奇偶情况座位类型都可以正常分配完毕
                 int seatTypeCount = (i + 1) == seatTypeRowCount ? (seatTypeLength - i * eachRowCount) : eachRowCount;
-                //创建必须使用的参数数组
-                int[] seatTypeArr = new int[seatTypeCount];
-                int[] thumbnailColorArr = new int[seatTypeCount];
-                String[] descArr = new String[seatTypeCount];
-
-                //创建可能需要使用的参数数组
-                int[] colorArr = null;
-                int[] imageIDArr = null;
-                Bitmap[] bitmapArr = null;
-
-                //复制必须使用的参数数组
-                System.arraycopy(mSeatTypeArrary, i * eachRowCount, seatTypeArr, 0, seatTypeCount);
-                System.arraycopy(mThumbnailColorArray, i * eachRowCount, thumbnailColorArr, 0, seatTypeCount);
-                System.arraycopy(mSeatTypeDescription, i * eachRowCount, descArr, 0, seatTypeCount);
-
-                //实例化并复制可能需要使用的参数数组
-                if (mSeatColorArrary != null) {
-                    colorArr = new int[seatTypeCount];
-                    System.arraycopy(mSeatColorArrary, i * eachRowCount, colorArr, 0, seatTypeCount);
-                }
-                if (mSeatImageID != null) {
-                    imageIDArr = new int[seatTypeCount];
-                    System.arraycopy(mSeatImageID, i * eachRowCount, imageIDArr, 0, seatTypeCount);
-                }
-                if (mSeatImageBitmaps != null) {
-                    bitmapArr = new Bitmap[seatTypeCount];
-                    System.arraycopy(mSeatImageBitmaps, i * eachRowCount, bitmapArr, 0, seatTypeCount);
+                for (int j = 0; j < seatTypeCount; j++) {
+                    String tag = originalTagList.get(i * eachRowCount + j);
+                    newStyleMap.put(tag, mDrawStyles.get(tag));
                 }
 
-                //按提供参数进行克隆
-                seatTypeParams[i] = this.getSelectableClone(getClassObject(T), seatTypeArr, colorArr, thumbnailColorArr, descArr, imageIDArr, bitmapArr);
+                seatTypeParams[i] = this.getSelectableClone(getClassObject(T), newStyleMap);
             }
         }
-
         return seatTypeParams;
     }
 
@@ -733,22 +476,17 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         } else if (newObj == null) {
             newObj = new BaseSeatParams();
         }
-        return this.getSelectableClone((BaseSeatParams) newObj, this.mSeatTypeArrary, this.mSeatColorArrary, this.mThumbnailColorArray, this.mSeatTypeDescription,
-                this.mSeatImageID, this.mSeatImageBitmaps);
+        return this.getSelectableClone((BaseSeatParams) newObj, this.mDrawStyles);
     }
 
     /**
-     * 可选参数的自我复制,对象的复制以参数为准(不检测出错情况,参数不合法依然会报错)
+     * a
      *
-     * @param seatTypeArr       座位类型
-     * @param seatColorArr      座位颜色
-     * @param thumbnailColorArr 缩略图座位颜色
-     * @param descArr           描述文本
-     * @param imageIDArr        座位图片资源ID
-     * @param bitmapArr         座位图片资源Bitmap
+     * @param newParams
+     * @param styleMap
      * @return
      */
-    protected BaseSeatParams getSelectableClone(BaseSeatParams newObj, int[] seatTypeArr, int[] seatColorArr, int[] thumbnailColorArr, String[] descArr, int[] imageIDArr, Bitmap[] bitmapArr) {
+    protected BaseSeatParams getSelectableClone(BaseSeatParams newParams, Map<String, BaseDrawStyle> styleMap) {
         //记录原始的缩略图绘制标志
         boolean isThumbnail = this.isDrawThumbnail();
         //将缩略图绘制状态恢复默认
@@ -756,99 +494,38 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);
 
         //创建新
-        if (newObj == null) {
-            newObj = new BaseSeatParams();
+        if (newParams == null) {
+            newParams = new BaseSeatParams();
         }
         //获取默认原始值
         OriginalValuesHolder holder = (OriginalValuesHolder) this.getOriginalValues();
 
         //设置默认初始值
-        newObj.storeOriginalValues(holder);
+        newParams.storeOriginalValues(holder);
         //设置当前值
-        newObj.setWidth(this.getWidth(), false);
-        newObj.setHeight(this.getHeight(), false);
-        newObj.setRadius(this.getRadius());
-        newObj.setSeatHorizontalInterval(this.getSeatHorizontalInterval());
-        newObj.setSeatVerticalInterval(this.getSeatVerticalInterval());
-        newObj.setSeatTypeInterval(this.getSeatTypeInterval());
-        newObj.setSeatTypeDescInterval(this.getSeatTypeDescInterval());
+        newParams.setWidth(this.getWidth(), false);
+        newParams.setHeight(this.getHeight(), false);
+        newParams.setRadius(this.getRadius());
+        newParams.setSeatHorizontalInterval(this.getSeatHorizontalInterval());
+        newParams.setSeatVerticalInterval(this.getSeatVerticalInterval());
+        newParams.setDrawStyleInterval(this.getDrawStyleInterval());
+        newParams.setDrawStyleDescInterval(this.getDrawStyleDescInterval());
 
         //设置其它的参数值
-        newObj.setIsDraw(this.isDraw());
-        newObj.setIsDrawThumbnail(isThumbnail, 0, 0);
-        newObj.setThumbnailRate(this.getThumbnailRate());
-        newObj.setAllSeatTypeWithColor(seatTypeArr, seatColorArr, thumbnailColorArr, descArr);
-        //设置图片资源
-        newObj.setImage(imageIDArr);
-        newObj.setImage(bitmapArr);
+        newParams.setIsDraw(this.isDraw());
+        newParams.setIsDrawThumbnail(isThumbnail, 0, 0);
+        newParams.setThumbnailRate(this.getThumbnailRate());
         //设置绘制方式
-        //此部分必须在最后设置,因为一旦设置了图片资源,则会默认将绘制方式修改为图片绘制模式
-        newObj.setDrawType(this.getDrawType(true));
+        newParams.setDrawType(this.getDrawType(true));
+        newParams.clearDrawStyles();
+        if (styleMap != null) {
+            for (Map.Entry<String, BaseDrawStyle> entity : styleMap.entrySet()) {
+                newParams.addNewDrawStyle(entity.getKey(), entity.getValue());
+            }
+        }
 
         this.setIsDrawThumbnail(isThumbnail, DEFAULT_INT, DEFAULT_INT);
-        return newObj;
-    }
-
-    /**
-     * 加载座位图片
-     *
-     * @param context  上下文对象,用于加载图片
-     * @param isReload 是否重新加载,若为true则以imageID为准,重新加载所有的bitmap,若为false则根据bitmap是否存在,若不存在则加载imageID的图片,存在则直接使用bitmap
-     */
-    protected void loadSeatImage(Context context, boolean isReload) {
-        mSeatImageBitmaps = super.loadSeatImage(context, mSeatImageID, mSeatImageBitmaps, (int) this.getWidth(), (int) this.getHeight(), isReload);
-    }
-
-    /**
-     * 根据座位类型获取座位类型对应的颜色
-     *
-     * @param seatType 座位类型
-     *                 <p>默认座位类型
-     *                 可选座位<br/>
-     *                 已选座位<br/>
-     *                 已售座位<br/>
-     *                 </p>
-     * @return 返回对应的座位颜色, 若查询不到对应的座位类型颜色则返回默认颜色值 {@link #DEFAULT_SEAT_COLOR}
-     */
-    public int getSeatColorByType(int seatType) {
-        int[] colorArr = null;
-        if (this.isDrawThumbnail()) {
-            colorArr = mThumbnailColorArray;
-        } else {
-            colorArr = mSeatColorArrary;
-        }
-
-        if (mSeatTypeArrary != null) {
-            for (int i = 0; i < mSeatTypeArrary.length; i++) {
-                if (seatType == mSeatTypeArrary[i]) {
-                    return colorArr[i];
-                }
-            }
-            return DEFAULT_SEAT_COLOR;
-        } else {
-            throw new RuntimeException("获取座位类型对应的颜色值失败!查询不到对应的座位类型或不存在该座位类型");
-        }
-    }
-
-    /**
-     * 根据座位类型获取座位绘制的图片
-     *
-     * @param context  上下文对象,用于加载图片
-     * @param seatType 座位类型
-     * @return 返回座位类型对应的图片, 可能为null
-     */
-    public Bitmap getSeatBitmapByType(Context context, int seatType) {
-        loadSeatImage(context, false);
-        if (mSeatTypeArrary != null) {
-            for (int i = 0; i < mSeatTypeArrary.length; i++) {
-                if (seatType == mSeatTypeArrary[i]) {
-                    return mSeatImageBitmaps[i];
-                }
-            }
-            return null;
-        } else {
-            throw new RuntimeException("获取座位类型对应的图片失败!查询不到对应的座位类型或不存在该座位类型");
-        }
+        return newParams;
     }
 
 
@@ -868,7 +545,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         float targetScaleRate = 0f;
         //是否缩放到默认最大值
         if (isSetEnlarge) {
-            targetScaleRate = 3f;
+            targetScaleRate = 2f;
         } else {
             //缩放到最小值
             targetScaleRate = 1f;
@@ -885,8 +562,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         this.setRadius(mOriginalHolder.radius * targetScaleRate);
         this.mSeatHorizontalInterval = mOriginalHolder.horizontalInterval * targetScaleRate;
         this.mSeatVerticalInterval = mOriginalHolder.verticalInterval * targetScaleRate;
-        this.mSeatTypeInterval = mOriginalHolder.typeInterval * targetScaleRate;
-        this.mSeatTypeDescInterval = mOriginalHolder.descInterval * targetScaleRate;
+        this.mDrawStyleInterval = mOriginalHolder.typeInterval * targetScaleRate;
+        this.mDrawStyleDescInterval = mOriginalHolder.descInterval * targetScaleRate;
         this.mDescriptionSize = mOriginalHolder.descSize * targetScaleRate;
 
         return oldScaleRate;
@@ -904,9 +581,9 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
             mOriginalHolder.radius = this.getRadius();
             mOriginalHolder.horizontalInterval = this.getSeatHorizontalInterval();
             mOriginalHolder.verticalInterval = this.getSeatVerticalInterval();
-            mOriginalHolder.typeInterval = this.getSeatTypeInterval();
+            mOriginalHolder.typeInterval = this.getDrawStyleInterval();
             mOriginalHolder.descSize = this.getDescriptionSize();
-            mOriginalHolder.descInterval = this.getSeatTypeDescInterval();
+            mOriginalHolder.descInterval = this.getDrawStyleDescInterval();
         } else if (copyObj instanceof OriginalValuesHolder) {
             OriginalValuesHolder newHolder = (OriginalValuesHolder) copyObj;
             mOriginalHolder.width = newHolder.width;
@@ -943,4 +620,33 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
 
+//    public class SeatDrawParamsInfo {
+//        public boolean isDraw = true;
+//        public int drawColor = DEFAULT_SEAT_COLOR;
+//        public int thumbnailColor = DEFAULT_SEAT_COLOR;
+//        public String description = null;
+//        public int imageID = DEFAULT_INT;
+//        public Bitmap bitmap = null;
+//
+//        public SeatDrawParamsInfo() {
+//        }
+//
+//        public SeatDrawParamsInfo(boolean isDraw, int drawColor, int thumbnailColor, String description, int imageID, Bitmap bitmap) {
+//            this.isDraw = isDraw;
+//            this.drawColor = drawColor;
+//            this.thumbnailColor = thumbnailColor;
+//            this.description = description;
+//            this.imageID = imageID;
+//            this.bitmap = bitmap;
+//        }
+//
+//        public void setParams(boolean isDraw, int drawColor, int thumbnailColor, String description, int imageID, Bitmap bitmap) {
+//            this.isDraw = isDraw;
+//            this.drawColor = drawColor;
+//            this.thumbnailColor = thumbnailColor;
+//            this.description = description;
+//            this.imageID = imageID;
+//            this.bitmap = bitmap;
+//        }
+//    }
 }

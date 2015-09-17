@@ -1,73 +1,48 @@
 package us.bestapp.henrytaro.params.interfaces;
 
-import android.graphics.Bitmap;
+import java.util.List;
 
-import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
+import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
 
 /**
  * Created by xuhaolin on 2015/8/24.
- * 座位参数设置接口,此接口用于公开可进行设置的参数方法,不允许访问和设置的方法没有在此接口公开(此接口仅仅相当于一个中间转换而已)
+ * 座位参数设置接口,此接口用于公开可进行设置的参数方法,不允许访问和设置的方法没有在此接口公开(此接口仅仅相当于一个中间转换而已)<br/>
+ * <br/>
+ * <font color="#ff9900"><b>关于标签及样式的设定,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
+ * 其中包括<br/>
+ * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
+ * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
+ * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
+ * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+ * <br/>
+ * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+ * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
  */
 public interface ISeatParams extends IBaseParams {
     /**
-     * 获取设置的对应的图像资源bitmap,可能返回null
-     *
-     * @return
+     * 锁定座位标签(即不可选)
      */
-    public Bitmap[] getImageBitmap();
-
+    public static final String TAG_LOCK_SEAT = "tag_lock_seat";
     /**
-     * 获取设置的对应的图像资源ID,可能返回null
-     *
-     * @return
+     * 可选座位标签
      */
-    public int[] getImageID();
-
+    public static final String TAG_OPTIONAL_SEAT = "tag_optional_seat";
     /**
-     * 设置座位基本类型常量,此方法与座位的类型并没有直接关系,设置的常量仅是方便用于处理数据而已<br/>
-     * 使用此方法对未选中类型及选中类型进行设置
-     *
-     * @param seleted        已选座位
-     * @param unSeleted      未选座位
-     * @param unShow         不显示座位(不可见,即未绘制出来)
-     * @param disableSeleted 不可选座位(可见)
-     * @param errorType      错误类型
+     * 已选座位标签
      */
-    public void setSeatTypeConstant(int seleted, int unSeleted, int unShow, int disableSeleted, int[] errorType);
-
+    public static final String TAG_SELECTE_SEAT = "tag_selecte_seat";
     /**
-     * 重置所有的座位基本类型为原始状态
+     * 情侣座位标签(未选中前的样式,选中样式同已选)
      */
-    public void resetSeatTypeConstant();
-
+    public static final String TAG_COUPLE_OPTIONAL_SEAT = "tag_couple_seat";
     /**
-     * 重置默认的座位参数,包括<font color="#ff9900"><b>座位类型,座位颜色,座位描述</b></font>
+     * 错误座位标签
      */
-    public void resetDefaultSeatParams();
-
+    public static final String TAG_ERROR_SEAT = "tag_error_seat";
     /**
-     * 重置所有的座位类型与参数,回到默认状态(三个座位类型及颜色参数),座位的绘制类型也重置为默认绘制方式
-     * <p>
-     * 可选座位<br/>
-     * 已选座位<br/>
-     * 已售座位<br/>
-     * </p>
+     * 不显示座位标签
      */
-    public void resetSeatTypeWithColor();
-
-    /**
-     * 设置是否绘制座位类型,<font color="#ff9900"><b>此处与是否绘制座位是两个不同的方法,代表的意义不同</b></font>,此方法是对座位类型是否绘制的判断处理
-     *
-     * @param isDrawSeatType
-     */
-    public void setIsDrawSeatType(boolean isDrawSeatType);
-
-    /**
-     * 获取座位类型是否进行绘制,此方法只针对座位类型的绘制,与{@link BaseSeatParams#isDraw()}是不同的方法(该方法只用于对座位的绘制判断)
-     *
-     * @return
-     */
-    public boolean isDrawSeatType();
+    public static final String TAG_UNSHOW_SEAT = "tag_unshow_seat";
 
     /**
      * 获取普通座位绘制之间的水平间隔
@@ -102,21 +77,21 @@ public interface ISeatParams extends IBaseParams {
      *
      * @param mSeatTextInterval
      */
-    public void setSeatTypeDescInterval(float mSeatTextInterval);
+    public void setDrawStyleDescInterval(float mSeatTextInterval);
 
     /**
      * 获取座位与邻近文字之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font>
      *
      * @return
      */
-    public float getSeatTypeDescInterval();
+    public float getDrawStyleDescInterval();
 
     /**
      * 获取座位类型(包括描述文字为一整体)之间的水平间隔
      *
      * @return
      */
-    public float getSeatTypeInterval();
+    public float getDrawStyleInterval();
 
     /**
      * 设置座位类型之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述的时候有效,在绘制普通座位时无效</b></font>.
@@ -127,134 +102,99 @@ public interface ISeatParams extends IBaseParams {
      *
      * @param mSeatTypeInterval
      */
-    public void setSeatTypeInterval(float mSeatTypeInterval);
+    public void setDrawStyleInterval(float mSeatTypeInterval);
 
-    /**
-     * 获取座位参数类型对应的数据表示,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
-     *
-     * @return
-     */
-    public int[] getSeatTypeArrary();
-
-    /**
-     * 获取座位类型对应的颜色数据,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
-     *
-     * @return
-     */
-    public int[] getSeatColorArrary();
-
-    /**
-     * 获取缩略图对应的座位颜色,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
-     *
-     * @return
-     */
-    public int[] getThumbnailColorArrary();
-
-    /**
-     * 获取座位类型对应的描述文字,,<font color="#ff9900"><b>结果为拷贝对象,不是原始引用</b></font>
-     *
-     * @return
-     */
-    public String[] getSeatTypeDescription();
 
     /**
      * 返回座位类型的长度
      *
      * @return
      */
-    public int getSeatTypeLength();
+    public int getDrawStyleLength();
+
 
     /**
-     * 获取选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
-     * <font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])} 相关,当自定义选中类型时,
-     * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
+     * 设置是否绘制座位类型
+     *
+     * @param isDraw
+     */
+    public void setIsDrawDrawStyle(boolean isDraw);
+
+    /**
+     * 获取是否绘制座位类型标志
      *
      * @return
      */
-    public int getSeletedType();
+    public boolean isDrawDrawStyle();
 
     /**
-     * 获取未选中状态的类型,因为不管是用于什么用途或者是针对任何不同的选座,必定存在选中状态与未选中状态两种类型<br/>
-     * <font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])}相关,当自定义未选中类型时,
-     * 需要调用该方法进行设置,否则可能获取的类型出错</b></font>
+     * 获取座位类型样式的所有标签,获取的标签不一定是按存入的顺序,因为内部是通过map的方式存放数据的
      *
      * @return
      */
-    public int getUnseletedType();
+    public List<String> getDrawStyleTags();
 
     /**
-     * 判断是否是不合法类型(错误或者是未显示类型的座位状态),<font color="#ff9900"><b>此方法与{@link #setSeatTypeConstant(int, int, int, int, int[])}相关,
-     * 需要设置自定义的错误类型时应该调用该方法</b></font>
+     * 获取指定标签的座位类型样式,若不存在返回null
      *
-     * @param type
+     * @param typeTag
      * @return
      */
-    public boolean isErrorOrUnshowType(int type);
-
-//    /**
-//     * 设置基本的类型数据
-//     *
-//     * @param selectedType   选中类型,详见{@link #getSeletedType()}
-//     * @param unselectedType 未选中类型,详见{@link #getUnseletedType()}
-//     * @param errorType      错误类型,错误类型可不止一种,详见{@link #isErrorOrUnshowType(int)}
-//     */
-//    public void setBaseTypes(int selectedType, int unselectedType, int[] errorType);
+    public BaseDrawStyle getDrawStyle(String typeTag);
 
     /**
-     * 设置座位类型及其图片,此处的座位类型将替换原来的座位类型,图片同理
-     *
-     * @param seatTypeArr       新的座位类型
-     * @param thumbnailColorArr 新座位类型对应的缩略图座位的颜色,此参数不可为null
-     * @param imageID
-     */
-    public void setSeatTypeWithImage(int[] seatTypeArr, int[] thumbnailColorArr, int[] imageID);
-
-    /**
-     * 设置座位类型及其图片,此处的座位类型将替换原来的座位类型,图片同理
-     *
-     * @param seatTypeArr       新的座位类型
-     * @param thumbnailColorArr 新座位类型对应的缩略图座位的颜色,此参数不可为null
-     * @param imageBitmap
-     */
-    public void setSeatTypeWithImage(int[] seatTypeArr, int[] thumbnailColorArr, Bitmap[] imageBitmap);
-
-    /**
-     * 设置所有座位的类型，颜色及其描述,<font color="#ff9900"><b>该方法会替换所有的座位对应的默认参数</b></font>
-     * <p>设置全新的座位类型后，建议设置{@link #setSeatTypeConstant(int, int, int, int, int[])},方便数据处理及以防出错</p>
-     *
-     * @param seatTypeArr       新的座位类型
-     * @param colorArr          新的座位类型对应的颜色
-     * @param thumbnailColorArr 缩略图对应的颜色,可为null,当该参数为null时引用colorArr作为参数值
-     * @param seatTypeDesc      新的座位类型对应的描述
-     */
-    public void setAllSeatTypeWithColor(int[] seatTypeArr, int[] colorArr, int[] thumbnailColorArr, String[] seatTypeDesc);
-
-    /**
-     * 设置图片资源ID,<font color="#ff9900"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)})
-     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font></p>
-     * 资源ID设置通过拷贝的方式设置，防止内部数据受到外部数据的影响
-     *
-     * @param imageID 设置的资源ID
-     */
-    public void setImage(int[] imageID);
-
-    /**
-     * <p><font color="#ff9900"><b>建议设置图片通过{@link #setImage(int[])}设置资源图片,非必要情况下尽量不使用此方法</b></font>,
-     * 使用此方法设置图片无法自动压缩并按适当的宽高加载图片,可能会占用大量内存</p>
+     * 新增一个座位类型样式及其标签,标签不可与其它标签重复，否则原有的样式会被替换<br/>
+     * <font color="#ff9900"><b>此处要注意的是,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
+     * 其中包括<br/>
+     * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
+     * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
+     * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
+     * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
      * <br/>
-     * 设置图片资源,<font color="#ff9900"><b>该图片资源数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见{@link #setDrawType(int)} )
-     * <p><font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,{@link #setImage(int[])} )</b></font></p>
-     * 资源设置通过拷贝的方式设置，防止内部数据受到外部数据的影响
+     * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+     * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
      *
-     * @param imageBitmap 设置资源的图片对象数组
+     * @param typeTag  标签
+     * @param newStyle 新样式
+     * @return 返回被替换下来的样式对象, 若此标签不存在样式, 则返回null
      */
-    public void setImage(Bitmap[] imageBitmap);
+    public BaseDrawStyle addNewDrawStyle(String typeTag, BaseDrawStyle newStyle);
 
     /**
-     * 设置缩略图的座位颜色
+     * 通过标签移除一个座位类型样式
      *
-     * @param colorArr 此参数值不可为null
+     * @param typeTag
+     * @return 返回被移除的样式对象, 若此标签不存在样式, 则返回null
      */
-    public void setThumbnailSeatColor(int[] colorArr);
+    public BaseDrawStyle removeDrawStyle(String typeTag);
 
+    /**
+     * 清除所有的样式及其标签
+     */
+    public void clearDrawStyles();
+
+    /**
+     * 设置是否按指定顺序绘制座位类型样式
+     *
+     * @param isInOrder
+     * @param tagInOrder 按某种顺序排序好的座位类型样式的标签,<font color="#ff9900"><b>此处应该注意,
+     *                   若isInOrder为true,则参数才有效且不可为null,否则没有任何意义;并且此时绘制的座位样式数量及实际内容是以提供的标签为主,
+     *                   即若提供顺序的标签完全不匹配实际任何一个样式,则不会有任何一个样式将会被绘制</b></font>
+     */
+    public void setIsDrawStyleByOrder(boolean isInOrder, List<String> tagInOrder);
+
+    /**
+     * 获取是否按指定顺序绘制座位类型样式
+     *
+     * @return
+     */
+    public boolean isDrawStyleByOrder();
+
+    /**
+     * 是否按指定顺序获取所有样式
+     *
+     * @param isInOrder
+     * @return
+     */
+    public List<BaseDrawStyle> getDrawStyles(boolean isInOrder);
 }

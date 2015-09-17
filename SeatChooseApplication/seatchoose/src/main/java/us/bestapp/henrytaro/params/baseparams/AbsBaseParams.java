@@ -1,12 +1,8 @@
 package us.bestapp.henrytaro.params.baseparams;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
-
-import java.io.InputStream;
 
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
@@ -60,7 +56,7 @@ public abstract class AbsBaseParams implements IBaseParams {
     //绘制类型
     private int mDrawType = DRAW_TYPE_DEFAULT;
     //最大缩放倍数
-    private int mLargeScaleRate = 10;
+    private float mLargeScaleRate = 10f;
     //最小绽放比例
     private float mSmallScaleRate = 0.2f;
 
@@ -74,35 +70,6 @@ public abstract class AbsBaseParams implements IBaseParams {
      */
     public AbsBaseParams(float defaultWidth, float defaultHeight, float defaultRadius, int defaultColor) {
         this.setDefault(defaultWidth, defaultHeight, defaultRadius, defaultColor);
-    }
-
-
-    /**
-     * 按指定宽高加载资源ID指定的图片到内存中
-     *
-     * @param context      上下文对象,用于获取资源对象
-     * @param imageID      资源ID
-     * @param targetWidth  目标图片的宽度(此处一般为座位宽度)
-     * @param targetHeight 目标图片的高度(此处一般为座位的高度)
-     * @return
-     */
-    public static Bitmap getScaleBitmap(Context context, int imageID, int targetWidth, int targetHeight) {
-        try {
-            //以流的形式加载比直接使用ID加载到消耗内存会少一些,并且可以指定宽高进行加载
-            //加载资源文件到流
-            InputStream in = context.getResources().openRawResource(imageID);
-            //设置加载选项
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = false;
-            //设置目标宽高
-            options.outWidth = targetWidth;
-            options.outHeight = targetHeight;
-            //加载图片
-            return BitmapFactory.decodeStream(in, null, options);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException(ex.getMessage());
-        }
     }
 
     /**
@@ -170,14 +137,8 @@ public abstract class AbsBaseParams implements IBaseParams {
     }
 
 
-    /**
-     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParams#DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
-     * <p>该缩放倍数是以默认高度为基数</p>
-     *
-     * @param large 放大倍数
-     * @return 设置成功返回true, 否则返回false, 不改变原值
-     */
-    public boolean setLargeScaleRate(int large) {
+    @Override
+    public boolean setLargeScaleRate(float large) {
         if (large == DEFAULT_INT) {
             this.mLargeScaleRate = 24;
             return true;
@@ -189,13 +150,7 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-    /**
-     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link IBaseParams#DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
-     * <p>该缩放倍数是以默认高度为基数</p>
-     *
-     * @param small 缩小比例
-     * @return 设置成功返回true, 否则返回false
-     */
+    @Override
     public boolean setSmallScaleRate(float small) {
         if (small == DEFAULT_INT) {
             this.mSmallScaleRate = 0.5f;
@@ -208,33 +163,33 @@ public abstract class AbsBaseParams implements IBaseParams {
         }
     }
 
-    /**
-     * 获取最大的高度
-     *
-     * @return
-     */
-    public float getLargestHeight() {
-        return this.mHeight * mLargeScaleRate;
-    }
-
-    /**
-     * 获取最小的高度
-     *
-     * @return
-     */
-    public float getSmallestHeight() {
-        return this.mHeight * mSmallScaleRate;
-    }
-
-
-    public int getDescriptionColor() {
-        return this.mDescriptionColor;
-    }
-
-
-    public void setDescriptionColor(int color) {
-        this.mDescriptionColor = color;
-    }
+//    /**
+//     * 获取最大的高度
+//     *
+//     * @return
+//     */
+//    public float getLargestHeight() {
+//        return this.mHeight * mLargeScaleRate;
+//    }
+//
+//    /**
+//     * 获取最小的高度
+//     *
+//     * @return
+//     */
+//    public float getSmallestHeight() {
+//        return this.mHeight * mSmallScaleRate;
+//    }
+//
+//
+//    public int getDescriptionColor() {
+//        return this.mDescriptionColor;
+//    }
+//
+//
+//    public void setDescriptionColor(int color) {
+//        this.mDescriptionColor = color;
+//    }
 
 
     public float getDescriptionSize() {
@@ -243,11 +198,7 @@ public abstract class AbsBaseParams implements IBaseParams {
 
     @Override
     public void setDrawType(int drawType) {
-        if (drawType == DEFAULT_INT) {
-            this.mDrawType = DRAW_TYPE_DEFAULT;
-        } else {
-            this.mDrawType = drawType;
-        }
+        this.mDrawType = drawType;
     }
 
     @Override
@@ -330,60 +281,6 @@ public abstract class AbsBaseParams implements IBaseParams {
             restoreBitmap = null;
         }
         return restoreBitmap;
-    }
-
-    /**
-     * 加载座位图片
-     *
-     * @param context      上下文对象,用于加载图片
-     * @param imageID      用于加载的资源ID，可为null，<font color="#ff9900"><b>但是两个资源参数必须一个不为null，且isReload为true时，此参数不可为null，否则抛出异常</b></font>
-     * @param imageBitmap  用于加载的资源图片数组，可为null，<font color="#ff9900"><b>但是两个资源参数必须一个不为null</b></font>
-     * @param targetWidth  加载图片的预期宽度
-     * @param targetHeight 加载图片的预期高度
-     * @param isReload     是否重新加载,若为true则以imageID为准,重新加载所有的bitmap,若为false则根据bitmap是否存在,若不存在则加载imageID的图片,存在则直接使用bitmap
-     *                     <p><font color="#ff9900"><b>此参数为true时，参数imageID不可为null，否则抛出异常</b></font></p>
-     * @return
-     */
-    protected Bitmap[] loadSeatImage(Context context, int[] imageID, Bitmap[] imageBitmap, int targetWidth, int targetHeight, boolean isReload) {
-        if (imageID == null && isReload) {
-            throw new RuntimeException("资源ID不存在,无法重新加载图片资源");
-        }
-        //检测imageID是否存在
-        if (imageID != null) {
-            //不需要重新加载且bitmap不为null
-            //只要设置了新的图片资源,第一次加载图片时必然使用新的图片资源进行加载
-            if (!isReload && imageBitmap != null && !mIsSetNewImage) {
-                boolean isNullObjeact = false;
-                //检测是否bitmap数组为空数组
-                for (Bitmap bitmap : imageBitmap) {
-                    if (bitmap == null) {
-                        isNullObjeact = true;
-                        break;
-                    }
-                }
-                if (!isNullObjeact) {
-                    //不存在空元素直直接使用该bitmap
-                    return imageBitmap;
-                }
-            }
-            //存在空元素则重新加载数据
-            imageBitmap = new Bitmap[imageID.length];
-
-            for (int i = 0; i < imageID.length; i++) {
-                //按预期宽度比例加载图片
-                //用于防止原图片太大加载的内存过大
-                Bitmap bitmap = getScaleBitmap(context, imageID[i], targetWidth, targetHeight);
-                imageBitmap[i] = bitmap;
-            }
-
-            mIsSetNewImage = false;
-            return imageBitmap;
-        } else if (imageBitmap != null) {
-            return imageBitmap;
-        } else {
-            //即不存在资源ID,也不存在图片文件
-            throw new RuntimeException("不存在可加载的图片资源或者已经加载的图片资源!");
-        }
     }
 
     /**

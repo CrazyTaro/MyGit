@@ -2,19 +2,16 @@ package us.bestapp.henrytaro.params.baseparams;/**
  * Created by xuhaolin on 15/9/10.
  */
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.PointF;
 
-import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
  * Created by xuhaolin on 15/9/10.<br/>
- * 舞台绘制参数基本类,该类继承了对外公开接口{@link IStageParams},此接口所有的方法用于对外公开提供给用户调用;
+ * 舞台绘制参数基本类,该类继承{@link AbsBaseParams}及对外公开接口{@link IStageParams},此接口所有的方法用于对外公开提供给用户调用;
  * 其余此类中的 {@code public} 方法均是用于提供给绘制时使用的方法,需要自定义参数类时请继承此方法重写部分方法即可
  */
 public class BaseStageParams extends AbsBaseParams implements IStageParams {
@@ -42,80 +39,26 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
      * 默认舞台下方空白高度（与座位的间隔）
      */
     public static final float DEFAULT_STAGE_MARGIN_BOTTOM = 50f;
-    /**
-     * 默认舞台文字
-     */
-    public static final String DEFAULT_STAGE_TEXT = "舞台";
+
     private float mStageMarginTop = DEFAULT_STAGE_MARGIN_TOP;
     private float mStageMarginBottom = DEFAULT_STAGE_MARGIN_BOTTOM;
-    private String mStageDescription = DEFAULT_STAGE_TEXT;
 
     private OriginalValuesHolder mOriginalHolder = null;
     //用于缩放暂存舞台数据
     private float[] mValueHolder = null;
     //用于检测缩放时是否已暂存数据
     private boolean mIsValueHold = false;
-    //默认资源ID
-    private int mStageImageID = DEFAULT_INT;
-    private Bitmap mStageImageBitmap = null;
+    //默认资源
+    private BaseDrawStyle mStageStyle = null;
+
 
     public BaseStageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
         this.storeOriginalValues(null);
+
+        mStageStyle = new BaseDrawStyle(null, true, DEFAULT_STAGE_COLOR, DEFAULT_STAGE_COLOR, Color.BLACK, "舞台", DEFAULT_INT, null);
     }
 
-    @Override
-    public void setImage(int imageID) {
-        this.mStageImageID = imageID;
-        super.setDrawType(DRAW_TYPE_IMAGE);
-    }
-
-    @Override
-    public void setImage(Bitmap imageBitmap) {
-        if (imageBitmap != null) {
-            this.mStageImageBitmap = imageBitmap;
-            super.setDrawType(DRAW_TYPE_IMAGE);
-        } else {
-            this.mStageImageBitmap = null;
-        }
-    }
-
-    /**
-     * 获取图片资源ID,默认值为{@link IBaseParams#DEFAULT_INT}
-     *
-     * @return
-     */
-    public int getImageId() {
-        return this.mStageImageID;
-    }
-
-    /**
-     * 获取图片资源,可能为null
-     *
-     * @return
-     */
-    public Bitmap getImageBitmap() {
-        return this.mStageImageBitmap;
-    }
-
-    @Override
-    public Bitmap getImage(Context context) {
-        this.loadStageImage(context, false);
-        return mStageImageBitmap;
-    }
-
-    /**
-     * 加载资源图片，当isReload为true时，即重新加载，以资源ID为主重新加载资源，此时不管bitmap是存为null都会重新加载；
-     * 当isReload为false时，则存在bitmap优先返回bitmap，否则加载资源ID，两者都不存在抛出异常
-     *
-     * @param context
-     * @param isReload 是否以资源ID重新加载数据
-     */
-    protected void loadStageImage(Context context, boolean isReload) {
-        int[] imageID = new int[]{this.mStageImageID};
-        Bitmap[] imageBitmap = new Bitmap[]{this.mStageImageBitmap};
-        super.loadSeatImage(context, imageID, imageBitmap, (int) this.getWidth(), (int) this.getHeight(), isReload);
-    }
 
     @Override
     public boolean isCanScale(float scaleRate) {
@@ -186,13 +129,18 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
     }
 
     @Override
+    public BaseDrawStyle getDrawStyle() {
+        return mStageStyle;
+    }
+
+    @Override
     public String getStageDescription() {
-        return mStageDescription;
+        return mStageStyle.description;
     }
 
     @Override
     public void setStageDescription(String text) {
-        this.mStageDescription = text;
+        this.mStageStyle.description = text;
     }
 
     @Override
@@ -361,11 +309,6 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
     }
 
     @Override
-    public int getType(String typeTag) {
-        return IBaseParams.TYPE_ERROR;
-    }
-
-    @Override
     public Object getClone(Object newObj) {
         if (newObj != null && !(newObj.getClass() != this.getClass())) {
             throw new RuntimeException("对象类型错误,无法进行克隆!");
@@ -393,8 +336,10 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         newParams.setIsDrawThumbnail(isThumbnail, 0, 0);
         newParams.setThumbnailRate(this.getThumbnailRate());
         //设置图片资源
-        newParams.setImage(this.getImageId());
-        newParams.setImage(this.getImageBitmap());
+//        newParams.setImage(this.getImageId());
+//        newParams.setImage(this.getImageBitmap());
+        newParams.getDrawStyle().imageID = this.getDrawStyle().imageID;
+        newParams.getDrawStyle().bitmap = this.getDrawStyle().bitmap;
         //设置绘制方式
         //此部分必须在最后设置,因为一旦设置了图片资源,则会默认将绘制方式修改为图片绘制模式
         newParams.setDrawType(this.getDrawType(true));
