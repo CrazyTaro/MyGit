@@ -54,6 +54,12 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
 
     public BaseStageParams() {
         super(DEFAULT_STAGE_WIDTH, DEFAULT_STAGE_HEIGHT, DEFAULT_STAGE_RADIUS, DEFAULT_STAGE_COLOR);
+        initial();
+    }
+
+    protected void initial() {
+        this.setLargeScaleWidth(this.getWidth() * 3f);
+        this.setSmallScaleWidth(this.getWidth() * 0.1f);
         this.storeOriginalValues(null);
 
         mStageStyle = new BaseDrawStyle(null, true, DEFAULT_STAGE_COLOR, DEFAULT_STAGE_COLOR, Color.BLACK, "舞台", DEFAULT_INT, null);
@@ -84,6 +90,11 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         } else {
             return true;
         }
+    }
+
+    @Override
+    protected void updateWidthAndHeightWhenSet(float width, float height) {
+
     }
 
     @Override
@@ -216,6 +227,14 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
         return stagePath;
     }
 
+    public void setAutoCalculateToFixScreen(float viewWidth) {
+        float eachWidth = viewWidth * 2 / 3;
+        float thisWidth = eachWidth;
+        float thisHeight = thisWidth * 0.1f;
+        float thisRadius = thisWidth * 0.05f;
+        this.setDefault(thisWidth, thisHeight, thisRadius, DEFAULT_STAGE_COLOR);
+    }
+
 
     /**
      * 获取舞台绘制的路径,默认是长方形,<font color="#ff9900"><b>若需要更改舞台的绘制形状,覆盖此方法即可</b></font>
@@ -260,14 +279,14 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
     }
 
     @Override
-    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge) {
+    public float setOriginalValuesToReplaceCurrents(float fixScaleRate) {
         float oldScaleRate = 0f;
-        float targetScaleRate = 0f;
-        if (isSetEnlarge) {
-            targetScaleRate = 2f;
-        } else {
-            targetScaleRate = 1f;
-        }
+        float targetScaleRate = fixScaleRate;
+//        if (fixScaleRate) {
+//            targetScaleRate = 2f;
+//        } else {
+//            targetScaleRate = 1f;
+//        }
         oldScaleRate = mOriginalHolder.width * targetScaleRate / this.getWidth();
 
         this.setWidth(mOriginalHolder.width * targetScaleRate, false);
@@ -281,6 +300,7 @@ public class BaseStageParams extends AbsBaseParams implements IStageParams {
 
     /**
      * 未使用
+     *
      * @param targetScaleRate
      */
     public void setNewParamsValues(float targetScaleRate) {

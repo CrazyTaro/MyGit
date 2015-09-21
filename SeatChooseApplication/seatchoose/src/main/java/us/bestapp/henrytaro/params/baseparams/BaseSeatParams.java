@@ -74,6 +74,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     //座位类型之间的间隔
     protected float mDrawStyleInterval = DEFAULT_SEAT_TYPE_INTERVAL;
 
+    //设置自动计算适应屏幕
+    private boolean mIsSetAutoCalculate = false;
 
     private Map<String, BaseDrawStyle> mDrawStyles = null;
 
@@ -116,8 +118,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 初始化
      */
     protected void initial() {
-        super.setLargeScaleRate(3);
-        super.setSmallScaleRate(0.5f);
+        super.setLargeScaleWidth(3 * this.getWidth());
+        super.setSmallScaleWidth(0.5f * this.getHeight());
         this.storeOriginalValues(null);
 
         int selectColor = Color.rgb(228, 24, 99);
@@ -267,6 +269,11 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         super.setColor(seatColor);
     }
 
+    @Override
+    protected void updateWidthAndHeightWhenSet(float width, float height) {
+
+    }
+
 
     @Override
     public int getDrawStyleLength() {
@@ -377,6 +384,37 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
             orderStyleList.addAll(mDrawStyles.values());
             return orderStyleList;
         }
+    }
+
+//    @Override
+//    public boolean isCanScale(float scaleRate) {
+//        boolean isAllow = super.isCanScale(scaleRate);
+//        //当已经设置了自动计算功能
+//        //即使缩放不合理还是允许进行缩放
+//        if (mIsSetAutoCalculate) {
+//            //当前允许缩放
+//            if (isAllow) {
+//                //取消自动计算标志,以后所有的缩放不再参考此参数
+//                //按正常缩放
+//                mIsSetAutoCalculate = false;
+//                return isAllow;
+//                //当前不允许缩放,但牌自动计算状态,允许缩放
+//            } else {
+//                return true;
+//            }
+//        } else {
+//            //不根据自动计算功能进行计算
+//            return isAllow;
+//        }
+//    }
+
+    public void setAutoCalculateToFixScreen(float viewWidth, int columnCount) {
+        float eachWidth = viewWidth / (columnCount + 2);
+        float thisWidth = eachWidth * 0.8f;
+        float thisHeight = thisWidth;
+        float thisRadius = eachWidth * 0.2f;
+        this.setDefault(thisWidth, thisHeight, thisRadius, DEFAULT_SEAT_COLOR);
+        this.mIsSetAutoCalculate = true;
     }
 
     /**
@@ -540,16 +578,16 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge) {
+    public float setOriginalValuesToReplaceCurrents(float fixScaleRate) {
         float oldScaleRate = 0f;
-        float targetScaleRate = 0f;
-        //是否缩放到默认最大值
-        if (isSetEnlarge) {
-            targetScaleRate = 2f;
-        } else {
-            //缩放到最小值
-            targetScaleRate = 1f;
-        }
+        float targetScaleRate = fixScaleRate;
+//        //是否缩放到默认最大值
+//        if (fixScaleRate) {
+//            targetScaleRate = 2f;
+//        } else {
+//            //缩放到最小值
+//            targetScaleRate = 1f;
+//        }
         //计算缩放后的值与当前值的比例,作为当前缩放比
         oldScaleRate =
                 //计算缩放后的宽值(放大原始的3倍或者还原为原始的大小)

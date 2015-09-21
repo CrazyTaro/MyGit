@@ -52,6 +52,13 @@ public class SeatParams extends BaseSeatParams {
         this.setSeatVerticalInterval(seatHeight * 0.8f);
     }
 
+    @Override
+    protected void updateWidthAndHeightWhenSet(float width, float height) {
+        super.updateWidthAndHeightWhenSet(width, height);
+        if (height != -1) {
+            this.autoCalculateSeatShapeHeight(height);
+        }
+    }
 
     /**
      * 获取默认的座位绘制区域,自定义座位使用
@@ -96,8 +103,8 @@ public class SeatParams extends BaseSeatParams {
     }
 
     @Override
-    public float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge) {
-        float scaleRate = super.setOriginalValuesToReplaceCurrents(isSetEnlarge);
+    public float setOriginalValuesToReplaceCurrents(float fixScaleRate) {
+        float scaleRate = super.setOriginalValuesToReplaceCurrents(fixScaleRate);
         this.autoCalculateSeatShapeHeight(this.getHeight());
         return scaleRate;
     }

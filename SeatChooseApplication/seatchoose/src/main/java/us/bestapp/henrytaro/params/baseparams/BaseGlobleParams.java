@@ -18,7 +18,7 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 public class BaseGlobleParams implements IGlobleParams {
 
     //画布背景颜色
-    private int mCanvasBackgroundColor = Color.argb(0,0,0,0);
+    private int mCanvasBackgroundColor = Color.argb(0, 0, 0, 0);
     //中心虚线的颜色值
     private int mDotLineColor = Color.BLACK;
     //缩略图背景色
@@ -27,6 +27,10 @@ public class BaseGlobleParams implements IGlobleParams {
     private int mThumbnailAlpha = 100;
     //缩略图显示宽比
     private float mThumbnailWidthRate = 1 / 3f;
+    //双击放大的固定比例
+    private float mDoubleClickScaleLargeRate = 1.5f;
+    //双击缩小的固定比例
+    private float mDoubleClickScaleSmallRate = 0.8f;
     //是否绘制缩略图
     private boolean mIsDrawThumbnail = true;
     //是否保持显示缩略图
@@ -40,7 +44,7 @@ public class BaseGlobleParams implements IGlobleParams {
     //是否允许通过单击缩略图快速显示区域
     private boolean mIsEnabledQuickShowByClickThumbnail = true;
     //是否缩小时,界面自动适应屏幕大小
-    private boolean mIsAutoScaleToScreen = true;
+    private boolean mIsAutoScaleToScreen = false;
 
     //是否绘制座位类型
     private boolean mIsDrawSeatType = false;
@@ -126,15 +130,15 @@ public class BaseGlobleParams implements IGlobleParams {
         return this.mIsDrawThumbnail;
     }
 
-    @Override
-    public void setIsAutoScaleToScreen(boolean isAutoScale) {
-        this.mIsAutoScaleToScreen = isAutoScale;
-    }
-
-    @Override
-    public boolean isAutoScaleToScreen() {
-        return this.mIsAutoScaleToScreen;
-    }
+//    @Override
+//    public void setIsAutoScaleToScreen(boolean isAutoScale) {
+//        this.mIsAutoScaleToScreen = isAutoScale;
+//    }
+//
+//    @Override
+//    public boolean isAutoScaleToScreen() {
+//        return this.mIsAutoScaleToScreen;
+//    }
 
     @Override
     public void setIsDrawThumbnail(boolean isDraw) {
@@ -282,8 +286,27 @@ public class BaseGlobleParams implements IGlobleParams {
     }
 
     @Override
-    public void setIsEnabledDoubleClickScale(boolean isEnabled) {
+    public void setIsEnabledDoubleClickScale(boolean isEnabled, float largeFixScale, float smallFixScale) {
         this.mIsEnabledDoubleClickScale = isEnabled;
+        if (largeFixScale < 1) {
+            throw new RuntimeException("固定最大缩放值不能小于1");
+        }
+
+        if (smallFixScale > 1 || smallFixScale <= 0) {
+            throw new RuntimeException("固定最小缩放值不能大于1且不可小于0");
+        }
+        this.mDoubleClickScaleLargeRate = largeFixScale;
+        this.mDoubleClickScaleSmallRate = smallFixScale;
+    }
+
+    @Override
+    public float getDoubleClickLargeScaleRate() {
+        return this.mDoubleClickScaleLargeRate;
+    }
+
+    @Override
+    public float getDoubleClickSmallScaleRate() {
+        return this.mDoubleClickScaleSmallRate;
     }
 
     @Override

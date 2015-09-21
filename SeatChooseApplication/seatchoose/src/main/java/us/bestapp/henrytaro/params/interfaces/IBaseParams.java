@@ -38,22 +38,34 @@ public interface IBaseParams {
     public static final int TYPE_ERROR = -1;
 
     /**
-     * 设置缩放最大值比,缩放最大倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_INT}可设置为原始默认值</b></font>,一般该参数大于1
-     * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
+     * 设置缩放可达的最大宽大小
      *
-     * @param large 放大倍数
+     * @param large 最大宽
      * @return 设置成功返回true, 否则返回false, 不改变原值
      */
-    public boolean setLargeScaleRate(float large);
+    public boolean setLargeScaleWidth(float large);
 
     /**
-     * 设置缩放最小值比,缩放最小倍数后应该座位高度应该小于880(为了文字可以进行处理),<font color="#ff9900"><b>使用默认参数{@link #DEFAULT_FLOAT}可设置为原始默认值</b></font>,一般该参数在0-1之间
-     * <p>该缩放倍数是以默认高度为基数{@link #getHeight()}</p>
+     * 获取最大的宽大小
      *
-     * @param small 缩小比例
+     * @return
+     */
+    public float getLargeScaleWidth();
+
+    /**
+     * 设置缩放可达的最小宽大小
+     *
+     * @param small 最小宽
      * @return 设置成功返回true, 否则返回false
      */
-    public boolean setSmallScaleRate(float small);
+    public boolean setSmallScaleWidth(float small);
+
+    /**
+     * 获取最小的宽大小
+     *
+     * @return
+     */
+    public float getSmallScaleWidth();
 
 //    /**
 //     * 设置描述文字的颜色,此颜色是用于绘制时使用的(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)

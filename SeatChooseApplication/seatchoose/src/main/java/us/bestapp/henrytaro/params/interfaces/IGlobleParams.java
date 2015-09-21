@@ -11,19 +11,19 @@ public interface IGlobleParams {
 
     public static final String FORMAT_STR = "%s";
 
-    /**
-     * 设置是否自动计算最小缩放(仅限缩小时)界面是否自动适应屏幕大小
-     *
-     * @param isAutoScale
-     */
-    public void setIsAutoScaleToScreen(boolean isAutoScale);
-
-    /**
-     * 获取是否自动计算最小缩放界面自动适应屏幕大小(仅限缩小时)
-     *
-     * @return
-     */
-    public boolean isAutoScaleToScreen();
+//    /**
+//     * 设置是否自动计算最小缩放(仅限缩小时)界面是否自动适应屏幕大小
+//     *
+//     * @param isAutoScale
+//     */
+//    public void setIsAutoScaleToScreen(boolean isAutoScale);
+//
+//    /**
+//     * 获取是否自动计算最小缩放界面自动适应屏幕大小(仅限缩小时)
+//     *
+//     * @return
+//     */
+//    public boolean isAutoScaleToScreen();
 
     /**
      * 设置是否绘制缩略图
@@ -263,10 +263,15 @@ public interface IGlobleParams {
 
     /**
      * 设置是否允许双击同一地方放大或者缩小界面
-     *
-     * @param isEnabled
+     *  @param isEnabled
+     * @param largeFixScale
+     * @param smallFixScale
      */
-    public void setIsEnabledDoubleClickScale(boolean isEnabled);
+    public void setIsEnabledDoubleClickScale(boolean isEnabled, float largeFixScale, float smallFixScale);
+
+    public float getDoubleClickLargeScaleRate();
+
+    public float getDoubleClickSmallScaleRate();
 
     /**
      * 获取是否允许双击同一地方放大或者缩小界面

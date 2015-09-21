@@ -56,9 +56,9 @@ public abstract class AbsBaseParams implements IBaseParams {
     //绘制类型
     private int mDrawType = DRAW_TYPE_DEFAULT;
     //最大缩放倍数
-    private float mLargeScaleRate = 10f;
+    private float mLargeScaleWidth = 10f;
     //最小绽放比例
-    private float mSmallScaleRate = 0.2f;
+    private float mSmallScaleWidth = 0.2f;
 
     /**
      * 构造参数
@@ -138,58 +138,52 @@ public abstract class AbsBaseParams implements IBaseParams {
 
 
     @Override
-    public boolean setLargeScaleRate(float large) {
-        if (large == DEFAULT_INT) {
-            this.mLargeScaleRate = 24;
-            return true;
-        } else if (large > 0 && large * this.mHeight <= 880) {
-            this.mLargeScaleRate = large;
-            return true;
-        } else {
+    public boolean setLargeScaleWidth(float large) {
+//        if (large == DEFAULT_INT) {
+//            this.mLargeScaleWidth = 24;
+//            return true;
+//        } else if (large > 0 && large * this.mHeight <= 880) {
+//            this.mLargeScaleWidth = large;
+//            return true;
+//        } else {
+//            return false;
+//        }
+        if (large <= 0 || large > 4096) {
             return false;
+        } else {
+            this.mLargeScaleWidth = large;
+            return true;
         }
     }
 
     @Override
-    public boolean setSmallScaleRate(float small) {
-        if (small == DEFAULT_INT) {
-            this.mSmallScaleRate = 0.5f;
-            return true;
-        } else if (small > 0 && small * this.mHeight <= 880) {
-            this.mSmallScaleRate = small;
-            return true;
-        } else {
+    public boolean setSmallScaleWidth(float small) {
+//        if (small == DEFAULT_INT) {
+//            this.mSmallScaleWidth = 0.5f;
+//            return true;
+//        } else if (small > 0 && small * this.mHeight <= 880) {
+//            this.mSmallScaleWidth = small;
+//            return true;
+//        } else {
+//            return false;
+//        }
+        if (small <= 0 || small > 4096) {
             return false;
+        } else {
+            this.mSmallScaleWidth = small;
+            return true;
         }
     }
 
-//    /**
-//     * 获取最大的高度
-//     *
-//     * @return
-//     */
-//    public float getLargestHeight() {
-//        return this.mHeight * mLargeScaleRate;
-//    }
-//
-//    /**
-//     * 获取最小的高度
-//     *
-//     * @return
-//     */
-//    public float getSmallestHeight() {
-//        return this.mHeight * mSmallScaleRate;
-//    }
-//
-//
-//    public int getDescriptionColor() {
-//        return this.mDescriptionColor;
-//    }
-//
-//
-//    public void setDescriptionColor(int color) {
-//        this.mDescriptionColor = color;
-//    }
+    @Override
+    public float getLargeScaleWidth() {
+        return this.mLargeScaleWidth;
+    }
+
+    @Override
+    public float getSmallScaleWidth() {
+        return this.mSmallScaleWidth;
+    }
 
 
     public float getDescriptionSize() {
@@ -300,6 +294,7 @@ public abstract class AbsBaseParams implements IBaseParams {
     @Override
     public void setWidth(float width) {
         this.setWidth(width, true);
+        this.updateWidthAndHeightWhenSet(width, -1);
     }
 
     /**
@@ -340,6 +335,7 @@ public abstract class AbsBaseParams implements IBaseParams {
     @Override
     public void setHeight(float height) {
         this.setHeight(height, true);
+        this.updateWidthAndHeightWhenSet(-1, height);
     }
 
 
@@ -410,14 +406,14 @@ public abstract class AbsBaseParams implements IBaseParams {
      * @return 可以缩放返回true, 否则返回false
      */
     public boolean isCanScale(float scaleRate) {
-        float newHeight = this.mHeight * scaleRate;
+        float newWidth = this.mWidth * scaleRate;
         //由于座位的宽度是决定座位对应的文字
         //文字大小不允许超过800
         //超过800的都取消缩放
         //设置最大最小缩放值
 
         //此处使用默认值的24倍,840
-        if (newHeight > DEFAULT_HEIGHT * mLargeScaleRate || newHeight < DEFAULT_HEIGHT * mSmallScaleRate) {
+        if (newWidth > mLargeScaleWidth || newWidth < mSmallScaleWidth) {
             return false;
         } else {
             return true;
@@ -447,6 +443,14 @@ public abstract class AbsBaseParams implements IBaseParams {
     }
 
     /**
+     * 更新width与height在其值被设置的时候
+     *
+     * @param width  非设置此值时,值为-1
+     * @param height 非设置此值时,值为-1
+     */
+    protected abstract void updateWidthAndHeightWhenSet(float width, float height);
+
+    /**
      * 设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font>
      *
      * @param scaleRate 新的缩放比
@@ -464,10 +468,10 @@ public abstract class AbsBaseParams implements IBaseParams {
     /**
      * 设置预设的缩放比为当前值(只用于双击缩放)
      *
-     * @param isSetEnlarge 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
+     * @param fixScaleRate 是否使用最大比例值替换当前值,true使用最大预设值替换当前值,false使用最小值替换当前值
      * @return
      */
-    public abstract float setOriginalValuesToReplaceCurrents(boolean isSetEnlarge);
+    public abstract float setOriginalValuesToReplaceCurrents(float fixScaleRate);
 
     /**
      * 存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例

@@ -9,6 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/areachoose" />
+            <option value="$PROJECT_DIR$/areachoosesapk" />
             <option value="$PROJECT_DIR$/seatchoose" />
             <option value="$PROJECT_DIR$/seatchooseapk" />
             <option value="$PROJECT_DIR$/textjar" />

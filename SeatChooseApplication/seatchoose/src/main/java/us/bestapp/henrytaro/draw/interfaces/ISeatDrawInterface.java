@@ -38,7 +38,8 @@ public interface ISeatDrawInterface {
 
     /**
      * 更新座位Map中的数据
-     *  @param updateTag
+     *
+     * @param updateTag        updateTag作为一个更新的标志,其意义可由继承子类自定义,默认是>0为更新为已选状态,<0更新为未选状态(只对可选的座位有效,其它类型的座位无效)
      * @param rowIndexInMap    map中的行索引
      * @param columnIndexInMap map中的列索引   @return
      */

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#ff9900">
+    android:background="#ededed">
 
     <us.bestapp.henrytaro.view.SeatChooseView
         android:id="@+id/view_choose"

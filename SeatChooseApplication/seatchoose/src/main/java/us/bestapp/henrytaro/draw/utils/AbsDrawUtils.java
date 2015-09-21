@@ -112,6 +112,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     private Point mCurrentSeletedSeat = new Point();
     //是否第一次存放偏移量
     private boolean mIsFirstStorePoint = false;
+    //是否第一次绘制
+    private boolean mIsFirstDraw = true;
     //默认的缩放比例
     private float mLastScaleRate = 1f;
     //按下事件的坐标
@@ -1430,6 +1432,15 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         this.mCanvasHeight = 0f;
         //绘制背景色
         mDrawView.setBackgroundColor(mGlobleParams.getCanvasBackgroundColor());
+
+
+//        if (mGlobleParams.isAutoScaleToScreen() && mSeatDrawMap != null && mIsFirstDraw) {
+//            if (mSeatParams != null && mStageParams != null) {
+//                mSeatParams.setAutoCalculateToFixScreen(mWHPoint.x, mSeatDrawMap.getMaxColumnCount());
+//                mStageParams.setAutoCalculateToFixScreen(mWHPoint.x);
+//                mIsFirstDraw = false;
+//            }
+//        }
     }
 
     /**
@@ -1663,7 +1674,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     /**
      * 绘制正常的界面,缩略图的绘制{@link #drawThumbnail(Canvas, Paint, float, float)}本身是依赖于此方法的,
      * 此方法实现了一次界面完整绘制的功能,{@link #drawCanvas(Canvas)}为总的绘制处理方法,<br/>
-     * <b><font color="#ff9900">若需要自定义绘制的流程,建议重写此方法,此类仅更改绘制流程,若需要修改绘制的具体内容
+     * <b><font color="#ff9900">若需要自定义绘制的流程,建议重写此方法,此方法仅更改绘制流程,若需要修改绘制的具体内容
      * 请重写对应的方法:</font><br/>
      * 重写普通座位绘制: {@link #drawNormalSingleSeat(Canvas, Paint, BaseSeatParams, float, float, BaseDrawStyle)}<br/>
      * 重写图片座位绘制: {@link #drawImageSeat(Canvas, Paint, BaseSeatParams, float, float, BaseDrawStyle)}<br/>
@@ -1990,16 +2001,21 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             return;
         }
 
-        if (newScaleRate < 1 && mGlobleParams.isAutoScaleToScreen()) {
-            if (this.isCanAutoScaleToScreen(newScaleRate)) {
-                mLastScaleRate = newScaleRate;
-                isCanScale = true;
-            } else {
-                isCanScale = false;
-            }
-            //是否缩放成功
-            //任何一个缩放不成功都不可以进行重绘,舞台与座位的缩放应该是同步的
-        } else if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
+//        if (newScaleRate < 1 && mGlobleParams.isAutoScaleToScreen()) {
+//            if (this.isCanAutoScaleToScreen(newScaleRate)) {
+//                mLastScaleRate = newScaleRate;
+//                isCanScale = true;
+//            } else {
+//                isCanScale = false;
+//            }
+//            //是否缩放成功
+//            //任何一个缩放不成功都不可以进行重绘,舞台与座位的缩放应该是同步的
+//        } else if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
+//            mLastScaleRate = newScaleRate;
+//            isCanScale = true;
+//        }
+
+        if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
             mLastScaleRate = newScaleRate;
             isCanScale = true;
         }
@@ -2196,19 +2212,20 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
         //新的缩放比,用于处理偏移量
         float newScaleRate = 0f;
-        //当前缩放比大于3,比默认最大缩放值大了,缩放到默认最大缩放值
-        if (currentScaleRate > 2) {
-            newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(true);
-            mStageParams.setOriginalValuesToReplaceCurrents(true);
+        //当前缩放比大于固定最大值,比默认最大缩放值大了,缩放到默认最大缩放值
+        if (currentScaleRate > mGlobleParams.getDoubleClickLargeScaleRate()) {
+            newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickLargeScaleRate());
+            mStageParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickLargeScaleRate());
         } else {
             //当前缩放比小于1.5,接近最小缩放值,缩放到默认最大值
-            if (currentScaleRate >= 1 && currentScaleRate < 1.8f) {
-                newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(true);
-                mStageParams.setOriginalValuesToReplaceCurrents(true);
+            if (
+                    currentScaleRate >= mGlobleParams.getDoubleClickSmallScaleRate() && currentScaleRate < mGlobleParams.getDoubleClickLargeScaleRate() * 0.9f) {
+                newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickLargeScaleRate());
+                mStageParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickLargeScaleRate());
             } else {
                 //当前缩放比大于1.5小于3,或者是小于1,在最大缩放值与最小缩放值之前,缩放到默认最小值
-                newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(false);
-                mStageParams.setOriginalValuesToReplaceCurrents(false);
+                newScaleRate = mSeatParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickSmallScaleRate());
+                mStageParams.setOriginalValuesToReplaceCurrents(mGlobleParams.getDoubleClickSmallScaleRate());
             }
         }
         //记录当前的值,写入存储信息(以便下次缩放使用,不是特指双击缩放,而是包括任何方式的缩放)
