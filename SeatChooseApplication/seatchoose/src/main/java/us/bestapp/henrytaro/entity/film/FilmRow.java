@@ -30,15 +30,24 @@ public class FilmRow extends AbsRowEntity {
      * 构造函数,设置行对象的基本数据,<font color="#ff9900"><b>解析列数据时会自动计算当前行是否需要绘制及数据是否为空,
      * 但在此处是否绘制及数据是否为空将由参数3/4决定,此构造函数不自动进行解析列信息,需要解析请调用方法{@link #parseData()}</b></font>
      *
-     * @param rowNumber  行号
-     * @param columnInfo 列数据信息
-     * @param isDraw     是否绘制此行
-     * @param isEmpty    此行数据是否为空
+     * @param rowNumber 行号
+     * @param isDraw    是否绘制此行
+     * @param isEmpty   此行数据是否为空
      */
-    public FilmRow(int rowNumber, String columnInfo, boolean isDraw, boolean isEmpty) {
-        super(rowNumber, isDraw, isEmpty);
+    public FilmRow(int x, int rowNumber, boolean isDraw, boolean isEmpty) {
+        super(x, rowNumber, isDraw, isEmpty);
         this.mRowNum = rowNumber;
-        this.mColumns = columnInfo;
+    }
+
+    /**
+     * 构造函数,创建一个空行
+     *
+     * @param x
+     * @param rowNumber
+     */
+    public FilmRow(int x, int rowNumber) {
+        super(x, rowNumber);
+        this.mRowNum = rowNumber;
     }
 
 
@@ -51,6 +60,12 @@ public class FilmRow extends AbsRowEntity {
         return this.mRowId;
     }
 
+    @Override
+    public int getRowNumber() {
+        this.mRowNumber = this.mRowNum;
+        return super.getRowNumber();
+    }
+
     /**
      * 解析已经加载的Json数据,此方法解析列信息时会自动解析行是否绘制及数据是否为空,若之前设定过绘制选项此处将会覆盖
      *
@@ -58,7 +73,6 @@ public class FilmRow extends AbsRowEntity {
      */
     @Override
     public void parseData() {
-        this.mRowNumber = this.mRowNum;
 
         if (StringUtils.isNullOrEmpty(mColumns)) {
             this.mIsDraw = false;
@@ -73,9 +87,9 @@ public class FilmRow extends AbsRowEntity {
             if (mColumns != null) {
                 mColumnData = new FilmSeat[columInfo.length];
                 for (int i = 0; i < columInfo.length; i++) {
-                    AbsSeatEntity newSeat = new FilmSeat(this.getRowNumber(), columInfo[i]);
-                    newSeat.parseData();
                     //座位解析
+                    AbsSeatEntity newSeat = new FilmSeat(this.getX(), i, this.getRowNumber(), columInfo[i]);
+                    newSeat.parseData();
                     mColumnData[i] = newSeat;
                     if (newSeat != null && newSeat.isExsit()) {
                         mExsitColumnCount++;
@@ -87,11 +101,6 @@ public class FilmRow extends AbsRowEntity {
                 throw new RuntimeException("column info is unable");
             }
         }
-    }
-
-    @Override
-    public int getExsitColumnCount() {
-        return this.mExsitColumnCount;
     }
 
     @Override

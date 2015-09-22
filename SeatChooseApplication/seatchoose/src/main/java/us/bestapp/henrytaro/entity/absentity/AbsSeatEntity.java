@@ -7,6 +7,13 @@ package us.bestapp.henrytaro.entity.absentity;
  * 这是由于座位的情况可能很复杂,解析方式也不一样,那么由座位自身处理是最好的</b></font>
  */
 public abstract class AbsSeatEntity {
+    private int mRowX = 0;
+    private int mColumnY = 0;
+
+    public AbsSeatEntity(int x, int y) {
+        this.mRowX = x;
+        this.mColumnY = y;
+    }
 
     /**
      * 解析数据
@@ -51,6 +58,39 @@ public abstract class AbsSeatEntity {
      */
     public abstract int getColumnNumber();
 
+    /**
+     * 获取当前座位所在的位置,行索引(在map列表中的位置)
+     *
+     * @return
+     */
+    public int getX() {
+        return this.mRowX;
+    }
+
+    /**
+     * 获取当前座位所在的位置,列索引(在map列表中的位置)
+     *
+     * @return
+     */
+    public int getY() {
+        return this.mColumnY;
+    }
+
+    /**
+     * 设置座位的位置XY,设置的值只有>=0才有效,否则保留原值
+     *
+     * @param x 行索引,位置
+     * @param y 列索引,位置
+     */
+    public void setXY(int x, int y) {
+        if (x >= 0) {
+            this.mRowX = x;
+        }
+        if (y >= 0) {
+            this.mColumnY = y;
+        }
+    }
+
 
     /**
      * 当前位置座位是否存在,不存在则不绘制,此方法是绘制的一个判断标准
@@ -74,4 +114,25 @@ public abstract class AbsSeatEntity {
      * @return
      */
     public abstract int isChosen();
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        } else if (o == this) {
+            return true;
+        } else if (o instanceof AbsSeatEntity) {
+            AbsSeatEntity seatEntity = (AbsSeatEntity) o;
+            //位置要相同
+            if (seatEntity.getX() == this.getX() && seatEntity.getY() == this.getY() &&
+                    //行列号要相同
+                    seatEntity.getRowNumber() == this.getRowNumber() && seatEntity.getColumnNumber() == this.getColumnNumber()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

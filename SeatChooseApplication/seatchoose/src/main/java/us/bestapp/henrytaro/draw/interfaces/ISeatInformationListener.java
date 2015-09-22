@@ -28,7 +28,7 @@ public interface ISeatInformationListener {
      * <p>
      * {@link #STATUS_MOVE},座位移动中<br/>
      * {@link #STATUS_CLICK},座位区域被单击,此事件被触发后面必定跟着{@link #STATUS_CHOOSE_SEAT}或者是{@link #STATUS_CHOOSE_NOTHING}<br/>
-     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(int, int, AbsSeatEntity)}<br/>
+     * {@link #STATUS_CHOOSE_SEAT},座位被选中,此事件被触发后面必定触发{@link #chooseInMapSuccess(AbsSeatEntity)}<br/>
      * {@link #STATUS_CHOOSE_NOTHING},座位未被选中,单击在空白区域<br/>
      * </p>
      *
@@ -40,11 +40,9 @@ public interface ISeatInformationListener {
      * 单击选中map中某个位置,此处的选中并不是真实的选中意思,指的是成功单击到map中的有效区域,
      * 此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该单击有效区域的行列索引则,并不作任何的处理<br/>
      *
-     * @param rowIndexInMap    座位在列表中的行索引,从0开始
-     * @param columnIndexInMap 座位在列表中的列索引,从0开始
      * @param seatEntity       座位接口,可能为null
      */
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity);
+    public void chooseInMapSuccess(AbsSeatEntity seatEntity);
 
     /**
      * 选择座位失败,未单击到有效的座位区域(可能单击在空白区等)
@@ -54,11 +52,9 @@ public interface ISeatInformationListener {
     /**
      * 选中座位成功,此处指实际的座位(不包括map中不显示的座位或者是空白区域)
      *
-     * @param rowIndexInMap    当前座位在map中的行索引,从0开始
-     * @param columnIndexInMap 当前座位在map中的列索引,从0开始
      * @param seatEntity       座位数据接口
      */
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity);
+    public void chooseSeatSuccess(AbsSeatEntity seatEntity);
 
     /**
      * 选中座位失败，此处可能是选中的座位无效(座位类型错误或不能显示等...)

@@ -12,6 +12,7 @@ public abstract class AbsRowEntity {
      * 座位列表,用于存放每一行对应的座位列表(包含每一列数据,空座位)
      */
     protected List<AbsSeatEntity> mAbsSeatList = null;
+    private int mRowX = 0;
     /**
      * 当前行的行号
      */
@@ -26,13 +27,25 @@ public abstract class AbsRowEntity {
     protected boolean mIsEmpty = true;
 
     /**
+     * 构造函数,默认创建空行
+     *
+     * @param x
+     * @param rowNumber
+     */
+    public AbsRowEntity(int x, int rowNumber) {
+        //默认创建的是空行
+        this(x, rowNumber, true, true);
+    }
+
+    /**
      * 构造函数,创建带默认值的构造函数
      *
      * @param rowNumber 行号
      * @param isDraw    是否绘制当前行
      * @param isEmpty   当前行是否为空行
      */
-    public AbsRowEntity(int rowNumber, boolean isDraw, boolean isEmpty) {
+    public AbsRowEntity(int x, int rowNumber, boolean isDraw, boolean isEmpty) {
+        this.mRowX = x;
         this.mRowNumber = rowNumber;
         this.mIsDraw = isDraw;
         this.mIsEmpty = isEmpty;
@@ -67,12 +80,6 @@ public abstract class AbsRowEntity {
         }
     }
 
-    /**
-     * 获取行中存在座位的列（真实存在的座位列数,不包含空列）
-     *
-     * @return
-     */
-    public abstract int getExsitColumnCount();
 
     /**
      * 获取行中的列数，此处是行中所有的列（包含空列）
@@ -97,6 +104,25 @@ public abstract class AbsRowEntity {
      */
     public int getRowNumber() {
         return this.mRowNumber;
+    }
+
+    /**
+     * 获取行索引(在map列表中的位置,从0开始)
+     *
+     * @return
+     */
+    public int getX() {
+        return this.mRowX;
+    }
+
+    /**
+     * 设置行索引
+     *
+     * @param x
+     * @return
+     */
+    public void setX(int x) {
+        this.mRowX = x;
     }
 
     /**

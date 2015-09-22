@@ -14,21 +14,16 @@ public class EgSeatRow extends AbsRowEntity {
     private int mColumnCount = 0;
 
     public EgSeatRow(int rowIndex, int[] rowArr) {
-        super(rowIndex + 1, true, false);
+        super(rowIndex, rowIndex + 1, true, false);
         if (rowArr == null) {
             throw new RuntimeException("rowarr can not be null");
         } else {
             this.mColumnCount = rowArr.length;
             mAbsSeatList = new ArrayList<AbsSeatEntity>();
             for (int i = 0; i < rowArr.length; i++) {
-                mAbsSeatList.add(new EgSeat(rowIndex + 1, i + 1, rowArr[i]));
+                mAbsSeatList.add(new EgSeat(rowIndex, i, rowIndex + 1, i + 1, rowArr[i]));
             }
         }
-    }
-
-    @Override
-    public int getExsitColumnCount() {
-        return this.mColumnCount;
     }
 
     @Override

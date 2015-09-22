@@ -54,6 +54,7 @@ public class FilmData {
             int currentRowNumber = 0;
             for (int i = 0; i < mRowList.size(); i++) {
                 FilmRow row = mRowList.get(i);
+                row.setX(row.getRowNumber() - 1);
                 row.parseData();
                 //记录每行中最大的列数,因为不是每一行的列数都相同
                 mMaxColumnCount = mMaxColumnCount < row.getColumnCount() ? row.getColumnCount() : mMaxColumnCount;
@@ -69,7 +70,7 @@ public class FilmData {
                         int tempIndex = i;
                         //在不连续的两行之间补充空行
                         for (int j = lastRowNumber + 1; j < currentRowNumber; j++) {
-                            mRowList.add(tempIndex, new FilmRow(j, null, true, true));
+                            mRowList.add(tempIndex, new FilmRow(j - 1, j));
                         }
                         //重新计算补充后的索引
                         i += currentRowNumber - lastRowNumber - 1;

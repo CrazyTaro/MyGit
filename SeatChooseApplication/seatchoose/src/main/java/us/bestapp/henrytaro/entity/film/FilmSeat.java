@@ -4,7 +4,6 @@ package us.bestapp.henrytaro.entity.film;/**
 
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
-import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.utils.StringUtils;
 
 /**
@@ -18,6 +17,7 @@ public class FilmSeat extends AbsSeatEntity {
     private String mTypeStr = null;
     private String mSeatInfo = null;
 
+
     /**
      * 获取新的实例,此方法会同时解析座位信息
      *
@@ -25,7 +25,8 @@ public class FilmSeat extends AbsSeatEntity {
      * @param seatInfo  座位信息
      * @return
      */
-    public FilmSeat(int rowNumber, String seatInfo) {
+    public FilmSeat(int x, int y, int rowNumber, String seatInfo) {
+        super(x, y);
         this.mRowNumber = rowNumber;
         this.mSeatInfo = seatInfo;
     }
@@ -114,9 +115,9 @@ public class FilmSeat extends AbsSeatEntity {
 
     @Override
     public boolean isExsit() {
-        if(mTypeStr.equals("ZL")){
+        if (mTypeStr.equals("ZL")) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -143,4 +144,5 @@ public class FilmSeat extends AbsSeatEntity {
             return 0;
         }
     }
+
 }

@@ -114,21 +114,21 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
     @Override
     protected void drawThumbnailSeat(Canvas canvas, Paint paint, BaseSeatParams seatParams, float drawPositionX, float drawPositionY, BaseDrawStyle drawStyle) {
-//        super.drawThumbnailSeat(canvas, paint, seatParams, drawPositionX, drawPositionY, seatType);
-        //绘制单个座位
-        //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
-        //获取座位类型对应的颜色
-        //设置绘制座位的颜色
-
-        //获取绘制的区域
-        mImageRectf = seatParams.getNormalDrawRecf(mImageRectf, drawPositionX, drawPositionY);
-        paint.setStyle(Paint.Style.FILL);
-        //填充颜色
-        paint.setColor(drawStyle.drawColor);
-        if (isRectfCanSeen(mImageRectf)) {
-            //绘制圆角矩形
-            canvas.drawRoundRect(mImageRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-        }
+        super.drawThumbnailSeat(canvas, paint, seatParams, drawPositionX, drawPositionY, drawStyle);
+//        //绘制单个座位
+//        //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
+//        //获取座位类型对应的颜色
+//        //设置绘制座位的颜色
+//
+//        //获取绘制的区域
+//        mImageRectf = seatParams.getNormalDrawRecf(mImageRectf, drawPositionX, drawPositionY);
+//        paint.setStyle(Paint.Style.FILL);
+//        //填充颜色
+//        paint.setColor(drawStyle.drawColor);
+//        if (isRectfCanSeen(mImageRectf)) {
+//            //绘制圆角矩形
+//            canvas.drawRoundRect(mImageRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+//        }
     }
 
     @Override

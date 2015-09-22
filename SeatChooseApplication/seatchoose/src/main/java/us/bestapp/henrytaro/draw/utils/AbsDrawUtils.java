@@ -2413,14 +2413,14 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                 //更新座位状态
                 mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_CHOOSE_SEAT);
                 //通知选中map中的有效区域
-                mISeatInformationListener.chooseInMapSuccess(clickSeatPoint.x, clickSeatPoint.y, seat);
+                mISeatInformationListener.chooseInMapSuccess(seat);
 
                 int seatType = IBaseParams.TYPE_ERROR;
                 //判断当前的座位是否是实际有效座位
                 //座位真实有效则进行处理
                 if (seat != null && seat.isExsit()) {
                     //通知选中实际的有效座位
-                    mISeatInformationListener.chooseSeatSuccess(clickSeatPoint.x, clickSeatPoint.y, seat);
+                    mISeatInformationListener.chooseSeatSuccess(seat);
                     mCurrentSeletedSeat = clickSeatPoint;
                     //显示当前选中座位的通知
                     if (mGlobleParams.isDrawSeletedRowColumnNotification()) {

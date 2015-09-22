@@ -14,7 +14,8 @@ public class EgSeat extends AbsSeatEntity {
     private int mRowNumber = 0;
     private int mColumnNumber = 0;
 
-    public EgSeat(int rowNumber, int columnNumber, int type) {
+    public EgSeat(int x, int y, int rowNumber, int columnNumber, int type) {
+        super(x, y);
         this.mRowNumber = rowNumber;
         this.mColumnNumber = columnNumber;
         this.mType = type;
@@ -74,9 +75,9 @@ public class EgSeat extends AbsSeatEntity {
 
     @Override
     public boolean isExsit() {
-        if(mType==0){
+        if (mType == 0) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
@@ -125,4 +126,5 @@ public class EgSeat extends AbsSeatEntity {
                 return 0;
         }
     }
+
 }

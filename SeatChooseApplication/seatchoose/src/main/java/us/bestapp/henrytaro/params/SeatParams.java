@@ -78,12 +78,12 @@ public class SeatParams extends BaseSeatParams {
         seatRectf.right = seatRectf.left + this.getWidth();
 
         seatRectf.top = drawPositionY - this.getHeight() / 2;
-        seatRectf.bottom = seatRectf.top + this.mMainSeatHeight;
+        seatRectf.bottom = seatRectf.top + this.getHeight() * 0.75f;
 
         if (!isMainSeat) {
             //若不是主座位,则更改上下座位坐标(左右是一致的)
-            seatRectf.top = seatRectf.bottom + this.mSeatHeightInterval + this.mMinorSeatHeight / 2;
-            seatRectf.bottom = seatRectf.top + this.mMinorSeatHeight;
+            seatRectf.top = seatRectf.bottom + this.getHeight() * 0.05f + this.getHeight() * 0.2f / 2;
+            seatRectf.bottom = seatRectf.top + this.getHeight() * 0.2f;
         }
 
         return seatRectf;

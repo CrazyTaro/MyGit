@@ -78,20 +78,26 @@ public class ShowSeatMap extends AbsMapEntity {
             }
             //当前行
             ShowRow currentRow = null;
-            int currentRowNumber = -1;
-            for (ShowData data : mData) {
+            int currentRowNumber = 0;
+            int currentColumnIndex = 0;
+            for (int i = 0; i < mData.size(); i++) {
+                ShowData data = mData.get(i);
                 //当前行与遍历的数据行号不同,则创建新的一行
                 //此处依赖于数据是先行后列的顺序排序好的,否则解析可能出错
                 if (currentRowNumber != data.getRowNumber()) {
                     currentRowNumber = data.getRowNumber();
+                    //创建新行,重置座位列号
+                    currentColumnIndex = 0;
                     //创建并设置新行的行号
-                    currentRow = new ShowRow(currentRowNumber);
+                    currentRow = new ShowRow(data.getX(), currentRowNumber);
                     mAbsRowList.add(currentRow);
                 }
                 //解析座位数据
                 data.parseData();
+                data.setXY(currentRowNumber - 1, currentColumnIndex);
                 //添加座位到新行
                 currentRow.addNewData(data);
+                currentColumnIndex++;
             }
         } else {
             mAbsRowList = null;

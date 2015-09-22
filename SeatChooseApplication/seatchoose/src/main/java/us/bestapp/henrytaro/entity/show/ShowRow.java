@@ -14,8 +14,8 @@ import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
  */
 public class ShowRow extends AbsRowEntity {
 
-    public ShowRow(int rowNumber) {
-        super(rowNumber, true, false);
+    public ShowRow(int x, int rowNumber) {
+        super(x, rowNumber, true, false);
         this.mRowNumber = rowNumber;
     }
 
@@ -31,10 +31,6 @@ public class ShowRow extends AbsRowEntity {
         mAbsSeatList.add(newData);
     }
 
-    @Override
-    public int getExsitColumnCount() {
-        return mAbsSeatList.size();
-    }
 
     @Override
     public int getColumnCount() {

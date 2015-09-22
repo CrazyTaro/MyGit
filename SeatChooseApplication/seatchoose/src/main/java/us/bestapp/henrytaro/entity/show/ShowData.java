@@ -22,6 +22,15 @@ public class ShowData extends AbsSeatEntity {
     @SerializedName("status")
     private String mStatus;
 
+    /**
+     * 构造函数
+     *
+     * @param x 行索引,位置
+     * @param y 列索引,位置
+     */
+    public ShowData(int x, int y) {
+        super(x, y);
+    }
 
     @Override
     public void parseData() {
