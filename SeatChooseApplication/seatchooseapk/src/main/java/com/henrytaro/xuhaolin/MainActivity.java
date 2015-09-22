@@ -1,7 +1,6 @@
 package com.henrytaro.xuhaolin;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -212,8 +211,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 
 //        setImage(seatParams);
 //        mSeatDataHandle.setSeatDrawMap(dataMap);
-        mSeatDataHandle.setSeatDrawMap(egMap);
-//        mSeatDataHandle.setSeatDrawMap(showMap);
+//        mSeatDataHandle.setSeatDrawMap(egMap);
+        mSeatDataHandle.setSeatDrawMap(showMap);
     }
 
     private void setImage(ISeatParams params) {
@@ -227,11 +226,11 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 
 
     @Override
-    public void clickSeatSuccess(int rowInMap, int columnInMap, AbsSeatEntity seatEntity) {
+    public void clickSeatSuccess(AbsSeatEntity seatEntity) {
     }
 
     @Override
-    public void seatStatusChanged(Point[] seatIndexInMap, AbsSeatEntity[] seatEntities, boolean isChosen) {
+    public void seatStatusChanged(AbsSeatEntity[] seatEntities, boolean isChosen) {
 
     }
 
