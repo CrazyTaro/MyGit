@@ -4,7 +4,6 @@ package us.bestapp.henrytaro.view;/**
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -14,6 +13,7 @@ import java.util.List;
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
+import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
@@ -48,7 +48,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     private ISeatChooseEvent mSeatChooseEvent = null;
     private ISeatParams mSeatParams = null;
     private int mMostSeletedCount = 5;
-    private List<Point> mCurrentSeletedSeats = null;
+    private List<AbsSeatEntity> mCurrentSeletedSeats = null;
     private Context mContext = null;
 
     public SeatChooseView(Context context) {
@@ -73,35 +73,45 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
         //设置监听事件
         mSeatDrawHandle.setSeatInformationListener(this);
         //创建选择座位的存储列表
-        mCurrentSeletedSeats = new ArrayList<Point>(mMostSeletedCount);
+        mCurrentSeletedSeats = new ArrayList<>(mMostSeletedCount);
     }
 
-    /**
-     * 从被选中的座位中将某个座位移除
-     *
-     * @param rowIndex    行索引
-     * @param columnIndex 列索引
-     */
-    private void removeSeat(int rowIndex, int columnIndex) {
-        for (Point seat : mCurrentSeletedSeats) {
-            if (seat.x == rowIndex && seat.y == columnIndex) {
+
+    @Override
+    public boolean removeSeat(AbsSeatEntity seatEntity) {
+        for (AbsSeatEntity seat : mCurrentSeletedSeats) {
+            if (seat.equals(seatEntity)) {
                 mCurrentSeletedSeats.remove(seat);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
-    /**
-     * 将选中的座位加入到选中座位列表中
-     *
-     * @param rowIndex
-     * @param columnIndex
-     */
-    private void addSeat(int rowIndex, int columnIndex) {
-        Point seletedSeat = new Point();
-        seletedSeat.x = rowIndex;
-        seletedSeat.y = columnIndex;
-        mCurrentSeletedSeats.add(seletedSeat);
+
+    @Override
+    public boolean addSeat(AbsSeatEntity seatEntity) {
+        //重复的座位将不添加
+        for (AbsSeatEntity seat : mCurrentSeletedSeats) {
+            if (seat.equals(seatEntity)) {
+                return false;
+            }
+        }
+
+        //空座位不添加
+        if (seatEntity == null) {
+            return false;
+        }
+        //对添加的座位进行判断是否在当前列表中
+        int rowIndex = seatEntity.getX();
+        int columnIndex = seatEntity.getY();
+        AbsMapEntity map = mSeatDrawHandle.getSeatDrawMap();
+        if (map != null && rowIndex < map.getRowCount() && columnIndex < map.getMaxColumnCount()) {
+            mCurrentSeletedSeats.add(seatEntity);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -115,7 +125,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public void chooseInMapSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
+    public void chooseInMapSuccess(AbsSeatEntity seatEntity) {
     }
 
 
@@ -127,31 +137,35 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public void chooseSeatSuccess(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
-        if (updateCoupleSeat(rowIndexInMap, columnIndexInMap, seatEntity)) {
+    public void chooseSeatSuccess(AbsSeatEntity seatEntity) {
+        //通知选中事件
+        if (mSeatChooseEvent != null) {
+            mSeatChooseEvent.clickSeatSuccess(seatEntity);
+        }
+
+        if (updateCoupleSeat(seatEntity)) {
             return;
         } else {
-            updateSingleSeat(rowIndexInMap, columnIndexInMap, seatEntity);
+            updateSingleSeat(seatEntity);
         }
     }
 
     /**
      * 更新情侣座选座位,通过当前座位计算出对应的情侣座
      *
-     * @param rowIndexInMap    当前选中的座位行索引
-     * @param columnIndexInMap 当前选中的座位列索引
-     * @param seatEntity       当前座位
+     * @param seatEntity 当前座位
      * @return
      */
-    protected boolean updateCoupleSeat(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
-        //通知选中事件
-        if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.clickSeatSuccess(rowIndexInMap, columnIndexInMap, seatEntity);
+    protected boolean updateCoupleSeat(AbsSeatEntity seatEntity) {
+        if (seatEntity == null) {
+            return false;
         }
 
         //是否被选中状态
         boolean isChoosen = false;
         boolean isHandle = false;
+        int rowIndexInMap = seatEntity.getX();
+        int columnIndexInMap = seatEntity.getY();
 
         //是否情侣座位
         if (seatEntity.isCouple()) {
@@ -184,8 +198,8 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
                         mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, columnIndexInMap);
                         mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, coupleColumnIndex);
                         //尝试移除存放在选中列表中的座位
-                        removeSeat(rowIndexInMap, columnIndexInMap);
-                        removeSeat(rowIndexInMap, coupleColumnIndex);
+                        removeSeat(seatEntity);
+                        removeSeat(coupleSeat);
                         //标志已处理选中事件
                         isChoosen = true;
                     } else if (seatEntity.isChosen() < 0) {
@@ -197,8 +211,8 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
                             mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, columnIndexInMap);
                             mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, coupleColumnIndex);
                             //将座位添加到选中座位列表中
-                            addSeat(rowIndexInMap, columnIndexInMap);
-                            addSeat(rowIndexInMap, coupleColumnIndex);
+                            addSeat(seatEntity);
+                            addSeat(coupleSeat);
                             isChoosen = true;
                         } else {
                             isChoosen = false;
@@ -213,10 +227,7 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
                 if (mSeatChooseEvent != null) {
                     //成功选中(更新了选中的状态)
                     if (isChoosen) {
-                        Point[] couplePoint = new Point[2];
-                        couplePoint[0] = new Point(rowIndexInMap, columnIndexInMap);
-                        couplePoint[1] = new Point(rowIndexInMap, coupleColumnIndex);
-                        mSeatChooseEvent.seatStatusChanged(couplePoint, new AbsSeatEntity[]{seatEntity, coupleSeat}, seatEntity.isChosen() > 0);
+                        mSeatChooseEvent.seatStatusChanged(new AbsSeatEntity[]{seatEntity, coupleSeat}, seatEntity.isChosen() > 0);
                     } else {
                         //没有更新选中状态,选中失败
                         mSeatChooseEvent.seletedFail(true);
@@ -232,35 +243,33 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     /**
      * 更新单击座位选中事件
      *
-     * @param rowIndexInMap    当前选中座位的行索引
-     * @param columnIndexInMap 当前选中座位的列索引
-     * @param seatEntity       选中座位
+     * @param seatEntity 选中座位
      */
-    protected void updateSingleSeat(int rowIndexInMap, int columnIndexInMap, AbsSeatEntity seatEntity) {
-        //通知选中事件
-        if (mSeatChooseEvent != null) {
-            mSeatChooseEvent.clickSeatSuccess(rowIndexInMap, columnIndexInMap, seatEntity);
+    protected boolean updateSingleSeat(AbsSeatEntity seatEntity) {
+        if (seatEntity == null) {
+            return false;
         }
-
         //是否被选中状态
         boolean isChoosen = false;
+        int rowIndexInMap = seatEntity.getX();
+        int columnIndexInMap = seatEntity.getY();
 
         if (seatEntity.isChosen() > 0) {
             //选座成功，当前座位为选中状态，将状态改为未选中，且从选中座位列表中移除该座位
             mSeatDrawHandle.updateSeatInMap(-1, rowIndexInMap, columnIndexInMap);
-            removeSeat(rowIndexInMap, columnIndexInMap);
+            removeSeat(seatEntity);
             isChoosen = true;
         } else if (seatEntity.isChosen() < 0) {
             if (mCurrentSeletedSeats.size() < mMostSeletedCount) {
                 //选座成功，当前座位为未选中状态，选中该座位并将座位加入选中座位列表中
                 mSeatDrawHandle.updateSeatInMap(1, rowIndexInMap, columnIndexInMap);
-                addSeat(rowIndexInMap, columnIndexInMap);
+                addSeat(seatEntity);
                 isChoosen = true;
             } else {
                 //当前选中座位数已达上限，回调接口，不将座位加入选中列表中
                 if (mSeatChooseEvent != null) {
                     mSeatChooseEvent.seletedFull(false);
-                    return;
+                    return false;
                 }
             }
         }
@@ -268,11 +277,14 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
         if (mSeatChooseEvent != null) {
             if (isChoosen) {
                 //若座位有效且未满，则回调选中座位结果
-                mSeatChooseEvent.seatStatusChanged(new Point[]{new Point(rowIndexInMap, columnIndexInMap)}, new AbsSeatEntity[]{seatEntity}, seatEntity.isChosen() > 0);
+                mSeatChooseEvent.seatStatusChanged(new AbsSeatEntity[]{seatEntity}, seatEntity.isChosen() > 0);
+                return true;
             } else {
                 mSeatChooseEvent.seletedFail(false);
+                return false;
             }
         }
+        return false;
     }
 
     @Override
@@ -303,11 +315,11 @@ public class SeatChooseView extends View implements ISeatInformationListener, IS
     }
 
     @Override
-    public List<Point> getSeletedSeats() {
+    public List<AbsSeatEntity> getSeletedSeats() {
         if (mCurrentSeletedSeats == null || mCurrentSeletedSeats.size() <= 0) {
             return null;
         } else {
-            List<Point> seletedSeatsList = new ArrayList<Point>(mCurrentSeletedSeats.size());
+            List<AbsSeatEntity> seletedSeatsList = new ArrayList<>(mCurrentSeletedSeats.size());
             seletedSeatsList.addAll(mCurrentSeletedSeats);
             return seletedSeatsList;
         }
