@@ -4,8 +4,8 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
-import us.bestapp.henrytaro.params.GlobleParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.seatchoose.params.GlobleParams;
+import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
