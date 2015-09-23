@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.draw;/**
+package us.bestapp.henrytaro.areachoose.draw;/**
  * Created by xuhaolin on 15/8/14.
  */
 

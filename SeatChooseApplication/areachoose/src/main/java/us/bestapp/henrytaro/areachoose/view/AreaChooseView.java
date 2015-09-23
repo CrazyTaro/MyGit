@@ -1,4 +1,4 @@
-package us.bestapp.henrytaro.view;/**
+package us.bestapp.henrytaro.areachoose.view;/**
  * Created by xuhaolin on 15/9/18.
  */
 
@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import us.bestapp.henrytaro.draw.AbsDrawUtils;
+import us.bestapp.henrytaro.areachoose.draw.AbsDrawUtils;
 
 /**
  * Created by xuhaolin on 15/9/18.
@@ -25,6 +25,10 @@ public class AreaChooseView extends View {
 
     public AreaChooseView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public AbsDrawUtils getDrawUtils() {
+        return this.mDrawUtils;
     }
 
     @Override
