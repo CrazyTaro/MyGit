@@ -5,7 +5,7 @@
     tools:context=".MainActivity"
     android:background="#ededed">
 
-    <us.bestapp.henrytaro.view.SeatChooseView
+    <us.bestapp.henrytaro.seatchoose.view.SeatChooseView
         android:id="@+id/view_choose"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

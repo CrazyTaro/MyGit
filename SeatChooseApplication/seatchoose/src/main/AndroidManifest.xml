@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="us.bestapp.henrytaro"
+    package="us.bestapp.henrytaro.seatchoose"
     android:versionCode="1200"
     android:versionName="v1.2">
 

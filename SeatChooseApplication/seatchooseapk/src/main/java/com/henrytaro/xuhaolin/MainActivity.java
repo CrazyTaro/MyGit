@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
-import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.entity.example.EgSeatMap;
-import us.bestapp.henrytaro.entity.film.FilmSeatMap;
-import us.bestapp.henrytaro.entity.show.ShowSeatMap;
-import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
-import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
-import us.bestapp.henrytaro.params.interfaces.ISeatParams;
-import us.bestapp.henrytaro.params.interfaces.IStageParams;
-import us.bestapp.henrytaro.view.SeatChooseView;
-import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
+import us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatDrawInterface;
+import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity;
+import us.bestapp.henrytaro.seatchoose.entity.example.EgSeatMap;
+import us.bestapp.henrytaro.seatchoose.entity.film.FilmSeatMap;
+import us.bestapp.henrytaro.seatchoose.entity.show.ShowSeatMap;
+import us.bestapp.henrytaro.seatchoose.params.baseparams.BaseSeatParams;
+import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.seatchoose.params.interfaces.ISeatParams;
+import us.bestapp.henrytaro.seatchoose.params.interfaces.IStageParams;
+import us.bestapp.henrytaro.seatchoose.view.SeatChooseView;
+import us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent;
 
 
 public class MainActivity extends Activity implements ISeatChooseEvent {
