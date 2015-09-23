@@ -135,7 +135,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../us/bestapp/henrytaro/Instruction.html#aboutSeatParams--">aboutSeatParams</a></span>()</code>
-<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类"><code>BaseSeatParams</code></a><br/>
+<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类"><code>BaseSeatParams</code></a><br/>
  BaseSeatParams是绘制所需要的座位参数,这是不可变的,除非不使用AbsDrawUtils;<br/>
  使用BaseSeatParams需要注意的是,继承此类实现其子类可以实现自定义的一些参数处理;比如更新默认绘制的座位形状等;<br/>
  继承此类的子类必须存在默认的构造函数,否则会导致内部的创建失败!</div>
@@ -144,7 +144,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../us/bestapp/henrytaro/Instruction.html#aboutStageParams--">aboutStageParams</a></span>()</code>
-<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类"><code>BaseStageParams</code></a><br/>
+<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类"><code>BaseStageParams</code></a><br/>
  BaseStageParams是绘制所需要的舞台参数,这是不可变的,除非不使用AbsDrawUtils;<br/>
  使用BaseStageParams需要注意的是,默认的舞台绘制方式是长方形,若需要额外处理舞台形状应该重写<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#getStagePathPoint-float-float-"><code>BaseStageParams.getStagePathPoint(float, float)</code></a><br/></div>
 </td>
@@ -153,8 +153,8 @@ var activeTableTab = "activeTableTab";
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../us/bestapp/henrytaro/Instruction.html#others--">others</a></span>()</code>
 <div class="block">关于其它<br/>
- 所有参数对外设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>ISeatParams</code></a>与<a href="../../../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>IStageParams</code></a><br/>
- 全局参数的设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>IGlobleParams</code></a><br/>
+ 所有参数对外设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>ISeatParams</code></a>与<a href="../../../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>IStageParams</code></a><br/>
+ 全局参数的设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>IGlobleParams</code></a><br/>
  需要测试数据时可以直接使用二维表数据进行类型测试,通过使用默认提供的测试对象即可<a href="../../../us/bestapp/henrytaro/entity/example/EgSeatMap.html" title="us.bestapp.henrytaro.entity.example中的类"><code>EgSeatMap</code></a><br/>
  需要自定义SeatMap类型用于显示界面请继承<a href="../../../us/bestapp/henrytaro/entity/absentity/AbsMapEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsMapEntity</code></a>抽象列表类;<a href="../../../us/bestapp/henrytaro/entity/absentity/AbsRowEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsRowEntity</code></a>抽象行类;
  <a href="../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsSeatEntity</code></a>抽象座位类,此三个抽象类是基于绘制类AbsDrawUtils所需要的,必须继承自此三个抽象类才可以正常处理并显示数据<br/></div>
@@ -196,7 +196,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>aboutSeatParams</h4>
 <pre>void&nbsp;aboutSeatParams()</pre>
-<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类"><code>BaseSeatParams</code></a><br/>
+<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类"><code>BaseSeatParams</code></a><br/>
  BaseSeatParams是绘制所需要的座位参数,这是不可变的,除非不使用AbsDrawUtils;<br/>
  使用BaseSeatParams需要注意的是,继承此类实现其子类可以实现自定义的一些参数处理;比如更新默认绘制的座位形状等;<br/>
  继承此类的子类必须存在默认的构造函数,否则会导致内部的创建失败!;<br/>
@@ -211,7 +211,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>aboutStageParams</h4>
 <pre>void&nbsp;aboutStageParams()</pre>
-<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类"><code>BaseStageParams</code></a><br/>
+<div class="block">关于<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类"><code>BaseStageParams</code></a><br/>
  BaseStageParams是绘制所需要的舞台参数,这是不可变的,除非不使用AbsDrawUtils;<br/>
  使用BaseStageParams需要注意的是,默认的舞台绘制方式是长方形,若需要额外处理舞台形状应该重写<a href="../../../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#getStagePathPoint-float-float-"><code>BaseStageParams.getStagePathPoint(float, float)</code></a><br/></div>
 </li>
@@ -224,8 +224,8 @@ var activeTableTab = "activeTableTab";
 <h4>others</h4>
 <pre>void&nbsp;others()</pre>
 <div class="block">关于其它<br/>
- 所有参数对外设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>ISeatParams</code></a>与<a href="../../../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>IStageParams</code></a><br/>
- 全局参数的设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口"><code>IGlobleParams</code></a><br/>
+ 所有参数对外设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>ISeatParams</code></a>与<a href="../../../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>IStageParams</code></a><br/>
+ 全局参数的设置接口来自于<a href="../../../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口"><code>IGlobleParams</code></a><br/>
  需要测试数据时可以直接使用二维表数据进行类型测试,通过使用默认提供的测试对象即可<a href="../../../us/bestapp/henrytaro/entity/example/EgSeatMap.html" title="us.bestapp.henrytaro.entity.example中的类"><code>EgSeatMap</code></a><br/>
  需要自定义SeatMap类型用于显示界面请继承<a href="../../../us/bestapp/henrytaro/entity/absentity/AbsMapEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsMapEntity</code></a>抽象列表类;<a href="../../../us/bestapp/henrytaro/entity/absentity/AbsRowEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsRowEntity</code></a>抽象行类;
  <a href="../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类"><code>AbsSeatEntity</code></a>抽象座位类,此三个抽象类是基于绘制类AbsDrawUtils所需要的,必须继承自此三个抽象类才可以正常处理并显示数据<br/></div>

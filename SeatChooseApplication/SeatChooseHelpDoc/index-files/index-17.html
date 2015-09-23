@@ -218,7 +218,7 @@ or to a theme attribute in the form "<code>?</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/SeatChooseView.html#SeatChooseView-Context-AttributeSet-">SeatChooseView(Context, AttributeSet)</a></span> - 类 的构造器us.bestapp.henrytaro.view.<a href="../us/bestapp/henrytaro/view/SeatChooseView.html" title="us.bestapp.henrytaro.view中的类">SeatChooseView</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类"><span class="typeNameLink">SeatParams</span></a> - <a href="../us/bestapp/henrytaro/params/package-summary.html">us.bestapp.henrytaro.params</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类"><span class="typeNameLink">SeatParams</span></a> - <a href="../us/bestapp/henrytaro/params/package-summary.html">us.bestapp.henrytaro.seatchoose.params</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 2015/8/9.</div>
 </dd>
@@ -230,13 +230,13 @@ or to a theme attribute in the form "<code>?</div>
  
  <a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE"><code>ISeatInformationListener.STATUS_MOVE</code></a>,座位移动中<br/>
  <a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK"><code>ISeatInformationListener.STATUS_CLICK</code></a>,座位区域被单击,此事件被触发后面必定跟着<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>或者是<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a><br/>
- <a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
+ <a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
  <a href="../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a>,座位未被选中,单击在空白区域<br/>
  </div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/SeatChooseView.html#seatStatus-int-">seatStatus(int)</a></span> - 类 中的方法us.bestapp.henrytaro.view.<a href="../us/bestapp/henrytaro/view/SeatChooseView.html" title="us.bestapp.henrytaro.view中的类">SeatChooseView</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html#seatStatusChanged-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity:A-boolean-">seatStatusChanged(AbsSeatEntity[], boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.view.interfaces.<a href="../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html#seatStatusChanged-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity:A-boolean-">seatStatusChanged(AbsSeatEntity[], boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.view.interfaces.<a href="../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a></dt>
 <dd>
 <div class="block">被选中座位状态改变时回调,<font color="#ff9900"><b>此处只有座位可以被选中且座位的状态改变才会回调,特别是情侣座情况,只有当选中的情侣座可以一起改变时才会返回</b></font></div>
 </dd>
@@ -274,45 +274,45 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">当前选中座位数已达到上限,设置选座上限请通过<a href="../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setMostSeletedCount-int-"><code>ISeatViewInterface.setMostSeletedCount(int)</code></a></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setAutoCalculateToFixScreen-float-int-">setAutoCalculateToFixScreen(float, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setAutoCalculateToFixScreen-float-int-">setAutoCalculateToFixScreen(float, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setAutoCalculateToFixScreen-float-">setAutoCalculateToFixScreen(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setAutoCalculateToFixScreen-float-">setAutoCalculateToFixScreen(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setCanvasBackgroundColor-int-">setCanvasBackgroundColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setCanvasBackgroundColor-int-">setCanvasBackgroundColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setCanvasBackgroundColor-int-">setCanvasBackgroundColor(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setCanvasBackgroundColor-int-">setCanvasBackgroundColor(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置背景色,默认透明,此处设置的背景色实际上并不是设置canvas,而是设置了view的背景色;
  由于没有办法直接设置canvas为透明,只能通过view间接实现</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setCenterDotLineColor-int-">setCenterDotLineColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setCenterDotLineColor-int-">setCenterDotLineColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setCenterDotLineColor-int-">setCenterDotLineColor(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setCenterDotLineColor-int-">setCenterDotLineColor(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置中心的虚线颜色</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setColor-int-">setColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setColor-int-">setColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置当前的绘制颜色值</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setColor-int-">setColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setColor-int-">setColor(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>
 <div class="block">设置绘制时使用的座位颜色，<font color="#ff9900"><b>该颜色并没有特别的意义，但绘制时使用的颜色必定是此颜色</b></font><br/>
  <font color="#ff9900"><b>在任何一次绘制座位之前都必须考虑是否需要调用此方法，否则绘制使用的颜色将是上一次绘制使用的颜色</b></font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setColumnNumberAlpha-int-">setColumnNumberAlpha(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setColumnNumberAlpha-int-">setColumnNumberAlpha(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setColumnNumberAlpha-int-">setColumnNumberAlpha(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setColumnNumberAlpha-int-">setColumnNumberAlpha(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置列数绘制的透明度,默认值请使用<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#DEFAULT_INT"><code>IBaseParams.DEFAULT_INT</code></a>,<font color="#ff9900">透明度的值只能是0-255</font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setColumnNumberBgColorWithTextColor-int-int-">setColumnNumberBgColorWithTextColor(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setColumnNumberBgColorWithTextColor-int-int-">setColumnNumberBgColorWithTextColor(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setColumnNumberBgColorWithTextColor-int-int-">setColumnNumberBgColorWithTextColor(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setColumnNumberBgColorWithTextColor-int-int-">setColumnNumberBgColorWithTextColor(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置列数背景颜色及文本颜色</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setDefault-float-float-float-int-">setDefault(float, float, float, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setDefault-float-float-float-int-">setDefault(float, float, float, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置默认值，当默认值需要改变时，必须调用此方法</div>
 </dd>
@@ -324,21 +324,21 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">设置/替换默认的座位列表</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setDrawStyleDescInterval-float-">setDrawStyleDescInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setDrawStyleDescInterval-float-">setDrawStyleDescInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setDrawStyleDescInterval-float-">setDrawStyleDescInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setDrawStyleDescInterval-float-">setDrawStyleDescInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置座位与邻近文字之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述(座位带文字)的时候有效,在绘制普通座位(仅座位不存在文字)时无效</b></font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setDrawStyleInterval-float-">setDrawStyleInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setDrawStyleInterval-float-">setDrawStyleInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setDrawStyleInterval-float-">setDrawStyleInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setDrawStyleInterval-float-">setDrawStyleInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置座位类型之间的间隔,<font color="#ff9900"><b>此参数仅在绘制座位类型及其描述的时候有效,在绘制普通座位时无效</b></font>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setDrawType-int-">setDrawType(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setDrawType-int-">setDrawType(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setDrawType-int-">setDrawType(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setDrawType-int-">setDrawType(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置绘制方式,使用此方法时必须注意,在设置图片之后可以通过此方法设置为默认的绘制模式;<br/>
  同样的也可以在绘制默认模式下设置为图片绘制模式;但这种方法存在一定的危险性;<br/>
@@ -346,26 +346,26 @@ or to a theme attribute in the form "<code>?</div>
  <font color="#ff9900"><b>请确保在调用此方法设置为图片绘制模式时已经设置好了图片</b><br/>
  <br/></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setHeight-float-">setHeight(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setHeight-float-">setHeight(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setHeight-float-boolean-">setHeight(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setHeight-float-boolean-">setHeight(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置高度,同时指定是否将此次值作为原始值存储,详见<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#storeOriginalValues-java.lang.Object-"><code>AbsBaseParams.storeOriginalValues(Object)</code></a>
  此方法为内部开放使用,外部公开设置请用<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setHeight-float-"><code>AbsBaseParams.setHeight(float)</code></a>,且该方法必定会存储设置值</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setHeight-float-">setHeight(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setHeight-float-">setHeight(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置高度</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/SeatParams.html#setHeight-float-">setHeight(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.<a href="../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类">SeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-int:A-int-int:A-">setImage(int[], int, int[])</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-int:A-int-int:A-">setImage(int[], int, int[])</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置图片资源ID,<font color="#ff9900"><b>该图片资源ID数组length必须与当前的座位类型length相同,否则抛出异常</b></font>,此方法会自动将绘制方式设置成图片绘制方式(详见<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setDrawType-int-"><code>AbsBaseParams.setDrawType(int)</code></a>)
  <font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),当重新加载数据或者不存在图片资源时以资源ID数据为准</b></font>
  资源ID设置通过拷贝的方式设置，防止内部数据受到外部数据的影响</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-Bitmap:A-int-Bitmap:A-">setImage(Bitmap[], int, Bitmap[])</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-Bitmap:A-int-Bitmap:A-">setImage(Bitmap[], int, Bitmap[])</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block"><font color="#ff9900"><b>建议设置图片通过<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-int:A-int-int:A-"><code>AbsBaseParams.setImage(int[], int, int[])</code></a>设置资源图片,非必要情况下尽量不使用此方法</b></font>,
  使用此方法设置图片无法自动压缩并按适当的宽高加载图片,可能会占用大量内存
@@ -374,7 +374,7 @@ or to a theme attribute in the form "<code>?</div>
  <font color="#ff9900"><b>加载图片时资源ID(imageID)优先于图片资源(bitmap),若需要使用当前的图像数据同时防止被其它数据影响,请将imageID设置为null(详见,<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setImage-int:A-int-int:A-"><code>AbsBaseParams.setImage(int[], int, int[])</code></a>)</b></font>
  资源设置通过拷贝的方式设置，防止内部数据受到外部数据的影响</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsAllowDrawThumbnail-boolean-">setIsAllowDrawThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsAllowDrawThumbnail-boolean-">setIsAllowDrawThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>
 <div class="block">是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)</div>
 </dd>
@@ -382,71 +382,71 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">设置是否绘制该行</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setIsDraw-boolean-">setIsDraw(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setIsDraw-boolean-">setIsDraw(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置是否进行对象绘制</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawColumnNumber-boolean-">setIsDrawColumnNumber(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawColumnNumber-boolean-">setIsDrawColumnNumber(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawColumnNumber-boolean-">setIsDrawColumnNumber(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawColumnNumber-boolean-">setIsDrawColumnNumber(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">是否绘制列号</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setIsDrawDrawStyle-boolean-">setIsDrawDrawStyle(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setIsDrawDrawStyle-boolean-">setIsDrawDrawStyle(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setIsDrawDrawStyle-boolean-">setIsDrawDrawStyle(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setIsDrawDrawStyle-boolean-">setIsDrawDrawStyle(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置是否绘制座位类型</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawRowNumber-boolean-">setIsDrawRowNumber(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawRowNumber-boolean-">setIsDrawRowNumber(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawRowNumber-boolean-">setIsDrawRowNumber(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawRowNumber-boolean-">setIsDrawRowNumber(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">是否绘制行号</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawSeletedRowColumnNotification-boolean-java.lang.String-">setIsDrawSeletedRowColumnNotification(boolean, String)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawSeletedRowColumnNotification-boolean-java.lang.String-">setIsDrawSeletedRowColumnNotification(boolean, String)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawSeletedRowColumnNotification-boolean-java.lang.String-">setIsDrawSeletedRowColumnNotification(boolean, String)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawSeletedRowColumnNotification-boolean-java.lang.String-">setIsDrawSeletedRowColumnNotification(boolean, String)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置是否显示选中某行某列时的提醒</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setIsDrawStyleByOrder-boolean-java.util.List-">setIsDrawStyleByOrder(boolean, List&lt;String&gt;)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setIsDrawStyleByOrder-boolean-java.util.List-">setIsDrawStyleByOrder(boolean, List&lt;String&gt;)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setIsDrawStyleByOrder-boolean-java.util.List-">setIsDrawStyleByOrder(boolean, List&lt;String&gt;)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setIsDrawStyleByOrder-boolean-java.util.List-">setIsDrawStyleByOrder(boolean, List&lt;String&gt;)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置是否按指定顺序绘制座位类型样式</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setIsDrawThumbnail-boolean-float-float-">setIsDrawThumbnail(boolean, float, float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setIsDrawThumbnail-boolean-float-float-">setIsDrawThumbnail(boolean, float, float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的<br/>
  <font color="#ff9900"><b>只有当设置为true时,后面两个参数才有效,否则无效</b></font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawThumbnail-boolean-">setIsDrawThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsDrawThumbnail-boolean-">setIsDrawThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawThumbnail-boolean-">setIsDrawThumbnail(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsDrawThumbnail-boolean-">setIsDrawThumbnail(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置是否绘制缩略图</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent(ISeatChooseEvent)</a></span> - 接口 中的方法us.bestapp.henrytaro.view.interfaces.<a href="../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent(ISeatChooseEvent)</a></span> - 接口 中的方法us.bestapp.henrytaro.view.interfaces.<a href="../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></dt>
 <dd>
 <div class="block">设置座位选中监听事件</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/SeatChooseView.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent(ISeatChooseEvent)</a></span> - 类 中的方法us.bestapp.henrytaro.view.<a href="../us/bestapp/henrytaro/view/SeatChooseView.html" title="us.bestapp.henrytaro.view中的类">SeatChooseView</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/view/SeatChooseView.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent(ISeatChooseEvent)</a></span> - 类 中的方法us.bestapp.henrytaro.view.<a href="../us/bestapp/henrytaro/view/SeatChooseView.html" title="us.bestapp.henrytaro.view中的类">SeatChooseView</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/entity/absentity/AbsRowEntity.html#setIsEmpty-boolean-">setIsEmpty(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.entity.absentity.<a href="../us/bestapp/henrytaro/entity/absentity/AbsRowEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsRowEntity</a></dt>
 <dd>
 <div class="block">设置该行是否存在数据(当需要绘制该行且该行为空时,则空出一行),此情况与该行需要绘制但每个座位都不存在是相同的,
  只是省略了一些工作与处理</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsEnabledDoubleClickScale-boolean-float-float-">setIsEnabledDoubleClickScale(boolean, float, float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsEnabledDoubleClickScale-boolean-float-float-">setIsEnabledDoubleClickScale(boolean, float, float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsEnabledDoubleClickScale-boolean-float-float-">setIsEnabledDoubleClickScale(boolean, float, float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsEnabledDoubleClickScale-boolean-float-float-">setIsEnabledDoubleClickScale(boolean, float, float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置是否允许双击同一地方放大或者缩小界面</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsEnabledQuickShowByClickOnThumbnail-boolean-">setIsEnabledQuickShowByClickOnThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsEnabledQuickShowByClickOnThumbnail-boolean-">setIsEnabledQuickShowByClickOnThumbnail(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsEnabledQuickShowByClickOnThumbnail-boolean-">setIsEnabledQuickShowByClickOnThumbnail(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsEnabledQuickShowByClickOnThumbnail-boolean-">setIsEnabledQuickShowByClickOnThumbnail(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置是否启用通过单击缩略图快速显示某个区域的功能</div>
 </dd>
@@ -460,13 +460,13 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">设置是否显示log</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsShowThumbnailAlways-boolean-">setIsShowThumbnailAlways(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsShowThumbnailAlways-boolean-">setIsShowThumbnailAlways(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsShowThumbnailAlways-boolean-">setIsShowThumbnailAlways(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setIsShowThumbnailAlways-boolean-">setIsShowThumbnailAlways(boolean)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置是否保持缩略图的显示，若设为false，则缩略图只在拖动界面或者是缩放时显示，当界面静止是不显示缩略图</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsThumbnailShowing-boolean-">setIsThumbnailShowing(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setIsThumbnailShowing-boolean-">setIsThumbnailShowing(boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>
 <div class="block">设置当前是否正在显示缩略图</div>
 </dd>
@@ -475,9 +475,9 @@ or to a theme attribute in the form "<code>?</div>
 <div class="block">设置在触发单击事件时是否同时触发单点触摸事件;默认触发
  单击事件本身属于单点触摸事件之中的一种,只是触摸时间在500ms以内则认为是单击事件,但同时是满足触发单点触摸事件的(此处仅指up事件)</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setLargeScaleWidth-float-">setLargeScaleWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setLargeScaleWidth-float-">setLargeScaleWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setLargeScaleWidth-float-">setLargeScaleWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setLargeScaleWidth-float-">setLargeScaleWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置缩放可达的最大宽大小</div>
 </dd>
@@ -489,11 +489,11 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">默认最多选择的个数为5，当参数不合法时该重置为默认值</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setNewParamsValues-float-">setNewParamsValues(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setNewParamsValues-float-">setNewParamsValues(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>
 <div class="block">未使用</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setNewParamsValues-float-">setNewParamsValues(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setNewParamsValues-float-">setNewParamsValues(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>
 <div class="block">未使用</div>
 </dd>
@@ -503,137 +503,137 @@ or to a theme attribute in the form "<code>?</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setOriginalOffset-float-float-">setOriginalOffset(float, float)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置预设的缩放比为当前值(只用于双击缩放)</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/SeatParams.html#setOriginalValuesToReplaceCurrents-float-">setOriginalValuesToReplaceCurrents(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.<a href="../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类">SeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setParams-us.bestapp.henrytaro.params.baseparams.BaseSeatParams-us.bestapp.henrytaro.params.baseparams.BaseStageParams-us.bestapp.henrytaro.params.baseparams.BaseGlobleParams-">setParams(BaseSeatParams, BaseStageParams, BaseGlobleParams)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setParams-us.bestapp.henrytaro.seatchoose.params.baseparams.BaseSeatParams-us.bestapp.henrytaro.seatchoose.params.baseparams.BaseStageParams-us.bestapp.henrytaro.seatchoose.params.baseparams.BaseGlobleParams-">setParams(BaseSeatParams, BaseStageParams, BaseGlobleParams)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
 <dd>
 <div class="block">设置参数</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/entity/film/FilmSeat.html#setParams-int-int-int-java.lang.String-">setParams(int, int, int, String)</a></span> - 类 中的方法us.bestapp.henrytaro.entity.film.<a href="../us/bestapp/henrytaro/entity/film/FilmSeat.html" title="us.bestapp.henrytaro.entity.film中的类">FilmSeat</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseDrawStyle.html#setParams-java.lang.String-boolean-int-int-int-java.lang.String-int-Bitmap-">setParams(String, boolean, int, int, int, String, int, Bitmap)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseDrawStyle.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseDrawStyle</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseDrawStyle.html#setParams-java.lang.String-boolean-int-int-int-java.lang.String-int-Bitmap-">setParams(String, boolean, int, int, int, String, int, Bitmap)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseDrawStyle.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseDrawStyle</a></dt>
 <dd>
 <div class="block">设置或修改参数,参数意义同构造函数</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setRadius-float-">setRadius(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setRadius-float-">setRadius(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setRadius-float-">setRadius(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setRadius-float-">setRadius(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置圆角弧度，此处并不是以度数计算的，使用默认值请用<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#DEFAULT_FLOAT"><code>IBaseParams.DEFAULT_FLOAT</code></a></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setRowNumberAlpha-int-">setRowNumberAlpha(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setRowNumberAlpha-int-">setRowNumberAlpha(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setRowNumberAlpha-int-">setRowNumberAlpha(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setRowNumberAlpha-int-">setRowNumberAlpha(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置行数绘制的透明度,默认值使用<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#DEFAULT_INT"><code>IBaseParams.DEFAULT_INT</code></a>,<font color="#ff9900">透明度的值只能是0-255</font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setRowNumberBgColorWithTextColor-int-int-">setRowNumberBgColorWithTextColor(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setRowNumberBgColorWithTextColor-int-int-">setRowNumberBgColorWithTextColor(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setRowNumberBgColorWithTextColor-int-int-">setRowNumberBgColorWithTextColor(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setRowNumberBgColorWithTextColor-int-int-">setRowNumberBgColorWithTextColor(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置行数绘制的背景色及文本颜色</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>
 <div class="block"><font color="#ff9900"><b>此方法不对用户开放使用,设置参数请忽略此方法</b></font><br/>
  设置缩放比例,缩放比是相对开始缩放前数据的缩放;<font color="#ff9900"><b>且缩放的大小有限制,当缩放的字体超过800时不允许继续缩放.因为此时会造成系统无法缓存文字</b></font></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/SeatParams.html#setScaleRate-float-boolean-">setScaleRate(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.<a href="../us/bestapp/henrytaro/params/SeatParams.html" title="us.bestapp.henrytaro.params中的类">SeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html#setSeatDrawMap-us.bestapp.henrytaro.entity.absentity.AbsMapEntity-">setSeatDrawMap(AbsMapEntity)</a></span> - 接口 中的方法us.bestapp.henrytaro.draw.interfaces.<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawInterface</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html#setSeatDrawMap-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsMapEntity-">setSeatDrawMap(AbsMapEntity)</a></span> - 接口 中的方法us.bestapp.henrytaro.draw.interfaces.<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawInterface</a></dt>
 <dd>
 <div class="block">设置座位Map</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.entity.absentity.AbsMapEntity-">setSeatDrawMap(AbsMapEntity)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setSeatDrawMap-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsMapEntity-">setSeatDrawMap(AbsMapEntity)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setSeatHorizontalInterval-float-">setSeatHorizontalInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setSeatHorizontalInterval-float-">setSeatHorizontalInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setSeatHorizontalInterval-float-">setSeatHorizontalInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setSeatHorizontalInterval-float-">setSeatHorizontalInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置每个座位与邻近座位之间的水平间隔距离</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html#setSeatInformationListener-us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener-">setSeatInformationListener(ISeatInformationListener)</a></span> - 接口 中的方法us.bestapp.henrytaro.draw.interfaces.<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawInterface</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html#setSeatInformationListener-us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener-">setSeatInformationListener(ISeatInformationListener)</a></span> - 接口 中的方法us.bestapp.henrytaro.draw.interfaces.<a href="../us/bestapp/henrytaro/draw/interfaces/ISeatDrawInterface.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatDrawInterface</a></dt>
 <dd>
 <div class="block">设置座位信息监听事件</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setSeatInformationListener-us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener-">setSeatInformationListener(ISeatInformationListener)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html#setSeatInformationListener-us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener-">setSeatInformationListener(ISeatInformationListener)</a></span> - 类 中的方法us.bestapp.henrytaro.draw.utils.<a href="../us/bestapp/henrytaro/draw/utils/AbsDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类">AbsDrawUtils</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setSeatTypeRowCount-int-">setSeatTypeRowCount(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setSeatTypeRowCount-int-">setSeatTypeRowCount(int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setSeatTypeRowCount-int-">setSeatTypeRowCount(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setSeatTypeRowCount-int-">setSeatTypeRowCount(int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置座位类型需要自动绘制成几行
  分行绘制的规则如下:座位类型总数/rowCount,若整除则每行为相同的座位类型个数,
  若有余则最后一行比其它行将多一个座位类型</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setSeatVerticalInterval-float-">setSeatVerticalInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#setSeatVerticalInterval-float-">setSeatVerticalInterval(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setSeatVerticalInterval-float-">setSeatVerticalInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">ISeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html#setSeatVerticalInterval-float-">setSeatVerticalInterval(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/ISeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">ISeatParams</a></dt>
 <dd>
 <div class="block">设置每个座位与邻近座位之间的垂直间隔距离</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setSmallScaleWidth-float-">setSmallScaleWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setSmallScaleWidth-float-">setSmallScaleWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setSmallScaleWidth-float-">setSmallScaleWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setSmallScaleWidth-float-">setSmallScaleWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置缩放可达的最小宽大小</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageDescription-java.lang.String-">setStageDescription(String)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageDescription-java.lang.String-">setStageDescription(String)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageDescription-java.lang.String-">setStageDescription(String)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageDescription-java.lang.String-">setStageDescription(String)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IStageParams</a></dt>
 <dd>
 <div class="block">设置舞台描述文字,设置时请注意文字的大小是由舞台的和长宽和</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageMarginBottom-float-">setStageMarginBottom(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageMarginBottom-float-">setStageMarginBottom(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageMarginBottom-float-">setStageMarginBottom(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageMarginBottom-float-">setStageMarginBottom(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IStageParams</a></dt>
 <dd>
 <div class="block">设置舞台与下方（座位）间隔的高度，，使用默认值请用<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#DEFAULT_FLOAT"><code>IBaseParams.DEFAULT_FLOAT</code></a></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageMarginTop-float-">setStageMarginTop(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#setStageMarginTop-float-">setStageMarginTop(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageMarginTop-float-">setStageMarginTop(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html#setStageMarginTop-float-">setStageMarginTop(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IStageParams</a></dt>
 <dd>
 <div class="block">设置舞台上方顶端的高度，使用默认值请用<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#DEFAULT_FLOAT"><code>IBaseParams.DEFAULT_FLOAT</code></a></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setThumbnailBackgroundColorWithAlpha-int-int-">setThumbnailBackgroundColorWithAlpha(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setThumbnailBackgroundColorWithAlpha-int-int-">setThumbnailBackgroundColorWithAlpha(int, int)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setThumbnailBackgroundColorWithAlpha-int-int-">setThumbnailBackgroundColorWithAlpha(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setThumbnailBackgroundColorWithAlpha-int-int-">setThumbnailBackgroundColorWithAlpha(int, int)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置缩略图背景色及透明度</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setThumbnailRate-float-">setThumbnailRate(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setThumbnailRate-float-">setThumbnailRate(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置当前缩略图缩放比例,此方法不对外公开,设置缩放比时也请尽量不使用此方法,请使用<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setIsDrawThumbnail-boolean-float-float-"><code>AbsBaseParams.setIsDrawThumbnail(boolean, float, float)</code></a></div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setThumbnailWidthRate-float-">setThumbnailWidthRate(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html#setThumbnailWidthRate-float-">setThumbnailWidthRate(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseGlobleParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setThumbnailWidthRate-float-">setThumbnailWidthRate(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IGlobleParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html#setThumbnailWidthRate-float-">setThumbnailWidthRate(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IGlobleParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IGlobleParams</a></dt>
 <dd>
 <div class="block">设置缩略图的相对当前view界面显示的比例,此处只以Width为标准计算比例,height的高度是跟随改变的</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setWidth-float-">setWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setWidth-float-">setWidth(float)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setWidth-float-boolean-">setWidth(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setWidth-float-boolean-">setWidth(float, boolean)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">设置宽度,同时指定是否将此次值作为原始值存储,详见<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#storeOriginalValues-java.lang.Object-"><code>AbsBaseParams.storeOriginalValues(Object)</code></a>
  此方法为内部开放使用,外部公开设置请用<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#setWidth-float-"><code>AbsBaseParams.setWidth(float)</code></a> ,且该方法必定会存储设置值</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setWidth-float-">setWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.params.interfaces中的接口">IBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html#setWidth-float-">setWidth(float)</a></span> - 接口 中的方法us.bestapp.henrytaro.params.interfaces.<a href="../us/bestapp/henrytaro/params/interfaces/IBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.interfaces中的接口">IBaseParams</a></dt>
 <dd>
 <div class="block">设置宽度</div>
 </dd>
@@ -653,7 +653,7 @@ or to a theme attribute in the form "<code>?</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/R.id.html#showCustom">showCustom</a></span> - 类 中的静态变量us.bestapp.henrytaro.<a href="../us/bestapp/henrytaro/R.id.html" title="us.bestapp.henrytaro中的类">R.id</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="../us/bestapp/henrytaro/entity/show/ShowData.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowData</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.entity.show</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/entity/show/ShowData.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowData</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.seatchoose.entity.show</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 15/9/14.</div>
 </dd>
@@ -675,13 +675,13 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">打印log</div>
 </dd>
-<dt><a href="../us/bestapp/henrytaro/entity/show/ShowRow.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowRow</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.entity.show</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/entity/show/ShowRow.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowRow</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.seatchoose.entity.show</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 15/9/14.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/entity/show/ShowRow.html#ShowRow-int-int-">ShowRow(int, int)</a></span> - 类 的构造器us.bestapp.henrytaro.entity.show.<a href="../us/bestapp/henrytaro/entity/show/ShowRow.html" title="us.bestapp.henrytaro.entity.show中的类">ShowRow</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="../us/bestapp/henrytaro/entity/show/ShowSeatMap.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowSeatMap</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.entity.show</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/entity/show/ShowSeatMap.html" title="us.bestapp.henrytaro.entity.show中的类"><span class="typeNameLink">ShowSeatMap</span></a> - <a href="../us/bestapp/henrytaro/entity/show/package-summary.html">us.bestapp.henrytaro.seatchoose.entity.show</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 15/9/14.</div>
 </dd>
@@ -693,7 +693,7 @@ or to a theme attribute in the form "<code>?</div>
 </dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/R.id.html#showTitle">showTitle</a></span> - 类 中的静态变量us.bestapp.henrytaro.<a href="../us/bestapp/henrytaro/R.id.html" title="us.bestapp.henrytaro中的类">R.id</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="../us/bestapp/henrytaro/draw/utils/SimpleDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类"><span class="typeNameLink">SimpleDrawUtils</span></a> - <a href="../us/bestapp/henrytaro/draw/utils/package-summary.html">us.bestapp.henrytaro.draw.utils</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/draw/utils/SimpleDrawUtils.html" title="us.bestapp.henrytaro.draw.utils中的类"><span class="typeNameLink">SimpleDrawUtils</span></a> - <a href="../us/bestapp/henrytaro/draw/utils/package-summary.html">us.bestapp.henrytaro.seatchoose.draw.utils</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 15/8/6.</div>
 </dd>
@@ -793,7 +793,7 @@ or to a theme attribute in the form "<code>?</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/R.id.html#src_over">src_over</a></span> - 类 中的静态变量us.bestapp.henrytaro.<a href="../us/bestapp/henrytaro/R.id.html" title="us.bestapp.henrytaro中的类">R.id</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="../us/bestapp/henrytaro/params/StageParams.html" title="us.bestapp.henrytaro.params中的类"><span class="typeNameLink">StageParams</span></a> - <a href="../us/bestapp/henrytaro/params/package-summary.html">us.bestapp.henrytaro.params</a>中的类</dt>
+<dt><a href="../us/bestapp/henrytaro/params/StageParams.html" title="us.bestapp.henrytaro.params中的类"><span class="typeNameLink">StageParams</span></a> - <a href="../us/bestapp/henrytaro/params/package-summary.html">us.bestapp.henrytaro.seatchoose.params</a>中的类</dt>
 <dd>
 <div class="block">Created by xuhaolin on 2015/8/9.</div>
 </dd>
@@ -825,13 +825,13 @@ or to a theme attribute in the form "<code>?</div>
 <dd>
 <div class="block">当前座位状态,处理座位移动事件</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">AbsBaseParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/AbsBaseParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">AbsBaseParams</a></dt>
 <dd>
 <div class="block">存储预设的缩放比,保证不管界面用户如何缩放在双击时都可以正常缩放到某个预设的比例</div>
 </dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseSeatParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseSeatParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseSeatParams</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.params.baseparams中的类">BaseStageParams</a></dt>
+<dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html#storeOriginalValues-java.lang.Object-">storeOriginalValues(Object)</a></span> - 类 中的方法us.bestapp.henrytaro.params.baseparams.<a href="../us/bestapp/henrytaro/params/baseparams/BaseStageParams.html" title="us.bestapp.henrytaro.seatchoose.params.baseparams中的类">BaseStageParams</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="../us/bestapp/henrytaro/R.string.html#string--">string()</a></span> - 类 的构造器us.bestapp.henrytaro.<a href="../us/bestapp/henrytaro/R.string.html" title="us.bestapp.henrytaro中的类">R.string</a></dt>
 <dd>&nbsp;</dd>

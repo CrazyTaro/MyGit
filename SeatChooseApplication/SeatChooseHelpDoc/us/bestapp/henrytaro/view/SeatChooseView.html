@@ -103,7 +103,7 @@ var activeTableTab = "activeTableTab";
 <li>View</li>
 <li>
 <ul class="inheritance">
-<li>us.bestapp.henrytaro.view.SeatChooseView</li>
+<li>us.bestapp.henrytaro.seatchoose.view.SeatChooseView</li>
 </ul>
 </li>
 </ul>
@@ -160,10 +160,10 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </a>
 <h3>字段概要</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener">
+<li class="blockList"><a name="fields.inherited.from.class.us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener">
 <!--   -->
 </a>
-<h3>从接口继承的字段&nbsp;us.bestapp.henrytaro.draw.interfaces.<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></h3>
+<h3>从接口继承的字段&nbsp;us.bestapp.henrytaro.seatchoose.draw.interfaces.<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></h3>
 <code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING">STATUS_CHOOSE_NOTHING</a>, <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT">STATUS_CHOOSE_SEAT</a>, <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK">STATUS_CLICK</a>, <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE">STATUS_MOVE</a></code></li>
 </ul>
 </li>
@@ -203,7 +203,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">addSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">addSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">将选中的座位加入到选中座位列表中<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font>,重复的座位将不再添加<br/>
@@ -213,7 +213,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">单击选中map中某个位置,此处的选中并不是真实的选中意思,指的是成功单击到map中的有效区域,
  此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该单击有效区域的行列索引则,并不作任何的处理<br/></div>
 </td>
@@ -226,7 +226,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">选中座位成功,此处指实际的座位(不包括map中不显示的座位或者是空白区域)</div>
 </td>
 </tr>
@@ -255,7 +255,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">removeSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">removeSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">从被选中的座位中将某个座位移除<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font><br/>
@@ -276,14 +276,14 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
  
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE"><code>ISeatInformationListener.STATUS_MOVE</code></a>,座位移动中<br/>
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK"><code>ISeatInformationListener.STATUS_CLICK</code></a>,座位区域被单击,此事件被触发后面必定跟着<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>或者是<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a><br/>
- <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
+ <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a>,座位未被选中,单击在空白区域<br/>
  </div>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></span>(<a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a>&nbsp;eventListener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></span>(<a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a>&nbsp;eventListener)</code>
 <div class="block">设置座位选中监听事件</div>
 </td>
 </tr>
@@ -295,13 +295,13 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#updateCoupleSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">updateCoupleSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#updateCoupleSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">updateCoupleSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">更新情侣座选座位,通过当前座位计算出对应的情侣座</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#updateSingleSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">updateSingleSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../us/bestapp/henrytaro/view/SeatChooseView.html#updateSingleSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">updateSingleSeat</a></span>(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">更新单击座位选中事件</div>
 </td>
 </tr>
@@ -354,14 +354,14 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 <!--   -->
 </a>
 <h3>方法详细资料</h3>
-<a name="removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>removeSeat</h4>
 <pre>public&nbsp;boolean&nbsp;removeSeat(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">ISeatViewInterface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">ISeatViewInterface</a></code></span></div>
 <div class="block">从被选中的座位中将某个座位移除<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font><br/>
@@ -369,18 +369,18 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
  <a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>默认进行比较确定的为该对象的引用,及该对象的行列索引与行列号</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">removeSeat</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
+<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">removeSeat</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>addSeat</h4>
 <pre>public&nbsp;boolean&nbsp;addSeat(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">ISeatViewInterface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">ISeatViewInterface</a></code></span></div>
 <div class="block">将选中的座位加入到选中座位列表中<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font>,重复的座位将不再添加<br/>
@@ -388,7 +388,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
  <a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>默认进行比较确定的为该对象的引用,及该对象的行列索引与行列号</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">addSeat</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
+<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">addSeat</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -413,7 +413,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
  <p>
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE"><code>ISeatInformationListener.STATUS_MOVE</code></a>,座位移动中<br/>
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK"><code>ISeatInformationListener.STATUS_CLICK</code></a>,座位区域被单击,此事件被触发后面必定跟着<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>或者是<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a><br/>
- <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
+ <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>ISeatInformationListener.STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-"><code>ISeatInformationListener.chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
  <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>ISeatInformationListener.STATUS_CHOOSE_NOTHING</code></a>,座位未被选中,单击在空白区域<br/>
  </p></div>
 <dl>
@@ -424,19 +424,19 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </dl>
 </li>
 </ul>
-<a name="chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>chooseInMapSuccess</h4>
 <pre>public&nbsp;void&nbsp;chooseInMapSuccess(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">ISeatInformationListener</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">ISeatInformationListener</a></code></span></div>
 <div class="block">单击选中map中某个位置,此处的选中并不是真实的选中意思,指的是成功单击到map中的有效区域,
  此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该单击有效区域的行列索引则,并不作任何的处理<br/></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></code></dd>
+<dd><code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></code></dd>
 <dt><span class="paramLabel">参数:</span></dt>
 <dd><code>seatEntity</code> - 座位接口,可能为null</dd>
 </dl>
@@ -457,24 +457,24 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </dl>
 </li>
 </ul>
-<a name="chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>chooseSeatSuccess</h4>
 <pre>public&nbsp;void&nbsp;chooseSeatSuccess(<a href="../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">ISeatInformationListener</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">ISeatInformationListener</a></code></span></div>
 <div class="block">选中座位成功,此处指实际的座位(不包括map中不显示的座位或者是空白区域)</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></code></dd>
+<dd><code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html" title="us.bestapp.henrytaro.draw.interfaces中的接口">ISeatInformationListener</a></code></dd>
 <dt><span class="paramLabel">参数:</span></dt>
 <dd><code>seatEntity</code> - 座位数据接口</dd>
 </dl>
 </li>
 </ul>
-<a name="updateCoupleSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="updateCoupleSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -489,7 +489,7 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </dl>
 </li>
 </ul>
-<a name="updateSingleSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="updateSingleSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -579,18 +579,18 @@ implements <a href="../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInform
 </dl>
 </li>
 </ul>
-<a name="setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">
+<a name="setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>setISeatChooseEvent</h4>
 <pre>public&nbsp;void&nbsp;setISeatChooseEvent(<a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a>&nbsp;eventListener)</pre>
-<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">ISeatViewInterface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">从接口复制的说明:&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">ISeatViewInterface</a></code></span></div>
 <div class="block">设置座位选中监听事件</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">指定者:</span></dt>
-<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
+<dd><code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></code>&nbsp;在接口中&nbsp;<code><a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatViewInterface</a></code></dd>
 <dt><span class="paramLabel">参数:</span></dt>
 <dd><code>eventListener</code> - <a href="../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口"><code>ISeatChooseEvent</code></a>,选择座位回调的事件</dd>
 </dl>

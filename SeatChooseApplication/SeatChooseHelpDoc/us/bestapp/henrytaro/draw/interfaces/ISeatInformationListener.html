@@ -92,7 +92,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">us.bestapp.henrytaro.draw.interfaces</div>
+<div class="subTitle">us.bestapp.henrytaro.seatchoose.draw.interfaces</div>
 <h2 title="接口 ISeatInformationListener" class="title">接口 ISeatInformationListener</h2>
 </div>
 <div class="contentContainer">
@@ -166,7 +166,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseInMapSuccess</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">单击选中map中某个位置,此处的选中并不是真实的选中意思,指的是成功单击到map中的有效区域,
  此时座位可能是被选中状态,也可能是未被选中状态,此处返回的仅仅是该单击有效区域的行列索引则,并不作任何的处理<br/></div>
 </td>
@@ -179,7 +179,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">chooseSeatSuccess</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">选中座位成功,此处指实际的座位(不包括map中不显示的座位或者是空白区域)</div>
 </td>
 </tr>
@@ -202,7 +202,7 @@ var activeTableTab = "activeTableTab";
  
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE"><code>STATUS_MOVE</code></a>,座位移动中<br/>
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK"><code>STATUS_CLICK</code></a>,座位区域被单击,此事件被触发后面必定跟着<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>或者是<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>STATUS_CHOOSE_NOTHING</code></a><br/>
- <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-"><code>chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
+ <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-"><code>chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>STATUS_CHOOSE_NOTHING</code></a>,座位未被选中,单击在空白区域<br/>
  </div>
 </td>
@@ -232,7 +232,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">当前座位状态,处理座位移动事件</div>
 <dl>
 <dt><span class="seeLabel">另请参阅:</span></dt>
-<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener.STATUS_MOVE">常量字段值</a></dd>
+<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener.STATUS_MOVE">常量字段值</a></dd>
 </dl>
 </li>
 </ul>
@@ -246,7 +246,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">当前座位状态,处理座位区域单击事件,<font color="#ff9900"><b>事件为单击事件且在座位区域内,但座位此时不一定被选中单击,可能单击在无效区域</b></font></div>
 <dl>
 <dt><span class="seeLabel">另请参阅:</span></dt>
-<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener.STATUS_CLICK">常量字段值</a></dd>
+<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener.STATUS_CLICK">常量字段值</a></dd>
 </dl>
 </li>
 </ul>
@@ -260,7 +260,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">当前座位状态,处理座位被单击事件,<font color="#ff9900"><b>座位已被选中</b></font></div>
 <dl>
 <dt><span class="seeLabel">另请参阅:</span></dt>
-<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener.STATUS_CHOOSE_SEAT">常量字段值</a></dd>
+<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener.STATUS_CHOOSE_SEAT">常量字段值</a></dd>
 </dl>
 </li>
 </ul>
@@ -274,7 +274,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">当前座位状态,处理座位区域被单击事件,<font color="#ff9900"><b>座位空白区域被选中,无任何座位被选中</b></font></div>
 <dl>
 <dt><span class="seeLabel">另请参阅:</span></dt>
-<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener.STATUS_CHOOSE_NOTHING">常量字段值</a></dd>
+<dd><a href="../../../../../constant-values.html#us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener.STATUS_CHOOSE_NOTHING">常量字段值</a></dd>
 </dl>
 </li>
 </ul>
@@ -297,7 +297,7 @@ var activeTableTab = "activeTableTab";
  <p>
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_MOVE"><code>STATUS_MOVE</code></a>,座位移动中<br/>
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CLICK"><code>STATUS_CLICK</code></a>,座位区域被单击,此事件被触发后面必定跟着<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>或者是<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>STATUS_CHOOSE_NOTHING</code></a><br/>
- <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-"><code>chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
+ <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_SEAT"><code>STATUS_CHOOSE_SEAT</code></a>,座位被选中,此事件被触发后面必定触发<a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-"><code>chooseInMapSuccess(AbsSeatEntity)</code></a><br/>
  <a href="../../../../../us/bestapp/henrytaro/draw/interfaces/ISeatInformationListener.html#STATUS_CHOOSE_NOTHING"><code>STATUS_CHOOSE_NOTHING</code></a>,座位未被选中,单击在空白区域<br/>
  </p></div>
 <dl>
@@ -306,7 +306,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="chooseInMapSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="chooseInMapSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -331,7 +331,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">选择座位失败,未单击到有效的座位区域(可能单击在空白区等)</div>
 </li>
 </ul>
-<a name="chooseSeatSuccess-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="chooseSeatSuccess-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">

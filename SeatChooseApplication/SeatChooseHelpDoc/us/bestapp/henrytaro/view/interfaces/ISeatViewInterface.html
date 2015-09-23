@@ -92,7 +92,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">us.bestapp.henrytaro.view.interfaces</div>
+<div class="subTitle">us.bestapp.henrytaro.seatchoose.view.interfaces</div>
 <h2 title="接口 ISeatViewInterface" class="title">接口 ISeatViewInterface</h2>
 </div>
 <div class="contentContainer">
@@ -128,7 +128,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">addSeat</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">addSeat</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">将选中的座位加入到选中座位列表中<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font>,重复的座位将不再添加<br/>
@@ -151,7 +151,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">removeSeat</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">removeSeat</a></span>(<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html" title="us.bestapp.henrytaro.entity.absentity中的类">AbsSeatEntity</a>&nbsp;seatEntity)</code>
 <div class="block">从被选中的座位中将某个座位移除<br/>
  <font color="#ff9900"><b>此处需要注意的是,是否添加和移除一个座位,是通过<a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>来确定的,
  该方法已被覆盖并实现了默认的确定方案，若需要处理特殊的方法请重写该方法</b></font><br/>
@@ -161,7 +161,7 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></span>(<a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a>&nbsp;eventListener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatViewInterface.html#setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">setISeatChooseEvent</a></span>(<a href="../../../../../us/bestapp/henrytaro/view/interfaces/ISeatChooseEvent.html" title="us.bestapp.henrytaro.view.interfaces中的接口">ISeatChooseEvent</a>&nbsp;eventListener)</code>
 <div class="block">设置座位选中监听事件</div>
 </td>
 </tr>
@@ -186,7 +186,7 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>方法详细资料</h3>
-<a name="removeSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="removeSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -200,7 +200,7 @@ var activeTableTab = "activeTableTab";
  <a href="../../../../../us/bestapp/henrytaro/entity/absentity/AbsSeatEntity.html#equals-java.lang.Object-"><code>AbsSeatEntity.equals(Object)</code></a>默认进行比较确定的为该对象的引用,及该对象的行列索引与行列号</div>
 </li>
 </ul>
-<a name="addSeat-us.bestapp.henrytaro.entity.absentity.AbsSeatEntity-">
+<a name="addSeat-us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -252,7 +252,7 @@ var activeTableTab = "activeTableTab";
  <p>其中point对象中，x为该选中座位的行索引值,y为该选中座位的列索引值</p></div>
 </li>
 </ul>
-<a name="setISeatChooseEvent-us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent-">
+<a name="setISeatChooseEvent-us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent-">
 <!--   -->
 </a>
 <ul class="blockListLast">
