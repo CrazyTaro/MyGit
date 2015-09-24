@@ -15,6 +15,7 @@ import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
 import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaEventHandle;
 import us.bestapp.henrytaro.areachoose.entity.AreaListEntity;
 import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.utils.AreaMaskColorUtils;
 import us.bestapp.henrytaro.areachoose.view.AreaChooseView;
 
 
@@ -46,6 +47,7 @@ public class MainActivity extends Activity implements IAreaEventHandle {
             public void onClick(View v) {
                 AreaListEntity areaListEntity = AreaListEntity.objectFromJsonStr(jsonStr);
                 IAreaDrawInterfaces drawUtils = view_choose.getAreaDrawIntrefaces();
+                drawUtils.setAreaMaskColorUtils(new AreaMaskColorUtils(areaListEntity.getAreaList()));
                 drawUtils.initial(areaListEntity.getAreaList(), R.drawable.img_test_small_front, R.drawable.img_test_small_bg, MainActivity.this);
             }
         });

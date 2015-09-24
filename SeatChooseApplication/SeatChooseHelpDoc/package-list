@@ -1,4 +1,4 @@
-us.bestapp.henrytaro
+us.bestapp.henrytaro.seatchoose
 us.bestapp.henrytaro.seatchoose.draw.interfaces
 us.bestapp.henrytaro.seatchoose.draw.utils
 us.bestapp.henrytaro.seatchoose.entity.absentity
@@ -8,6 +8,6 @@ us.bestapp.henrytaro.seatchoose.entity.show
 us.bestapp.henrytaro.seatchoose.params
 us.bestapp.henrytaro.seatchoose.params.baseparams
 us.bestapp.henrytaro.seatchoose.params.interfaces
-us.bestapp.henrytaro.utils
-us.bestapp.henrytaro.view
+us.bestapp.henrytaro.seatchoose.utils
+us.bestapp.henrytaro.seatchoose.view
 us.bestapp.henrytaro.seatchoose.view.interfaces
