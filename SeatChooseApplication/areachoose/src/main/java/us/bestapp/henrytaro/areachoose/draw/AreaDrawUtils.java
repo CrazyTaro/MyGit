@@ -6,19 +6,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
 import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaEventHandle;
 import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.utils.AbsMaskColorUtils;
 
 /**
  * Created by xuhaolin on 15/9/18.
@@ -26,6 +25,7 @@ import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
 public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInterfaces {
     private Context mContext = null;
     private View mDrawView = null;
+    private AbsMaskColorUtils mMaskColorUtils = null;
     private IAreaEventHandle mAreaEventHandle = null;
     //区域列表
     private List<AbsAreaEntity> mAreaList = null;
@@ -202,33 +202,20 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
     protected boolean createMaskBitmap(List<AbsAreaEntity> areaList) {
         if (mFtBitmap == null || mBgBitmap == null || mMaskBitmap == null) {
             throw new RuntimeException("尚未设置图片");
+        } else if (mMaskColorUtils == null) {
+            throw new RuntimeException("尚未设置图层蒙板工具类");
         }
         if (areaList == null || areaList.size() <= 0) {
             return false;
         } else {
-            //创建售完颜色对应列表
-            List<Integer> soldOutColorList = new ArrayList<>();
-            for (AbsAreaEntity area : areaList) {
-                if (area.isSoldOut()) {
-                    //添加售完颜色
-                    soldOutColorList.add(area.getAreaColor());
-                }
-            }
-
             //遍历蒙板图像进行颜色替换处理
             for (int i = 0; i < mMaskBitmap.getWidth(); i++) {
                 for (int j = 0; j < mMaskBitmap.getHeight(); j++) {
                     //获取当前位置的像素颜色值
                     int color = mMaskBitmap.getPixel(i, j);
-                    for (int soldOutColor : soldOutColorList) {
-                        if (color == soldOutColor) {
-                            //颜色值为售完颜色,替换为售完颜色
-                            mMaskBitmap.setPixel(i, j, Color.BLACK);
-                            break;
-                        } else {
-                            //否则替换为透明色
-                            mMaskBitmap.setPixel(i, j, Color.TRANSPARENT);
-                        }
+                    int newColor = mMaskColorUtils.getMaskColor(color);
+                    if (color != newColor) {
+                        mMaskBitmap.setPixel(i, j, newColor);
                     }
                 }
             }
@@ -326,6 +313,11 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
         if (mIsMaskSuccess && mMaskBitmap != null) {
             canvas.drawBitmap(mMaskBitmap, null, mDrawRectf, null);
         }
+    }
+
+    @Override
+    public void setAreaMaskColorUtils(AbsMaskColorUtils utils) {
+        this.mMaskColorUtils = utils;
     }
 
     /**

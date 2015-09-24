@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import java.util.List;
 
 import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.utils.AbsMaskColorUtils;
 
 /**
  * Created by xuhaolin on 15/9/24.
@@ -39,4 +40,11 @@ public interface IAreaDrawInterfaces {
      * @param canvas
      */
     public void drawCanvas(Canvas canvas);
+
+    /**
+     * 设置蒙板处理对象
+     *
+     * @param utils
+     */
+    public void setAreaMaskColorUtils(AbsMaskColorUtils utils);
 }
