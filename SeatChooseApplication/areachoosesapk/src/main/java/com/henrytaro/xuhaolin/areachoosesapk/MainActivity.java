@@ -1,21 +1,28 @@
 package com.henrytaro.xuhaolin.areachoosesapk;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.henrytaro.xuhaolin.areachoosesapk.entity.AreaListEntity;
-
-import us.bestapp.henrytaro.areachoose.draw.AbsDrawUtils;
+import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
+import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaEventHandle;
+import us.bestapp.henrytaro.areachoose.entity.AreaListEntity;
+import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
 import us.bestapp.henrytaro.areachoose.view.AreaChooseView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements IAreaEventHandle {
     private Button btn_reset;
     private AreaChooseView view_choose;
+    private ProgressDialog dialog;
+    private Handler mHanlder = null;
 
     private String jsonStr = "{area:[" +
             "{area_name: 1, color: \"#d21616\", is_sold_out: true},\n" +
@@ -38,12 +45,25 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 AreaListEntity areaListEntity = AreaListEntity.objectFromJsonStr(jsonStr);
-                AbsDrawUtils drawUtils = view_choose.getDrawUtils();
-                drawUtils.setAreaList(areaListEntity.getAreaList());
-                drawUtils.setDrawBitmap(R.drawable.img_test_front, R.drawable.img_test_bg);
-                view_choose.postInvalidate();
+                IAreaDrawInterfaces drawUtils = view_choose.getAreaDrawIntrefaces();
+                drawUtils.initial(areaListEntity.getAreaList(), R.drawable.img_test_small_front, R.drawable.img_test_small_bg, MainActivity.this);
             }
         });
+
+        mHanlder = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 0x1:
+                        dialog = ProgressDialog.show(MainActivity.this, null, "正在加载数据,请稍等!");
+                        break;
+                    case 0x2:
+                        dialog.dismiss();
+                        view_choose.postInvalidate();
+                        break;
+                }
+            }
+        };
     }
 
 
@@ -67,5 +87,22 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStartLoadMaskBitmap() {
+        mHanlder.sendEmptyMessage(0x1);
+    }
+
+    @Override
+    public void onFinishLoadMaskBitmap(boolean isSuccess) {
+        if (isSuccess && dialog != null) {
+            mHanlder.sendEmptyMessage(0x2);
+        }
+    }
+
+    @Override
+    public void onAreaChoose(AbsAreaEntity areaEntity) {
+        Toast.makeText(this, "选中颜色为:" + areaEntity.getAreaColorHXStr() + "/选中区为:" + areaEntity.getAreaName(), Toast.LENGTH_SHORT).show();
     }
 }
