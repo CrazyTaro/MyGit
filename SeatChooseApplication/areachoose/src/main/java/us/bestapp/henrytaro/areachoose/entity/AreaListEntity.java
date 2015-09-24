@@ -1,4 +1,4 @@
-package com.henrytaro.xuhaolin.areachoosesapk.entity;/**
+package us.bestapp.henrytaro.areachoose.entity;/**
  * Created by xuhaolin on 15/9/23.
  */
 
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.areachoose.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
 
 /**
  * Created by xuhaolin on 15/9/23.

@@ -7,13 +7,16 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 
-import us.bestapp.henrytaro.areachoose.draw.AbsDrawUtils;
+import us.bestapp.henrytaro.areachoose.draw.AreaDrawUtils;
+import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
+import us.bestapp.henrytaro.areachoose.view.Interfaces.IAreaViewInterface;
 
 /**
  * Created by xuhaolin on 15/9/18.
  */
-public class AreaChooseView extends View {
-    private AbsDrawUtils mDrawUtils = new AbsDrawUtils(getContext(), this);
+public class AreaChooseView extends View implements IAreaViewInterface {
+    //区域选择控件
+    private IAreaDrawInterfaces mAreaDrawInterfaces = new AreaDrawUtils(getContext(), this);
 
     public AreaChooseView(Context context) {
         super(context);
@@ -27,12 +30,13 @@ public class AreaChooseView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public AbsDrawUtils getDrawUtils() {
-        return this.mDrawUtils;
+    @Override
+    protected void onDraw(Canvas canvas) {
+        mAreaDrawInterfaces.drawCanvas(canvas);
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        mDrawUtils.drawCanvas(canvas);
+    public IAreaDrawInterfaces getAreaDrawIntrefaces() {
+        return mAreaDrawInterfaces;
     }
 }

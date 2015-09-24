@@ -10,43 +10,54 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import us.bestapp.henrytaro.areachoose.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
+import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaEventHandle;
+import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
 
 /**
  * Created by xuhaolin on 15/9/18.
  */
-public class AbsDrawUtils extends AbsTouchEventHandle {
+public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInterfaces {
     private Context mContext = null;
     private View mDrawView = null;
+    private IAreaEventHandle mAreaEventHandle = null;
+    //区域列表
     private List<AbsAreaEntity> mAreaList = null;
 
+    //前景图像
     private Bitmap mFtBitmap = null;
+    //背景图像
     private Bitmap mBgBitmap = null;
+    //蒙板图层
     private Bitmap mMaskBitmap = null;
 
+    //目标显示区域
     private RectF mDstRectf = null;
+    //图像原始区域大小(即图像大小)
     private RectF mScrRectf = null;
+    //绘制的实际区域(包括了偏移值)
     private RectF mDrawRectf = null;
+    //缓存目标显示区域
+    private RectF mTempRectf = null;
     private Paint mPaint = null;
 
+    //是否第一次绘制界面
     private boolean mIsFirstDraw = true;
+    //是否初始化蒙板层成功
     private boolean mIsMaskSuccess = false;
+    //图像默认适应控件屏幕大小,此值为图像大小与屏幕大小的比例关系
     private float mOriginalScaleRate = 0;
+    //当前图像与当前目标显示区域的大小比例
     private float mRectfScaleRate = 0;
-    private float mBitmapScaleRate = 1;
+    //屏幕宽高存储点
     protected PointF mWHPoint = null;
 
-
-    //是否第一次存放偏移量
-    private boolean mIsFirstStorePoint = false;
     //上一次的缩放比例
     private float mLastScaleRate = 1f;
     /**
@@ -54,8 +65,6 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
      */
     protected float mBeginDrawOffsetY = 0f;
     protected float mBeginDrawOffsetX = 0f;
-    //用于暂时存放在开始移动缩放前的X/Y偏移量
-    private PointF mOffsetPoint = new PointF();
     //多点触控缩放按下坐标
     private float mScaleFirstDownX = 0f;
     private float mScaleFirstDownY = 0f;
@@ -74,7 +83,7 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
     //是否已经移动过(满足移动条件)
     private boolean mIsMoved = false;
 
-    public AbsDrawUtils(Context context, View drawView) {
+    public AreaDrawUtils(Context context, View drawView) {
         this.mContext = context;
         this.mDrawView = drawView;
 
@@ -86,16 +95,46 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         mDstRectf = new RectF();
         mScrRectf = new RectF();
         mDrawRectf = new RectF();
+        mTempRectf = new RectF();
 
         mPaint = new Paint();
     }
 
-    public void setAreaList(List<AbsAreaEntity> areaList) {
+    @Override
+    public void initial(List<AbsAreaEntity> areaList, int frontBmpID, int backBmpID, IAreaEventHandle event) {
+        this.setAreaList(areaList);
+        this.setDrawBitmap(frontBmpID, backBmpID);
+        this.mAreaEventHandle = event;
+        initialBitmap();
+    }
+
+    @Override
+    public void initial(List<AbsAreaEntity> areaList, Bitmap frontBmp, Bitmap backBmp, IAreaEventHandle event) {
+        this.setAreaList(areaList);
+        this.setDrawBitmap(frontBmp, backBmp);
+        this.mAreaEventHandle = event;
+        initialBitmap();
+    }
+
+    /**
+     * 设置区域列表数据
+     *
+     * @param areaList
+     */
+    protected void setAreaList(List<AbsAreaEntity> areaList) {
         this.mAreaList = areaList;
     }
 
-    public boolean setDrawBitmap(int frontBmpID, int backBmpID) {
+    /**
+     * 设置图像资源ID,此方法会加载资源ID并使用{@link #setDrawBitmap(Bitmap, Bitmap)}设置图像资源
+     *
+     * @param frontBmpID 前景显示的图片ID
+     * @param backBmpID  用于处理数据的图片ID
+     * @return
+     */
+    protected boolean setDrawBitmap(int frontBmpID, int backBmpID) {
         try {
+            //加载资源ID
             Bitmap frontBitmap = BitmapFactory.decodeResource(mContext.getResources(), frontBmpID);
             Bitmap backBitmap = BitmapFactory.decodeResource(mContext.getResources(), backBmpID);
             if (frontBitmap == null || backBitmap == null) {
@@ -109,50 +148,100 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         }
     }
 
-    public boolean setDrawBitmap(Bitmap frontBitmap, Bitmap backBitmap) {
+    /**
+     * 设置图像资源,<font color="#ff9900"><b>此方法若在{@link #setDrawBitmap(int, int)}之后使用将会覆盖原来的资源ID加载的图像资源</b></font>
+     *
+     * @param frontBitmap 前景显示的图像
+     * @param backBitmap  用于处理数据的图像
+     * @return
+     */
+    protected boolean setDrawBitmap(Bitmap frontBitmap, Bitmap backBitmap) {
         if (frontBitmap == null || backBitmap == null) {
             return false;
         } else {
             mFtBitmap = frontBitmap;
             mBgBitmap = backBitmap;
+            //创建蒙板图层(资源来自背景处理图像)
             mMaskBitmap = mBgBitmap.copy(mBgBitmap.getConfig(), true);
             return true;
         }
     }
 
-    protected boolean createSoldOutBitmap(List<AbsAreaEntity> areaList) {
+    /**
+     * 初始化图像,<font color="#ff9900"><b>此方法很重要,此方法只能在设置完图像及区域列表之后调用,否则数据将无法正常获取或者显示</b></font>
+     *
+     * @return
+     */
+    protected void initialBitmap() {
+        if (mFtBitmap == null || mBgBitmap == null || mMaskBitmap == null || mAreaList == null) {
+            return;
+        } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mAreaEventHandle != null) {
+                        mAreaEventHandle.onStartLoadMaskBitmap();
+                    }
+                    //创建蒙板图层
+                    mIsMaskSuccess = createMaskBitmap(mAreaList);
+                    if (mAreaEventHandle != null) {
+                        mAreaEventHandle.onFinishLoadMaskBitmap(mIsMaskSuccess);
+                    }
+                }
+            }).start();
+            return;
+        }
+    }
+
+    /**
+     * 创建蒙板图像
+     *
+     * @param areaList 区域列表信息
+     * @return
+     */
+    protected boolean createMaskBitmap(List<AbsAreaEntity> areaList) {
         if (mFtBitmap == null || mBgBitmap == null || mMaskBitmap == null) {
             throw new RuntimeException("尚未设置图片");
         }
         if (areaList == null || areaList.size() <= 0) {
             return false;
         } else {
+            //创建售完颜色对应列表
             List<Integer> soldOutColorList = new ArrayList<>();
             for (AbsAreaEntity area : areaList) {
                 if (area.isSoldOut()) {
+                    //添加售完颜色
                     soldOutColorList.add(area.getAreaColor());
                 }
             }
-            int lastColor = 0;
 
+            //遍历蒙板图像进行颜色替换处理
             for (int i = 0; i < mMaskBitmap.getWidth(); i++) {
                 for (int j = 0; j < mMaskBitmap.getHeight(); j++) {
+                    //获取当前位置的像素颜色值
                     int color = mMaskBitmap.getPixel(i, j);
                     for (int soldOutColor : soldOutColorList) {
                         if (color == soldOutColor) {
+                            //颜色值为售完颜色,替换为售完颜色
                             mMaskBitmap.setPixel(i, j, Color.BLACK);
                             break;
                         } else {
+                            //否则替换为透明色
                             mMaskBitmap.setPixel(i, j, Color.TRANSPARENT);
                         }
                     }
                 }
             }
-
             return true;
         }
     }
 
+    /**
+     * 获取可编辑的图像
+     *
+     * @param bitmap 原不可编辑的图像(res资源加载的图像默认为不可编辑)
+     * @return
+     */
     protected Bitmap getMutableBitmap(Bitmap bitmap) {
         if (bitmap == null || bitmap.isMutable()) {
             return bitmap;
@@ -161,8 +250,14 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         }
     }
 
-    public void getWidthAndHeight() {
-        if (mWHPoint == null) {
+    /**
+     * 获取控件的宽高,为了得到正确的数据,建议第一次使用是在绘制的过程中,保证控件的宽高是计算出来且有效的;
+     * 此方法仅会处理一次,除非参数强制要求重新处理
+     *
+     * @param isReload 是否强制重新获取数据
+     */
+    protected void getWidthAndHeight(boolean isReload) {
+        if (mWHPoint == null || isReload) {
             mWHPoint = new PointF();
             int width = 0;
             int height = 0;
@@ -178,40 +273,56 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         }
     }
 
-
+    @Override
     public void drawCanvas(Canvas canvas) {
-        if (mFtBitmap != null && mIsFirstDraw) {
-            getWidthAndHeight();
+        //确保前景图像存在且是第一次绘制
+        //同时必须已经处理了蒙板图像层
+        if (mFtBitmap != null && mIsFirstDraw && mIsMaskSuccess) {
+            getWidthAndHeight(false);
 
             float dstWidth = 0f;
             float dstHeight = 0f;
 
+            //计算当前图像适应屏幕的比例
             mOriginalScaleRate = mWHPoint.x / mFtBitmap.getWidth();
-            mRectfScaleRate = mOriginalScaleRate;
+            //计算目标图像显示宽高(即绘制区域)
             dstWidth = mFtBitmap.getWidth() * mOriginalScaleRate;
             dstHeight = mFtBitmap.getHeight() * mOriginalScaleRate;
 
+            //创建图像显示区域
             mDstRectf.left = mWHPoint.x / 2 - dstWidth / 2;
             mDstRectf.right = mDstRectf.left + dstWidth;
             mDstRectf.top = mWHPoint.y / 2 - dstHeight / 2;
             mDstRectf.bottom = mDstRectf.top + dstHeight;
 
-            mIsMaskSuccess = createSoldOutBitmap(mAreaList);
+            //取消第一次绘制的标志
             mIsFirstDraw = false;
 
-            mScrRectf.left = mDstRectf.left;
-            mScrRectf.right = mDstRectf.right;
-            mScrRectf.top = mDstRectf.top;
-            mScrRectf.bottom = mDstRectf.bottom;
+            //创建原始图像区域的数据
+            mScrRectf.left = mWHPoint.x / 2 - mFtBitmap.getWidth() / 2;
+            mScrRectf.right = mScrRectf.left + mFtBitmap.getWidth();
+            mScrRectf.top = mWHPoint.y / 2 - mFtBitmap.getHeight() / 2;
+            mScrRectf.bottom = mScrRectf.top + mFtBitmap.getHeight();
+
+            //创建缓存目标显示区域
+            mTempRectf.left = mDstRectf.left;
+            mTempRectf.right = mDstRectf.right;
+            mTempRectf.top = mDstRectf.top;
+            mTempRectf.bottom = mDstRectf.bottom;
         }
 
+        //创建绘制区域
+        //此处是处理了偏移量
         mDrawRectf.top = mDstRectf.top + mBeginDrawOffsetY;
         mDrawRectf.bottom = mDstRectf.bottom + mBeginDrawOffsetY;
         mDrawRectf.left = mDstRectf.left + mBeginDrawOffsetX;
         mDrawRectf.right = mDstRectf.right + mBeginDrawOffsetX;
-        if (mFtBitmap != null) {
-            canvas.drawBitmap(mFtBitmap, null, mDrawRectf, null);
+
+        //当前前景图像存在才进行绘制
+        if (mBgBitmap != null) {
+            canvas.drawBitmap(mBgBitmap, null, mDrawRectf, null);
         }
+        //当前蒙板图像及蒙板处理成功才进行绘制
         if (mIsMaskSuccess && mMaskBitmap != null) {
             canvas.drawBitmap(mMaskBitmap, null, mDrawRectf, null);
         }
@@ -246,13 +357,24 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         return 1;
     }
 
+    /**
+     * 是否可以进行缩放
+     *
+     * @param newScaleRate 新的缩放比例
+     * @return
+     */
     protected boolean isCanScale(float newScaleRate) {
-        int width = mFtBitmap.getWidth();
-        int height = mFtBitmap.getHeight();
+        getWidthAndHeight(false);
+        //获取前景图像的原始大小(即图像的原始大小,背景图也是与前景图像是相同的)
+        float width = mWHPoint.x;
+        float height = mWHPoint.y;
 
-        float scaleWidth = width * mBitmapScaleRate * newScaleRate;
-        float scaleHeight = height * mBitmapScaleRate * newScaleRate;
+        //计算新的缩放后的大小
+        //此处使用了图像相对本身的缩放比例 * 新的缩放比例
+        float scaleWidth = mTempRectf.width() * newScaleRate;
+        float scaleHeight = mTempRectf.height() * newScaleRate;
 
+        //缩放后的大小为原图的4位或者小于0.5倍则不合法
         if (scaleWidth > width * 4 || scaleWidth < width * 0.5f) {
             return false;
         } else {
@@ -260,19 +382,30 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         }
     }
 
+    /**
+     * 设置缩放比
+     *
+     * @param newScaleRate 新的缩放比
+     * @param isTrueSet    是否保存当前缩放后的具体数据
+     */
     protected void setScaleRate(float newScaleRate, boolean isTrueSet) {
-        float newWidth = mFtBitmap.getWidth() * mBitmapScaleRate * newScaleRate;
-        float newHeight = mFtBitmap.getWidth() * mBitmapScaleRate * newScaleRate;
-        getWidthAndHeight();
+        float newWidth = mTempRectf.width() * newScaleRate;
+        float newHeight = mTempRectf.height() * newScaleRate;
+        getWidthAndHeight(false);
 
+        //计算新的图像目标显示区域(以屏幕中心为基准)
         mDstRectf.left = mWHPoint.x / 2 - newWidth / 2;
         mDstRectf.right = mDstRectf.left + newWidth;
         mDstRectf.top = mWHPoint.y / 2 - newHeight / 2;
         mDstRectf.bottom = mDstRectf.top + newHeight;
 
+        //若需要保存数据,则对处理进行保存
         if (isTrueSet) {
-            mBitmapScaleRate *= newScaleRate;
-            mRectfScaleRate = mDstRectf.width() / mFtBitmap.getWidth();
+            //将确定缩放的结果数据保存到缓存中
+            mTempRectf.left = mDstRectf.left;
+            mTempRectf.right = mDstRectf.right;
+            mTempRectf.top = mDstRectf.top;
+            mTempRectf.bottom = mDstRectf.bottom;
         }
     }
 
@@ -291,45 +424,23 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
             return;
         }
 
+        //是否可进行绽放
         if (this.isCanScale(newScaleRate)) {
             mLastScaleRate = newScaleRate;
-        } else {
-            return;
-        }
-
-        if (isTrueSetValue) {
+        } else if (isTrueSetValue) {
             //若缩放比不合法且当前缩放为最后一次缩放(up事件),则将上一次的缩放比作为此次的缩放比,用于记录数据
             //且将最后的缩放比设为1(因为已经达到缩放的上限,再缩放也不会改变,所以比例使用1)
             //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(有闪屏的效果...)
             newScaleRate = mLastScaleRate;
             mLastScaleRate = 1;
+        } else {
+            return;
         }
-
 
         //设置缩放的数据
         //最后一次缩放比为1时,其实与原界面是相同的
         this.setScaleRate(newScaleRate, isTrueSetValue);
 
-//        //判断是否已经存放了移动前的偏移数据
-//        if (!mIsFirstStorePoint) {
-//            //相对当前屏幕中心的X轴偏移量
-//            mOffsetPoint.x = mBeginDrawOffsetX + mWHPoint.x / 2;
-//            //相对当前屏幕中心的Y轴偏移量
-//            //原来的偏移量是以Y轴顶端为偏移值
-//            mOffsetPoint.y = mBeginDrawOffsetY + mWHPoint.y / 2;
-//            mIsFirstStorePoint = true;
-//        }
-//        //根据缩放比计算新的偏移值
-//        mBeginDrawOffsetX = newScaleRate * mOffsetPoint.x - mWHPoint.x / 2;
-//        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-//        mBeginDrawOffsetY = newScaleRate * mOffsetPoint.y - mWHPoint.y / 2;
-//        //是否进行up事件,是保存数据当前计算的最后数据
-//        if (isTrueSetValue) {
-//            mOffsetPoint.x = mBeginDrawOffsetX + mWHPoint.x / 2;
-//            mOffsetPoint.y = mBeginDrawOffsetY + mWHPoint.y / 2;
-//            //重置记录标志亦是
-//            mIsFirstStorePoint = false;
-//        }
         //重绘工作
         mDrawView.postInvalidate();
     }
@@ -359,18 +470,18 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
             //新的偏移量
             float newDrawPositionX = mBeginDrawOffsetX + moveDistanceX;
             float newDrawPositionY = mBeginDrawOffsetY + moveDistanceY;
-//            //新的开始绘制的界面中心X轴坐标
-//            float newStartDrawCenterX = newDrawPositionX + mWHPoint.x / 2;
-//            //新的开始绘制的界面最顶端
-//            float newStartDrawCenterY = newDrawPositionY + mWHPoint.y / 2;
 
-            //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
-            if (Math.abs(newDrawPositionX) > (mDstRectf.width() / 2 - mWHPoint.x / 2)) {
+            //当前移动方向为向右,且绘制界面已达到左边界
+            if ((moveDistanceX > 0 && mDrawRectf.left >= 0) ||
+                    //当前移动方向为向左,且绘制界面已达到右边界
+                    (moveDistanceX < 0 && mDrawRectf.right <= mWHPoint.x)) {
                 //保持原来的偏移量不变
                 newDrawPositionX = mBeginDrawOffsetX;
             }
-            //当前绘制的顶端坐标大于0且移动方向为向下移动
-            if (Math.abs(newDrawPositionY) > (mDstRectf.height() / 2 - mWHPoint.y / 2)) {
+            //当前移动方向为向上,且绘制界面已达到下边界
+            if ((moveDistanceY < 0 && mDrawRectf.bottom <= mWHPoint.y) ||
+                    //当前移动方向为向下,且绘制界面已达到上边界
+                    (moveDistanceY > 0 && mDrawRectf.top >= 0)) {
                 //保持原来的Y轴偏移量
                 newDrawPositionY = mBeginDrawOffsetY;
             }
@@ -512,28 +623,31 @@ public class AbsDrawUtils extends AbsTouchEventHandle {
         if (mFtBitmap == null || mBgBitmap == null || mAreaList == null) {
             return;
         }
+        //计算当前目标显示区域与实际上的图像区域的比例
+        mRectfScaleRate = mDstRectf.width() / mFtBitmap.getWidth();
 
         float x = event.getX();
         float y = event.getY();
 
-        float distanceX = x - mWHPoint.x / 2;
-        float distanceY = y - mWHPoint.y / 2;
-        float dstX = x - mDstRectf.left;
-        float dstY = y - mDstRectf.top;
-
+        //计算单击点在目标显示区域中的相对位置
+        float dstX = x - mDrawRectf.left;
+        float dstY = y - mDrawRectf.top;
 
         int orlx = 0;
         int orly = 0;
+        //计算单击点映射到图像区域的相对位置
         orlx = (int) (dstX / mRectfScaleRate);
         orly = (int) (dstY / mRectfScaleRate);
-        if (orlx > mScrRectf.left && orlx < mScrRectf.right && orly > mScrRectf.top && orly < mScrRectf.bottom) {
-
+        //判断当前单击点是否在图像区域的有效位置内
+        if (orlx >= 0 && orlx < mBgBitmap.getWidth() && orly >= 0 && orly < mBgBitmap.getHeight()) {
+            //获取图像区域内单击点的像素颜色值
             int color = mBgBitmap.getPixel(orlx, orly);
-            Log.i("color", color + "");
-
+            //对像素值进行分析处理
             for (AbsAreaEntity area : mAreaList) {
                 if (color == area.getAreaColor()) {
-                    Toast.makeText(mContext, "选中颜色为:" + area.getAreaColorName() + "/选中区为:" + area.getAreaName(), Toast.LENGTH_SHORT).show();
+                    if (mAreaEventHandle != null) {
+                        mAreaEventHandle.onAreaChoose(area);
+                    }
                 }
             }
         }

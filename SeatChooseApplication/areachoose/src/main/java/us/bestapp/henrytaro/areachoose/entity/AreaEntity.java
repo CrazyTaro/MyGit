@@ -1,4 +1,4 @@
-package com.henrytaro.xuhaolin.areachoosesapk.entity;/**
+package us.bestapp.henrytaro.areachoose.entity;/**
  * Created by xuhaolin on 15/9/23.
  */
 
@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
-import us.bestapp.henrytaro.areachoose.absentity.AbsAreaEntity;
+import us.bestapp.henrytaro.areachoose.entity.absentity.AbsAreaEntity;
 
 /**
  * Created by xuhaolin on 15/9/23.
@@ -28,7 +28,7 @@ public class AreaEntity extends AbsAreaEntity {
     }
 
     @Override
-    public String getAreaColorName() {
+    public String getAreaColorHXStr() {
         return this.colorName;
     }
 
