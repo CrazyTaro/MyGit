@@ -32,6 +32,10 @@ public class ShowData extends AbsSeatEntity {
         super(x, y);
     }
 
+    public float getSeatPrice() {
+        return this.mPrice;
+    }
+
     @Override
     public void parseData() {
     }

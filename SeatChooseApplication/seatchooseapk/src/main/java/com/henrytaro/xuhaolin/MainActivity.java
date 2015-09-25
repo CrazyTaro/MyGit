@@ -210,9 +210,9 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         stageParams.setStageDescription("深圳橙天嘉禾影城万象城店 6号厅");
 
 //        setImage(seatParams);
-//        mSeatDataHandle.setSeatDrawMap(dataMap);
+        mSeatDataHandle.setSeatDrawMap(dataMap);
 //        mSeatDataHandle.setSeatDrawMap(egMap);
-        mSeatDataHandle.setSeatDrawMap(showMap);
+//        mSeatDataHandle.setSeatDrawMap(showMap);
     }
 
     private void setImage(ISeatParams params) {

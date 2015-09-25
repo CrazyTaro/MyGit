@@ -16,7 +16,9 @@ import android.view.View;
 import java.util.List;
 
 import us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatDrawInterface;
+import us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsMapEntity;
+import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsRowEntity;
 import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.seatchoose.params.GlobleParams;
 import us.bestapp.henrytaro.seatchoose.params.SeatParams;
@@ -27,8 +29,6 @@ import us.bestapp.henrytaro.seatchoose.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.seatchoose.params.baseparams.BaseStageParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
-import us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatInformationListener;
-import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsRowEntity;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IStageParams;
 
@@ -2082,6 +2082,32 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param invalidateAction 重绘的行为标志
      */
     private boolean invalidateInSinglePoint(float moveDistanceX, float moveDistanceY, int invalidateAction) {
+
+        //当前缩略图没有显示或者不启用缩略图快速移动功能
+        if (!mGlobleParams.isThumbnailShowing() || !mGlobleParams.isEnabledQuickMoveOnThumbnail()) {
+            return false;
+        } else {
+            //获取缩略图的界面
+            RectF thumbnailRectf = this.beginDrawThumbnail(mCanvasWidth, mCanvasHeight);
+            //获取缩略图中的显示框与缩略图的各边界距离
+            RectF distanceRectf = getMoveDistacneRectfOnThumbnail(mDownX, mDownY, thumbnailRectf);
+            //结束缩略图的绘制设置,防止出错
+            this.finishDrawThumbnail();
+            //可进行缩略图移动
+            if (distanceRectf != null) {
+                //尝试移动缩略图
+                if (this.singleMoveOnThumbnail(moveDistanceX, moveDistanceY, thumbnailRectf, distanceRectf)) {
+                    return true;
+                } else {
+                    //移动不成功,但由于启用了缩略图快速移动功能
+                    //所以单击在缩略图上的任何事件都不作其它的处理(也不处理为普通的移动功能)
+                    //移动距离置0
+                    moveDistanceX = 0;
+                    moveDistanceY = 0;
+                }
+            }
+        }
+
         //此处处理的是按是否进行移动过(默认移动范围为5像素)来确认是否是单击事件
         //而不是按单击事件来确定
         if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
@@ -2391,6 +2417,87 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             mDrawView.postInvalidate();
 
             return true;
+        }
+    }
+
+    /**
+     * 获取当前缩略图显示框与缩略图的各边界之间的距离
+     *
+     * @param downx          按下的位置
+     * @param downY          按下的位置
+     * @param thumbnailRectf 当前缩略图的界面
+     * @return
+     */
+    private RectF getMoveDistacneRectfOnThumbnail(float downx, float downY, RectF thumbnailRectf) {
+        if (thumbnailRectf == null) {
+            return null;
+        } else {
+            //判断单击点是否单击在缩略图内
+            if (isClickInRectf(downx, downY, thumbnailRectf)) {
+                RectF distanceRectf = new RectF();
+                //获取缩略图的显示框
+                RectF showRectf = this.getShowRectfInThumbnail(mCanvasWidth, mCanvasHeight);
+                distanceRectf.left = Math.abs(thumbnailRectf.left - showRectf.left);
+                distanceRectf.right = Math.abs(thumbnailRectf.right - showRectf.right);
+                distanceRectf.top = Math.abs(thumbnailRectf.top - showRectf.top);
+                distanceRectf.bottom = Math.abs(thumbnailRectf.bottom - showRectf.bottom);
+
+                return distanceRectf;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * 判断是否可以在缩略图上移动界面
+     *
+     * @param moveDistanceX X轴移动距离
+     * @param moveDistanceY Y轴移动距离
+     * @param distanceRectf 当前缩略图显示框与缩略图各边界之间的距离(距离全为正数,且left表示显示框left与缩略图left之间的距离)
+     * @return
+     */
+    private boolean isCanMoveOnThumbnail(float moveDistanceX, float moveDistanceY, RectF distanceRectf) {
+        if (distanceRectf == null) {
+            return false;
+        } else {
+            if ((Math.abs(moveDistanceX) > distanceRectf.left && moveDistanceX < 0) ||
+                    (Math.abs(moveDistanceX) > distanceRectf.right && moveDistanceX > 0) ||
+                    (Math.abs(moveDistanceY) > distanceRectf.top && moveDistanceY < 0) ||
+                    (Math.abs(moveDistanceY) > distanceRectf.bottom) && moveDistanceY > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+
+    /**
+     * 尝试通过缩略图移动界面,此方法依赖于{@link #getMoveDistacneRectfOnThumbnail(float, float, RectF)}
+     *
+     * @param moveDistanceX  X轴移动距离
+     * @param moveDistanceY  Y轴移动距离
+     * @param thumbnailRectf 缩略图界面
+     * @param distanceRectf  当前缩略图显示框与缩略图各边界之间的距离(距离全为正数,且left表示显示框left与缩略图left之间的距离)
+     * @return
+     */
+    private boolean singleMoveOnThumbnail(float moveDistanceX, float moveDistanceY, RectF thumbnailRectf, RectF distanceRectf) {
+        //是否可以移动
+        if (isCanMoveOnThumbnail(moveDistanceX, moveDistanceY, distanceRectf)) {
+            //计算移动比例
+            float thumbnailRate = thumbnailRectf.width() / mCanvasWidth;
+            float canvasMoveDstX = moveDistanceX / thumbnailRate;
+            float canvasMoveDstY = moveDistanceY / thumbnailRate;
+
+            //更新偏移量
+            this.mBeginDrawOffsetX -= canvasMoveDstX;
+            this.mBeginDrawOffsetY -= canvasMoveDstY;
+            //重绘
+            mDrawView.postInvalidate();
+            return true;
+        } else {
+            return false;
         }
     }
 

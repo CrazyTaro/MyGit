@@ -11,19 +11,6 @@ public interface IGlobleParams {
 
     public static final String FORMAT_STR = "%s";
 
-//    /**
-//     * 设置是否自动计算最小缩放(仅限缩小时)界面是否自动适应屏幕大小
-//     *
-//     * @param isAutoScale
-//     */
-//    public void setIsAutoScaleToScreen(boolean isAutoScale);
-//
-//    /**
-//     * 获取是否自动计算最小缩放界面自动适应屏幕大小(仅限缩小时)
-//     *
-//     * @return
-//     */
-//    public boolean isAutoScaleToScreen();
 
     /**
      * 设置是否绘制缩略图
@@ -33,7 +20,7 @@ public interface IGlobleParams {
     public void setIsDrawThumbnail(boolean isDraw);
 
     /**
-     * 设置是否保持缩略图的显示，若设为false，则缩略图只在拖动界面或者是缩放时显示，当界面静止是不显示缩略图
+     * 设置是否保持缩略图的显示，若设为false，则缩略图只在拖动界面或者是缩放时显示，当界面静止是不显示缩略图,默认false
      *
      * @param isShowAlways
      */
@@ -124,7 +111,7 @@ public interface IGlobleParams {
     public int getSeatTypeRowCount();
 
     /**
-     * 是否绘制行号
+     * 是否绘制行号,默认false
      *
      * @param isDrawRowNumber
      */
@@ -172,7 +159,7 @@ public interface IGlobleParams {
     public int getRowNumberAlpha();
 
     /**
-     * 是否绘制列号
+     * 是否绘制列号,默认true
      *
      * @param isDrawColumnNumber
      */
@@ -220,7 +207,7 @@ public interface IGlobleParams {
     public int getColumnNumberAlpha();
 
     /**
-     * 设置是否显示选中某行某列时的提醒
+     * 设置是否显示选中某行某列时的提醒,默认false
      *
      * @param isDrawNotification
      * @param notifyFormat       用于格式化的通知文字内容,例:%1$s行/%2$s列,参数一将被替换为行号,参数二将被替换为列号,
@@ -262,15 +249,26 @@ public interface IGlobleParams {
     public boolean isDrawSeletedRowColumnNotification();
 
     /**
-     * 设置是否允许双击同一地方放大或者缩小界面
-     *  @param isEnabled
+     * 设置是否允许双击同一地方放大或者缩小界面,默认false
+     *
+     * @param isEnabled
      * @param largeFixScale
      * @param smallFixScale
      */
     public void setIsEnabledDoubleClickScale(boolean isEnabled, float largeFixScale, float smallFixScale);
 
+    /**
+     * 获取双击时固定的最大缩放比例(相对原始设置值),原始设置值每次设置宽高时都会重新记录一次
+     *
+     * @return
+     */
     public float getDoubleClickLargeScaleRate();
 
+    /**
+     * 获取双击时固定的最小缩放比例(相对原始设置值),原始设置值每次设置宽高时都会重新记录一次
+     *
+     * @return
+     */
     public float getDoubleClickSmallScaleRate();
 
     /**
@@ -295,7 +293,7 @@ public interface IGlobleParams {
     public int getCenterDotLineColor();
 
     /**
-     * 设置是否启用通过单击缩略图快速显示某个区域的功能
+     * 设置是否启用通过单击缩略图快速显示某个区域的功能,默认true
      *
      * @param isEnabled
      */
@@ -308,19 +306,17 @@ public interface IGlobleParams {
      */
     public boolean isEnabledQuickShowByClickOnThumbnail();
 
-//    /**
-//     * 获取是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
-//     *
-//     * @return
-//     */
-//    public boolean isAllowDrawThumbnail();
-//
-//    /**
-//     * 是否允许绘制缩略图,设置用户参数时请勿使用此方法(此方法为提供给绘制时使用)
-//     *
-//     * @param isForceToDraw 是否强制要求一定要绘制
-//     * @return
-//     */
-//    public void setIsAllowDrawThumbnail(boolean isForceToDraw);
+    /**
+     * 设置是否允许通过缩略图快速移动,默认true
+     *
+     * @param isEnabled
+     */
+    public void setIsEnabledQuickMoveOnThumbnail(boolean isEnabled);
 
+    /**
+     * 获取是否允许通过缩略图快速移动
+     *
+     * @return
+     */
+    public boolean isEnabledQuickMoveOnThumbnail();
 }

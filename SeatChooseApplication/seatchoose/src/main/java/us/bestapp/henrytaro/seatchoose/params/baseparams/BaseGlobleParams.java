@@ -4,9 +4,9 @@ package us.bestapp.henrytaro.seatchoose.params.baseparams;/**
 
 import android.graphics.Color;
 
-import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.seatchoose.draw.utils.SimpleDrawUtils;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IBaseParams;
+import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
 
 /**
  * Created by xuhaolin on 15/9/11.
@@ -43,6 +43,8 @@ public class BaseGlobleParams implements IGlobleParams {
     private boolean mIsEnabledDoubleClickScale = true;
     //是否允许通过单击缩略图快速显示区域
     private boolean mIsEnabledQuickShowByClickThumbnail = true;
+    //是否允许通过缩略图快速移动界面
+    private boolean mIsEnabledQuickMoveOnThumbnail = false;
     //是否缩小时,界面自动适应屏幕大小
     private boolean mIsAutoScaleToScreen = false;
 
@@ -332,6 +334,16 @@ public class BaseGlobleParams implements IGlobleParams {
     @Override
     public boolean isEnabledQuickShowByClickOnThumbnail() {
         return this.mIsEnabledQuickShowByClickThumbnail;
+    }
+
+    @Override
+    public void setIsEnabledQuickMoveOnThumbnail(boolean isEnabled) {
+        this.mIsEnabledQuickMoveOnThumbnail = isEnabled;
+    }
+
+    @Override
+    public boolean isEnabledQuickMoveOnThumbnail() {
+        return this.mIsEnabledQuickMoveOnThumbnail;
     }
 
     /**
