@@ -40,6 +40,42 @@ public class TouchUtils {
     private boolean mIsMoved = false;
 
     /**
+     * 获取X轴偏移量
+     *
+     * @return
+     */
+    public float getOffsetX() {
+        return this.mBeginDrawOffsetX;
+    }
+
+    /**
+     * 获取Y轴偏移量
+     *
+     * @return
+     */
+    public float getOffsetY() {
+        return this.mBeginDrawOffsetY;
+    }
+
+    /**
+     * 通过此方法可以设置初始值
+     *
+     * @param offsetX
+     */
+    public void setOffsetX(float offsetX) {
+        this.mBeginDrawOffsetX = offsetX;
+    }
+
+    /**
+     * 通过此方法可以设置初始值
+     *
+     * @param offsetY
+     */
+    public void setOffsetY(float offsetY) {
+        this.mBeginDrawOffsetY = offsetY;
+    }
+
+    /**
      * 设置缩放处理事件
      *
      * @param event
@@ -288,12 +324,12 @@ public class TouchUtils {
             float newDrawOffsetY = mBeginDrawOffsetY + moveDistanceY;
 
             //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
-            if (mMoveEvent.isCanMovedOnX(moveDistanceX, newDrawOffsetX)) {
+            if (!mMoveEvent.isCanMovedOnX(moveDistanceX, newDrawOffsetX)) {
                 //保持原来的偏移量不变
                 newDrawOffsetX = mBeginDrawOffsetX;
             }
             //当前绘制的顶端坐标大于0且移动方向为向下移动
-            if (mMoveEvent.isCanMovedOnY(moveDistanceY, newDrawOffsetY)) {
+            if (!mMoveEvent.isCanMovedOnY(moveDistanceY, newDrawOffsetY)) {
                 //保持原来的Y轴偏移量
                 newDrawOffsetY = mBeginDrawOffsetY;
             }
@@ -383,7 +419,7 @@ public class TouchUtils {
          * @param suggestEventAction 建议处理的事件,值可能为{@link MotionEvent#ACTION_MOVE},{@link MotionEvent#ACTION_UP}
          * @return
          */
-        public abstract boolean onMove(int suggestEventAction);
+        public abstract void onMove(int suggestEventAction);
 
         /**
          * 无法进行移动事件

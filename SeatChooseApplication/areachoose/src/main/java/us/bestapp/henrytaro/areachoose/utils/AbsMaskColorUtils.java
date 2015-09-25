@@ -41,7 +41,7 @@ public abstract class AbsMaskColorUtils {
     public abstract Map<Integer, Integer> parseAreaToMaskColor(Map<Integer, Integer> maskColorMap, List<AbsAreaEntity> areaEntityList);
 
     /**
-     * 根据当前图片位置的颜色获取其对应的蒙板颜色(默认请返回透明色0,{@link android.graphics.Color#TRANSPARENT})
+     * 根据当前图片位置的颜色获取其对应的蒙板颜色(默认返回透明色0,{@link android.graphics.Color#TRANSPARENT})
      *
      * @param pixelColor 当前图片中扫描到的像素的颜色值
      * @return
