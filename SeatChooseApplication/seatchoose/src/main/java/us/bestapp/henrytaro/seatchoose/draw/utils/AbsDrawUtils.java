@@ -1005,7 +1005,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param rowCount      预定需要绘制的行数,此值将会被记录下用于后续处理,详见部分方法{@link #getCanvasDrawBeginY(int)}
      */
     protected void drawSeatTypeByAuto(Canvas canvas, Paint paint, float drawPositionY, int rowCount) {
-        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.isDrawDrawStyle() || mSeatParams.getDrawStyleLength() <= 0) {
+        if (mSeatParams == null || rowCount <= 0 || !mSeatParams.isDrawStyle() || mSeatParams.getDrawStyleLength() <= 0) {
             return;
         }
 
@@ -1146,7 +1146,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         } else {
             beginDrawCenterY += mStageParams.getStageMarginBottom();
         }
-        if (mSeatParams.isDrawDrawStyle()) {
+        if (mSeatParams.isDrawStyle()) {
             beginDrawCenterY += mStageParams.getHeight() / 2;
         }
         return beginDrawCenterY;
@@ -1183,7 +1183,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         } else {
             beginDrawCenterY += mStageParams.getStageMarginBottom();
         }
-        if (mSeatParams.isDrawDrawStyle()) {
+        if (mSeatParams.isDrawStyle()) {
             beginDrawCenterY += (mSeatParams.getHeight() + mSeatParams.getSeatVerticalInterval()) * seatTypeRowCount;
         }
         beginDrawCenterY += mSeatParams.getHeight() / 2;
@@ -1252,7 +1252,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     protected float getCanvasDrawBeginY(int seatTypeRowCount) {
         if (mStageParams.isDraw()) {
             return this.getStageDrawCenterY() - mStageParams.getHeight() / 2 - mStageParams.getStageMarginTop();
-        } else if (mSeatParams.isDrawDrawStyle()) {
+        } else if (mSeatParams.isDrawStyle()) {
             return this.getSeatTypeDrawCenterY() - mSeatParams.getHeight() / 2 - mStageParams.getStageMarginBottom();
         } else {
             return this.getSellSeatDrawBeginY(seatTypeRowCount);
@@ -2082,30 +2082,26 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param invalidateAction 重绘的行为标志
      */
     private boolean invalidateInSinglePoint(float moveDistanceX, float moveDistanceY, int invalidateAction) {
+        //获取缩略图的界面
+        RectF thumbnailRectf = this.beginDrawThumbnail(mCanvasWidth, mCanvasHeight);
+        //获取缩略图中的显示框与缩略图的各边界距离
+        RectF distanceRectf = getMoveDistacneRectfOnThumbnail(mDownX, mDownY, thumbnailRectf);
+        //结束缩略图的绘制设置,防止出错
+        this.finishDrawThumbnail();
 
-        //当前缩略图没有显示或者不启用缩略图快速移动功能
-        if (!mGlobleParams.isThumbnailShowing() || !mGlobleParams.isEnabledQuickMoveOnThumbnail()) {
-            return false;
-        } else {
-            //获取缩略图的界面
-            RectF thumbnailRectf = this.beginDrawThumbnail(mCanvasWidth, mCanvasHeight);
-            //获取缩略图中的显示框与缩略图的各边界距离
-            RectF distanceRectf = getMoveDistacneRectfOnThumbnail(mDownX, mDownY, thumbnailRectf);
-            //结束缩略图的绘制设置,防止出错
-            this.finishDrawThumbnail();
-            //可进行缩略图移动
-            if (distanceRectf != null) {
-                //尝试移动缩略图
-                if (this.singleMoveOnThumbnail(moveDistanceX, moveDistanceY, thumbnailRectf, distanceRectf)) {
-                    return true;
-                } else {
-                    //移动不成功,但由于启用了缩略图快速移动功能
-                    //所以单击在缩略图上的任何事件都不作其它的处理(也不处理为普通的移动功能)
-                    //移动距离置0
-                    moveDistanceX = 0;
-                    moveDistanceY = 0;
-                }
+        //可进行缩略图移动
+        if (distanceRectf != null) {
+            //尝试移动缩略图
+            if (this.singleMoveOnThumbnail(moveDistanceX, moveDistanceY, thumbnailRectf, distanceRectf)) {
+                return true;
+            } else {
+                //移动不成功,但由于启用了缩略图快速移动功能
+                //所以单击在缩略图上的任何事件都不作其它的处理(也不处理为普通的移动功能)
+                //移动距离置0
+                moveDistanceX = 0;
+                moveDistanceY = 0;
             }
+
         }
 
         //此处处理的是按是否进行移动过(默认移动范围为5像素)来确认是否是单击事件
@@ -2429,7 +2425,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @return
      */
     private RectF getMoveDistacneRectfOnThumbnail(float downx, float downY, RectF thumbnailRectf) {
-        if (thumbnailRectf == null) {
+        if (thumbnailRectf == null || !mGlobleParams.isThumbnailShowing() || !mGlobleParams.isEnabledQuickMoveOnThumbnail()) {
             return null;
         } else {
             //判断单击点是否单击在缩略图内

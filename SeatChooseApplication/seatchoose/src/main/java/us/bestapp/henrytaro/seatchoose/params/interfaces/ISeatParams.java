@@ -119,14 +119,14 @@ public interface ISeatParams extends IBaseParams {
      *
      * @param isDraw
      */
-    public void setIsDrawDrawStyle(boolean isDraw);
+    public void setIsDrawStyle(boolean isDraw);
 
     /**
      * 获取是否绘制座位类型标志
      *
      * @return
      */
-    public boolean isDrawDrawStyle();
+    public boolean isDrawStyle();
 
     /**
      * 获取座位类型样式的所有标签,获取的标签不一定是按存入的顺序,因为内部是通过map的方式存放数据的

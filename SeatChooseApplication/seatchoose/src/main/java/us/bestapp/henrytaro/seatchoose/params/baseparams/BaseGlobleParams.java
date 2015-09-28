@@ -48,9 +48,6 @@ public class BaseGlobleParams implements IGlobleParams {
     //是否缩小时,界面自动适应屏幕大小
     private boolean mIsAutoScaleToScreen = false;
 
-    //是否绘制座位类型
-    private boolean mIsDrawSeatType = false;
-
     //选中行列的提醒
     private boolean mIsDrawSeletedRowColumnNotification = false;
     //提醒格式化字符串

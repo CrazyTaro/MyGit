@@ -198,11 +198,12 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         globleParams.setSeatTypeRowCount(2);
         globleParams.setIsShowThumbnailAlways(true);
         globleParams.setIsEnabledQuickShowByClickOnThumbnail(true);
+        globleParams.setIsEnabledQuickMoveOnThumbnail(true);
 //        globleParams.setIsAutoScaleToScreen(false);
 //        globleParams.setIsDrawColumnNumber(true);
 
         ISeatParams seatParams = mSeatDataHandle.getSeatParams();
-        seatParams.setIsDrawDrawStyle(true);
+        seatParams.setIsDrawStyle(true);
         seatParams.setWidth(40f);
         seatParams.setHeight(40f);
 

@@ -281,12 +281,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    public void setIsDrawDrawStyle(boolean isDraw) {
+    public void setIsDrawStyle(boolean isDraw) {
         this.mIsDrawSeatDrawStyle = isDraw;
     }
 
     @Override
-    public boolean isDrawDrawStyle() {
+    public boolean isDrawStyle() {
         return this.mIsDrawSeatDrawStyle;
     }
 
