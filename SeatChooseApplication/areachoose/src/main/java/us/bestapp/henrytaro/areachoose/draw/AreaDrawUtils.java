@@ -6,13 +6,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaDrawInterfaces;
 import us.bestapp.henrytaro.areachoose.draw.interfaces.IAreaEventHandle;
@@ -27,6 +30,7 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
     private View mDrawView = null;
     private AbsMaskColorUtils mMaskColorUtils = null;
     private IAreaEventHandle mAreaEventHandle = null;
+    private Map<Integer, AbsAreaEntity> mAreaMap = null;
     //区域列表
     private List<AbsAreaEntity> mAreaList = null;
 
@@ -51,6 +55,7 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
     private boolean mIsFirstDraw = true;
     //是否初始化蒙板层成功
     private boolean mIsMaskSuccess = false;
+    private boolean mIsAllAlpha = true;
     //图像默认适应控件屏幕大小,此值为图像大小与屏幕大小的比例关系
     private float mOriginalScaleRate = 0;
     //当前图像与当前目标显示区域的大小比例
@@ -122,6 +127,14 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
      * @param areaList
      */
     protected void setAreaList(List<AbsAreaEntity> areaList) {
+        if (mAreaMap == null) {
+            mAreaMap = new HashMap<>();
+        } else {
+            mAreaMap.clear();
+        }
+        for (AbsAreaEntity area : areaList) {
+            mAreaMap.put(area.getAreaColor(), area);
+        }
         this.mAreaList = areaList;
     }
 
@@ -173,7 +186,7 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
      * @return
      */
     protected void initialBitmap() {
-        if (mFtBitmap == null || mBgBitmap == null || mMaskBitmap == null || mAreaList == null) {
+        if (mFtBitmap == null || mBgBitmap == null || mMaskBitmap == null || mAreaMap == null) {
             return;
         } else {
             new Thread(new Runnable() {
@@ -217,6 +230,9 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
                     if (color != newColor) {
                         mMaskBitmap.setPixel(i, j, newColor);
                     }
+//                    if (newColor != Color.TRANSPARENT && mIsAllAlpha) {
+//                        mIsAllAlpha = false;
+//                    }
                 }
             }
             return true;
@@ -306,12 +322,15 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
         mDrawRectf.right = mDstRectf.right + mBeginDrawOffsetX;
 
         //当前前景图像存在才进行绘制
-        if (mBgBitmap != null) {
-            canvas.drawBitmap(mBgBitmap, null, mDrawRectf, null);
+        if (mFtBitmap != null) {
+            canvas.drawBitmap(mFtBitmap, null, mDrawRectf, null);
         }
         //当前蒙板图像及蒙板处理成功才进行绘制
-        if (mIsMaskSuccess && mMaskBitmap != null) {
-            canvas.drawBitmap(mMaskBitmap, null, mDrawRectf, null);
+        if (mIsMaskSuccess && mMaskBitmap != null ) {
+            if (mMaskColorUtils != null) {
+                mPaint.setAlpha(mMaskColorUtils.getAlpha());
+            }
+            canvas.drawBitmap(mMaskBitmap, null, mDrawRectf, mPaint);
         }
     }
 
@@ -612,7 +631,7 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
 
     @Override
     public void onSingleClickByDistance(MotionEvent event) {
-        if (mFtBitmap == null || mBgBitmap == null || mAreaList == null) {
+        if (mFtBitmap == null || mBgBitmap == null || mAreaMap == null) {
             return;
         }
         //计算当前目标显示区域与实际上的图像区域的比例
@@ -635,12 +654,16 @@ public class AreaDrawUtils extends AbsTouchEventHandle implements IAreaDrawInter
             //获取图像区域内单击点的像素颜色值
             int color = mBgBitmap.getPixel(orlx, orly);
             //对像素值进行分析处理
-            for (AbsAreaEntity area : mAreaList) {
-                if (color == area.getAreaColor()) {
-                    if (mAreaEventHandle != null) {
-                        mAreaEventHandle.onAreaChoose(area);
-                    }
-                }
+//            for (AbsAreaEntity area : mAreaList) {
+//                if (color == area.getAreaColor()) {
+//                    if (mAreaEventHandle != null) {
+//                        mAreaEventHandle.onAreaChoose(area);
+//                    }
+//                }
+//            }
+            AbsAreaEntity area = mAreaMap.get(color);
+            if (area != null && mAreaEventHandle != null) {
+                mAreaEventHandle.onAreaChoose(area);
             }
         }
     }

@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements IAreaEventHandle {
             public void onClick(View v) {
                 AreaListEntity areaListEntity = AreaListEntity.objectFromJsonStr(jsonStr);
                 IAreaDrawInterfaces drawUtils = view_choose.getAreaDrawIntrefaces();
-                drawUtils.setAreaMaskColorUtils(new AreaMaskColorUtils(areaListEntity.getAreaList()));
+                drawUtils.setAreaMaskColorUtils(new AreaMaskColorUtils(areaListEntity.getAreaList(),255));
                 drawUtils.initial(areaListEntity.getAreaList(), R.drawable.img_test_small_front, R.drawable.img_test_small_bg, MainActivity.this);
             }
         });

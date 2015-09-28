@@ -2,10 +2,12 @@ package us.bestapp.henrytaro.areachoose.entity.absentity;/**
  * Created by xuhaolin on 15/9/23.
  */
 
+import java.io.Serializable;
+
 /**
  * Created by xuhaolin on 15/9/23.
  */
-public abstract class AbsAreaEntity {
+public abstract class AbsAreaEntity implements Serializable{
 
     /**
      * 获取区域名
