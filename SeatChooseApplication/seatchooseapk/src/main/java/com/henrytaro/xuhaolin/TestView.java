@@ -11,8 +11,8 @@ import android.view.View;
  * Created by xuhaolin on 15/9/25.
  */
 public class TestView extends View {
+    //创建绘制界面专用的绘制类
     TestDraw mTestDraw = new TestDraw(this, getContext());
-    ;
 
     public TestView(Context context) {
         super(context);
@@ -29,7 +29,10 @@ public class TestView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
+        //实际上的绘制工作全部都交给了绘制专用类
+        //个人觉得在绘制很复杂的界面时,这样可以很清楚地分开
+        //绘制与视图,因为视图本身可能还要处理其它的事件(比如来自绘制事件中回调的事件等)
+        //而且View本身的方法就够多了,还加一很多绘制方法,看起来也不容易理解
         mTestDraw.onDraw(canvas);
     }
 }
