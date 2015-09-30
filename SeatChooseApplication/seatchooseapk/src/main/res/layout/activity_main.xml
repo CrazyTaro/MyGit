@@ -10,6 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:layout_alignParentBottom="true"/>
+
     <!--<com.henrytaro.xuhaolin.TestView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent" />-->

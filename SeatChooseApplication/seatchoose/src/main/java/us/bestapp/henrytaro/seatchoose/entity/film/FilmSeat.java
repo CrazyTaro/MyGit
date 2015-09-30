@@ -11,6 +11,31 @@ import us.bestapp.henrytaro.seatchoose.utils.StringUtils;
  * 自定义创建的对象,用于实现通用的座位接口与数据处理传递
  */
 public class FilmSeat extends AbsSeatEntity {
+    /**
+     * 错误类型,默认的类型
+     */
+    public static final String TAG_ERROR_SEAT = BaseSeatParams.TAG_ERROR_SEAT;
+    /**
+     * 情侣座位可选的类型(普通座与情侣座选中类型是一样的)
+     */
+    public static final String TAG_COUPLE_OPTIONAL_SEAT = BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT;
+    /**
+     * 普通座可选类型
+     */
+    public static final String TAG_OPTIONAL_SEAT = BaseSeatParams.TAG_OPTIONAL_SEAT;
+    /**
+     * 已选类型
+     */
+    public static final String TAG_TAG_SELECTE_SEAT = BaseSeatParams.TAG_SELECTE_SEAT;
+    /**
+     * 未显示座位类型
+     */
+    public static final String TAG_UNSHOW_SEAT = BaseSeatParams.TAG_UNSHOW_SEAT;
+    /**
+     * 锁定座位类型
+     */
+    public static final String TAG_LOCK_SEAT = BaseSeatParams.TAG_LOCK_SEAT;
+
     private int mRowNumber = 0;
     private int mColumnNumber = 0;
     private int mType = 0;

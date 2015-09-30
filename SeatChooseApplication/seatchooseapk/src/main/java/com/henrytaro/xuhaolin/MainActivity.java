@@ -2,24 +2,33 @@ package com.henrytaro.xuhaolin;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.List;
+
 import us.bestapp.henrytaro.seatchoose.draw.interfaces.ISeatDrawInterface;
+import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.seatchoose.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.seatchoose.entity.example.EgSeatMap;
+import us.bestapp.henrytaro.seatchoose.entity.film.FilmSeat;
 import us.bestapp.henrytaro.seatchoose.entity.film.FilmSeatMap;
 import us.bestapp.henrytaro.seatchoose.entity.show.ShowSeatMap;
 import us.bestapp.henrytaro.seatchoose.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.seatchoose.params.interfaces.IStageParams;
+import us.bestapp.henrytaro.seatchoose.utils.SeatCheckRuleUtils;
 import us.bestapp.henrytaro.seatchoose.view.SeatChooseView;
 import us.bestapp.henrytaro.seatchoose.view.interfaces.ISeatChooseEvent;
 
 
 public class MainActivity extends Activity implements ISeatChooseEvent {
     SeatChooseView mChooseview = null;
+    Button mBtnSubmit = null;
     ISeatDrawInterface mSeatDataHandle = null;
+    AbsMapEntity mMap = null;
     private int[][] mSeatMap = {
 //            {4, 5, 1, 1, 1, 3, 1, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 3, 1, 3,},//1
 //            {1, 1, 3, 1, 1, 3, 1, 1, 1, 1, 3, 3, 3, 1, 1, 1, 3, 1, 1, 3,},//3
@@ -180,12 +189,13 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
+        mBtnSubmit = (Button) findViewById(R.id.btn_submit);
+
 
         FilmSeatMap dataMap = FilmSeatMap.objectFromJsonStr(filmJsonStr);
         ShowSeatMap showMap = ShowSeatMap.objectFromJsonStr(showJsonStr);
         EgSeatMap egMap = new EgSeatMap(mSeatMap);
-
-        mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
         mChooseview.setISeatChooseEvent(this);
         mSeatDataHandle = mChooseview.getSeatDrawInterface();
         mSeatDataHandle.setIsShowLog(true, null);
@@ -211,9 +221,26 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         stageParams.setStageDescription("深圳橙天嘉禾影城万象城店 6号厅");
 
 //        setImage(seatParams);
-        mSeatDataHandle.setSeatDrawMap(dataMap);
-//        mSeatDataHandle.setSeatDrawMap(egMap);
-//        mSeatDataHandle.setSeatDrawMap(showMap);
+        mMap = dataMap;
+//        mMap=showMap;
+//        mMap=egMap;
+        mSeatDataHandle.setSeatDrawMap(mMap);
+
+        mBtnSubmit.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              List<AbsSeatEntity> selectSeats = mChooseview.getSeletedSeats();
+                                              String[] edgeTags = new String[]{FilmSeat.TAG_UNSHOW_SEAT, FilmSeat.TAG_ERROR_SEAT, FilmSeat.TAG_LOCK_SEAT};
+                                              String[] enabledTags = new String[]{FilmSeat.TAG_OPTIONAL_SEAT, FilmSeat.TAG_COUPLE_OPTIONAL_SEAT};
+                                              if (SeatCheckRuleUtils.isIllegalSeatList(selectSeats, mMap, edgeTags, enabledTags)) {
+                                                  Toast.makeText(MainActivity.this, "不能留下单个座位!", Toast.LENGTH_SHORT).show();
+                                              } else {
+                                                  Toast.makeText(MainActivity.this, "所有座位有效~~~", Toast.LENGTH_SHORT).show();
+                                              }
+                                          }
+                                      }
+
+        );
     }
 
     private void setImage(ISeatParams params) {
@@ -232,7 +259,9 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
 
     @Override
     public void seatStatusChanged(AbsSeatEntity[] seatEntities, boolean isChosen) {
+        if (isChosen && seatEntities != null) {
 
+        }
     }
 
     @Override

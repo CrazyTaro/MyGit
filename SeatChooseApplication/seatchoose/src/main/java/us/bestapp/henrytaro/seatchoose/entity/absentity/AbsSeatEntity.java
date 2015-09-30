@@ -21,7 +21,7 @@ public abstract class AbsSeatEntity {
     public abstract void parseData();
 
     /**
-     * 获取绘制样式的标签
+     * 获取绘制样式的标签,建议默认返回的值不是null,而是{@link us.bestapp.henrytaro.seatchoose.params.baseparams.BaseSeatParams#TAG_ERROR_SEAT}或者是自定义的某个默认类型
      *
      * @return
      */
