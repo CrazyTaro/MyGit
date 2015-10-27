@@ -146,13 +146,14 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         mUpdateProgressThread.start();
 
 
+        //初始化通知栏播放控制器
         NotificationUtils.initial(this);
         NotificationUtils.showNotifcation("播覇音乐", "音乐播放~", "播覇音乐", "音乐播放~", null);
+        //注册广播
         if (mNotificationBroadCast == null) {
             mNotificationBroadCast = new NotificationBroadcast();
             IntentFilter filter = new IntentFilter();
             filter.addAction(NotificationUtils.NOTIFY_ACTION_PLAY);
-            filter.addAction(NotificationUtils.NOTIFY_ACTION_PAUSE);
             filter.addAction(NotificationUtils.NOTIFY_ACTION_PREVIOUS);
             filter.addAction(NotificationUtils.NOTIFY_ACTION_NEXT);
             filter.addAction(NotificationUtils.NOTIFY_ACTION_LIKE);
@@ -207,6 +208,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
                 mPlayer.prepare();
                 mPlayer.start();
 
+                //更新通知栏
                 NotificationUtils.updateNotification(current, R.drawable.ic_pause);
             } catch (Exception ex) {
                 ex.printStackTrace();
