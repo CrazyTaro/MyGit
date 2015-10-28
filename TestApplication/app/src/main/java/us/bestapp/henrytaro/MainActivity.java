@@ -2,7 +2,6 @@ package us.bestapp.henrytaro;
 
 import android.app.ProgressDialog;
 import android.content.ComponentName;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,12 +20,11 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import us.bestapp.henrytaro.player.interfaces.IPlayListHandle;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.model.AbsTrack;
-import us.bestapp.henrytaro.player.model.PlayModel;
 import us.bestapp.henrytaro.player.model.Song;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
-import us.bestapp.henrytaro.player.utils.NotificationUtils;
 import us.bestapp.henrytaro.player.utils.PlayServiceHelperUtils;
 
 
@@ -103,20 +101,20 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 String model;
                 switch (mModelIndex) {
                     case 0:
-                        model = PlayModel.MODEL_SINGLE;
+                        model = IPlayListHandle.MODEL_SINGLE;
                         break;
                     case 1:
-                        model = PlayModel.MODEL_ORDER;
+                        model = IPlayListHandle.MODEL_ORDER;
                         break;
                     case 2:
-                        model = PlayModel.MODEL_RANDOM;
+                        model = IPlayListHandle.MODEL_RANDOM;
                         break;
                     default:
-                        model = PlayModel.MODEL_ORDER;
+                        model = IPlayListHandle.MODEL_ORDER;
                         break;
                 }
                 if (mBinder != null) {
-                    mBinder.setPlayModel(model);
+                    mBinder.getPlayListHandle().setPlayModel(model);
                 }
                 Toast.makeText(MainActivity.this, "current model " + model, Toast.LENGTH_SHORT).show();
                 mModelIndex++;
@@ -152,7 +150,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AbsTrack music = (AbsTrack) mAdapter.getItem(position);
-                mBinder.getOperaHandle().play(music, position);
+                if (mBinder.getPlayListHandle().getPlayModel().equals(IPlayListHandle.MODEL_RANDOM)) {
+                    mBinder.setPlayListWithTrackPlayNow(mAdapter.getList(), music, position);
+                } else {
+                    mBinder.getOperaHandle().play(music, position);
+                }
             }
         });
 
@@ -191,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 }
                 mAdapter = new TrackAdapter(MainActivity.this);
                 mAdapter.setList(list);
-                mBinder.setPlayListWidthHistoryList(list, null);
+                mBinder.getPlayListHandle().setPlayList(list);
                 mHanlder.sendEmptyMessage(0x3);
             }
         }).start();
@@ -215,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             mBinder.printPlayList();
-            mBinder.printHistoryList();
         }
         return super.onOptionsItemSelected(item);
     }

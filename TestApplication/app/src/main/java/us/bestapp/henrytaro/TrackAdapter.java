@@ -22,6 +22,10 @@ public class TrackAdapter extends BaseAdapter {
         this.mContext = context;
     }
 
+    public List<Song> getList(){
+        return mList;
+    }
+
     public void setList(List<Song> list) {
         this.mList = list;
 //        notifyDataSetChanged();
