@@ -74,4 +74,40 @@ public class CommonUtils {
         }
         return false;
     }
+
+    public static final class IntentAction {
+        public static final String INTENT_ACTION_SCREEN_ACTIVITY_DESTROY="us.bestapp.player.screen_activity_destroy";
+        public static final String INTENT_ACTION_SCREEN_ACTIVITY_CREATE="us.bestapp.player.screen_activity_create";
+
+        public static final String INTENT_ACTION_TRACK_START_PLAY = "us.bestapp.player.track_action_start_play";
+        public static final String INTNET_ACTION_TRACK_PAUSE = "us.bestapp.player.track_action_pause";
+
+        public static final String INTENT_ACTION_SCREEN_ON = "android.intent.action.SCREEN_ON";
+        public static final String INTENT_ACTION_SCRREN_OFF = "android.intent.action.SCREEN_OFF";
+
+        /**
+         * 通知单击关闭按钮广播
+         */
+        public static final String INTENT_ACTION_NOTIFY_CLOSE = "us.bestapp.player.action_close";
+        /**
+         * 通知单击播放按钮广播
+         */
+        public static final String INTENT_ACTION_NOTIFY_PLAY = "us.bestapp.player.action_play";
+        /**
+         * 通知单击上一首按钮广播
+         */
+        public static final String INTENT_ACTION_NOTIFY_PREVIOUS = "us.bestapp.player.action_previous";
+        /**
+         * 通知单击下一首按钮广播
+         */
+        public static final String INTENT_ACTION_NOTIFY_NEXT = "us.bestapp.player.action_next";
+        /**
+         * 通知单击收藏按钮广播
+         */
+        public static final String INTENT_ACTION_NOTIFY_LIKE = "us.bestapp.player.action_like";
+
+
+        public static final String INTENT_EXTRA_TRACK_NAME = "track";
+        public static final String INTENT_EXTRA_TRACK_ARTITST = "artist";
+    }
 }

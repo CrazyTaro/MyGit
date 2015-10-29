@@ -43,26 +43,6 @@ public class NotificationUtils {
      */
     public static final int UPDATE_VIEW_BACKGROUND = 0x5;
 
-    /**
-     * 通知单击关闭按钮广播
-     */
-    public static final String NOTIFY_ACTION_CLOSE = "action_close";
-    /**
-     * 通知单击播放按钮广播
-     */
-    public static final String NOTIFY_ACTION_PLAY = "action_play";
-    /**
-     * 通知单击上一首按钮广播
-     */
-    public static final String NOTIFY_ACTION_PREVIOUS = "action_previous";
-    /**
-     * 通知单击下一首按钮广播
-     */
-    public static final String NOTIFY_ACTION_NEXT = "action_next";
-    /**
-     * 通知单击收藏按钮广播
-     */
-    public static final String NOTIFY_ACTION_LIKE = "action_like";
 
     /**
      * 唯一固定的通知ID
@@ -135,11 +115,11 @@ public class NotificationUtils {
         mNotificationView.setInt(R.id.lin_container, "setBackgroundColor", Color.WHITE);
 
         //绑定按钮的单击广播事件
-        mNotificationView.setOnClickPendingIntent(R.id.imageview_close, getBroadcastPendingIntent(NOTIFY_ACTION_CLOSE));
-        mNotificationView.setOnClickPendingIntent(R.id.imageview_play, getBroadcastPendingIntent(NOTIFY_ACTION_PLAY));
-        mNotificationView.setOnClickPendingIntent(R.id.imageview_like, getBroadcastPendingIntent(NOTIFY_ACTION_PLAY));
-        mNotificationView.setOnClickPendingIntent(R.id.imageview_next, getBroadcastPendingIntent(NOTIFY_ACTION_NEXT));
-        mNotificationView.setOnClickPendingIntent(R.id.imageview_pre, getBroadcastPendingIntent(NOTIFY_ACTION_PREVIOUS));
+        mNotificationView.setOnClickPendingIntent(R.id.imageview_close, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_CLOSE));
+        mNotificationView.setOnClickPendingIntent(R.id.imageview_play, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PLAY));
+        mNotificationView.setOnClickPendingIntent(R.id.imageview_like, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_LIKE));
+        mNotificationView.setOnClickPendingIntent(R.id.imageview_next, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_NEXT));
+        mNotificationView.setOnClickPendingIntent(R.id.imageview_pre, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PREVIOUS));
         //通知显示
         notifyMgr.notify(NOTIFICATION_ID, mTrackNotification);
     }
@@ -148,11 +128,11 @@ public class NotificationUtils {
      * 获取广播使用的Intent
      *
      * @param action 广播动作<br/>
-     *               {@link #NOTIFY_ACTION_PLAY}<br/>
-     *               {@link #NOTIFY_ACTION_PREVIOUS}<br/>
-     *               {@link #NOTIFY_ACTION_NEXT}<br/>
-     *               {@link #NOTIFY_ACTION_LIKE}<br/>
-     *               {@link #NOTIFY_ACTION_CLOSE}<br/>
+     *               {@link us.bestapp.henrytaro.player.utils.CommonUtils.IntentAction#INTENT_ACTION_NOTIFY_CLOSE}<br/>
+     *               {@link us.bestapp.henrytaro.player.utils.CommonUtils.IntentAction#INTENT_ACTION_NOTIFY_PREVIOUS}<br/>
+     *               {@link us.bestapp.henrytaro.player.utils.CommonUtils.IntentAction#INTENT_ACTION_NOTIFY_NEXT}<br/>
+     *               {@link us.bestapp.henrytaro.player.utils.CommonUtils.IntentAction#INTENT_ACTION_NOTIFY_LIKE}<br/>
+     *               {@link us.bestapp.henrytaro.player.utils.CommonUtils.IntentAction#INTENT_ACTION_NOTIFY_PLAY}<br/>
      * @return
      */
     public static PendingIntent getBroadcastPendingIntent(String action) {

@@ -21,6 +21,7 @@ import us.bestapp.henrytaro.player.interfaces.IPlayCallback;
 import us.bestapp.henrytaro.player.interfaces.IPlayerOperaHandle;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.model.AbsTrack;
+import us.bestapp.henrytaro.player.utils.CommonUtils;
 import us.bestapp.henrytaro.player.utils.NotificationUtils;
 
 /**
@@ -46,6 +47,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
     private volatile boolean mIsStopUpdate = false;
     //通知栏常驻播放控制器的广播响应
     private NotificationBroadcast mNotificationBroadCast;
+    private MainBroadcast mMainBroadcast;
 
     //回调事件
     private MediaPlayer.OnCompletionListener mUserComletionListener;
@@ -148,15 +150,30 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         //初始化通知栏播放控制器
         NotificationUtils.initial(this);
         NotificationUtils.showNotifcation("播覇音乐", "音乐播放~", "播覇音乐", "音乐播放~", null);
+        registerReceivers();
+    }
+
+    private void registerReceivers() {
         //注册广播
         if (mNotificationBroadCast == null) {
             mNotificationBroadCast = new us.bestapp.henrytaro.player.service.NotificationBroadcast();
             IntentFilter filter = new IntentFilter();
-            filter.addAction(NotificationUtils.NOTIFY_ACTION_PLAY);
-            filter.addAction(NotificationUtils.NOTIFY_ACTION_PREVIOUS);
-            filter.addAction(NotificationUtils.NOTIFY_ACTION_NEXT);
-            filter.addAction(NotificationUtils.NOTIFY_ACTION_LIKE);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PLAY);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PREVIOUS);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_NEXT);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_LIKE);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_CLOSE);
             this.registerReceiver(mNotificationBroadCast, filter);
+        }
+
+        if (mMainBroadcast == null) {
+            mMainBroadcast = new MainBroadcast();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SCREEN_ON);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SCRREN_OFF);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SCREEN_ACTIVITY_CREATE);
+            filter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SCREEN_ACTIVITY_DESTROY);
+            this.registerReceiver(mMainBroadcast, filter);
         }
     }
 
