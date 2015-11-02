@@ -120,6 +120,16 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 mModelIndex++;
             }
         });
+        mBtnModel.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mPlayServiceHelperUtils != null) {
+                    mPlayServiceHelperUtils.stopService();
+                    MainActivity.this.finish();
+                }
+                return false;
+            }
+        });
         mSeekBar.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
@@ -159,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
 
         mHanlder.sendEmptyMessage(0x1);
-        mPlayServiceHelperUtils = new PlayServiceHelperUtils(this, mSeekBar);
+        mPlayServiceHelperUtils = PlayServiceHelperUtils.getInstance(this, mSeekBar);
         mPlayServiceHelperUtils.initial(this);
     }
 
