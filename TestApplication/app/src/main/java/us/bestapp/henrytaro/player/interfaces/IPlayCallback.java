@@ -15,6 +15,11 @@ public interface IPlayCallback {
      * 出错标签,在暂停时
      */
     public static final int IN_PAUSE = 0x120;
+
+    /**
+     * 出错标签,在停止音乐时
+     */
+    public static final int IN_STOP = 0x119;
     /**
      * 出错标签,在下一首切换时
      */
@@ -35,6 +40,7 @@ public interface IPlayCallback {
      * @param inWhichLink  在哪个环节出错,即出错标签<br/>
      *                     {@link #IN_PLAY}<br/>
      *                     {@link #IN_PAUSE}<br/>
+     *                     {@link #IN_STOP}<br/>
      *                     {@link #IN_NEXT}<br/>
      *                     {@link #IN_PREVIOUS}<br/>
      *                     {@link #IN_SEEK_TO}<br/>
@@ -47,7 +53,6 @@ public interface IPlayCallback {
      */
     void onTrackNotExsit();
 
-
     /***
      * 播放列表为空事件
      */
@@ -55,10 +60,8 @@ public interface IPlayCallback {
 
     /**
      * 获取下一首歌曲失败
-     *
-     * @param errorMsg 错误信息
      */
-    void onFailToGetNextTrack(String errorMsg);
+    void onFailToGetNextTrack();
 
     /**
      * 服务销毁

@@ -1,8 +1,14 @@
 package us.bestapp.henrytaro.player.utils;
 
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
+import android.os.DeadObjectException;
+import android.text.TextUtils;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -54,6 +60,23 @@ public class CommonUtils {
         }
     }
 
+    public static boolean isForeground(Context context, String className) {
+        if (context == null || TextUtils.isEmpty(className)) {
+            return false;
+        }
+
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        if (list != null && list.size() > 0) {
+            ComponentName cpn = list.get(0).topActivity;
+            if (className.equals(cpn.getClassName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /***
      * 检测当前应用是否在前台运行
      *
@@ -75,12 +98,41 @@ public class CommonUtils {
         return false;
     }
 
-    public static final class IntentAction {
-        public static final String INTENT_ACTION_SCREEN_ACTIVITY_DESTROY="us.bestapp.player.screen_activity_destroy";
-        public static final String INTENT_ACTION_SCREEN_ACTIVITY_CREATE="us.bestapp.player.screen_activity_create";
+    public static String getDateStr(String format, Calendar date) {
+        String dayWeek = getWeekStr(date);
+        return String.format(format, date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DATE), dayWeek);
+    }
 
-        public static final String INTENT_ACTION_TRACK_START_PLAY = "us.bestapp.player.track_action_start_play";
-        public static final String INTNET_ACTION_TRACK_PAUSE = "us.bestapp.player.track_action_pause";
+    public static String getTimeStr(String format, Calendar date) {
+        return String.format(format, date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE));
+    }
+
+    public static String getWeekStr(Calendar date) {
+        switch (date.get(Calendar.DAY_OF_WEEK)) {
+            case Calendar.SUNDAY:
+                return "星期日";
+            case Calendar.MONDAY:
+                return "星期一";
+            case Calendar.TUESDAY:
+                return "星期二";
+            case Calendar.WEDNESDAY:
+                return "星期三";
+            case Calendar.THURSDAY:
+                return "星期四";
+            case Calendar.FRIDAY:
+                return "星期五";
+            case Calendar.SATURDAY:
+                return "星期六";
+            default:
+                return "未知";
+        }
+    }
+
+    public static final class IntentAction {
+        public static final String INTENT_ACTION_SCREEN_ACTIVITY_DESTROY = "us.bestapp.player.screen_activity_destroy";
+        public static final String INTENT_ACTION_SCREEN_ACTIVITY_CREATE = "us.bestapp.player.screen_activity_create";
+
+        public static final String INTENT_ACTION_TRACK_UPDATE = "us.bestapp.player.track_action_update";
 
         public static final String INTENT_ACTION_SCREEN_ON = "android.intent.action.SCREEN_ON";
         public static final String INTENT_ACTION_SCRREN_OFF = "android.intent.action.SCREEN_OFF";
@@ -107,7 +159,11 @@ public class CommonUtils {
         public static final String INTENT_ACTION_NOTIFY_LIKE = "us.bestapp.player.action_like";
 
 
-        public static final String INTENT_EXTRA_TRACK_NAME = "track";
-        public static final String INTENT_EXTRA_TRACK_ARTITST = "artist";
+        public static final String INTENT_EXTRA_TRACK_NAME = "track_name";
+        public static final String INTENT_EXTRA_TRACK_ARTITST = "track_artist";
+        public static final String INTENT_EXTRA_TRACK_PLAY_RESID = "track_play_resid";
+        public static final String INTENT_EXTRA_TRACK_ABLUMN_RESID = "track_ablumn_resid";
+        public static final String INTENT_EXTRA_TRACK_ABLUMN_BITMAP = "track_ablumn_bitmap";
+        public static final String INTENT_EXTRA_TRACK_BACKGROUND_BITMAP = "track_bg_bitmap";
     }
 }

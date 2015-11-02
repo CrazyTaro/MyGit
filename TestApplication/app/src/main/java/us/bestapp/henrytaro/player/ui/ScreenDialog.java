@@ -60,18 +60,21 @@ public class ScreenDialog extends Dialog implements View.OnClickListener {
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
         params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        this.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+//        this.getWindow().setContentView(lockView);
+        this.setContentView(lockView);
         this.getWindow().setAttributes(params);
-        this.getWindow().setContentView(lockView);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mBiner = PlaySerive.getBinder();
     }
 
     public static void createDialog(Context context) {
-        if (mInstance == null) {
-            mInstance = new ScreenDialog(context, 0);
-        }
+//        if (mInstance == null) {
+//            mInstance = new ScreenDialog(context, 0);
+//        }
+        mInstance = new ScreenDialog(context, 0);
     }
 
     public static ScreenDialog getInstance() {

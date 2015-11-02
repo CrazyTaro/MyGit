@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
-import us.bestapp.henrytaro.player.utils.NotificationUtils;
 
 /**
  * Created by xuhaolin on 15/10/26.
@@ -41,7 +40,7 @@ public class NotificationBroadcast extends BroadcastReceiver {
                 break;
             //关闭程序
             case CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_CLOSE:
-                binder.destory();
+                binder.destroy();
                 break;
             default:
                 break;

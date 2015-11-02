@@ -1,8 +1,13 @@
 package us.bestapp.henrytaro.player.service;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
+import android.service.media.MediaBrowserService;
 import android.util.Log;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import us.bestapp.henrytaro.player.interfaces.IPlayCallback;
@@ -104,7 +109,16 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
      * @return
      */
     public AbsTrack getNextTrack() {
-        return mPlayList.getNextTrack();
+        if (mPlayList.isPlayListEmpty() && mCallback != null) {
+            mCallback.onPlayListEmpty();
+            return null;
+        } else {
+            AbsTrack next = mPlayList.getNextTrack();
+            if (next == null && mCallback != null) {
+                mCallback.onFailToGetNextTrack();
+            }
+            return next;
+        }
     }
 
     /**
@@ -115,8 +129,9 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
     }
 
     @Override
-    public void destory() {
-        mService.stopSelf();
+    public void destroy() {
+        Intent stopService = new Intent(mService, PlaySerive.class);
+        mService.stopService(stopService);
     }
 
     @Override

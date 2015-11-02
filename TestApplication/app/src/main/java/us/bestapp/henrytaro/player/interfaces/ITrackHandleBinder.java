@@ -1,5 +1,6 @@
 package us.bestapp.henrytaro.player.interfaces;
 
+import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import java.util.List;
@@ -11,10 +12,11 @@ import us.bestapp.henrytaro.player.model.AbsTrack;
  * 与音乐有关的操作事件(非播放器操作)
  */
 public interface ITrackHandleBinder extends IBinder {
+
     /**
      * 销毁binder,将所有引用置null
      */
-    public void destory();
+    public void destroy();
 
     /**
      * 设置新的播放列表同时立即播放指定歌曲(使用此方法可以立即播放该歌曲)

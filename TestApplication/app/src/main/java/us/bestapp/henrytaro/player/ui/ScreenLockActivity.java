@@ -5,10 +5,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -16,11 +21,15 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 
 import us.bestapp.henrytaro.R;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
+import us.bestapp.henrytaro.player.model.AbsTrack;
 import us.bestapp.henrytaro.player.service.PlaySerive;
+import us.bestapp.henrytaro.player.service.TrackStatusBroadcast;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
 
 /**
@@ -28,66 +37,142 @@ import us.bestapp.henrytaro.player.utils.CommonUtils;
  */
 public class ScreenLockActivity extends Activity implements View.OnClickListener {
 
-    ITrackHandleBinder mBiner;
-    ImageView imageViewPlay;
-    ImageView imageViewPrevious;
-    ImageView imageViewNext;
-    ImageView imageViewLike;
-    TextView textViewTime;
-    TextView textViewDate;
-    TextView textViewTrack;
-    TextView textViewArtist;
+    private TrackStatusBroadcast mTrackStatusBroadcast;
+
+    public class ViewHolder {
+        public ImageView imageViewPlay;
+        public ImageView imageViewPrevious;
+        public ImageView imageViewNext;
+        public ImageView imageViewLike;
+        public TextView textViewTime;
+        public TextView textViewDate;
+        public TextView textViewTrack;
+        public TextView textViewArtist;
+    }
+
+    private ITrackHandleBinder mBiner;
+    private ViewHolder mViewHolder = new ViewHolder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);//关键代码
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
 
         View lock = View.inflate(this, R.layout.activity_screen_lock, null);
-        initialView(lock);
+        setContentView(lock);
+
+        WindowManager windowMgr = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowMgr.getDefaultDisplay();
+        Point windowSize = new Point();
+        display.getSize(windowSize);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
-        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-//        Dialog dialog = new Dialog(this, R.style.FullScreen);
-//        dialog.setContentView(lock, params);
-//        dialog.getWindow().getDecorView().setPadding(0, 0, 0, 0);
-//        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        dialog.show();
+        params.type = WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG;
+        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
+        this.getWindow().setAttributes(params);
+
+        mTrackStatusBroadcast = new TrackStatusBroadcast(this, mViewHolder);
+//        params.width=windowSize.x;
+//        params.height=windowSize.y;
+//        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+//        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.FullScreen);
 //        builder.setView(lock);
-//        AlertDialog dialog = builder.create();
-        Dialog dialog=new Dialog(this,R.style.FullScreen);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setAttributes(params);
-//        dialog.getWindow().setContentView(lock);
-        dialog.setContentView(lock);
-        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        dialog.show();
+//        AlertDialog alertDialog = builder.create();
+//        alertDialog.getWindow().setAttributes(params);
+//        alertDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        alertDialog.show();
 
-        mBiner = PlaySerive.getBinder();
+
+        //自定义dialog
+        //TODO:魅族可用
+
+        //TODO:三星可用
+
+
+//        //TODO:魅族可用
+//        //home无效,返回无效,状态栏有效
+//        Dialog dialog = new Dialog(this, R.style.FullScreen);
+//        dialog.setContentView(lock);
+//        dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+////        dialog.getWindow().setAttributes(params);
+//        dialog.show();
+//        //TODO:魅族可用
+
+//        //TODO:三星可用
+        //home有效,返回无效,状态栏有效
+//        Dialog dialog = new Dialog(this, R.style.FullScreen);
+////        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(lock);
+//        dialog.getWindow().setAttributes(params);
+//        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        dialog.show();
+//        //TODO:三星可用
+
+        initialView(lock, mViewHolder);
+        updateView(PlaySerive.getBinder());
     }
 
-    private void initialView(View view) {
-        imageViewLike = (ImageView) view.findViewById(R.id.imageview_screen_like);
-        imageViewPrevious = (ImageView) view.findViewById(R.id.imageview_screen_previous);
-        imageViewNext = (ImageView) view.findViewById(R.id.imageview_screen_next);
-        imageViewPlay = (ImageView) view.findViewById(R.id.imageview_screen_play);
-        textViewTime = (TextView) view.findViewById(R.id.textview_screen_time);
-        textViewDate = (TextView) view.findViewById(R.id.textview_screen_date);
-        textViewTrack = (TextView) view.findViewById(R.id.textview_screen_track);
-        textViewArtist = (TextView) view.findViewById(R.id.textview_screen_artist);
+    private void updateView(ITrackHandleBinder binder) {
+        mBiner = binder;
+        if (mBiner != null) {
+            String trackName = "播覇音乐";
+            String trackArtist = "暂未播放任何音乐";
+            AbsTrack track = mBiner.getPlayListHandle().getCurrentTrack();
+            if (track != null) {
+                trackName = track.getTrackName();
+                trackArtist = track.getTrackArtist();
+            }
+            mViewHolder.textViewTrack.setText(trackName);
+            mViewHolder.textViewArtist.setText(trackArtist);
 
-        imageViewLike.setOnClickListener(this);
-        imageViewPrevious.setOnClickListener(this);
-        imageViewNext.setOnClickListener(this);
-        imageViewPlay.setOnClickListener(this);
+            if (mBiner.getOperaHandle().isPlaying()) {
+                mViewHolder.imageViewPlay.setImageResource(R.drawable.ic_pause);
+            } else {
+                mViewHolder.imageViewPlay.setImageResource(R.drawable.ic_play);
+            }
+        }
+
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(System.currentTimeMillis());
+        mViewHolder.textViewTime.setText(CommonUtils.getTimeStr(TrackStatusBroadcast.FORMAT_TIME, date));
+        mViewHolder.textViewDate.setText(CommonUtils.getDateStr(TrackStatusBroadcast.FORMAT_DATE, date));
+    }
+
+    private void initialView(View view, ViewHolder holder) {
+        holder.imageViewLike = (ImageView) view.findViewById(R.id.imageview_screen_like);
+        holder.imageViewPrevious = (ImageView) view.findViewById(R.id.imageview_screen_previous);
+        holder.imageViewNext = (ImageView) view.findViewById(R.id.imageview_screen_next);
+        holder.imageViewPlay = (ImageView) view.findViewById(R.id.imageview_screen_play);
+        holder.textViewTime = (TextView) view.findViewById(R.id.textview_screen_time);
+        holder.textViewDate = (TextView) view.findViewById(R.id.textview_screen_date);
+        holder.textViewTrack = (TextView) view.findViewById(R.id.textview_screen_track);
+        holder.textViewArtist = (TextView) view.findViewById(R.id.textview_screen_artist);
+
+        holder.imageViewLike.setOnClickListener(this);
+        holder.imageViewPrevious.setOnClickListener(this);
+        holder.imageViewNext.setOnClickListener(this);
+        holder.imageViewPlay.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mTrackStatusBroadcast != null) {
+            this.registerReceiver(mTrackStatusBroadcast, mTrackStatusBroadcast.getDefaultBroadcastFilter());
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(mTrackStatusBroadcast);
     }
 
     @Override

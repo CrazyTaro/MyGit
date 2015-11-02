@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lin_container"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_toRightOf="@id/imageview_ablumn"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp">
+
+
+    <TextView
+        android:id="@+id/textview_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:text="fight song"
+        android:textColor="#000000"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textview_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:text="unkown"
+        android:textColor="#555555"
+        android:textSize="15sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <ImageView
+            android:id="@+id/imageview_like"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_like" />
+
+        <ImageView
+            android:id="@+id/imageview_pre"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_previous" />
+
+        <ImageView
+            android:id="@+id/imageview_play"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_play" />
+
+        <ImageView
+            android:id="@+id/imageview_next"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_next" />
+    </LinearLayout>
+</LinearLayout>

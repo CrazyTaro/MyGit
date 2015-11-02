@@ -17,8 +17,6 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
     private static UpdateSeekBarUtils mInstance;
     //用于更新显示的进度条
     private SeekBar mSeekbar;
-    //绑定的数据来源
-    private PlayBinder mBinder;
     //更新线程
     private Runnable mUpdateProgressRunnable;
     private Runnable mUpdateBufferRunnable;
@@ -28,10 +26,6 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
     private volatile int mBufferPercent;
     private volatile int mProgress;
     private volatile int mDuration;
-    //同步处理,是否更新
-    private volatile boolean mIsStart = false;
-    //同步处理,是否退出更新线程
-    private volatile boolean mIsBreak = false;
 
     /**
      * 获取更新进度条工具的唯一实例
@@ -51,10 +45,10 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
             @Override
             public void run() {
                 if (mSeekbar != null) {
-                    if (mSeekbar.getMax() <= 0) {
+                    if (mSeekbar.getMax() <= 0 || mSeekbar.getMax() == 100) {
                         mSeekbar.setMax(mDuration);
                     }
-                    Log.i("thread","progress update");
+                    Log.i("thread", "progress update");
                     mSeekbar.setProgress(mProgress);
                 }
             }
@@ -70,7 +64,9 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
         };
     }
 
-    /**更新进度条*/
+    /**
+     * 更新进度条
+     */
     private void updateProgress(int progress, int duration) {
         mProgress = progress;
         mDuration = duration;
@@ -108,24 +104,9 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
         //保存新的参数
         this.mUiActivity = uiActivity;
         this.mSeekbar = seekBar;
-        mIsStart = true;
-        mIsBreak = false;
         return true;
     }
 
-    /**
-     * 继续更新
-     */
-    private void continueUpdate() {
-        this.mIsStart = true;
-    }
-
-    /**
-     * 暂停更新
-     */
-    public void pauseUpdate() {
-        this.mIsStart = false;
-    }
 
     /**
      * 销毁更新线程及重置所有的数据

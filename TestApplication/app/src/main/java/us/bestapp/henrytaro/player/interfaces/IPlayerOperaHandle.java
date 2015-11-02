@@ -17,6 +17,16 @@ public interface IPlayerOperaHandle {
     void pause();
 
     /**
+     * 继续播放,不管当前的状态如何,都尝试继续播放被暂停的歌曲,若未有歌曲被暂停,则播放当前歌曲
+     */
+    void continues();
+
+    /**
+     * 停止播放,不管当前的状态如何,都停止音乐的播放,但不改变当前音乐的播放进度
+     */
+    void stop();
+
+    /**
      * 上一首(可播放历史记录)
      */
     void previous();
@@ -58,7 +68,7 @@ public interface IPlayerOperaHandle {
     /**
      * 销毁更新线程
      */
-    void destoryUpdateThread();
+    void destroyUpdateThread();
 
     /**
      * 创建并开始更新线程
