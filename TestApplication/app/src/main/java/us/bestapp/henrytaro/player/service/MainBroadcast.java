@@ -13,10 +13,6 @@ import us.bestapp.henrytaro.player.utils.CommonUtils;
  * Created by xuhaolin on 15/10/29.
  */
 public class MainBroadcast extends BroadcastReceiver {
-    String SYSTEM_REASON = "reason";
-    String SYSTEM_HOME_KEY = "homekey";
-    String SYSTEM_HOME_KEY_LONG = "recentapps";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

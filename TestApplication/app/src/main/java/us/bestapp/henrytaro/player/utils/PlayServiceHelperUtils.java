@@ -1,17 +1,17 @@
 package us.bestapp.henrytaro.player.utils;
 
 import android.app.Activity;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.os.IBinder;
 import android.widget.SeekBar;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import us.bestapp.henrytaro.player.interfaces.IServiceConnection;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.service.PlaySerive;
 
@@ -19,35 +19,33 @@ import us.bestapp.henrytaro.player.service.PlaySerive;
  * Created by xuhaolin on 15/10/20.
  * 辅助工具类,用于简化服务及相关操作的一些初始化
  */
-public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnBufferingUpdateListener, ServiceConnection {
+public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnBufferingUpdateListener, IServiceConnection {
     //保留程序的引用
     private Context mApplicationContext;
     private UpdateSeekBarUtils mUpdateSeekbarUtils;
     private Activity mUiActivity;
     private SeekBar mUpdateSeekBar;
-    private List<ServiceConnection> mBindedConns;
-    private List<ServiceConnection> mUnbindConnections;
-    private ComponentName mComponent;
-    private IBinder mIBinder;
+    private List<IServiceConnection> mBindedConns;
+    private List<IServiceConnection> mUnbindConnections;
+    private boolean mIsConnected = false;
     private static PlayServiceHelperUtils mInstance;
 
-    public static synchronized PlayServiceHelperUtils getInstance(Activity uiActivity, SeekBar updateSeekBar) {
-        if (uiActivity == null) {
+    public static synchronized PlayServiceHelperUtils getInstance(Context context) {
+        if (context == null) {
             throw new RuntimeException("context can not be null");
         }
         if (mInstance == null) {
-            mInstance = new PlayServiceHelperUtils(uiActivity, updateSeekBar);
-        } else {
-            mInstance.setNewSeekBar(updateSeekBar, uiActivity);
+            mInstance = new PlayServiceHelperUtils(context);
         }
         return mInstance;
     }
 
     /**
      * 返回可能存在的实例对象
+     *
      * @return
      */
-    public static synchronized PlayServiceHelperUtils getInstanceWhenExsit(){
+    public static synchronized PlayServiceHelperUtils getInstanceWhenExsit() {
         return mInstance;
     }
 
@@ -55,22 +53,21 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
     /**
      * 构造函数,当参数为null时抛出异常,<font color="#ff9900"><b>此类保存的Context为应用的Context,不会持有当前参数context</b></font>
      *
-     * @param uiActivity    不可为null,用于显示更新进度条的Activity,此处的作用还包括充当context
-     * @param updateSeekBar 用于更新进度的进度条
+     * @param context
      */
-    private PlayServiceHelperUtils(Activity uiActivity, SeekBar updateSeekBar) {
-        setNewSeekBar(updateSeekBar, uiActivity);
+    private PlayServiceHelperUtils(Context context) {
         //获取应用context
-        mApplicationContext = uiActivity.getApplicationContext();
+        mApplicationContext = context.getApplicationContext();
         mUpdateSeekbarUtils = UpdateSeekBarUtils.getInstance();
         mBindedConns = new LinkedList<>();
         mUnbindConnections = new LinkedList<>();
 
-        //创建服务
-        Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
-        //启动服务
-        mApplicationContext.startService(serviceIntent);
-        mApplicationContext.bindService(serviceIntent, this, Context.BIND_AUTO_CREATE);
+        MyBroadcastReceiver broadcastReceiver = new MyBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SERVICE_START);
+        intentFilter.addAction(CommonUtils.IntentAction.INTENT_ACTION_SERVICE_DESTROY);
+
+        mApplicationContext.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     /**
@@ -78,22 +75,26 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
      *
      * @param connection 服务连接接口,不可为null
      */
-    public void initial(ServiceConnection connection) {
+    public void addServiceConnection(IServiceConnection connection) {
         if (connection == null) {
             throw new RuntimeException("service connection can not be null");
         }
-        if (mComponent != null && mIBinder != null) {
-            connection.onServiceConnected(mComponent, mIBinder);
+        if (mIsConnected) {
+            connection.onServiceConnected(PlaySerive.getBinder());
             mBindedConns.add(connection);
         } else {
             mUnbindConnections.add(connection);
         }
-//        //创建服务
-//        Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
-//        //启动服务
-//        mApplicationContext.startService(serviceIntent);
-//        //绑定服务
-//        mApplicationContext.bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
+//        创建服务
+        Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
+//        启动服务
+        mApplicationContext.startService(serviceIntent);
+    }
+
+    public void removeServiceConnection(IServiceConnection connection) {
+        if (!mBindedConns.remove(connection)) {
+            mUnbindConnections.remove(connection);
+        }
     }
 
     /**
@@ -102,7 +103,6 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
     public void stopService() {
         //创建服务
         Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
-        mApplicationContext.unbindService(this);
         //启动服务
         mApplicationContext.stopService(serviceIntent);
     }
@@ -113,7 +113,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
      * @param seekBar    新进度条
      * @param uiActivity 此参数必须与进度条所在的UI界面关联,即进度条必须在此activity中
      */
-    public void setNewSeekBar(SeekBar seekBar, Activity uiActivity) {
+    public void setUpdateActivityWithSeekBar(SeekBar seekBar, Activity uiActivity) {
         if (uiActivity != null && uiActivity != this.mUiActivity) {
             this.mUiActivity = uiActivity;
         }
@@ -178,7 +178,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
 //            binder.getMediaPlayerCallback().addOnProgressUpdateListener(mUpdateSeekbarUtils);
 //        }
 //    }
-
+//
 //    /**
 //     * 服务断开预设
 //     */
@@ -215,30 +215,28 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
     }
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        mComponent = name;
-        mIBinder = service;
+    public void onServiceConnected(ITrackHandleBinder service) {
+        mIsConnected = true;
         for (; mUnbindConnections.size() > 0; ) {
-            ServiceConnection conn = mUnbindConnections.get(0);
-            conn.onServiceConnected(mComponent, mIBinder);
+            IServiceConnection conn = mUnbindConnections.get(0);
+            conn.onServiceConnected(service);
             mBindedConns.add(conn);
             mUnbindConnections.remove(0);
         }
         if (service != null) {
-            ITrackHandleBinder binder = (ITrackHandleBinder) service;
             //设置音乐加载初始化监听/播放完毕监听/缓存更新监听
-            binder.getMediaPlayerCallback().setOnPreparedListener(this);
-            binder.getMediaPlayerCallback().setOnCompletitonListener(this, false);
-            binder.getMediaPlayerCallback().setOnBufferUpdateListener(this);
-            binder.getMediaPlayerCallback().addOnProgressUpdateListener(mUpdateSeekbarUtils);
+            service.getMediaPlayerCallback().setOnPreparedListener(this);
+            service.getMediaPlayerCallback().setOnCompletitonListener(this, false);
+            service.getMediaPlayerCallback().setOnBufferUpdateListener(this);
+            service.getMediaPlayerCallback().addOnProgressUpdateListener(mUpdateSeekbarUtils);
         }
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName name) {
+    public void onServiceDisconnected() {
         for (; mBindedConns.size() > 0; ) {
-            ServiceConnection conn = mBindedConns.get(0);
-            conn.onServiceDisconnected(name);
+            IServiceConnection conn = mBindedConns.get(0);
+            conn.onServiceDisconnected();
             mBindedConns.remove(conn);
         }
         if (mUpdateSeekbarUtils != null) {
@@ -248,5 +246,21 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
         this.mApplicationContext = null;
         this.mUiActivity = null;
         this.mUpdateSeekBar = null;
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case CommonUtils.IntentAction.INTENT_ACTION_SERVICE_START:
+                    onServiceConnected(PlaySerive.getBinder());
+                    break;
+                case CommonUtils.IntentAction.INTENT_ACTION_SERVICE_DESTROY:
+                    onServiceDisconnected();
+                    break;
+            }
+        }
     }
 }

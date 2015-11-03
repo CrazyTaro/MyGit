@@ -129,6 +129,9 @@ public class CommonUtils {
     }
 
     public static final class IntentAction {
+        public static final String INTENT_ACTION_SERVICE_START="us.bestapp.player.service.start";
+        public static final String INTENT_ACTION_SERVICE_DESTROY="us.bestapp.player.service.destroy";
+
         public static final String INTENT_ACTION_SCREEN_ACTIVITY_DESTROY = "us.bestapp.player.screen_activity_destroy";
         public static final String INTENT_ACTION_SCREEN_ACTIVITY_CREATE = "us.bestapp.player.screen_activity_create";
 

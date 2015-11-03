@@ -1,6 +1,9 @@
 package us.bestapp.henrytaro.player.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -11,7 +14,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.LinkedList;
@@ -70,6 +75,8 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
     private Runnable mUpdateProgressRunnable;
     private Handler mHandler;
 
+    private PowerManager.WakeLock mWakeLock;
+
     /**
      * 返回服务绑定的对象(服务只存在一个,绑定的对象也只存在一个)
      */
@@ -85,13 +92,33 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(CommonUtils.IntentAction.INTENT_ACTION_SERVICE_START);
+        sendBroadcast(broadcastIntent);
+
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, new Intent(this, PlaySerive.class), 0);
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//        builder.setContentTitle("service");
+//        builder.setContentText("on going");
+//        builder.setSmallIcon(R.drawable.ic_track);
+//        builder.setContentIntent(pendingIntent);
+//        Notification notification = builder.build();
+//        startForeground(startId, notification);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         initial();
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, PlaySerive.class.getName());
+        mWakeLock.acquire();
     }
 
 
@@ -99,6 +126,16 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
     public void onDestroy() {
         super.onDestroy();
         Log.i("bug", "recycle service");
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(CommonUtils.IntentAction.INTENT_ACTION_SERVICE_DESTROY);
+        sendBroadcast(broadcastIntent);
+
+        if(mWakeLock!=null){
+            mWakeLock.release();
+            mWakeLock=null;
+        }
+
+//        stopForeground(true);
         //回收通知栏相关的资源,取消通知栏常驻
         NotificationUtils.recycle();
 
@@ -170,9 +207,9 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
 
         //初始化通知栏播放控制器
         NotificationUtils.initial(this);
-        Intent activityIntent=null;
-        if(NOTIFICATION_ACTIVITY!=null){
-            activityIntent=new Intent(this.getApplicationContext(),NOTIFICATION_ACTIVITY);
+        Intent activityIntent = null;
+        if (NOTIFICATION_ACTIVITY != null) {
+            activityIntent = new Intent(this.getApplicationContext(), NOTIFICATION_ACTIVITY);
         }
         NotificationUtils.showNotifcation("播覇音乐", "音乐播放~", "播覇音乐", "音乐播放~", activityIntent);
         registerReceivers();
@@ -180,6 +217,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         requestAudioFocus(false, null);
     }
 
+    //销毁后台控制播放的线程(销毁后播放功能不可再用)
     private void destroyBackgroundThread() {
         if (mBackgroundThread != null && mBackgroundThread.isAlive()) {
             mBackgroundThread.interrupt();
@@ -187,6 +225,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //注册广播
     private void registerReceivers() {
         //注册广播
         //通知栏控制条通知操作广播
@@ -220,6 +259,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //取消广播注册
     private void unRegisterReceivers() {
         if (mNotificationBroadCast != null) {
             this.unregisterReceiver(mNotificationBroadCast);
@@ -234,6 +274,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //请求媒体音乐的焦点
     private void requestAudioFocus(boolean isPlay, Bitmap ablumn) {
         AudioManager audioMgr = (AudioManager) this.getSystemService(AUDIO_SERVICE);
         audioMgr.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
@@ -241,19 +282,23 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         updateTrackStatus(mBinder.getCurrentTrack(), isPlay, ablumn);
     }
 
+    //更新歌曲状态
     private void updateTrackStatus(AbsTrack currentPlay, boolean isPlay, Bitmap ablumn) {
         String trackName = "播覇音乐";
         String trackArtist = "暂未播放任何音乐";
         int resID = 0;
+        //设置当前播放歌曲的信息
         if (currentPlay != null) {
             trackName = currentPlay.getTrackName();
             trackArtist = currentPlay.getTrackArtist();
         }
+        //根据当前播放状态确定显示使用的图像
         if (isPlay) {
             resID = RES_ID_PAUSE;
         } else {
             resID = RES_ID_PLAY;
         }
+        //通知更新当前播放歌曲
         Intent updateBroadcast = new Intent();
         updateBroadcast.setAction(CommonUtils.IntentAction.INTENT_ACTION_TRACK_UPDATE);
         updateBroadcast.putExtra(CommonUtils.IntentAction.INTENT_EXTRA_TRACK_NAME, trackName);
@@ -329,12 +374,14 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //播放当前歌曲
     private void threadPlay() {
         //尝试播放当前歌曲
         tryPlayCurrentTrack(IPlayCallback.IN_PLAY);
         onStatusChanged(IPlayCallback.IN_PLAY);
     }
 
+    //尝试继续播放歌曲(若为第一次播放,则直接播放歌曲,如果尝试继续播放歌曲失败,则播放当前歌曲)
     private void threadContinue() {
         if (mIsFirstPlay) {
             //若当前播放的音乐为null且为第一次播放,则对尝试根据当前的播放模式生成音乐进行播放
@@ -356,6 +403,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         onStatusChanged(IPlayCallback.IN_PLAY);
     }
 
+    //暂停(停止状态尝试播放,播放状态尝试停止 )
     private void threadPause() {
         //暂停事件
         if (!threadStop()) {
@@ -363,6 +411,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //停止
     private boolean threadStop() {
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
@@ -376,6 +425,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    //播放上一首
     private void threadPrevious() {
         //获取当前的时间
         int intervalTime = getCurrentPosition() / 1000;
@@ -390,6 +440,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         onStatusChanged(IPlayCallback.IN_PREVIOUS);
     }
 
+    //播放下一首
     private void threadNext() {
         //获取下一首歌曲
         AbsTrack next = mBinder.getNextTrack();
@@ -398,6 +449,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         onStatusChanged(IPlayCallback.IN_NEXT);
     }
 
+    //播放指定歌曲
     private void threadPlay(AbsTrack source, int index) {
         mBinder.setCurrentPlayIndex(index);
         tryPlayTrack(IPlayCallback.IN_PLAY, source);
@@ -405,6 +457,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         mIsFirstPlay = false;
     }
 
+    //设置播放进度
     private void threadSeekTo(int position) {
         try {
             //移动到指定的播放位置
@@ -659,7 +712,9 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-                continues();
+                if (!mIsFirstPlay && !isPlaying()) {
+                    continues();
+                }
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:

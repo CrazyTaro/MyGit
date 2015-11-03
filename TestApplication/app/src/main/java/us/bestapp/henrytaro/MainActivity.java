@@ -1,11 +1,8 @@
 package us.bestapp.henrytaro;
 
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.DragEvent;
@@ -21,6 +18,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import us.bestapp.henrytaro.player.interfaces.IPlayListHandle;
+import us.bestapp.henrytaro.player.interfaces.IServiceConnection;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.model.AbsTrack;
 import us.bestapp.henrytaro.player.model.Song;
@@ -28,7 +26,7 @@ import us.bestapp.henrytaro.player.utils.CommonUtils;
 import us.bestapp.henrytaro.player.utils.PlayServiceHelperUtils;
 
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection {
+public class MainActivity extends AppCompatActivity implements IServiceConnection {
     private Button mBtnPre;
     private Button mBtnNext;
     private Button mBtnPlay;
@@ -169,8 +167,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         });
 
         mHanlder.sendEmptyMessage(0x1);
-        mPlayServiceHelperUtils = PlayServiceHelperUtils.getInstance(this, mSeekBar);
-        mPlayServiceHelperUtils.initial(this);
+        mPlayServiceHelperUtils = PlayServiceHelperUtils.getInstance(this);
+        mPlayServiceHelperUtils.addServiceConnection(this);
+        mPlayServiceHelperUtils.setUpdateActivityWithSeekBar(mSeekBar, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPlayServiceHelperUtils.removeServiceConnection(this);
     }
 
     @Override
@@ -186,9 +191,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        this.mBinder = (ITrackHandleBinder) service;
-        mPlayServiceHelperUtils.onServiceConnect(mBinder);
+    public void onServiceConnected(ITrackHandleBinder service) {
+        this.mBinder = service;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -210,8 +214,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName name) {
-        mPlayServiceHelperUtils.onServiceDisconnected();
+    public void onServiceDisconnected() {
         mBinder = null;
         mPlayServiceHelperUtils = null;
         mHanlder.sendEmptyMessage(0x2);

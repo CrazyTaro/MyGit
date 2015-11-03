@@ -26,6 +26,7 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
     private volatile int mBufferPercent;
     private volatile int mProgress;
     private volatile int mDuration;
+    private boolean mIsBufferFinish = false;
 
     /**
      * 获取更新进度条工具的唯一实例
@@ -80,9 +81,12 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
      * 更新进度条缓存的数据
      */
     public void updateBufferProgress(int percent) {
-        mBufferPercent = percent;
-        if (mUiActivity != null && mSeekbar != null) {
-            mUiActivity.runOnUiThread(mUpdateBufferRunnable);
+        mIsBufferFinish = (percent == 100 && mBufferPercent == 100) ? true : false;
+        if (!mIsBufferFinish) {
+            mBufferPercent = percent;
+            if (mUiActivity != null && mSeekbar != null) {
+                mUiActivity.runOnUiThread(mUpdateBufferRunnable);
+            }
         }
     }
 
@@ -97,6 +101,8 @@ public class UpdateSeekBarUtils implements IPlayCallback.onProgressUpdateListene
     public boolean startUpdate(Activity uiActivity, SeekBar seekBar) {
         //任何一个参数理论上都不可以为null
         if (uiActivity == null || seekBar == null) {
+            this.mUiActivity = null;
+            this.mSeekbar = null;
             return false;
             //throw new RuntimeException("binder, activity, seekbar can not be null or ui can't be update");
         }
