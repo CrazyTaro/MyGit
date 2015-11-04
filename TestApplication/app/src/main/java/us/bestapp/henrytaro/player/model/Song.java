@@ -1,7 +1,5 @@
 package us.bestapp.henrytaro.player.model;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by xuhaolin on 15/10/20.
  */
@@ -128,11 +126,6 @@ public class Song extends us.bestapp.henrytaro.player.model.AbsTrack<String> {
     @Override
     public String getTrackArtist() {
         return getAlbum();
-    }
-
-    @Override
-    public Bitmap getTrackAblumn() {
-        return null;
     }
 
     @Override

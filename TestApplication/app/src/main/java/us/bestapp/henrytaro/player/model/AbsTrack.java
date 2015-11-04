@@ -2,11 +2,13 @@ package us.bestapp.henrytaro.player.model;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by xuhaolin on 15/10/18.
  * 音乐抽象基类
  */
-public abstract class AbsTrack<K> {
+public abstract class AbsTrack<K> implements Serializable {
     public int index;
 
     /***
@@ -39,14 +41,14 @@ public abstract class AbsTrack<K> {
         }
     }
 
-    /**获取当前歌曲的url或者地址*/
+    /**
+     * 获取当前歌曲的url或者地址
+     */
     public abstract String getUrlOrFilePath();
 
     public abstract String getTrackName();
 
     public abstract String getTrackArtist();
-
-    public abstract Bitmap getTrackAblumn();
 
     /**
      * 获取当前音乐的唯一标识(此值不同时两个对象equals结果为false),作为区分不同音乐的标识
