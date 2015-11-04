@@ -1,35 +1,22 @@
 package us.bestapp.henrytaro.player.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.app.DialogFragment;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.annotation.ElementType;
-import java.lang.reflect.Method;
 import java.util.Calendar;
 
 import us.bestapp.henrytaro.R;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.model.AbsTrack;
 import us.bestapp.henrytaro.player.service.PlaySerive;
-import us.bestapp.henrytaro.player.service.TrackStatusBroadcast;
+import us.bestapp.henrytaro.player.service.ScreenLockUpdateBroadcast;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
 
 /**
@@ -37,7 +24,7 @@ import us.bestapp.henrytaro.player.utils.CommonUtils;
  */
 public class ScreenLockActivity extends Activity implements View.OnClickListener {
 
-    private TrackStatusBroadcast mTrackStatusBroadcast;
+    private ScreenLockUpdateBroadcast mScreenLockUpdateBroadcast;
 
     public class ViewHolder {
         public ImageView imageViewPlay;
@@ -76,7 +63,7 @@ public class ScreenLockActivity extends Activity implements View.OnClickListener
         params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
         this.getWindow().setAttributes(params);
 
-        mTrackStatusBroadcast = new TrackStatusBroadcast(this, mViewHolder);
+        mScreenLockUpdateBroadcast = new ScreenLockUpdateBroadcast(this, mViewHolder);
 //        params.width=windowSize.x;
 //        params.height=windowSize.y;
 //        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
@@ -116,7 +103,6 @@ public class ScreenLockActivity extends Activity implements View.OnClickListener
 //        //TODO:三星可用
 
         initialView(lock, mViewHolder);
-        updateView(PlaySerive.getBinder());
     }
 
     private void updateView(ITrackHandleBinder binder) {
@@ -141,8 +127,8 @@ public class ScreenLockActivity extends Activity implements View.OnClickListener
 
         Calendar date = Calendar.getInstance();
         date.setTimeInMillis(System.currentTimeMillis());
-        mViewHolder.textViewTime.setText(CommonUtils.getTimeStr(TrackStatusBroadcast.FORMAT_TIME, date));
-        mViewHolder.textViewDate.setText(CommonUtils.getDateStr(TrackStatusBroadcast.FORMAT_DATE, date));
+        mViewHolder.textViewTime.setText(CommonUtils.getTimeStr(ScreenLockUpdateBroadcast.FORMAT_TIME, date));
+        mViewHolder.textViewDate.setText(CommonUtils.getDateStr(ScreenLockUpdateBroadcast.FORMAT_DATE, date));
     }
 
     private void initialView(View view, ViewHolder holder) {
@@ -164,15 +150,16 @@ public class ScreenLockActivity extends Activity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
-        if (mTrackStatusBroadcast != null) {
-            this.registerReceiver(mTrackStatusBroadcast, mTrackStatusBroadcast.getDefaultBroadcastFilter());
+        if (mScreenLockUpdateBroadcast != null) {
+            this.registerReceiver(mScreenLockUpdateBroadcast, mScreenLockUpdateBroadcast.createBroadcastFilter());
         }
+        updateView(PlaySerive.getBinder());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        this.unregisterReceiver(mTrackStatusBroadcast);
+        this.unregisterReceiver(mScreenLockUpdateBroadcast);
     }
 
     @Override
