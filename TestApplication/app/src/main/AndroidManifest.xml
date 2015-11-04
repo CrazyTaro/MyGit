@@ -28,7 +28,7 @@
             android:name=".player.ui.ScreenLockActivity"
             android:launchMode="singleInstance" />
 
-        <service android:name="us.bestapp.henrytaro.player.service.PlaySerive" />
+        <service android:name=".player.service.PlayService" />
     </application>
 
 </manifest>
