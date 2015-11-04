@@ -1,13 +1,9 @@
 package us.bestapp.henrytaro.player.service;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
-import android.service.media.MediaBrowserService;
 import android.util.Log;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import us.bestapp.henrytaro.player.interfaces.IPlayCallback;
@@ -27,7 +23,7 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
     //唯一对象
     private static PlayBinder mInstance;
     //绑定的服务
-    private PlaySerive mService;
+    private PlayService mService;
     //播放列表处理
     private PlayListUtils mPlayList;
     //播放回调
@@ -40,7 +36,7 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
      * @param service
      * @return
      */
-    public static synchronized PlayBinder getInstance(PlaySerive service) {
+    public static synchronized PlayBinder getInstance(PlayService service) {
         if (mInstance == null) {
             mInstance = new PlayBinder(service);
         }
@@ -52,7 +48,7 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
      *
      * @param serive
      */
-    private PlayBinder(PlaySerive serive) {
+    private PlayBinder(PlayService serive) {
         this.mService = serive;
         mPlayList = new PlayListUtils();
     }
@@ -130,7 +126,7 @@ public class PlayBinder extends Binder implements ITrackHandleBinder {
 
     @Override
     public void destroy() {
-        Intent stopService = new Intent(mService, PlaySerive.class);
+        Intent stopService = new Intent(mService, PlayService.class);
         mService.stopService(stopService);
     }
 

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -15,11 +16,14 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import us.bestapp.henrytaro.MainActivity;
 import us.bestapp.henrytaro.R;
+import us.bestapp.henrytaro.player.interfaces.IAblumUpdateCallBack;
 import us.bestapp.henrytaro.player.interfaces.IMediaPlayerCallback;
 import us.bestapp.henrytaro.player.interfaces.IPlayCallback;
 import us.bestapp.henrytaro.player.interfaces.IPlayerOperaHandle;
@@ -32,7 +36,7 @@ import us.bestapp.henrytaro.player.utils.NotificationUtils;
  * Created by xuhaolin on 15/10/18.
  * 播放后台服务
  */
-public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPlayerCallback, MediaPlayer.OnCompletionListener, Runnable, AudioManager.OnAudioFocusChangeListener {
+public class PlayService extends Service implements IPlayerOperaHandle, IMediaPlayerCallback, MediaPlayer.OnCompletionListener, Runnable, AudioManager.OnAudioFocusChangeListener, IAblumUpdateCallBack {
     public static final int THREAD_PLAY = 0x1;
     public static final int THREAD_PAUSE = 0x2;
     public static final int THREAD_PREVIOUS = 0x3;
@@ -71,6 +75,10 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
     private Runnable mUpdateProgressRunnable;
     private Handler mHandler;
 
+    public static int[] ARTIST_ABLUMN = {R.drawable.aritst_cao_ge, R.drawable.artist_fantisty_man, R.drawable.artist_hoishow, R.drawable.artist_meng_ting_wei, R.drawable.artist_pikaqiu,
+            R.drawable.artist_shae, R.drawable.artist_skrillex};
+    public static Map<Integer, Bitmap> ARTIST_ABLUMN_MAP;
+
     /**
      * 返回服务绑定的对象(服务只存在一个,绑定的对象也只存在一个)
      */
@@ -95,7 +103,7 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         broadcastIntent.setAction(CommonUtils.IntentAction.INTENT_ACTION_SERVICE_START);
         sendBroadcast(broadcastIntent);
 
-//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, new Intent(this, PlaySerive.class), 0);
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 0, new Intent(this, PlayService.class), 0);
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 //        builder.setContentTitle("service");
 //        builder.setContentText("on going");
@@ -152,6 +160,14 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         }
     }
 
+    private void loadArtistAblumn() {
+        ARTIST_ABLUMN_MAP = new HashMap<>(ARTIST_ABLUMN.length);
+        for (int i = 0; i < ARTIST_ABLUMN.length; i++) {
+            Bitmap ablumn = BitmapFactory.decodeResource(this.getResources(), ARTIST_ABLUMN[i]);
+            ARTIST_ABLUMN_MAP.put(i, ablumn);
+        }
+    }
+
     //初始化
     private void initial() {
         mBinder = us.bestapp.henrytaro.player.service.PlayBinder.getInstance(this);
@@ -204,6 +220,8 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
         registerReceivers();
 
         requestAudioFocus(false, null);
+
+        loadArtistAblumn();
     }
 
     //销毁后台控制播放的线程(销毁后播放功能不可再用)
@@ -697,6 +715,18 @@ public class PlaySerive extends Service implements IPlayerOperaHandle, IMediaPla
                 savePlayStateBeforeLostFocus(isPlaying());
                 stop();
                 break;
+        }
+    }
+
+    @Override
+    public void updateAblumn(Bitmap ablumn, AbsTrack updateTrack) {
+        AbsTrack currentPlay = mBinder.getCurrentTrack();
+        if (ablumn == null || currentPlay == null || ablumn.isRecycled()) {
+            return;
+        } else {
+            if (currentPlay.getKey().equals(updateTrack.getKey())) {
+                NotificationUtils.updateNotification(ablumn);
+            }
         }
     }
 }
