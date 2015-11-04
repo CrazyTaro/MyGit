@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import java.util.Random;
+
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.ui.ScreenLockActivity;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
@@ -15,6 +17,7 @@ import us.bestapp.henrytaro.player.utils.NotificationUtils;
  * 主广播,启动于服务中,用于处理屏幕点亮锁屏/通知栏音乐状态更新/响应通知栏音乐操作/耳机拔插监听
  */
 public class MainBroadcast extends BroadcastReceiver {
+
     public static final int HEADSET_IN = 1;
     public static final int HEADSET_OUT = 0;
     public static final int MICROPHONE_YES = 1;
@@ -81,7 +84,7 @@ public class MainBroadcast extends BroadcastReceiver {
         int headsetState = intent.getIntExtra(CommonUtils.IntentExtra.INTENT_EXTRA_HEADSET, -1);
         //耳机拔出
         if (headsetState == HEADSET_OUT) {
-            ITrackHandleBinder binder = PlaySerive.getBinder();
+            ITrackHandleBinder binder = PlayService.getBinder();
             if (binder != null) {
                 //停止播放
                 binder.getOperaHandle().stop();
@@ -95,7 +98,7 @@ public class MainBroadcast extends BroadcastReceiver {
      * @param context
      */
     private void handleActionFromScreenOn(Context context) {
-        ITrackHandleBinder binder = PlaySerive.getBinder();
+        ITrackHandleBinder binder = PlayService.getBinder();
         //当前歌曲正在播放则启动锁屏,否则不使用锁屏
         if (binder != null && binder.getOperaHandle().isPlaying()) {
             //启动该第三方锁屏
@@ -114,7 +117,7 @@ public class MainBroadcast extends BroadcastReceiver {
     private void handleActionFromNotification(String action) {
         //获取当前服务绑定的binder
         //binder不存在时,不进行任何操作
-        ITrackHandleBinder binder = PlaySerive.getBinder();
+        ITrackHandleBinder binder = PlayService.getBinder();
         if (binder == null) {
             return;
         }
@@ -153,6 +156,8 @@ public class MainBroadcast extends BroadcastReceiver {
         String trackName = intent.getStringExtra(CommonUtils.IntentExtra.INTENT_EXTRA_TRACK_NAME);
         String trackArtist = intent.getStringExtra(CommonUtils.IntentExtra.INTENT_EXTRA_TRACK_ARTITST);
         int playResID = intent.getIntExtra(CommonUtils.IntentExtra.INTENT_EXTRA_TRACK_PLAY_RESID, 0);
+        Random random = new Random();
+        int randomIndex = random.nextInt(PlayService.ARTIST_ABLUMN.length);
 
         if (trackName != null && trackArtist != null) {
             if (playResID == 0) {
@@ -160,7 +165,7 @@ public class MainBroadcast extends BroadcastReceiver {
                 NotificationUtils.updateNotification(trackName, trackArtist);
             } else {
                 //更新所有数据
-                NotificationUtils.updateNotification(trackName, trackArtist, playResID);
+                NotificationUtils.updateNotification(trackName, trackArtist, playResID, PlayService.ARTIST_ABLUMN_MAP.get(randomIndex));
             }
         }
     }
