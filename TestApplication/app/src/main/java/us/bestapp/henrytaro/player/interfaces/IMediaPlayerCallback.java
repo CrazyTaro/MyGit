@@ -48,7 +48,7 @@ public interface IMediaPlayerCallback {
     /**
      * 设置播放器状态切换监听事件
      */
-    void setOnPlayerStatusChangedListener(IPlayCallback.onPlayerStatusChangedListener listener);
+    void setOnPlayerStateChangedListener(IPlayCallback.onPlayerStateChangedListener listener);
 
     /**
      * 添加进度监听事件

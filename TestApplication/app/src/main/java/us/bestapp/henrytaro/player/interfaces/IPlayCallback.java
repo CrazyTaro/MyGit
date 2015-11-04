@@ -71,14 +71,14 @@ public interface IPlayCallback {
     /**
      * 播放器状态切换监听事件
      */
-    public interface onPlayerStatusChangedListener {
+    public interface onPlayerStateChangedListener {
 
         /**
          * 播放器状态切换
          *
          * @param afterChanged 切换后的状态
          */
-        void onPlayerStatusChanged(int afterChanged);
+        void onPlayerStateChanged(int afterChanged);
     }
 
     /**
