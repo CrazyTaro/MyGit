@@ -1,5 +1,6 @@
 package us.bestapp.henrytaro.player.utils;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +11,8 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
+
+import java.util.TreeMap;
 
 import us.bestapp.henrytaro.R;
 
@@ -145,14 +148,53 @@ public class NotificationUtils {
             builder.setPublicVersion(screenNotification);
         }
 
-        //否则显示小通知视图
-        RemoteViews remoteView = new RemoteViews(mServiceContext.getPackageName(), R.layout.notification_small);
-        builder.setContent(remoteView);
         Notification trackNotification = builder.build();
-
         //设置通知栏显示的内容正在运行且不会被用户删除(常驻)
-        trackNotification.flags = Notification.FLAG_NO_CLEAR;
+        trackNotification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
+        //否则显示小通知视图
+        RemoteViews remoteView = getContentView(trackNotification, mServiceContext.getPackageName());
+        setupView(remoteView, trackName, trackArtist);
+
+//        //初始化第一次显示的所有数据及图片
+//        remoteView.setTextViewText(R.id.textview_name, trackName);
+//        remoteView.setTextViewText(R.id.textview_artist, trackArtist);
+//        remoteView.setImageViewResource(R.id.imageview_ablumn, R.drawable.ic_track);
+//        remoteView.setImageViewResource(R.id.imageview_play, R.drawable.ic_play);
+//        remoteView.setImageViewResource(R.id.imageview_next, R.drawable.ic_next);
+//        remoteView.setInt(R.id.lin_container, "setBackgroundColor", Color.WHITE);
+//
+//        //绑定按钮的单击广播事件
+//        remoteView.setOnClickPendingIntent(R.id.imageview_play, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PLAY));
+//        remoteView.setOnClickPendingIntent(R.id.imageview_next, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_NEXT));
+
+        return trackNotification;
+    }
+
+    private static boolean isUseBigContentView() {
+        if (Build.VERSION.SDK_INT >= 16 && !CommonUtils.isMIUI()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static RemoteViews getContentView(Notification notification, String packageName) {
+        RemoteViews remoteViews = null;
+        if (isUseBigContentView()) {
+            remoteViews = new RemoteViews(packageName, R.layout.notification_big);
+            if (Build.VERSION.SDK_INT >= 16) {
+                notification.bigContentView = remoteViews;
+                notification.priority = Notification.PRIORITY_HIGH;
+            }
+        } else {
+            remoteViews = new RemoteViews(packageName, R.layout.notification_small);
+            notification.contentView = remoteViews;
+        }
+        return remoteViews;
+    }
+
+    private static void setupView(RemoteViews remoteView, String trackName, String trackArtist) {
         //初始化第一次显示的所有数据及图片
         remoteView.setTextViewText(R.id.textview_name, trackName);
         remoteView.setTextViewText(R.id.textview_artist, trackArtist);
@@ -164,8 +206,19 @@ public class NotificationUtils {
         //绑定按钮的单击广播事件
         remoteView.setOnClickPendingIntent(R.id.imageview_play, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PLAY));
         remoteView.setOnClickPendingIntent(R.id.imageview_next, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_NEXT));
+        if (isUseBigContentView()) {
+            //初始化其它未显示的所有数据及图片
+            remoteView.setTextViewText(R.id.textview_name, trackName);
+            remoteView.setTextViewText(R.id.textview_artist, trackArtist);
+            remoteView.setImageViewResource(R.id.imageview_like, R.drawable.ic_like);
+            remoteView.setImageViewResource(R.id.imageview_pre, R.drawable.ic_previous);
+            remoteView.setImageViewResource(R.id.imageview_close, R.drawable.ic_close);
 
-        return trackNotification;
+            //绑定其它按钮的单击广播事件
+            remoteView.setOnClickPendingIntent(R.id.imageview_like, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_LIKE));
+            remoteView.setOnClickPendingIntent(R.id.imageview_pre, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_PREVIOUS));
+            remoteView.setOnClickPendingIntent(R.id.imageview_pre, getBroadcastPendingIntent(CommonUtils.IntentAction.INTENT_ACTION_NOTIFY_CLOSE));
+        }
     }
 
     /**
@@ -188,6 +241,14 @@ public class NotificationUtils {
         startUpdate();
         updateText(trackName, trackArtist);
         submitUpdate();
+    }
+
+    public static void updateNotification(Bitmap ablumn) {
+        if (ablumn != null && !ablumn.isRecycled()) {
+            startUpdate();
+            updateView(UPDATE_VIEW_ALBUMN, ablumn);
+            submitUpdate();
+        }
     }
 
     /**
@@ -225,8 +286,7 @@ public class NotificationUtils {
      */
     private static void startUpdate() {
         //更新需要创建新的remoteviews
-        mNotificationView = new RemoteViews(mServiceContext.getPackageName(), R.layout.notification_small);
-        mTrackNotification.contentView = mNotificationView;
+        mNotificationView = getContentView(mTrackNotification, mServiceContext.getPackageName());
         updateBackgroundColor(Color.WHITE);
     }
 
