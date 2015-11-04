@@ -15,7 +15,7 @@ import java.util.Calendar;
 import us.bestapp.henrytaro.R;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
 import us.bestapp.henrytaro.player.model.AbsTrack;
-import us.bestapp.henrytaro.player.service.PlaySerive;
+import us.bestapp.henrytaro.player.service.PlayService;
 import us.bestapp.henrytaro.player.service.ScreenLockUpdateBroadcast;
 import us.bestapp.henrytaro.player.utils.CommonUtils;
 
@@ -153,7 +153,7 @@ public class ScreenLockActivity extends Activity implements View.OnClickListener
         if (mScreenLockUpdateBroadcast != null) {
             this.registerReceiver(mScreenLockUpdateBroadcast, mScreenLockUpdateBroadcast.createBroadcastFilter());
         }
-        updateView(PlaySerive.getBinder());
+        updateView(PlayService.getBinder());
     }
 
     @Override

@@ -54,11 +54,25 @@ public class CommonUtils {
     public static final String URL_I_Just_Wanna_Run = "http://m1.music.126.net/swBzXZJMeuqq753jV1a3qA==/2018703348607974.mp3";
     public static final String URL_192 = "http://hoishow-file.b0.upaiyun.com/uploads/boom_track/file/110/c89fb9a926699864c2efaa4e258deee1_ab192.mp3";
     public static final String URL_320 = "http://hoishow-file.b0.upaiyun.com/uploads/boom_track/file/110/c89fb9a926699864c2efaa4e258deee1_ab320.mp3";
+    public static final String URL_不将就 = "http://m1.music.126.net/sduBr7cmA8ZRpbwVv366tQ==/7818627185867013.mp3";
+    public static final String URL_走在冷风中 = "http://m1.music.126.net/U4AMUON6WC3HVSWAfkczeg==/5631698557584400.mp3";
+    public static final String URL_年轮 = "http://m1.music.126.net/6BeaReuG6TOYeqKu_EgoZQ==/7974757836661306.mp3";
+    public static final String URL_演员 = "http://m1.music.126.net/t-9JjLqGH2TbKPKLHwYE7g==/2938994583160304.mp3";
+    public static final String URL_模特 = "http://m1.music.126.net/tUp0j7isuVteoyBx86hqxw==/7729566743762381.mp3";
+    public static final String URL_What_Are_Words = "http://m1.music.126.net/79hBXs3RsGNU8FvdmJ7pUg==/2011006767211637.mp3";
+    public static final String URL_奇妙能力歌 = "http://m1.music.126.net/ZE7bMgL39ly1JZTBaYOFqg==/6628955604505262.mp3";
+    public static final String URL_Traveling_Light = "http://m1.music.126.net/9Fvbij1ovThu1Uqai1mPfA==/5860396976108241.mp3";
+    public static final String URL_Love_Me_Like_You_Do = "http://m1.music.126.net/AvWIphpgj4pMGhUJ5etYdQ==/2881819976646264.mp3";
+    public static final String URL_Booty_Music = "http://m1.music.126.net/hYTPhwx2Zr0Gng-puCszgA==/2081375511409143.mp3";
     public static final String URL_ = "";
+
+
 //    public static final String URL_ = "";
 
-    public static final String[] FILE_NAME = {"192bit", "320bit", "李白", "十年", "勿勿那年", "一直很安静", "夜空中最亮的星", "平凡之路", "Five Hundred Miles", "DJ", "Try", "如果有来生", "I Just Wanna Run"};
-    public static final String[] URL_MUSICS = {URL_192, URL_320, URL_李白, URL_十年, URL_匆匆那年, URL_一直很安静, URL_夜空中最亮的星, URL_平凡之路, URL_Five_Hundred_Miles, URL_DJ, URL_Try, URL_如果有来生, URL_I_Just_Wanna_Run};
+    public static final String[] FILE_NAME = {"如果有来生", "不将就", "走在冷风中", "年轮", "演员", "模特", "奇妙能力歌", "勿勿那年", "一直很安静", "夜空中最亮的星", "平凡之路", "李白", "十年",
+            "booty music", "what are words", "traveling light", "love me like you do", "Five Hundred Miles", "Try", "I Just Wanna Run", "192bit", "320bit", "DJ",};
+    public static final String[] URL_MUSICS = {URL_如果有来生, URL_不将就, URL_走在冷风中, URL_年轮, URL_演员, URL_模特, URL_奇妙能力歌, URL_匆匆那年, URL_一直很安静, URL_夜空中最亮的星, URL_平凡之路, URL_李白, URL_十年,
+            URL_Booty_Music, URL_What_Are_Words, URL_Traveling_Light, URL_Love_Me_Like_You_Do, URL_Five_Hundred_Miles, URL_Try, URL_I_Just_Wanna_Run, URL_192, URL_320, URL_DJ};
 
     /**
      * 获取指定Kbps的链接
