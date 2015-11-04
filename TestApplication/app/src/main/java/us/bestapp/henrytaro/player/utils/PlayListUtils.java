@@ -40,6 +40,7 @@ public class PlayListUtils implements IPlayListHandle {
     public PlayListUtils() {
         mAbsTrackList = new ArrayList<>();
         mCacheTrackList = new ArrayList<>();
+        mPlayListUpdateCallbackList=new LinkedList<>();
         mCurrentIndex = -1;
     }
 
