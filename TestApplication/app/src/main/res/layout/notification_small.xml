@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/lin_container"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="3dp">
 
     <ImageView
         android:id="@+id/imageview_ablumn"
-        android:layout_width="64dp"
+        android:layout_width="60dp"
         android:layout_height="match_parent"
         android:src="@drawable/ic_track" />
 
