@@ -1,22 +1,19 @@
 package us.bestapp.henrytaro.player.ui;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import us.bestapp.henrytaro.R;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
-import us.bestapp.henrytaro.player.service.PlaySerive;
+import us.bestapp.henrytaro.player.service.PlayService;
 
 /**
  * Created by xuhaolin on 15/10/29.
@@ -67,7 +64,7 @@ public class ScreenDialog extends Dialog implements View.OnClickListener {
         this.getWindow().setAttributes(params);
 //        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        mBiner = PlaySerive.getBinder();
+        mBiner = PlayService.getBinder();
     }
 
     public static void createDialog(Context context) {
