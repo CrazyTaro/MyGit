@@ -13,7 +13,7 @@ import java.util.List;
 
 import us.bestapp.henrytaro.player.interfaces.IServiceConnection;
 import us.bestapp.henrytaro.player.interfaces.ITrackHandleBinder;
-import us.bestapp.henrytaro.player.service.PlaySerive;
+import us.bestapp.henrytaro.player.service.PlayService;
 
 /**
  * Created by xuhaolin on 15/10/20.
@@ -80,13 +80,13 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
             throw new RuntimeException("service connection can not be null");
         }
         if (mIsConnected) {
-            connection.onServiceConnected(PlaySerive.getBinder());
+            connection.onServiceConnected(PlayService.getBinder());
             mBindedConns.add(connection);
         } else {
             mUnbindConnections.add(connection);
         }
 //        创建服务
-        Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
+        Intent serviceIntent = new Intent(mApplicationContext, PlayService.class);
 //        启动服务
         mApplicationContext.startService(serviceIntent);
     }
@@ -102,7 +102,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
      */
     public void stopService() {
         //创建服务
-        Intent serviceIntent = new Intent(mApplicationContext, PlaySerive.class);
+        Intent serviceIntent = new Intent(mApplicationContext, PlayService.class);
         //启动服务
         mApplicationContext.stopService(serviceIntent);
     }
@@ -143,7 +143,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
      * @param updateSeekbar 用于更新进度的进度条
      */
     public void onResume(Activity uiActivity, SeekBar updateSeekbar) {
-        ITrackHandleBinder binder = PlaySerive.getBinder();
+        ITrackHandleBinder binder = PlayService.getBinder();
         if (binder != null) {
             binder.getOperaHandle().continueUpdateNotify();
         }
@@ -158,7 +158,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
      * 停止状态
      */
     public void onStop() {
-        ITrackHandleBinder binder = PlaySerive.getBinder();
+        ITrackHandleBinder binder = PlayService.getBinder();
         if (binder != null) {
             binder.getOperaHandle().pauseUpdateNotify();
         }
@@ -255,7 +255,7 @@ public class PlayServiceHelperUtils implements MediaPlayer.OnCompletionListener,
             String action = intent.getAction();
             switch (action) {
                 case CommonUtils.IntentAction.INTENT_ACTION_SERVICE_START:
-                    onServiceConnected(PlaySerive.getBinder());
+                    onServiceConnected(PlayService.getBinder());
                     break;
                 case CommonUtils.IntentAction.INTENT_ACTION_SERVICE_DESTROY:
                     onServiceDisconnected();
