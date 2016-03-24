@@ -9,14 +9,15 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import us.bestapp.henrytaro.seatchoose.draw.utils.AbsTouchEventHandle;
-import us.bestapp.henrytaro.seatchoose.utils.TouchUtils;
+import us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle;
+import us.bestapp.henrytaro.draw.utils.TouchUtils;
 
 
 /**
  * Created by xuhaolin on 15/9/25.
+ * 绘制工具类
  */
-public class TestDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEvent, TouchUtils.IMoveEvent {
+public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEvent, TouchUtils.IMoveEvent {
     //创建工具类
     TouchUtils mTouch = new TouchUtils();
     View mDrawView = null;
@@ -30,7 +31,7 @@ public class TestDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEv
     //针对构造函数,可有不同的需求,在此例中,其实并不需要context
     //此参数是可有可无的,有时自定义绘制界面需要加载一些资源什么的需要用到context,
     //这个时候就有用了,这个看需要
-    public TestDraw(View drawView, Context context) {
+    public TestCircleDraw(View drawView, Context context) {
         this.mDrawView = drawView;
         this.mContext = context;
         //设置工具类的监听事件
