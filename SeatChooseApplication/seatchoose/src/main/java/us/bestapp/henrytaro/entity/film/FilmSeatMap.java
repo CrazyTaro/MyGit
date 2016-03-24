@@ -125,6 +125,26 @@ public class FilmSeatMap extends AbsMapEntity {
         return this.getData().mRowIDs.toArray(new String[this.getData().mRowIDs.size()]);
     }
 
+    public void setIsSucceed(boolean isSucceed) {
+        this.mIsSucceed = isSucceed;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.mErrorCode = errorCode;
+    }
+
+    public void setMessage(String message) {
+        this.mMessage = message;
+    }
+
+    public void setSeatData(FilmData seatData) {
+        this.mSeatData = seatData;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.mDataSource = dataSource;
+    }
+
     @Override
     public String toString() {
         return "FilmSeatMap{" +

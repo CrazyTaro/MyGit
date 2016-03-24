@@ -3,11 +3,13 @@ package us.bestapp.henrytaro.entity.film;/**
  */
 
 import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
-import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 
 /**
  * Created by xuhaolin on 15/9/2.<br/>
@@ -36,6 +38,10 @@ public class FilmData {
         }
     }
 
+    public void setRowList(List<FilmRow> rowList) {
+        this.mRowList = rowList;
+    }
+
     /**
      * 获取所有行中最大的列数
      *
@@ -44,6 +50,7 @@ public class FilmData {
     public int getMaxColumnCount() {
         return this.mMaxColumnCount;
     }
+
 
     /**
      * 加载行数据,同时解析数据到每个单位
@@ -63,13 +70,13 @@ public class FilmData {
                 //解析第一行数据记录第一行的行号
                 //第一行行号必须从1开始,若未从1开始则将之前的几行空行补充完整
 
-                if (i == 0 && row.getRowNumber() == 1) {
-                    lastRowNumber = row.getRowNumber();
-                } else {
-                    //当前行的行号
-                    currentRowNumber = row.getRowNumber();
-
-                    //上一行与当前行之间并不连续则补充完整
+//                if (i == 0 && row.getRowNumber() == 1) {
+//                    lastRowNumber = row.getRowNumber();
+//                } else {
+//                    //当前行的行号
+//                    currentRowNumber = row.getRowNumber();
+//
+//                    //上一行与当前行之间并不连续则补充完整
 //                    if (lastRowNumber + 1 < currentRowNumber) {
 //                        int tempIndex = i;
 //                        //在不连续的两行之间补充空行
@@ -79,11 +86,11 @@ public class FilmData {
 //                        //重新计算补充后的索引
 //                        i += currentRowNumber - lastRowNumber - 1;
 //                    }
-                    //将当前行的行号作为新的上一行的行号
-                    //继续解析
-                    lastRowNumber = row.getRowNumber();
+//                    //将当前行的行号作为新的上一行的行号
+//                    //继续解析
+//                    lastRowNumber = row.getRowNumber();
 //                    mRowIDs.add(row.getRowId());
-                }
+//                }
                 mRowIDs.add(TextUtils.isEmpty(row.getRowId()) || row.getRowId().equals("0") ? "" : row.getRowId());
             }
 

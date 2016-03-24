@@ -8,6 +8,11 @@ import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
  * Created by xuhaolin on 15/9/10.
+ *4/5 表示情侣座
+ * 1表示座位可选
+ * 2表示已选座位
+ * 3表示锁定座位
+ * -4/-5 表示已选了的情侣座位
  */
 public class EgSeat extends AbsSeatEntity {
     private int mType = IBaseParams.TYPE_ERROR;

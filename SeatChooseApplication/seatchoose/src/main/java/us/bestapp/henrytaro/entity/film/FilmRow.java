@@ -39,6 +39,10 @@ public class FilmRow extends AbsRowEntity {
         this.mRowNum = rowNumber;
     }
 
+    public FilmRow(){
+
+    }
+
 
     /**
      * 构造函数,创建一个空行
@@ -122,5 +126,17 @@ public class FilmRow extends AbsRowEntity {
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
         }
+    }
+
+    public void setRowNum(int rowNum) {
+        this.mRowNum = rowNum;
+    }
+
+    public void setRowId(String rowId) {
+        this.mRowId = rowId;
+    }
+
+    public void setColumns(String columns) {
+        this.mColumns = columns;
     }
 }

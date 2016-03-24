@@ -10,16 +10,21 @@ import java.util.ArrayList;
 
 /**
  * Created by xuhaolin on 15/9/10.
+ * 虚拟座位列表,使用数字代码座位
  */
 public class EgSeatMap extends AbsMapEntity {
+    private String[] mRowIDs = null;
 
     public EgSeatMap(int[][] arr) {
         if (arr == null) {
             throw new RuntimeException("arr can not be null");
         } else {
+            mRowIDs = new String[arr.length];
             mAbsRowList = new ArrayList<AbsRowEntity>();
             for (int i = 0; i < arr.length; i++) {
-                mAbsRowList.add(new EgSeatRow(i, arr[i]));
+                EgSeatRow row = new EgSeatRow(i, arr[i]);
+                mAbsRowList.add(row);
+                mRowIDs[i] = row.getRowNumber() + "";
             }
         }
     }
@@ -41,7 +46,7 @@ public class EgSeatMap extends AbsMapEntity {
 
     @Override
     public String[] getRowIDs() {
-        return new String[0];
+        return mRowIDs;
     }
 
 
