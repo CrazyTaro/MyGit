@@ -4,8 +4,8 @@ import android.app.Application;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
-import us.bestapp.henrytaro.seatchoose.params.GlobleParams;
-import us.bestapp.henrytaro.seatchoose.params.interfaces.IGlobleParams;
+import us.bestapp.henrytaro.params.GlobalParams;
+import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -16,7 +16,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     }
 
     public void test() {
-        String format = new GlobleParams().createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列");
+        String format = new GlobalParams().createNotificationFormat(true, "第", IGlobleParams.FORMAT_STR, "行/第", IGlobleParams.FORMAT_STR, "列");
         String str = String.format(format, 1, 2);
         Log.i("format", str);
     }
