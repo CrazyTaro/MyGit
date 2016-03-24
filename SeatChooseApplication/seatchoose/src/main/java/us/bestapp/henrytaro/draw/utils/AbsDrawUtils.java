@@ -4,16 +4,17 @@ import android.content.Context;
 import android.graphics.*;
 import android.view.MotionEvent;
 import android.view.View;
+
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsRowEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.params.GlobleParams;
+import us.bestapp.henrytaro.params.GlobalParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
 import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
-import us.bestapp.henrytaro.params.baseparams.BaseGlobleParams;
+import us.bestapp.henrytaro.params.baseparams.BaseGlobalParams;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.baseparams.BaseStageParams;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
@@ -47,7 +48,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     /**
      * 全局参数,所需要用到的全局性参数均来自此接口,如背景色/是否绘制缩略图/是否绘制行列号等
      */
-    protected BaseGlobleParams mGlobleParams = null;
+    protected BaseGlobalParams mGlobleParams = null;
     /**
      * 座位参数,座位类型及绘制座位需要的参数,详见{@link BaseSeatParams}
      */
@@ -196,7 +197,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param stage    舞台参数，可为null
      * @param globle   全局参数,此参数不可为null
      */
-    public AbsDrawUtils(Context context, View drawView, BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
+    public AbsDrawUtils(Context context, View drawView, BaseSeatParams seat, BaseStageParams stage, BaseGlobalParams globle) {
         if (context == null || drawView == null || globle == null) {
             throw new RuntimeException("初始化中context及drawView,全局参数globle不可为null,该参数都是必需的");
         }
@@ -212,12 +213,18 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         mContext = context;
         mDrawView = drawView;
 
-        initial(null, null, new GlobleParams());
+        initial(null, null, new GlobalParams());
     }
 
 
-    //初始化数据
-    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
+    /**
+     * 初始化数据,可以重写此方法初始化一些个性化的数据,但必须调用父类此方法
+     *
+     * @param seat
+     * @param stage
+     * @param globle
+     */
+    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobalParams globle) {
         if (globle == null) {
             throw new RuntimeException("初始化中全局参数globle不可为null,该参数都是必需的");
         }
@@ -228,9 +235,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //设置监听事件,实际事件分配来自于抽象父类
         mDrawView.setOnTouchListener(this);
 
-        mSeatParams = seat;
-        mStageParams = stage;
-        mGlobleParams = globle;
+        this.setParams(seat, stage, globle);
     }
 
     /**
@@ -240,7 +245,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param stageParams  舞台参数
      * @param globleParams 全局参数,若不替换原始的全局参数,此参数可设置为null,若不为null则替换原始的全局参数
      */
-    protected void setParams(BaseSeatParams seatParams, BaseStageParams stageParams, BaseGlobleParams globleParams) {
+    protected void setParams(BaseSeatParams seatParams, BaseStageParams stageParams, BaseGlobalParams globleParams) {
         if (globleParams == null && mGlobleParams != null) {
             mSeatParams = seatParams;
             mStageParams = stageParams;
@@ -498,7 +503,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param seatParams    绘制参数
      * @param drawPositionX 座位绘制的中心X轴坐标
      * @param drawPositionY 座位绘制的中心Y轴坐标
-     * @param drawStyle
+     * @param drawStyle     {@link BaseDrawStyle}
      * @since <font color="#ff9900"><b>继承此类时该方法可能需要重写</b></font>
      */
     protected abstract void drawNormalSingleSeat(Canvas canvas, Paint paint, BaseSeatParams seatParams, float drawPositionX, float drawPositionY, BaseDrawStyle drawStyle);
@@ -719,7 +724,6 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * @param drawPositionX 开始绘制的X轴中心位置
      * @param drawPositionY 开始绘制的Y轴起始位置,即座位开始绘制的第一行相同的Y坐标
      * @param edgeY         Y轴边界值,在此处特指顶端可显示的最top值,<font color="#ff9900">此值向下的部分可显示</font>
-     * @param rowCount      行数(即seatMap.length)
      */
     protected void drawFloatTitleRowNumber(Canvas canvas, Paint paint, float drawPositionX, float drawPositionY, float edgeY, String[] rowIDs) {
         float textLength = 0f;
@@ -764,7 +768,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             beginDrawY += mSeatParams.getDescriptionSize() / 3;
 
             //超过边界值的不绘制
-            if (beginDrawY > edgeY + textSize&&rowIDs[i]!= null) {
+            if (beginDrawY > edgeY + textSize && rowIDs[i] != null) {
                 canvas.drawText(rowIDs[i], beginDrawX, beginDrawY, paint);
             }
 
@@ -1569,6 +1573,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
         }
         if (mGlobleParams.isDrawRowNumber()) {
+            showMsg("draw","开始绘制行号");
             //绘制行数
             this.drawFloatTitleRowNumber(canvas, paint, drawCenterX, this.getFirstSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount()), edgeY, rowIDs);
         }
@@ -1770,7 +1775,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         int clickRow = calculateRowIndex(clickPositionY, beginDrawPositionY, seatRowCount);
         //计算列的索引
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
-        showMsg("单击座位结果:row = " + clickRow + "/column = " + clickColumn);
+        showMsg("draw", "单击座位结果:row = " + clickRow + "/column = " + clickColumn);
         //座位有效则进行处理
         if (clickColumn != -1 && clickRow != -1) {
             //返回的座位对应的索引值点

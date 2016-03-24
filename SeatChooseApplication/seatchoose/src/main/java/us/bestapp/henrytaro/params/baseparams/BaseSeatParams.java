@@ -80,11 +80,11 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     private Map<String, BaseDrawStyle> mDrawStyles = null;
 
     //是否按指定顺序绘制座位类型
-    protected boolean mIsDrawSeatStyleInOrder = false;
+    protected boolean mIsDrawSampleStyleInOrder = false;
     //座位类型指定顺序
     protected List<String> mTagInOrder = null;
     //是否绘制座位类型
-    protected boolean mIsDrawSeatDrawStyle = true;
+    protected boolean mIsDrawSampleStyle = true;
 
     protected float mDescriptionSize = DEFAULT_DESCRIPTION_SIZE;
     //移动缩放时用于暂时存放缩放前的数据(以便于正常使用比例缩放)
@@ -281,13 +281,13 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    public void setIsDrawDrawStyle(boolean isDraw) {
-        this.mIsDrawSeatDrawStyle = isDraw;
+    public void setIsDrawSampleStyle(boolean isDraw) {
+        this.mIsDrawSampleStyle = isDraw;
     }
 
     @Override
     public boolean isDrawDrawStyle() {
-        return this.mIsDrawSeatDrawStyle;
+        return this.mIsDrawSampleStyle;
     }
 
     @Override
@@ -353,7 +353,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
 
     @Override
     public void setIsDrawStyleByOrder(boolean isInOrder, List<String> tagInOrder) {
-        this.mIsDrawSeatStyleInOrder = isInOrder;
+        this.mIsDrawSampleStyleInOrder = isInOrder;
         if (isInOrder) {
             this.mTagInOrder = tagInOrder;
         } else {
@@ -363,13 +363,13 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
 
     @Override
     public boolean isDrawStyleByOrder() {
-        return this.mIsDrawSeatStyleInOrder;
+        return this.mIsDrawSampleStyleInOrder;
     }
 
     @Override
     public List<BaseDrawStyle> getDrawStyles(boolean isInOrder) {
         if (isInOrder) {
-            if (this.mIsDrawSeatStyleInOrder && this.mTagInOrder != null) {
+            if (this.mIsDrawSampleStyleInOrder && this.mTagInOrder != null) {
                 List<BaseDrawStyle> orderStyleList = new ArrayList<>();
                 for (String tag : mTagInOrder) {
                     orderStyleList.add(mDrawStyles.get(tag));
@@ -408,6 +408,11 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
 //        }
 //    }
 
+
+    @Deprecated
+    /**
+     * 方法废弃
+     */
     public void setAutoCalculateToFixScreen(float viewWidth, int columnCount) {
         float eachWidth = viewWidth / (columnCount + 2);
         float thisWidth = eachWidth * 0.8f;
@@ -425,7 +430,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      */
     public List<String> getDrawStyleDescription(boolean isInOrder) {
         if (isInOrder) {
-            if (mIsDrawSeatStyleInOrder && mTagInOrder != null) {
+            if (mIsDrawSampleStyleInOrder && mTagInOrder != null) {
                 List<String> typeDescList = new ArrayList<>();
                 for (String tag : mTagInOrder) {
                     typeDescList.add(mDrawStyles.get(tag).description);
@@ -482,7 +487,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
             //创建分离的行数的参数对象
             seatTypeParams = new BaseSeatParams[seatTypeRowCount];
             List<String> originalTagList = null;
-            if (mIsDrawSeatStyleInOrder) {
+            if (mIsDrawSampleStyleInOrder) {
                 originalTagList = mTagInOrder;
             } else {
                 originalTagList = new ArrayList<>();

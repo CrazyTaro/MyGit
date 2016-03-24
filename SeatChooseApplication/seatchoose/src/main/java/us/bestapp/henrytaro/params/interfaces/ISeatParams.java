@@ -118,7 +118,7 @@ public interface ISeatParams extends IBaseParams {
      *
      * @param isDraw
      */
-    public void setIsDrawDrawStyle(boolean isDraw);
+    public void setIsDrawSampleStyle(boolean isDraw);
 
     /**
      * 获取是否绘制座位类型标志

@@ -15,7 +15,7 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
  * 在所有接口中并不提供此类的替换接口或者是重新设置的接口,但可以通过方法获取到此类的引用,
  * 该方法是用于设置全局参数,但可能会被设置为null引用,此时会出错</p>
  */
-public class BaseGlobleParams implements IGlobleParams {
+public class BaseGlobalParams implements IGlobleParams {
 
     //画布背景颜色
     private int mCanvasBackgroundColor = Color.argb(0, 0, 0, 0);

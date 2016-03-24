@@ -12,11 +12,11 @@ import android.graphics.RectF;
 import android.view.View;
 
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
-import us.bestapp.henrytaro.params.GlobleParams;
+import us.bestapp.henrytaro.params.GlobalParams;
 import us.bestapp.henrytaro.params.SeatParams;
 import us.bestapp.henrytaro.params.StageParams;
 import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
-import us.bestapp.henrytaro.params.baseparams.BaseGlobleParams;
+import us.bestapp.henrytaro.params.baseparams.BaseGlobalParams;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.baseparams.BaseStageParams;
 
@@ -38,7 +38,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
 
     @Override
-    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobleParams globle) {
+    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobalParams globle) {
         super.initial(seat, stage, globle);
         mSeatParams = new SeatParams();
         mStageParams = new StageParams();
@@ -62,21 +62,8 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
         //绘制情侣座
         if (drawStyle.tag.equals(BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT)) {
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
-            //默认的绘制方式
-            //当该绘制图像有显示在画布上的部分时才进行绘制
-            //所有的坐标都不在画布的有效显示范围则不进行绘制
-            if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMainSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-            }
-            //当该绘制图像有显示在画布上的部分时才进行绘制
-            //所有的坐标都不在画布的有效显示范围则不进行绘制
-            if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-            }
-
             //绘制单个座位的情侣座位
+            //只绘制边
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(seatParams.getHeight() * 0.05f);
             paint.setColor(drawStyle.drawColor);
@@ -115,20 +102,8 @@ public class SimpleDrawUtils extends AbsDrawUtils {
     @Override
     protected void drawThumbnailSeat(Canvas canvas, Paint paint, BaseSeatParams seatParams, float drawPositionX, float drawPositionY, BaseDrawStyle drawStyle) {
         super.drawThumbnailSeat(canvas, paint, seatParams, drawPositionX, drawPositionY, drawStyle);
-//        //绘制单个座位
-//        //若当前的绘制类型是缩略图,则只绘制区域内的小方块作为座位显示(由于缩略图很小,没必要绘制很复杂,反正也看不清楚...)
-//        //获取座位类型对应的颜色
-//        //设置绘制座位的颜色
-//
-//        //获取绘制的区域
-//        mImageRectf = seatParams.getNormalDrawRecf(mImageRectf, drawPositionX, drawPositionY);
-//        paint.setStyle(Paint.Style.FILL);
-//        //填充颜色
-//        paint.setColor(drawStyle.drawColor);
-//        if (isRectfCanSeen(mImageRectf)) {
-//            //绘制圆角矩形
-//            canvas.drawRoundRect(mImageRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
-//        }
+        //绘制缩略图,默认使用正式绘制方式进行绘制,如需要可以自定义缩略图的绘制方式
+        //比如简单化座位的表现形式
     }
 
     @Override
@@ -174,6 +149,6 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
     @Override
     public void resetParams() {
-        this.setParams(new SeatParams(), new StageParams(), new GlobleParams());
+        this.setParams(new SeatParams(), new StageParams(), new GlobalParams());
     }
 }
