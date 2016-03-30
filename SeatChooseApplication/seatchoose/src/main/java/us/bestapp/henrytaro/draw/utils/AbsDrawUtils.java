@@ -1573,7 +1573,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
         }
         if (mGlobleParams.isDrawRowNumber()) {
-            showMsg("draw","开始绘制行号");
+            showMsg("draw", "开始绘制行号");
             //绘制行数
             this.drawFloatTitleRowNumber(canvas, paint, drawCenterX, this.getFirstSellSeatDrawCenterY(mGlobleParams.getSeatTypeRowCount()), edgeY, rowIDs);
         }
@@ -2233,9 +2233,6 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
 
-        //当双击事件触发后,取消双击事件,否则可能再次造成触发
-        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
-
 //        尝试绘制缩放动画,效果不佳
 //        //当前缩放比,当前的界面相对原始界面的比例
 //        float currentScaleRate = mSeatParams.getScaleRateCompareToOriginal();
@@ -2271,9 +2268,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 //        msg.what = 0x1;
 //
 //        mUpdateScaleHandle.sendMessage(msg);
-
-        //当双击事件触发后,取消双击事件,否则可能再次造成触发
-        this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
+//
+//        //当双击事件触发后,取消双击事件,否则可能再次造成触发
+//        this.cancelDoubleClickEvent(EVENT_DOUBLE_CLICK_BY_TIME);
     }
 
 
@@ -2384,9 +2381,12 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //计算得到的座位索引值在有效范围内
         //行索引应该<=列表行数
         //列索引应该<=列表列数
-        if (clickSeatPoint != null && clickSeatPoint.x < mSeatDrawMap.getRowCount())
-            if (!mSeatDrawMap.getSeatRowInMap(clickSeatPoint.x).isEmpty())
+        if (clickSeatPoint != null && clickSeatPoint.x < mSeatDrawMap.getRowCount()) {
+            //该行不为空行
+            if (!mSeatDrawMap.getSeatRowInMap(clickSeatPoint.x).isEmpty()) {
+                //单击位置所有的列为该行有效列内
                 if (clickSeatPoint.y < mSeatDrawMap.getColumnCount(clickSeatPoint.x)) {
+                    //监听事件存在时再处理,否则不处理
                     if (mISeatInformationListener != null) {
                         //获取当前选中区域的座位类型
                         AbsSeatEntity seat = mSeatDrawMap.getSeatEntity(clickSeatPoint.x, clickSeatPoint.y);
@@ -2413,8 +2413,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
                         }
                     }
                 }
-
-
+            }
+        }
         return false;
     }
 
@@ -2444,6 +2444,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
      * 单击选择座位事件
      *
      * @param event
+     * @return 若单击位置有效且处理了事件, 返回true, 否则返回false(单击位置可能无效或不存在座位)
      */
     private boolean singleClickChooseSeat(MotionEvent event) {
         //通知单击事件触发
@@ -2458,8 +2459,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             boolean isHandle = false;
             isHandle = singleClickPointHandle(clickPoint);
             if (isHandle) {
+                showMsg("单击有效座位,消费双击标识");
                 //单击事件处理了取消双击事件(单击到有效的座位位置)
-                this.cancelEvent(EVENT_DOUBLE_CLICK_DISTANCE);
+                this.cancelDoubleClickEvent(EVENT_DOUBLE_CLICK_BY_TIME);
             }
             return isHandle;
         } else {
@@ -2546,17 +2548,14 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         }
     }
 
-    @Override
-    public void onDoubleClickByTime() {
-    }
-
     /**
      * 双击放大缩小
      */
     @Override
-    public void onDoubleClickByDistance() {
+    public void onDoubleClickByTime() {
         this.doubleClickScale();
     }
+
 
     /**
      * 根据坐标值计算需要缩放的比例,<font color="#ff9900"><b>返回值为移动距离与按下距离的商,move/down</b></font>

@@ -81,14 +81,6 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
     }
 
     @Override
-    public void onDoubleClickByDistance() {
-        //基本于距离的双击事件
-        //单击事件基于clickByDistance的两次单击
-        //两次单击之间的时间不超过250ms
-        //以上所有时间都是自定义,自己看看代码就知道了
-    }
-
-    @Override
     public boolean isCanMovedOnX(float moveDistanceX, float newOffsetX) {
         return true;
     }
