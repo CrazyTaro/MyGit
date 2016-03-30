@@ -21,7 +21,6 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.code.gson:gson:2.5'
 }
 
 //打jar包方式1,其实要打出jar包,不能更改参数build/intermediates/bundles/release/
