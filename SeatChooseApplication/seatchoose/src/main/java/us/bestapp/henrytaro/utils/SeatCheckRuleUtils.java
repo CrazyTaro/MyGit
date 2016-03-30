@@ -1,10 +1,10 @@
 package us.bestapp.henrytaro.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by taro on 16/3/24.
@@ -359,13 +359,13 @@ public class SeatCheckRuleUtils {
         boolean result = true;
         if (notEdgeSide < 0) {
             //检测左边的座位是否为两个有效座位
-            result = isNearSeatDoubleEnabled(seat, map, true, enbaledTags);
+            result = isNearSeatDoubleEnabled(seat, map, true, 2, enbaledTags);
         } else if (notEdgeSide > 0) {
             //检测右边的座位是否为两个有效座位
-            result = isNearSeatDoubleEnabled(seat, map, false, enbaledTags);
+            result = isNearSeatDoubleEnabled(seat, map, false, 2, enbaledTags);
         } else {
             //左右两边都非边界,检测两边的座位是否同时为两个有效座位
-            result = isNearSeatDoubleEnabled(seat, map, true, enbaledTags) && isNearSeatDoubleEnabled(seat, map, false, enbaledTags);
+            result = isNearSeatDoubleEnabled(seat, map, true, 2, enbaledTags) && isNearSeatDoubleEnabled(seat, map, false, 2, enbaledTags);
         }
         return result;
     }
@@ -386,59 +386,120 @@ public class SeatCheckRuleUtils {
     /**
      * 检测当前座位的某个方向是否为有效座位(通过参数确定检测左边还是右边)
      *
-     * @param seat        当前座位
-     * @param map         座位数据列表
-     * @param isCheckLeft 是否检测左边,true检测左边,false检测右边
-     * @param enableTags  有效可用座位的类型标签
-     * @return
+     * @param seat            当前座位
+     * @param map             座位数据列表
+     * @param isCheckLeft     是否检测左边,true检测左边,false检测右边
+     * @param enableSeatCount 需要保留的有效的座位数(默认两位)
+     * @param enableTags      有效可用座位的类型标签  @return
      */
-    public static boolean isNearSeatDoubleEnabled(AbsSeatEntity seat, AbsMapEntity map, boolean isCheckLeft, String[] enableTags) {
+    public static boolean isNearSeatDoubleEnabled(AbsSeatEntity seat, AbsMapEntity map, boolean isCheckLeft, int enableSeatCount, String[] enableTags) {
         if (seat == null || map == null || enableTags == null) {
             throw new RuntimeException("参数不可为null");
         }
-        //第一个座位
-        AbsSeatEntity firstSeat = null;
-        //第二个座位
-        AbsSeatEntity secondSeat = null;
-        //获取当前座位的位置
+        //判断要求检测的有效座位数是否在合法范围,不可小于等于0,也不可大于座位表中最大行的座位数
+        if (enableSeatCount <= 0 || enableSeatCount > map.getMaxColumnCount()) {
+            throw new RuntimeException("有效座位数不可小于0, 也不可大于座位表中最大行的座位数");
+        }
+        //座位数合法,创建与有效座位数相同的暂存座位数组
+        AbsSeatEntity[] checkSeatArr = new AbsSeatEntity[enableSeatCount];
+        //获取当前座位的X/Y位置
         int rowIndex = seat.getX();
         int columnIndex = seat.getY();
-        int firstCoumnIndex = 0;
-        int secondColumnIndex = 0;
-        //判断向左边检测还是右边检测
+        //增量,用于向左检测或者向右检测
+        int increaseValue = 1;
+        int tempColumnIndex = 0;
+        //邻近座位是否可用标识
+        boolean isNearSeatEnabled = true;
+        //向左遍历检测,增量为负数
         if (isCheckLeft) {
-            firstCoumnIndex = columnIndex - 1;
-            secondColumnIndex = columnIndex - 2;
+            increaseValue = -1;
         } else {
-            firstCoumnIndex = columnIndex + 1;
-            secondColumnIndex = columnIndex + 2;
+            //向右遍历检测,增量为正数
+            increaseValue = 1;
         }
-        //获取检测方向的邻近两个座位
-        firstSeat = map.getSeatEntity(rowIndex, firstCoumnIndex);
-        secondSeat = map.getSeatEntity(rowIndex, secondColumnIndex);
-        //两个座位任何一个不存在都说明不为有效座位
-        if (firstSeat == null || secondSeat == null) {
+        //获取需要检测的邻近座位
+        for (int i = 0; i < enableSeatCount; i++) {
+            tempColumnIndex = columnIndex + i * increaseValue;
+            checkSeatArr[i] = map.getSeatEntity(rowIndex, tempColumnIndex);
+            if (checkSeatArr[i] == null) {
+                //若获取到的座位是空的,说明该座位不存在,直接返回不可用(没有达到有效座位数的要求)
+                isNearSeatEnabled = false;
+            }
+        }
+        if (!isNearSeatEnabled) {
             return false;
         } else {
-            //判断获取的两个座位是否有效座位
-            boolean isFirstEnable = false;
-            boolean isSecondEnable = false;
-            for (String enable : enableTags) {
-                //判断第一个座位
-                if (firstSeat.getDrawStyleTag().equals(enable)) {
-                    isFirstEnable = true;
+            //若所有邻近座位存在,检测其是否为有效座位
+            //遍历检测的每个座位标识(每次遍历时对应座位的有效标识)
+            boolean isCheckSeatEnable = false;
+            for (int i = 0; i < checkSeatArr.length; i++) {
+                AbsSeatEntity checkSeat = checkSeatArr[i];
+                //遍历所有的有效标签
+                for (String enable : enableTags) {
+                    //检测当前邻近座位的标签是否有效
+                    if (checkSeat.getDrawStyleTag().equals(enable)) {
+                        //标签有效此座位有效, 则不需要遍历完所有的标签,直接检测下一个座位
+                        isCheckSeatEnable = true;
+                        break;
+                    }
                 }
-                //判断第二个座位
-                if (secondSeat.getDrawStyleTag().equals(enable)) {
-                    isSecondEnable = true;
-                }
-                //当两个座位同时都有为效时,才返回true
-                if (isFirstEnable && isSecondEnable) {
-                    return true;
+                //每遍历一个座位检测该座位是否有效,若该座位有效,检测下一座位
+                if (isCheckSeatEnable) {
+                    continue;
+                } else {
+                    //该座位无效,此不管其它座位有没有效,都直接返回邻近座位无效
+                    isNearSeatEnabled = false;
+                    break;
                 }
             }
-
-            return false;
+            //返回结果
+            return isNearSeatEnabled;
         }
+
+
+//        //第一个座位
+//        AbsSeatEntity firstSeat = null;
+//        //第二个座位
+//        AbsSeatEntity secondSeat = null;
+//        //获取当前座位的位置
+//        int rowIndex = seat.getX();
+//        int columnIndex = seat.getY();
+//        int firstCoumnIndex = 0;
+//        int secondColumnIndex = 0;
+//        //判断向左边检测还是右边检测
+//        if (isCheckLeft) {
+//            firstCoumnIndex = columnIndex - 1;
+//            secondColumnIndex = columnIndex - 2;
+//        } else {
+//            firstCoumnIndex = columnIndex + 1;
+//            secondColumnIndex = columnIndex + 2;
+//        }
+//        //获取检测方向的邻近两个座位
+//        firstSeat = map.getSeatEntity(rowIndex, firstCoumnIndex);
+//        secondSeat = map.getSeatEntity(rowIndex, secondColumnIndex);
+//        //两个座位任何一个不存在都说明不为有效座位
+//        if (firstSeat == null || secondSeat == null) {
+//            return false;
+//        } else {
+//            //判断获取的两个座位是否有效座位
+//            boolean isFirstEnable = false;
+//            boolean isSecondEnable = false;
+//            for (String enable : enableTags) {
+//                //判断第一个座位
+//                if (firstSeat.getDrawStyleTag().equals(enable)) {
+//                    isFirstEnable = true;
+//                }
+//                //判断第二个座位
+//                if (secondSeat.getDrawStyleTag().equals(enable)) {
+//                    isSecondEnable = true;
+//                }
+//                //当两个座位同时都有为效时,才返回true
+//                if (isFirstEnable && isSecondEnable) {
+//                    return true;
+//                }
+//            }
+//
+//            return false;
+//        }
     }
 }
