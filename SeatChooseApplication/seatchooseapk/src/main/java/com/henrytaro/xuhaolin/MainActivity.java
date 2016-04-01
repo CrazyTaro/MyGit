@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import us.bestapp.henrytaro.view.interfaces.ISeatChooseEvent;
 
 
 public class MainActivity extends Activity implements ISeatChooseEvent {
+    TestView mTestView = null;
     SeatChooseView mChooseview = null;
     Button mBtnSubmit = null;
     ISeatDrawInterface mSeatDataHandle = null;
@@ -33,24 +35,24 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     //3表示锁定座位
     private int[][] mSeatMap = {
             //1,02,03,04,05,06,0708,09,10,11,12,13,14,15,16,11,18,13,20,21,22,23,24,25,26,21,28,23,30,31,32,33,34,35,36
-            {4, 5,1, 4, 5, 0, 0, 1, 1, 1, 4, 5, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 4, 5,},//1
-            {1, 1,1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//3
-            {1, 3,1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1, 0, 0, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//3
-            {3, 1,1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//4
-            {1, 1,1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 4, 5,},//5
-            {1, 1,1, 1, 1, 0, 0, 4, 5, 1, 1, 1, 3, 4, 5, 0, 0, 3, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//6
-            {1, 1,1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 3, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//1
-            {1, 3,1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 3, 1, 1, 0, 0, 1, 4, 5, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//8
-            {3, 1,1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//3
-            {1, 1,1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 3, 4, 5, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//11
-            {1, 1,1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1,},//11
-            {1, 1,1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1,},//12
-            {1, 1,1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//13
-            {1, 1,1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//14
-            {1, 3,1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1, 0, 0, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//15
-            {3, 1,1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//16
-            {1, 1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//11
-            {1, 1,1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1,},//18
+            {4, 5, 1, 4, 5, 0, 0, 1, 1, 1, 4, 5, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 4, 5,},//1
+            {1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//3
+            {1, 3, 1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1, 0, 0, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//3
+            {3, 1, 1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//4
+            {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 4, 5,},//5
+            {1, 1, 1, 1, 1, 0, 0, 4, 5, 1, 1, 1, 3, 4, 5, 0, 0, 3, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//6
+            {1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 3, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//1
+            {1, 3, 1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 3, 1, 1, 0, 0, 1, 4, 5, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//8
+            {3, 1, 1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//3
+            {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 3, 4, 5, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//11
+            {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1,},//11
+            {1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1,},//12
+            {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//13
+            {1, 1, 1, 1, 1, 0, 0, 3, 1, 1, 1, 1, 1, 1, 3, 0, 0, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1,},//14
+            {1, 3, 1, 1, 3, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1, 0, 0, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1,},//15
+            {3, 1, 1, 3, 1, 0, 0, 1, 1, 1, 3, 1, 1, 1, 1, 0, 0, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//16
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1,},//11
+            {1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1,},//18
 //            {1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 3, 4, 5, 1, 1, 1, 3, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1,},//13
 //            {1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3,},//21
 //            {3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 1, 3,},//21
@@ -76,12 +78,13 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mChooseview = (SeatChooseView) findViewById(R.id.view_choose);
+        mTestView = (TestView) findViewById(R.id.view_test);
         mBtnSubmit = (Button) findViewById(R.id.btn_submit);
 
         EgSeatMap egMap = new EgSeatMap(mSeatMap);
         mChooseview.setISeatChooseEvent(this);
         mSeatDataHandle = mChooseview.getSeatDrawInterface();
-        mSeatDataHandle.setIsShowLog(true, null);
+        mSeatDataHandle.setIsShowLog(false, null);
 
 
         IGlobleParams globleParams = mSeatDataHandle.getGlobleParams();
@@ -111,19 +114,23 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         IStageParams stageParams = mSeatDataHandle.getStageParams();
         stageParams.setStageDescription("CrazyTaro的舞台 6号厅");
 
-        mMap=egMap;
+        mMap = egMap;
         mSeatDataHandle.setSeatDrawMap(mMap);
 
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
-                                              List<AbsSeatEntity> selectSeats = mChooseview.getSeletedSeats();
-                                              String[] edgeTags = new String[]{BaseSeatParams.TAG_UNSHOW_SEAT, BaseSeatParams.TAG_ERROR_SEAT, BaseSeatParams.TAG_LOCK_SEAT};
-                                              String[] enabledTags = new String[]{BaseSeatParams.TAG_OPTIONAL_SEAT, BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT};
-                                              if (SeatCheckRuleUtils.isIllegalSeatList(selectSeats, mMap, edgeTags, enabledTags)) {
-                                                  Toast.makeText(MainActivity.this, "不能留下单个座位!", Toast.LENGTH_SHORT).show();
-                                              } else {
-                                                  Toast.makeText(MainActivity.this, "所有座位有效~~~", Toast.LENGTH_SHORT).show();
+                                              if (mChooseview.getVisibility() == View.VISIBLE) {
+                                                  List<AbsSeatEntity> selectSeats = mChooseview.getSeletedSeats();
+                                                  String[] edgeTags = new String[]{BaseSeatParams.TAG_UNSHOW_SEAT, BaseSeatParams.TAG_ERROR_SEAT, BaseSeatParams.TAG_LOCK_SEAT};
+                                                  String[] enabledTags = new String[]{BaseSeatParams.TAG_OPTIONAL_SEAT, BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT};
+                                                  if (SeatCheckRuleUtils.isIllegalSeatList(selectSeats, mMap, edgeTags, enabledTags)) {
+                                                      Toast.makeText(MainActivity.this, "不能留下单个座位!", Toast.LENGTH_SHORT).show();
+                                                  } else {
+                                                      Toast.makeText(MainActivity.this, "所有座位有效~~~", Toast.LENGTH_SHORT).show();
+                                                  }
+                                              } else if (mTestView.getVisibility() == View.VISIBLE) {
+                                                  mTestView.rollback();
                                               }
                                           }
                                       }
