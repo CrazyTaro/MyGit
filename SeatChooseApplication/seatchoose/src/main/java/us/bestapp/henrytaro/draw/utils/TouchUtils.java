@@ -22,13 +22,13 @@ public class TouchUtils {
     //上一次的缩放比例
     private float mLastScaleRate = 1f;
 
-    //移动过程中临时保存的偏移量
+    //任何时候绘制需要的偏移量
     protected float mDrawOffsetY = 0f;
     protected float mDrawOffsetX = 0f;
-    //
+    //上一次移动后保存的偏移量
     protected float mLastDrawOffsetX = 0f;
     protected float mLastDrawOffsetY = 0f;
-    //移动过程中保存的上一次偏移量
+    //移动过程中临时保存的移动前的偏移量
     protected float mTempDrawOffsetX = 0f;
     protected float mTempDrawOffsetY = 0f;
     //按下事件的坐标
@@ -213,13 +213,7 @@ public class TouchUtils {
                 mUpY = event.getY();
                 moveDistanceX = mUpX - mDownX;
                 moveDistanceY = mUpY - mDownY;
-//                //此次移动加数据量达到足够的距离触发移动事件
-//                //若数据量太小无法满足移动事件的处理,不重置此次的数据留到下一次再使用
-//                if (invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_MOVE)) {
-//                    //重置移动操作完的数据,以防出现不必要的错误
-//                    mDownX = event.getX();
-//                    mDownY = event.getY();
-//                }
+                //此次移动加数据量达到足够的距离触发移动事件
                 invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_MOVE);
                 mUpX = 0f;
                 mUpY = 0f;
