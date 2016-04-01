@@ -6,3 +6,5 @@
 /build
 /captures
 /.idea/*
+.idea
+*.iml
