@@ -46,7 +46,7 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.FILL);
         //模拟绘制的界面
-        canvas.drawCircle(mTouch.getOffsetX() + 300, mTouch.getOffsetY() + 300, mRadius, mPaint);
+        canvas.drawCircle(mTouch.getDrawOffsetX() + 300, mTouch.getDrawOffsetY() + 300, mRadius, mPaint);
     }
 
     @Override

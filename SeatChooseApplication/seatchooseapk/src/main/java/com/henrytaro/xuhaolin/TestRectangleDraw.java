@@ -48,13 +48,17 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
         mTempRectf = new RectF(mDrawRectf);
     }
 
+    public void rollback(){
+        mTouch.rollbackToLastOffset();
+    }
+
     public void onDraw(Canvas canvas) {
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.FILL);
         //此处是实际的绘制界面+偏移量,偏移量切记不能保存到实际绘制的数据中!!!!
         //不可以使用 mDrawRectf.offset(x,y)
-        canvas.drawRect(mDrawRectf.left + mTouch.getOffsetX(), mDrawRectf.top + mTouch.getOffsetY(),
-                mDrawRectf.right + mTouch.getOffsetX(), mDrawRectf.bottom + mTouch.getOffsetY(),
+        canvas.drawRect(mDrawRectf.left + mTouch.getDrawOffsetX(), mDrawRectf.top + mTouch.getDrawOffsetY(),
+                mDrawRectf.right + mTouch.getDrawOffsetX(), mDrawRectf.bottom + mTouch.getDrawOffsetY(),
                 mPaint);
     }
 

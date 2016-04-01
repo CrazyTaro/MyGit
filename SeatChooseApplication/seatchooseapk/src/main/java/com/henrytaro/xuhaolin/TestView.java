@@ -29,6 +29,9 @@ public class TestView extends View {
         super(context, attrs, defStyleAttr);
     }
 
+    public void rollback(){
+        mTestRectfDraw.rollback();
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
