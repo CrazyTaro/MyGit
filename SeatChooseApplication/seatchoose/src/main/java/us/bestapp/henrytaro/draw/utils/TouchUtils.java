@@ -1,5 +1,6 @@
 package us.bestapp.henrytaro.draw.utils;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -21,27 +22,83 @@ public class TouchUtils {
     //上一次的缩放比例
     private float mLastScaleRate = 1f;
 
-    /**
-     * 用户触摸偏移量
-     */
-    protected float mBeginDrawOffsetY = 0f;
-    protected float mBeginDrawOffsetX = 0f;
+    //移动过程中临时保存的偏移量
+    protected float mDrawOffsetY = 0f;
+    protected float mDrawOffsetX = 0f;
+    //
+    protected float mLastDrawOffsetX = 0f;
+    protected float mLastDrawOffsetY = 0f;
+    //移动过程中保存的上一次偏移量
+    protected float mTempDrawOffsetX = 0f;
+    protected float mTempDrawOffsetY = 0f;
     //按下事件的坐标
     private float mDownX = 0f;
     private float mDownY = 0f;
     //抬起事件的坐标
     private float mUpX = 0f;
     private float mUpY = 0f;
-    //是否已经移动过(满足移动条件)
-    private boolean mIsMoved = false;
+    //是否打印消息
+    private boolean mIsShowLog = true;
+
+    /**
+     * 获取上一次移动后的X轴偏移量,此值只会保存移动的上一次偏移量,若回滚过一次偏移量,此值与当前偏移量值相同
+     *
+     * @return
+     */
+    public float getLastOffsetX() {
+        return this.mLastDrawOffsetX;
+    }
+
+    /**
+     * 获取上一次移动后的Y轴偏移量,此值只会保存移动的上一次偏移量,若回滚过一次偏移量,此值与当前偏移量值相同
+     *
+     * @return
+     */
+    public float getLastOffset() {
+        return this.mLastDrawOffsetY;
+    }
+
+    /**
+     * 是否可回滚到上一次移动的偏移量
+     *
+     * @return
+     */
+    public boolean isCanRollBack() {
+        if (mDrawOffsetX == mLastDrawOffsetX && mDrawOffsetY == mLastDrawOffsetY) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 回滚到上一次移动的偏移量,若回滚成功返回true,否则返回False
+     *
+     * @return
+     */
+    public boolean rollbackToLastOffset() {
+        boolean isRollbackSuccess = isCanRollBack();
+        if (isRollbackSuccess) {
+            //将当前的移动偏移值替换为上一次的偏移量
+            this.mDrawOffsetX = mLastDrawOffsetX;
+            this.mDrawOffsetY = mLastDrawOffsetY;
+            this.mTempDrawOffsetX = mLastDrawOffsetX;
+            this.mTempDrawOffsetY = mLastDrawOffsetY;
+            //通过移动事件进行移动
+            if (mMoveEvent != null) {
+                mMoveEvent.onMove(Integer.MIN_VALUE);
+            }
+        }
+        return isRollbackSuccess;
+    }
 
     /**
      * 获取X轴偏移量
      *
      * @return
      */
-    public float getOffsetX() {
-        return this.mBeginDrawOffsetX;
+    public float getDrawOffsetX() {
+        return this.mDrawOffsetX;
     }
 
     /**
@@ -49,8 +106,8 @@ public class TouchUtils {
      *
      * @return
      */
-    public float getOffsetY() {
-        return this.mBeginDrawOffsetY;
+    public float getDrawOffsetY() {
+        return this.mDrawOffsetY;
     }
 
     /**
@@ -59,7 +116,7 @@ public class TouchUtils {
      * @param offsetX
      */
     public void setOffsetX(float offsetX) {
-        this.mBeginDrawOffsetX = offsetX;
+        this.mDrawOffsetX = offsetX;
     }
 
     /**
@@ -68,7 +125,7 @@ public class TouchUtils {
      * @param offsetY
      */
     public void setOffsetY(float offsetY) {
-        this.mBeginDrawOffsetY = offsetY;
+        this.mDrawOffsetY = offsetY;
     }
 
     /**
@@ -143,31 +200,27 @@ public class TouchUtils {
                 //此时尝试结束进行移动界面,并将当前移动的结果固定下来作为新的界面(效果与直接抬起结束触摸相同)
                 //并不作任何操作(因为在单击后再进行多点触摸无法分辨需要进行处理的事件是什么)
                 if (extraMotionEvent == MotionEvent.ACTION_UP) {
+                    showMsg("move 处理为 up 事件");
                     //已经移动过且建议处理为up事件时
-                    if (mIsMoved) {
-                        //处理为up事件
-                        invalidateInSinglePoint(0, 0, MotionEvent.ACTION_UP);
-                        mDownX = 0f;
-                        mDownY = 0f;
-                        mUpX = 0f;
-                        mUpY = 0f;
-                        //取消移动重绘的标志
-                        mIsMoved = false;
-                    }
+                    //处理为up事件
+                    event.setAction(MotionEvent.ACTION_UP);
+                    singleTouchEvent(event, Integer.MIN_VALUE);
                     return;
                 }
 
+                showMsg("move 拖动重绘界面");
                 mUpX = event.getX();
                 mUpY = event.getY();
                 moveDistanceX = mUpX - mDownX;
                 moveDistanceY = mUpY - mDownY;
-                //此次移动加数据量达到足够的距离触发移动事件
-                //若数据量太小无法满足移动事件的处理,不重置此次的数据留到下一次再使用
-                if (invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_MOVE)) {
-                    //重置移动操作完的数据,以防出现不必要的错误
-                    mDownX = event.getX();
-                    mDownY = event.getY();
-                }
+//                //此次移动加数据量达到足够的距离触发移动事件
+//                //若数据量太小无法满足移动事件的处理,不重置此次的数据留到下一次再使用
+//                if (invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_MOVE)) {
+//                    //重置移动操作完的数据,以防出现不必要的错误
+//                    mDownX = event.getX();
+//                    mDownY = event.getY();
+//                }
+                invalidateInSinglePoint(moveDistanceX, moveDistanceY, MotionEvent.ACTION_MOVE);
                 mUpX = 0f;
                 mUpY = 0f;
                 break;
@@ -184,7 +237,6 @@ public class TouchUtils {
                 mDownY = 0f;
                 mUpX = 0f;
                 mUpY = 0f;
-                mIsMoved = false;
                 break;
         }
     }
@@ -301,40 +353,38 @@ public class TouchUtils {
         if (mMoveEvent == null) {
             return false;
         }
-        //此处处理的是按是否进行移动过(默认移动范围为5像素)来确认是否是单击事件
-        //而不是按单击事件来确定
-        if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
-            //判断当前重绘时是否由move事件触发,若非move事件触发则将移动标志设置为false
-            if (invalidateAction == MotionEvent.ACTION_MOVE) {
-                mIsMoved = true;
-            } else {
-                mIsMoved = false;
-            }
-        }
         //此处做大于5的判断是为了避免在检测单击事件时
         //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
         if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5 || invalidateAction == MotionEvent.ACTION_UP) {
-
             //新的偏移量
-            float newDrawOffsetX = mBeginDrawOffsetX + moveDistanceX;
-            float newDrawOffsetY = mBeginDrawOffsetY + moveDistanceY;
+            float newDrawOffsetX = mTempDrawOffsetX + moveDistanceX;
+            float newDrawOffsetY = mTempDrawOffsetY + moveDistanceY;
 
             //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
             if (!mMoveEvent.isCanMovedOnX(moveDistanceX, newDrawOffsetX)) {
                 //保持原来的偏移量不变
-                newDrawOffsetX = mBeginDrawOffsetX;
+                newDrawOffsetX = mDrawOffsetX;
             }
             //当前绘制的顶端坐标大于0且移动方向为向下移动
             if (!mMoveEvent.isCanMovedOnY(moveDistanceY, newDrawOffsetY)) {
                 //保持原来的Y轴偏移量
-                newDrawOffsetY = mBeginDrawOffsetY;
+                newDrawOffsetY = mDrawOffsetY;
             }
 
             //其它情况正常移动重绘
             //当距离确实有效地改变了再进行重绘制,否则原界面不变,减少重绘的次数
-            if (newDrawOffsetX != mBeginDrawOffsetX || newDrawOffsetY != mBeginDrawOffsetY || invalidateAction == MotionEvent.ACTION_UP) {
-                mBeginDrawOffsetX = newDrawOffsetX;
-                mBeginDrawOffsetY = newDrawOffsetY;
+            if (newDrawOffsetX != mDrawOffsetX || newDrawOffsetY != mDrawOffsetY || invalidateAction == MotionEvent.ACTION_UP) {
+                mDrawOffsetX = newDrawOffsetX;
+                mDrawOffsetY = newDrawOffsetY;
+                //抬起事件时,回调为
+                if (invalidateAction == MotionEvent.ACTION_UP) {
+                    //保存上一次的偏移量
+                    mLastDrawOffsetX = mTempDrawOffsetX;
+                    mLastDrawOffsetY = mTempDrawOffsetY;
+                    //将此次的新偏移量保存为临时数据后续拖动时可使用
+                    mTempDrawOffsetX = mDrawOffsetX;
+                    mTempDrawOffsetY = mDrawOffsetY;
+                }
                 mMoveEvent.onMove(invalidateAction);
                 return true;
             } else {
@@ -342,6 +392,26 @@ public class TouchUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 设置是否打印消息
+     *
+     * @param isShowLog
+     */
+    public void setIsShowLog(boolean isShowLog) {
+        mIsShowLog = isShowLog;
+    }
+
+    /**
+     * 打印消息
+     *
+     * @param msg
+     */
+    public void showMsg(String msg) {
+        if (mIsShowLog) {
+            Log.i("touchUtils", msg + "");
+        }
     }
 
     /**

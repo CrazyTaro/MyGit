@@ -23,7 +23,7 @@ public abstract class AbsTouchEventHandle implements View.OnTouchListener {
     /**
      * 额外分配的触摸事件,用于建议优先处理的触摸事件
      */
-    public static final int MOTION_EVENT_NOTHING = 0;
+    public static final int MOTION_EVENT_NOTHING = Integer.MIN_VALUE;
     /**
      * 处理时间单击事件
      */
