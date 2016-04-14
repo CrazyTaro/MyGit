@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -107,9 +106,9 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         //设置是否绘制样本类型
         seatParams.setIsDrawSampleStyle(true);
         //设置单个座位宽度
-        seatParams.setWidth(40f);
+        seatParams.seDrawWidth(40f);
         //设置单个座位高度
-        seatParams.setHeight(40f);
+        seatParams.seDrawHeight(40f);
 
         IStageParams stageParams = mSeatDataHandle.getStageParams();
         stageParams.setStageDescription("CrazyTaro的舞台 6号厅");

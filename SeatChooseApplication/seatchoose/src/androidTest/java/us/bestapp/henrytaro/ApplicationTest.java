@@ -1,10 +1,13 @@
 package us.bestapp.henrytaro;
 
 import android.app.Application;
+import android.graphics.Color;
 import android.test.ApplicationTestCase;
 import android.util.Log;
 
 import us.bestapp.henrytaro.params.GlobalParams;
+import us.bestapp.henrytaro.params.SeatParams;
+import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 
 /**
@@ -13,6 +16,17 @@ import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+    }
+
+    public void show() {
+        SeatParams params = new SeatParams();
+        Log.i("show",params.toString());
+        params.seDrawWidth(100);
+        params.seDrawHeight(30);
+        params.clearDrawStyles();
+        params.addNewDrawStyle("test", new BaseDrawStyle("test", true, Color.RED, Color.BLACK, Color.BLUE, "desc", 0, null));
+        SeatParams newParams=(SeatParams) params.clone();
+        Log.i("show",newParams.toString());
     }
 
     public void test() {

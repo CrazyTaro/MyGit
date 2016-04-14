@@ -2,28 +2,29 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".MainActivity"
-                android:background="#ededed">
+                android:background="#ededed"
+                tools:context=".MainActivity">
 
     <Button
-            android:id="@+id/btn_submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="提交"
-            android:layout_alignParentBottom="true"/>
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="提交"/>
 
     <us.bestapp.henrytaro.view.SeatChooseView
-            android:id="@+id/view_choose"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/btn_submit"
-            android:visibility="gone"/>
+        android:id="@+id/view_choose"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_submit"
+        android:visibility="visible"/>
 
     <com.henrytaro.xuhaolin.TestView
-            android:id="@+id/view_test"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/btn_submit"/>
+        android:id="@+id/view_test"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_submit"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>
