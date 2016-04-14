@@ -4,9 +4,6 @@ package us.bestapp.henrytaro.params;/**
 
 import android.graphics.RectF;
 
-import java.util.Map;
-
-import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
@@ -42,8 +39,12 @@ public class SeatParams extends BaseSeatParams {
      * @param seatHeight
      */
     protected void autoCalculateSeatShapeHeight(float seatHeight) {
+        float newMainSeatHeight = seatHeight * 0.75f;
+        if (this.mMainSeatHeight == newMainSeatHeight) {
+            return;
+        }
         float newRadius = seatHeight * 0.1f;
-        this.setRadius(newRadius > 20f ? 20f : newRadius);
+        this.setDrawRadius(newRadius > 20f ? 20f : newRadius);
         this.mMainSeatHeight = seatHeight * 0.75f;
         this.mMinorSeatHeight = seatHeight * 0.2f;
         this.mSeatHeightInterval = seatHeight * 0.05f;
@@ -53,10 +54,10 @@ public class SeatParams extends BaseSeatParams {
     }
 
     @Override
-    protected void updateWidthAndHeightWhenSet(float width, float height) {
-        super.updateWidthAndHeightWhenSet(width, height);
-        if (height != -1) {
-            this.autoCalculateSeatShapeHeight(height);
+    protected void updateWidthAndHeightWhenSet(float newWidth, float newHeight) {
+        super.updateWidthAndHeightWhenSet(newWidth, newHeight);
+        if (newHeight > 0) {
+            this.autoCalculateSeatShapeHeight(newHeight);
         }
     }
 
@@ -74,45 +75,46 @@ public class SeatParams extends BaseSeatParams {
             seatRectf = new RectF();
         }
         //创建主座位
-        seatRectf.left = drawPositionX - this.getWidth() / 2;
-        seatRectf.right = seatRectf.left + this.getWidth();
+        seatRectf.left = drawPositionX - this.getDrawWidth() / 2;
+        seatRectf.right = seatRectf.left + this.getDrawWidth();
 
-        seatRectf.top = drawPositionY - this.getHeight() / 2;
-        seatRectf.bottom = seatRectf.top + this.getHeight() * 0.75f;
+        seatRectf.top = drawPositionY - this.getDrawHeight() / 2;
+        seatRectf.bottom = seatRectf.top + this.getDrawHeight() * 0.75f;
 
         if (!isMainSeat) {
             //若不是主座位,则更改上下座位坐标(左右是一致的)
-            seatRectf.top = seatRectf.bottom + this.getHeight() * 0.05f + this.getHeight() * 0.2f / 2;
-            seatRectf.bottom = seatRectf.top + this.getHeight() * 0.2f;
+            seatRectf.top = seatRectf.bottom + this.getDrawHeight() * 0.05f + this.getDrawHeight() * 0.2f / 2;
+            seatRectf.bottom = seatRectf.top + this.getDrawHeight() * 0.2f;
         }
 
         return seatRectf;
     }
 
 
-    @Override
-    public void setHeight(float height) {
-        super.setHeight(height);
-        this.autoCalculateSeatShapeHeight(this.getHeight());
-    }
-
-    @Override
-    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
-        super.setScaleRate(scaleRate, isTrueSetValue);
-        this.autoCalculateSeatShapeHeight(this.getHeight());
-    }
-
-    @Override
-    public float setOriginalValuesToReplaceCurrents(float fixScaleRate) {
-        float scaleRate = super.setOriginalValuesToReplaceCurrents(fixScaleRate);
-        this.autoCalculateSeatShapeHeight(this.getHeight());
-        return scaleRate;
-    }
-
-    @Override
-    protected BaseSeatParams getSelectableClone(BaseSeatParams newParams, Map<String, BaseDrawStyle> styleMap) {
-        SeatParams newObj = (SeatParams) super.getSelectableClone(newParams, styleMap);
-        newObj.autoCalculateSeatShapeHeight(newObj.getHeight());
-        return newObj;
-    }
+//    @Override
+//    public void seDrawHeight(float height) {
+//        super.seDrawHeight(height);
+//        this.autoCalculateSeatShapeHeight(this.getDrawHeight());
+//    }
+//
+//    @Override
+//    public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
+//        super.setScaleRate(scaleRate, isTrueSetValue);
+//        this.autoCalculateSeatShapeHeight(this.getDrawHeight());
+//    }
+//
+//    @Override
+//    public float setScaleDefaultValuesToReplaceCurrents(float fixScaleRate) {
+//        float scaleRate = super.setScaleDefaultValuesToReplaceCurrents(fixScaleRate);
+//        this.autoCalculateSeatShapeHeight(this.getDrawHeight());
+//        return scaleRate;
+//    }
+//
+//    @Override
+//    protected BaseSeatParams getSelectableClone(Map<String, BaseDrawStyle> styleMap) {
+//        SeatParams params = (SeatParams) super.getSelectableClone(styleMap);
+//        //子类存在属于自己的计算规则时,需要重写此方法.
+//        params.autoCalculateSeatShapeHeight(params.getDrawHeight());
+//        return params;
+//    }
 }

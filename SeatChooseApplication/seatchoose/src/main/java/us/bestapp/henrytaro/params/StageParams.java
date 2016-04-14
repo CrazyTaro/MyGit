@@ -14,17 +14,17 @@ import us.bestapp.henrytaro.utils.StringUtils;
 public class StageParams extends BaseStageParams {
 
     @Override
-    public float getDescriptionSize() {
+    public float getDescriptionSize(float textRate) {
         if (StringUtils.isNullOrEmpty(this.getStageDescription())) {
             return 0;
         } else {
             //计算理论字体大小,以舞台宽度为标准
             //此处由于舞台是不规则的,以舞台最短的宽设为文字的最大长度(底边<顶边)
-            float theoryTextLength = this.getWidth() - 2 * this.getHeight();
+            float theoryTextLength = this.getDrawWidth() - 2 * this.getDrawHeight();
             float textSize = theoryTextLength / this.getStageDescription().length();
             //理论值大于舞台高度时,以舞台高度为标准
-            if (textSize > this.getHeight()) {
-                return this.getHeight() * 0.8f;
+            if (textSize > this.getDrawHeight()) {
+                return this.getDrawHeight() * 0.8f;
             } else {
                 return textSize;
             }
@@ -47,20 +47,20 @@ public class StageParams extends BaseStageParams {
         }
 
         //左上角
-        points[0].x = drawCenterX - this.getWidth() / 2;
-        points[0].y = drawCenterY - this.getHeight() / 2;
+        points[0].x = drawCenterX - this.getDrawWidth() / 2;
+        points[0].y = drawCenterY - this.getDrawHeight() / 2;
 
         //左下角
-        points[1].x = points[0].x + this.getHeight();
-        points[1].y = points[0].y + this.getHeight();
+        points[1].x = points[0].x + this.getDrawHeight();
+        points[1].y = points[0].y + this.getDrawHeight();
 
         //右下角
-        points[2].x = drawCenterX + this.getWidth() / 2 - this.getHeight();
+        points[2].x = drawCenterX + this.getDrawWidth() / 2 - this.getDrawHeight();
         points[2].y = points[1].y;
 
         //右上角
-        points[3].x = points[2].x + this.getHeight();
-        points[3].y = points[2].y - this.getHeight();
+        points[3].x = points[2].x + this.getDrawHeight();
+        points[3].y = points[2].y - this.getDrawHeight();
 
         return points;
     }
