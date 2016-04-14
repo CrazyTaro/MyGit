@@ -1,5 +1,7 @@
 package us.bestapp.henrytaro.params.interfaces;
 
+import android.graphics.PointF;
+
 /**
  * Created by xuhaolin on 2015/8/24.
  * 基本参数设置接口,所有的接口为通用接口,分别为座位与舞台两种不同的数据设置而提供的通用接口,且这一部分的接口为对外公开设置可用
@@ -38,54 +40,77 @@ public interface IBaseParams {
     public static final int TYPE_ERROR = -1;
 
     /**
-     * 设置缩放可达的最大宽大小
+     * 设置默认值，当默认值需要改变时，必须调用此方法;一般情况下,建议只调用此方法一次(除非默认值需要改变)</br>
+     * 这里的默认值指的是在初次绘制界面时参数使用的值</br>
+     * 重复设置默认值但不需要对某些值进行改变时,使用{@link #DEFAULT_FLOAT}或者{@link #DEFAULT_INT}即可不替换原值.
      *
-     * @param large 最大宽
-     * @return 设置成功返回true, 否则返回false, 不改变原值
+     * @param defaultWidth   默认宽度
+     * @param defaultHeight  默认高度
+     * @param defaultRadius  默认圆角弧度
+     * @param defaultColor   默认颜色
+     * @param largeScaleRate 默认最大缩放比例
+     * @param smallScaleRate 默认最小缩放比例
      */
-    public boolean setLargeScaleWidth(float large);
+    public void setDefault(float defaultWidth, float defaultHeight, float defaultRadius, int defaultColor, float largeScaleRate, float smallScaleRate);
 
     /**
-     * 获取最大的宽大小
+     * 获取设置默认的宽高值,此值也是缩放最大小值的比较基础.pointF.x为宽度,pointF.y为高度
      *
      * @return
      */
-    public float getLargeScaleWidth();
+    public PointF getDefaultWidthAndHeight();
 
     /**
-     * 设置缩放可达的最小宽大小
+     * 设置缩放可达的最大比例,此比例基于{@link #setDefault(float, float, float, int, float, float)}中的宽高,缩放时最大值不允许超过此比例与 default_width/height 的乘积(max = large*default_width/height).
      *
-     * @param small 最小宽
+     * @param large 最大比例,通用于宽高
+     * @return 设置成功返回true, 否则返回false, 不改变原值
+     */
+    public boolean setLargeScaleRate(float large);
+
+    /**
+     * 获取最大的缩放比例
+     *
+     * @return
+     */
+    public float getLargeScaleRate();
+
+    /**
+     * 获取宽的边界值,即最大值及最小值,最大值存放在pointF.x中,最小值存放在pointF.y中
+     *
+     * @return
+     */
+    public PointF getEdgeScaleWidth();
+
+    /**
+     * 设置缩放可达的最小缩放比例,使用原理同{@link #setLargeScaleRate(float)}
+     *
+     * @param small 最小缩放比例,通用于宽高
      * @return 设置成功返回true, 否则返回false
      */
-    public boolean setSmallScaleWidth(float small);
+    public boolean setSmallScaleRate(float small);
 
     /**
      * 获取最小的宽大小
      *
      * @return
      */
-    public float getSmallScaleWidth();
-
-//    /**
-//     * 设置描述文字的颜色,此颜色是用于绘制时使用的(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
-//     * <p>设置座位描述文字时请勿使用此方法</p>
-//     *
-//     * @param color
-//     */
-//    public void setDescriptionColor(int color);
-//
-//    /**
-//     * 获取描述文字的颜色(即当前绘制的文字必定使用此颜色,所以此颜色值是动态可变的)
-//     */
-//    public int getDescriptionColor();
+    public float getSmallScaleRate();
 
     /**
-     * 获取自动计算的描述文字字体大小，此值由当前参数height所决定，使字体的大小心保证与参数高度统一
+     * 获取高的边界值,即最大值及最小值,最大值存放在pointF.x中,最小值存放在pointF.y中
      *
      * @return
      */
-    public float getDescriptionSize();
+    public PointF getEdgeScaleHeight();
+
+    /**
+     * 获取自动计算的描述文字字体大小，此值由当前height或width所决定(宽高中的最小边)，使字体的大小保证与参数高度统一
+     *
+     * @param textRate 0-1之间,不可取0.该参数有效时返回当前宽高中最小边与该参数的积;默认值为0.8f,使用默认值可用{@link #DEFAULT_FLOAT},任何不合法数据都会使用默认值
+     * @return
+     */
+    public float getDescriptionSize(float textRate);
 
     /**
      * 设置绘制方式,使用此方法时必须注意,在设置图片之后可以通过此方法设置为默认的绘制模式;<br/>
@@ -115,16 +140,73 @@ public interface IBaseParams {
      */
     public int getDrawType(boolean isGetOriginalDrawType);
 
-    public float getWidth();
+    /**
+     * 设置是否使用绘制缩略图的参数,缩略图的缩放比例只由宽度决定,高度是可变的<br/>
+     * <font color="#ff9900"><b>只有当设置为true时,后面两个参数才有效,否则无效</b></font>
+     *
+     * @param isDrawThumbnail 是否绘制缩略图,<font color="#ff9900"><b>此参数为true,则所有的座位相关的绘制数据返回时将计算为缩略图的大小返回</b></font>
+     * @param originalWidth   实际绘制界面的宽度
+     * @param targetWidth     目标缩略图的宽度
+     */
+    public void setIsDrawThumbnail(boolean isDrawThumbnail, float originalWidth, float targetWidth);
+
+    /**
+     * 获取是否绘制缩略图
+     *
+     * @return
+     */
+    public boolean isDrawThumbnail();
+
+    /**
+     * 设置是否进行对象绘制
+     *
+     * @param isDraw
+     */
+    public void setIsDraw(boolean isDraw);
+
+    /**
+     * 是否绘制对象
+     *
+     * @return 返回true绘制, 返回false不绘制
+     */
+    public boolean isDraw();
+
+    /**
+     * 获取当前需要绘制的宽,当绘制缩略图时,获取的为缩略图绘制数据,缩略图宽度;
+     * 当绘制正常的界面时,获取的为正常的绘制数据,是正常宽度
+     *
+     * @return
+     */
+    public float getDrawWidth();
+
+    /**
+     * 获取非缩略图时的宽度,即正常宽度
+     *
+     * @return
+     */
+    public float getWidthNotInThumbnail();
 
     /**
      * 设置宽度
      *
      * @param width
      */
-    public void setWidth(float width);
+    public boolean seDrawWidth(float width);
 
-    public float getHeight();
+    /**
+     * 获取当前需要绘制的高,当绘制缩略图时,获取的为缩略图绘制数据,缩略图高度;
+     * 当绘制正常的界面时,获取的为正常的绘制数据,是正常高度
+     *
+     * @return
+     */
+    public float getDrawHeight();
+
+    /**
+     * 获取非缩略图时的高度,即正常高度
+     *
+     * @return
+     */
+    public float getHeightNotInThumbnail();
 
     /**
      * 设置高度
@@ -132,25 +214,20 @@ public interface IBaseParams {
      * @param height
      * @return
      */
-    public void setHeight(float height);
+    public boolean seDrawHeight(float height);
 
-    public float getRadius();
+    /**
+     * 获取当前需要绘制的角度,可能是缩略图状态也可能不是
+     *
+     * @return
+     */
+    public float getDrawRadius();
 
     /**
      * 设置圆角弧度，此处并不是以度数计算的，使用默认值请用{@link #DEFAULT_FLOAT}
      *
      * @param radius 圆角弧度
      */
-    public void setRadius(float radius);
-
-    /**
-     * 获取此实例的自我复制
-     *
-     * @param newObj 用于存储拷贝数据的新的对象,若该对象为null会尝试创建一个新对象进行处理,<font color="#ff9900"><b>
-     *               但创建的对象是基于基类,拷贝的数据也仅限于基类,同时若需要对继承子类的特有数据做更改则需要重写此类.</b></font>
-     *               建议重写此类,创建一个子类的对象并作为参数传递进去即可
-     * @return
-     */
-    public Object getClone(Object newObj);
+    public void setDrawRadius(float radius);
 
 }

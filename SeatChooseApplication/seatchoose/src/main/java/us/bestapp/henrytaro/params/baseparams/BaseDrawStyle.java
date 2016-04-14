@@ -14,7 +14,7 @@ import java.io.InputStream;
  * Created by xuhaolin on 15/9/16.
  * 此类用于存放座位及舞台绘制的相关参数,如颜色/图片/描述文字等
  */
-public class BaseDrawStyle {
+public class BaseDrawStyle implements Cloneable {
     /**
      * 样式标签
      */
@@ -161,5 +161,24 @@ public class BaseDrawStyle {
             Log.i("error", ex.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public BaseDrawStyle clone() {
+        try {
+            return (BaseDrawStyle) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "params\t|values\t\n" +
+                "tag\t|" + tag + "\t\n" +
+                "drawColor\t|" + drawColor + "\t\n" +
+                "descColor\t|" + descColor + "\t\n" +
+                "desc\t\n" + description + "\t\n";
     }
 }
