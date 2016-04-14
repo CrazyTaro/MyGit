@@ -18,6 +18,7 @@ import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
 import us.bestapp.henrytaro.params.baseparams.BaseGlobalParams;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
 import us.bestapp.henrytaro.params.baseparams.BaseStageParams;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 
 /**
  * Created by xuhaolin on 15/8/6.<br/>
@@ -37,12 +38,11 @@ public class SimpleDrawUtils extends AbsDrawUtils {
 
 
     @Override
-    protected void initial(BaseSeatParams seat, BaseStageParams stage, BaseGlobalParams globle) {
-        super.initial(seat, stage, globle);
+    protected void initial(BaseSeatParams seatParams, BaseStageParams stage, BaseGlobalParams global) {
         mSeatParams = new SeatParams();
         mStageParams = new StageParams();
 
-        this.setParams(mSeatParams, mStageParams, globle);
+        this.setParams(mSeatParams, mStageParams, global);
         //创建主座位与次要座位
         //此部分仅仅是让座位看起来比较好看而已....
         mMainSeatRectf = new RectF();
@@ -64,18 +64,18 @@ public class SimpleDrawUtils extends AbsDrawUtils {
             //绘制单个座位的情侣座位
             //只绘制边
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(seatParams.getHeight() * 0.05f);
+            paint.setStrokeWidth(seatParams.getDrawHeight() * 0.05f);
             paint.setColor(drawStyle.drawColor);
             //默认的绘制方式
             //当该绘制图像有显示在画布上的部分时才进行绘制
             //所有的坐标都不在画布的有效显示范围则不进行绘制
             if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMainSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+                canvas.drawRoundRect(mMainSeatRectf, seatParams.getDrawRadius(), seatParams.getDrawRadius(), paint);
             }
             //当该绘制图像有显示在画布上的部分时才进行绘制
             //所有的坐标都不在画布的有效显示范围则不进行绘制
             if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getDrawRadius(), seatParams.getDrawRadius(), paint);
             }
         } else {
             //绘制普通座位
@@ -88,12 +88,12 @@ public class SimpleDrawUtils extends AbsDrawUtils {
             //当该绘制图像有显示在画布上的部分时才进行绘制
             //所有的坐标都不在画布的有效显示范围则不进行绘制
             if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMainSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+                canvas.drawRoundRect(mMainSeatRectf, seatParams.getDrawRadius(), seatParams.getDrawRadius(), paint);
             }
             //当该绘制图像有显示在画布上的部分时才进行绘制
             //所有的坐标都不在画布的有效显示范围则不进行绘制
             if (isRectfCanSeen(mMainSeatRectf)) {
-                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getRadius(), seatParams.getRadius(), paint);
+                canvas.drawRoundRect(mMinorSeatRectf, seatParams.getDrawRadius(), seatParams.getDrawRadius(), paint);
             }
         }
     }
@@ -111,7 +111,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
         float textBeginDrawY = 0f;
         float textLength = 0f;
         //设置文字大小为舞台高度小一点(保证文字可以显示在舞台范围内)
-        float textSize = stageParams.getDescriptionSize();
+        float textSize = stageParams.getDescriptionSize(IBaseParams.DEFAULT_FLOAT);
 
 
         //缩略图的绘制也是使用默认的绘制方式,图片绘制到很小的的时候完全看不清楚而已很难分辨
