@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 /**
- * Created by xuhaolin in 2015-08-14
+ * Created by CT in 2015-08-14
  * <p>抽像类,处理触摸事件,区分单击及多点触摸事件</p>
  * <p>此类中使用到handler,请确保使用在UI线程或者是自定义looper的线程中(一般也没有人会把触摸事件放在非UI线程吧 =_=)</p>
  */

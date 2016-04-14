@@ -4,7 +4,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 /**
- * Created by taro on 16/3/24.
+ * Created by CT on 16/3/24.
+ * 触摸事件的辅助工具类,用于处理基本的拖动及缩放事件,提供简单的回调接口
  */
 public class TouchUtils {
 
@@ -38,7 +39,15 @@ public class TouchUtils {
     private float mUpX = 0f;
     private float mUpY = 0f;
     //是否打印消息
-    private boolean mIsShowLog = true;
+    private boolean mIsShowLog = false;
+
+    public TouchUtils() {
+    }
+
+    public TouchUtils(IScaleEvent scaleEvent, IMoveEvent moveEvent) {
+        this.mScaleEvent = scaleEvent;
+        this.mMoveEvent = moveEvent;
+    }
 
     /**
      * 获取上一次移动后的X轴偏移量,此值只会保存移动的上一次偏移量,若回滚过一次偏移量,此值与当前偏移量值相同
@@ -117,6 +126,7 @@ public class TouchUtils {
      */
     public void setOffsetX(float offsetX) {
         this.mDrawOffsetX = offsetX;
+        this.mTempDrawOffsetX = offsetX;
     }
 
     /**
@@ -126,6 +136,7 @@ public class TouchUtils {
      */
     public void setOffsetY(float offsetY) {
         this.mDrawOffsetY = offsetY;
+        this.mTempDrawOffsetY = offsetY;
     }
 
     /**
@@ -302,36 +313,38 @@ public class TouchUtils {
         if (mScaleEvent == null) {
             return;
         }
-        //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
-        //如果是最后一次(up事件),除非是不能绘制,否则必定重绘并记录缩放比
+        //若缩放比为1且不为缩放的最终事件时,不进行重绘,防止反复多次地重绘..
+        //如果是最后一次(up事件),必定重绘并记录缩放比
         boolean isCanScale = false;
         boolean isTrueSetValue = invalidateAction == MotionEvent.ACTION_POINTER_UP;
         if (newScaleRate == 1 && !isTrueSetValue) {
             return;
         }
 
+        //回调缩放事件接口,是否允许缩放
         if (mScaleEvent.isCanScale(newScaleRate)) {
+            //进行缩放,更新最后一次缩放比例为当前值
             mLastScaleRate = newScaleRate;
             isCanScale = true;
-        } else if (isTrueSetValue) {
+        }
+
+        if (isTrueSetValue) {
             //若缩放比不合法且当前缩放为最后一次缩放(up事件),则将上一次的缩放比作为此次的缩放比,用于记录数据
-            //且将最后的缩放比设为1(因为已经达到缩放的上限,再缩放也不会改变,所以比例使用1)
-            //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(有闪屏的效果...)
+            //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(因为没有保存当前缩放值,有闪屏的效果...)
             newScaleRate = mLastScaleRate;
+            //将最后一次的缩放比设为1(缩放事件已经终止,所以比例使用1)
             mLastScaleRate = 1;
+            //最后一次必须缩放并保存值
             isCanScale = true;
         }
-
-        mScaleEvent.setScaleRate(newScaleRate, isTrueSetValue);
-
         if (!isCanScale) {
-            //若为抬起缩放事件,则不管是否已经通知过,必定再通知一次
-            if (invalidateAction == MotionEvent.ACTION_UP) {
-                mScaleEvent.onScaleFail(invalidateAction);
-            }
+            //通知无法进行缩放
+            mScaleEvent.onScaleFail(invalidateAction);
             return;
         }
-
+        //更新缩放数据
+        mScaleEvent.setScaleRate(newScaleRate, isTrueSetValue);
+        //缩放回调
         mScaleEvent.onScale(invalidateAction);
     }
 
@@ -370,7 +383,7 @@ public class TouchUtils {
             if (newDrawOffsetX != mDrawOffsetX || newDrawOffsetY != mDrawOffsetY || invalidateAction == MotionEvent.ACTION_UP) {
                 mDrawOffsetX = newDrawOffsetX;
                 mDrawOffsetY = newDrawOffsetY;
-                //抬起事件时,回调为
+                //抬起事件时
                 if (invalidateAction == MotionEvent.ACTION_UP) {
                     //保存上一次的偏移量
                     mLastDrawOffsetX = mTempDrawOffsetX;
