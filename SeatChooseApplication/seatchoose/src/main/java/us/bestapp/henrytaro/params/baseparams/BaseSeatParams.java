@@ -1,16 +1,12 @@
-package us.bestapp.henrytaro.params.baseparams;/**
- * Created by xuhaolin on 15/9/10.
- */
+package us.bestapp.henrytaro.params.baseparams;
 
 import android.graphics.Color;
-import android.graphics.RectF;
+import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 /**
  * Created by xuhaolin on 15/9/10.<br/>
@@ -73,10 +69,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     protected float mDrawStyleDescInterval = DEFAULT_SEAT_TEXT_INTERVAL;
     //座位类型之间的间隔
     protected float mDrawStyleInterval = DEFAULT_SEAT_TYPE_INTERVAL;
-
-    //设置自动计算适应屏幕
-    private boolean mIsSetAutoCalculate = false;
-
+    //绘制类型表格,每一种类型都对应唯一的一个类型对象及TAG
     private Map<String, BaseDrawStyle> mDrawStyles = null;
 
     //是否按指定顺序绘制座位类型
@@ -89,7 +82,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     protected float mDescriptionSize = DEFAULT_DESCRIPTION_SIZE;
     //移动缩放时用于暂时存放缩放前的数据(以便于正常使用比例缩放)
     protected float[] mValueHolder = null;
-    protected boolean mIsValueHold = false;
     //用于保存最原始的数据
     protected OriginalValuesHolder mOriginalHolder = null;
 
@@ -97,8 +89,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 创建并初始化参数
      */
     public BaseSeatParams() {
-        this(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR);
-        initial();
+        this(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR, 3f, 0.5f);
     }
 
     /**
@@ -109,8 +100,8 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * @param defaultRadius 默认圆角弧度
      * @param defaultColor  默认颜色
      */
-    public BaseSeatParams(float defaultWidth, float defaultHeight, float defaultRadius, int defaultColor) {
-        super(defaultWidth, defaultHeight, defaultRadius, defaultColor);
+    public BaseSeatParams(float defaultWidth, float defaultHeight, float defaultRadius, int defaultColor, float largeScale, float smallScale) {
+        super(defaultWidth, defaultHeight, defaultRadius, defaultColor, largeScale, smallScale);
         initial();
     }
 
@@ -118,10 +109,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 初始化
      */
     protected void initial() {
-        super.setLargeScaleWidth(3 * this.getWidth());
-        super.setSmallScaleWidth(0.5f * this.getHeight());
-        this.storeOriginalValues(null);
-
         int selectColor = Color.rgb(228, 24, 99);
         int optionalColor = Color.WHITE;
         int lockColor = Color.rgb(196, 195, 196);
@@ -148,38 +135,28 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      */
     @Override
     public void setScaleRate(float scaleRate, boolean isTrueSetValue) {
+        super.setScaleRate(scaleRate, isTrueSetValue);
         //创建缓存数据对象
         if (mValueHolder == null) {
-            mValueHolder = new float[6];
-        }
-        if (!mIsValueHold) {
+            mValueHolder = new float[4];
             //第一次更新数据记录下最原始的数据
-            mValueHolder[0] = this.getWidth();
-            mValueHolder[1] = this.getHeight();
-            mValueHolder[2] = this.mSeatVerticalInterval;
-            mValueHolder[3] = this.mDrawStyleDescInterval;
-            mValueHolder[4] = this.mDrawStyleInterval;
-            mValueHolder[5] = this.mDescriptionSize;
-            mIsValueHold = true;
+            mValueHolder[0] = this.mSeatVerticalInterval;
+            mValueHolder[1] = this.mDrawStyleDescInterval;
+            mValueHolder[2] = this.mDrawStyleInterval;
+            mValueHolder[3] = this.mDescriptionSize;
         }
         //每一次变化都处理为相对原始数据的变化
-        this.setWidth(mValueHolder[0] * scaleRate, false);
-        this.setHeight(mValueHolder[1] * scaleRate, false);
-        this.mSeatVerticalInterval = mValueHolder[2] * scaleRate;
-        this.mDrawStyleDescInterval = mValueHolder[3] * scaleRate;
-        this.mDrawStyleInterval = mValueHolder[4] * scaleRate;
-        this.mDescriptionSize = mValueHolder[5] * scaleRate;
+        this.mSeatVerticalInterval = mValueHolder[0] * scaleRate;
+        this.mDrawStyleDescInterval = mValueHolder[1] * scaleRate;
+        this.mDrawStyleInterval = mValueHolder[2] * scaleRate;
+        this.mDescriptionSize = mValueHolder[3] * scaleRate;
 
         //若确认更新数据,则将变化后的数据作为永久性数据进行缓存
         if (isTrueSetValue) {
-            mValueHolder[0] = this.getWidth();
-            mValueHolder[1] = this.getHeight();
-            mValueHolder[2] = this.mSeatVerticalInterval;
-            mValueHolder[3] = this.mDrawStyleDescInterval;
-            mValueHolder[4] = this.mDrawStyleInterval;
-            mValueHolder[5] = this.mDescriptionSize;
-            //重置记录标志
-            mIsValueHold = false;
+            mValueHolder[0] = this.mSeatVerticalInterval;
+            mValueHolder[1] = this.mDrawStyleDescInterval;
+            mValueHolder[2] = this.mDrawStyleInterval;
+            mValueHolder[3] = this.mDescriptionSize;
         }
     }
 
@@ -270,8 +247,9 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     }
 
     @Override
-    protected void updateWidthAndHeightWhenSet(float width, float height) {
-
+    protected void updateWidthAndHeightWhenSet(float newWidth, float newHeight) {
+        //TODO:更新宽高的某些计算,在此基类中并不需要特别计算,所以实现方法为空.
+        //TODO:若子类需要自定义绘制图案等则需要考虑是否要基于宽高的某些计算,可参照 (SeatParams}
     }
 
 
@@ -297,29 +275,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         } else {
             this.mDrawStyleDescInterval = mSeatTextInterval;
         }
-    }
-
-    /**
-     * 获取用于绘制情侣座的绘制区域,暂时未使用,每个情侣座为两个座位合并在一起
-     *
-     * @param coupleRectf   区域对象
-     * @param drawPositionX 绘制中心X轴
-     * @param drawPositionY 绘制中心Y轴
-     * @return
-     */
-    public RectF getCoupleDrawRecf(RectF coupleRectf, float drawPositionX, float drawPositionY) {
-        if (coupleRectf == null) {
-            coupleRectf = new RectF();
-        }
-
-        float coupleWidth = this.getWidth() * 2 + this.getSeatHorizontalInterval();
-        float coupleHeight = this.getHeight();
-        coupleRectf.left = drawPositionX - coupleWidth / 2;
-        coupleRectf.top = drawPositionY - coupleHeight / 2;
-        coupleRectf.right = coupleRectf.left + coupleWidth;
-        coupleRectf.bottom = coupleRectf.top + coupleHeight;
-
-        return coupleRectf;
     }
 
     @Override
@@ -348,7 +303,12 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
 
     @Override
     public void clearDrawStyles() {
-        mDrawStyles.clear();
+        if (mDrawStyles != null) {
+            mDrawStyles.clear();
+        }
+        if (mTagInOrder != null) {
+            mTagInOrder.clear();
+        }
     }
 
     @Override
@@ -386,42 +346,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         }
     }
 
-//    @Override
-//    public boolean isCanScale(float scaleRate) {
-//        boolean isAllow = super.isCanScale(scaleRate);
-//        //当已经设置了自动计算功能
-//        //即使缩放不合理还是允许进行缩放
-//        if (mIsSetAutoCalculate) {
-//            //当前允许缩放
-//            if (isAllow) {
-//                //取消自动计算标志,以后所有的缩放不再参考此参数
-//                //按正常缩放
-//                mIsSetAutoCalculate = false;
-//                return isAllow;
-//                //当前不允许缩放,但牌自动计算状态,允许缩放
-//            } else {
-//                return true;
-//            }
-//        } else {
-//            //不根据自动计算功能进行计算
-//            return isAllow;
-//        }
-//    }
-
-
-    @Deprecated
-    /**
-     * 方法废弃
-     */
-    public void setAutoCalculateToFixScreen(float viewWidth, int columnCount) {
-        float eachWidth = viewWidth / (columnCount + 2);
-        float thisWidth = eachWidth * 0.8f;
-        float thisHeight = thisWidth;
-        float thisRadius = eachWidth * 0.2f;
-        this.setDefault(thisWidth, thisHeight, thisRadius, DEFAULT_SEAT_COLOR);
-        this.mIsSetAutoCalculate = true;
-    }
-
     /**
      * 获取座位类型样式的所有文本
      *
@@ -448,21 +372,6 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         }
     }
 
-    /**
-     * 获取指定类型的对象
-     *
-     * @param T 继承自BaseSeatParams
-     * @return
-     */
-
-    private BaseSeatParams getClassObject(Class<? extends BaseSeatParams> T) {
-        try {
-            return T.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("当前参数类型无法正常创建对象或者不存在默认构造函数");
-        }
-    }
-
 
     /**
      * 获取自动计算并分离的seatParams,用于座位类型的分批绘制
@@ -470,7 +379,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * @param seatTypeRowCount 座位类型绘制的行数
      * @return
      */
-    public BaseSeatParams[] getAutoSeparateParams(Class<? extends BaseSeatParams> T, int seatTypeRowCount) {
+    public BaseSeatParams[] getAutoSeparateParams(int seatTypeRowCount) {
         BaseSeatParams[] seatTypeParams = null;
         //座位类型个数
         int seatTypeLength = this.getDrawStyleLength();
@@ -481,7 +390,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         if (seatTypeRowCount <= 0) {
             seatTypeParams = new BaseSeatParams[1];
             //创建当前变量类型的对象
-            seatTypeParams[0] = this.getSelectableClone(this, this.mDrawStyles);
+            seatTypeParams[0] = this.getSelectableClone(this.mDrawStyles);
         } else {
             //正常分行
             //创建分离的行数的参数对象
@@ -506,176 +415,148 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
                     newStyleMap.put(tag, mDrawStyles.get(tag));
                 }
 
-                seatTypeParams[i] = this.getSelectableClone(getClassObject(T), newStyleMap);
+                seatTypeParams[i] = this.getSelectableClone(newStyleMap);
             }
         }
         return seatTypeParams;
     }
 
-    @Override
-    public Object getClone(Object newObj) {
-        if (newObj != null && !(newObj.getClass() != this.getClass())) {
-            throw new RuntimeException("对象类型错误,无法进行克隆!");
-        } else if (newObj == null) {
-            newObj = new BaseSeatParams();
-        }
-        return this.getSelectableClone((BaseSeatParams) newObj, this.mDrawStyles);
-    }
-
     /**
-     * a
+     * 根据参数部分性复制当前对象.部分复制对象像,会跟据参数进行复制部分的 tagInOrder 列表,因为此列表与 map 是相关联的
      *
-     * @param newParams
-     * @param styleMap
+     * @param styleMap 需要复制的map,仅此map对象的数据会被复制,其它的不会.若需要复制完整的对象则将原对象的map引用作为参数即可
      * @return
      */
-    protected BaseSeatParams getSelectableClone(BaseSeatParams newParams, Map<String, BaseDrawStyle> styleMap) {
-        //记录原始的缩略图绘制标志
-        boolean isThumbnail = this.isDrawThumbnail();
-        //将缩略图绘制状态恢复默认
-        //当缩略图状态为true时,获取的数据将不是原始数据
-        this.setIsDrawThumbnail(false, DEFAULT_INT, DEFAULT_INT);
-
-        //创建新
-        if (newParams == null) {
-            newParams = new BaseSeatParams();
+    protected BaseSeatParams getSelectableClone(Map<String, BaseDrawStyle> styleMap) {
+        BaseSeatParams params = (BaseSeatParams) super.clone();
+        //深度复制保存的值对象
+        if (params.mOriginalHolder != null) {
+            params.mOriginalHolder = this.mOriginalHolder.clone();
         }
-        //获取默认原始值
-        OriginalValuesHolder holder = (OriginalValuesHolder) this.getOriginalValues();
-
-        //设置默认初始值
-        newParams.storeOriginalValues(holder);
-        //设置当前值
-        newParams.setWidth(this.getWidth(), false);
-        newParams.setHeight(this.getHeight(), false);
-        newParams.setRadius(this.getRadius());
-        newParams.setSeatHorizontalInterval(this.getSeatHorizontalInterval());
-        newParams.setSeatVerticalInterval(this.getSeatVerticalInterval());
-        newParams.setDrawStyleInterval(this.getDrawStyleInterval());
-        newParams.setDrawStyleDescInterval(this.getDrawStyleDescInterval());
-
-        //设置其它的参数值
-        newParams.setIsDraw(this.isDraw());
-        newParams.setIsDrawThumbnail(isThumbnail, 0, 0);
-        newParams.setThumbnailRate(this.getThumbnailRate());
-        //设置绘制方式
-        newParams.setDrawType(this.getDrawType(true));
-        newParams.clearDrawStyles();
+        if (params.mValueHolder != null) {
+            params.mValueHolder = this.mValueHolder.clone();
+        }
+        //深度复制绘制类型
         if (styleMap != null) {
-            for (Map.Entry<String, BaseDrawStyle> entity : styleMap.entrySet()) {
-                newParams.addNewDrawStyle(entity.getKey(), entity.getValue());
+            HashMap<String, BaseDrawStyle> newMap = new HashMap<>(styleMap.size());
+            for (Map.Entry<String, BaseDrawStyle> entry : styleMap.entrySet()) {
+                newMap.put(entry.getKey(), entry.getValue().clone());
             }
-        }
-
-        this.setIsDrawThumbnail(isThumbnail, DEFAULT_INT, DEFAULT_INT);
-        return newParams;
-    }
-
-
-    @Override
-    public float getScaleRateCompareToOriginal() {
-        if (mOriginalHolder != null) {
-            //计算当前值与原始值的缩放比
-            return this.getWidth() / mOriginalHolder.width;
+            params.mDrawStyles = newMap;
         } else {
-            return DEFAULT_FLOAT;
+            params.mDrawStyles = new HashMap<>();
         }
+        //深度复制顺序绘制标签
+        if (params.mTagInOrder == null || styleMap == null) {
+            params.mTagInOrder = null;
+        } else if (styleMap == this.mDrawStyles) {
+            //原对象完整复制
+            List<String> newList = new ArrayList<>(params.mTagInOrder.size());
+            for (String tag : params.mTagInOrder) {
+                newList.add(tag);
+            }
+        } else {
+            //部分复制
+            List<String> newList = new ArrayList<>(params.mTagInOrder.size());
+            for (int i = 0; i < params.mTagInOrder.size(); i++) {
+                String tag = params.mTagInOrder.get(i);
+                if (styleMap.containsKey(tag)) {
+                    newList.add(tag);
+                }
+            }
+            params.mTagInOrder = newList;
+        }
+        //更新width/height相关参数信息
+        this.updateWidthAndHeightWhenSet(this.getWidthNotInThumbnail(), this.getHeightNotInThumbnail());
+        return params;
     }
 
     @Override
-    public float setOriginalValuesToReplaceCurrents(float fixScaleRate) {
-        float oldScaleRate = 0f;
-        float targetScaleRate = fixScaleRate;
-//        //是否缩放到默认最大值
-//        if (fixScaleRate) {
-//            targetScaleRate = 2f;
-//        } else {
-//            //缩放到最小值
-//            targetScaleRate = 1f;
-//        }
-        //计算缩放后的值与当前值的比例,作为当前缩放比
-        oldScaleRate =
-                //计算缩放后的宽值(放大原始的3倍或者还原为原始的大小)
-                mOriginalHolder.width * targetScaleRate
-                        //当前界面值
-                        / this.getWidth();
-
-        this.setWidth(mOriginalHolder.width * targetScaleRate, false);
-        this.setHeight(mOriginalHolder.height * targetScaleRate, false);
-        this.setRadius(mOriginalHolder.radius * targetScaleRate);
-        this.mSeatHorizontalInterval = mOriginalHolder.horizontalInterval * targetScaleRate;
-        this.mSeatVerticalInterval = mOriginalHolder.verticalInterval * targetScaleRate;
-        this.mDrawStyleInterval = mOriginalHolder.typeInterval * targetScaleRate;
-        this.mDrawStyleDescInterval = mOriginalHolder.descInterval * targetScaleRate;
-        this.mDescriptionSize = mOriginalHolder.descSize * targetScaleRate;
-
+    public float setScaleDefaultValuesToReplaceCurrents(float fixScaleRate) {
+        float oldScaleRate = super.setScaleDefaultValuesToReplaceCurrents(fixScaleRate);
+        if (mOriginalHolder != null && oldScaleRate != DEFAULT_FLOAT) {
+            this.mSeatHorizontalInterval = mOriginalHolder.DEFAULT_HORI_INTERVAL * fixScaleRate;
+            this.mSeatVerticalInterval = mOriginalHolder.DEFAULT_VERT_INTERVAL * fixScaleRate;
+            this.mDrawStyleInterval = mOriginalHolder.DEFAULT_STYLE_INTERVAL * fixScaleRate;
+            this.mDrawStyleDescInterval = mOriginalHolder.DEFAULT_DESC_INTERVAL * fixScaleRate;
+            this.mDescriptionSize = mOriginalHolder.DEFAULT_DESC_SIZE * fixScaleRate;
+        }
         return oldScaleRate;
     }
 
-    /**
-     * 未使用
-     *
-     * @param targetScaleRate
-     */
-    public void setNewParamsValues(float targetScaleRate) {
-        this.setWidth(mOriginalHolder.width * targetScaleRate, false);
-        this.setHeight(mOriginalHolder.height * targetScaleRate, false);
-        this.setRadius(mOriginalHolder.radius * targetScaleRate);
-        this.mSeatHorizontalInterval = mOriginalHolder.horizontalInterval * targetScaleRate;
-        this.mSeatVerticalInterval = mOriginalHolder.verticalInterval * targetScaleRate;
-        this.mDrawStyleInterval = mOriginalHolder.typeInterval * targetScaleRate;
-        this.mDrawStyleDescInterval = mOriginalHolder.descInterval * targetScaleRate;
-        this.mDescriptionSize = mOriginalHolder.descSize * targetScaleRate;
-    }
-
 
     @Override
-    public void storeOriginalValues(Object copyObj) {
+    public void storeDefaultValues(DefaultValuesHolder holder) {
         if (mOriginalHolder == null) {
             mOriginalHolder = new OriginalValuesHolder();
         }
-        if (copyObj == null) {
-            mOriginalHolder.width = this.getWidth();
-            mOriginalHolder.height = this.getHeight();
-            mOriginalHolder.radius = this.getRadius();
-            mOriginalHolder.horizontalInterval = this.getSeatHorizontalInterval();
-            mOriginalHolder.verticalInterval = this.getSeatVerticalInterval();
-            mOriginalHolder.typeInterval = this.getDrawStyleInterval();
-            mOriginalHolder.descSize = this.getDescriptionSize();
-            mOriginalHolder.descInterval = this.getDrawStyleDescInterval();
-        } else if (copyObj instanceof OriginalValuesHolder) {
-            OriginalValuesHolder newHolder = (OriginalValuesHolder) copyObj;
-            mOriginalHolder.width = newHolder.width;
-            mOriginalHolder.height = newHolder.height;
-            mOriginalHolder.radius = newHolder.radius;
-            mOriginalHolder.horizontalInterval = newHolder.horizontalInterval;
-            mOriginalHolder.verticalInterval = newHolder.verticalInterval;
-            mOriginalHolder.typeInterval = newHolder.typeInterval;
-            mOriginalHolder.descInterval = newHolder.descInterval;
-            mOriginalHolder.descSize = newHolder.descSize;
-        } else {
-            throw new RuntimeException("参数类型出错,请根据注释提醒进行传参");
-        }
+        mOriginalHolder.updateValues(holder);
+        mOriginalHolder.DEFAULT_HORI_INTERVAL = this.getSeatHorizontalInterval();
+        mOriginalHolder.DEFAULT_VERT_INTERVAL = this.getSeatVerticalInterval();
+        mOriginalHolder.DEFAULT_STYLE_INTERVAL = this.getDrawStyleInterval();
+        mOriginalHolder.DEFAULT_DESC_SIZE = this.getDescriptionSize(DEFAULT_FLOAT);
+        mOriginalHolder.DEFAULT_DESC_INTERVAL = this.getDrawStyleDescInterval();
     }
 
     @Override
-    public Object getOriginalValues() {
-        return mOriginalHolder;
+    public OriginalValuesHolder getDefaultValues() {
+        return new OriginalValuesHolder(mOriginalHolder);
+    }
+
+    @Override
+    public BaseSeatParams clone() {
+        return getSelectableClone(this.mDrawStyles);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder strBuilder = new StringBuilder();
+        if (mDrawStyles != null) {
+            for (BaseDrawStyle style : mDrawStyles.values()) {
+                strBuilder.append("/***** style *******/\n");
+                strBuilder.append(style.toString());
+                strBuilder.append("=================================\n");
+            }
+        }
+        return super.toString() +
+                "style\t|\n" + strBuilder.toString();
     }
 
     /**
      * 原始座位数据的保存,此处的原始是指<font color="#ff9900"><b>座位默认设定的宽高或者用户设定的宽高,即第一次运行并显示出来的界面即为原始界面;
      * 当用户对宽高做修改时,也会重新记录此数据</b></font>
      */
-    protected class OriginalValuesHolder {
-        public float width = 0f;
-        public float height = 0f;
-        public float radius = 0f;
-        public float horizontalInterval = 0f;
-        public float verticalInterval = 0f;
-        public float typeInterval = 0f;
-        public float descInterval = 0f;
-        public float descSize = 0f;
+    protected class OriginalValuesHolder extends DefaultValuesHolder implements Cloneable {
+        public float DEFAULT_HORI_INTERVAL = 0f;
+        public float DEFAULT_VERT_INTERVAL = 0f;
+        public float DEFAULT_STYLE_INTERVAL = 0f;
+        public float DEFAULT_DESC_INTERVAL = 0f;
+        public float DEFAULT_DESC_SIZE = 0f;
+
+        public OriginalValuesHolder() {
+        }
+
+        public OriginalValuesHolder(OriginalValuesHolder holder) {
+            if (holder != null) {
+                this.updateValues(holder.DEFAULT_WIDTH, holder.DEFAULT_HEIGHT, holder.DEFAULT_RADIUS, holder.DEFAULT_COLOR,
+                        holder.DEFAULT_HORI_INTERVAL, holder.DEFAULT_VERT_INTERVAL, holder.DEFAULT_STYLE_INTERVAL, holder.DEFAULT_DESC_INTERVAL, holder.DEFAULT_DESC_SIZE);
+            }
+        }
+
+        public void updateValues(float width, float height, float radius, int color,
+                                 float horizontalInterval, float verticalInterval, float typeInterval, float descInterval, float descSize) {
+            super.updateValues(width, height, radius, color);
+            this.DEFAULT_HORI_INTERVAL = horizontalInterval;
+            this.DEFAULT_VERT_INTERVAL = verticalInterval;
+            this.DEFAULT_STYLE_INTERVAL = typeInterval;
+            this.DEFAULT_DESC_INTERVAL = descInterval;
+            this.DEFAULT_DESC_SIZE = descSize;
+        }
+
+        @Override
+        public OriginalValuesHolder clone() {
+            return (OriginalValuesHolder) super.clone();
+        }
     }
 
 }
