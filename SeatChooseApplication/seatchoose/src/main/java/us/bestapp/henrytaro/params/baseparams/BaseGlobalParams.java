@@ -4,6 +4,7 @@ package us.bestapp.henrytaro.params.baseparams;/**
 
 import android.graphics.Color;
 
+import android.graphics.PointF;
 import us.bestapp.henrytaro.draw.utils.SimpleDrawUtils;
 import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
@@ -130,16 +131,6 @@ public class BaseGlobalParams implements IGlobleParams {
         return this.mIsDrawThumbnail;
     }
 
-//    @Override
-//    public void setIsAutoScaleToScreen(boolean isAutoScale) {
-//        this.mIsAutoScaleToScreen = isAutoScale;
-//    }
-//
-//    @Override
-//    public boolean isAutoScaleToScreen() {
-//        return this.mIsAutoScaleToScreen;
-//    }
-
     @Override
     public void setIsDrawThumbnail(boolean isDraw) {
         this.mIsDrawThumbnail = isDraw;
@@ -251,23 +242,10 @@ public class BaseGlobalParams implements IGlobleParams {
     }
 
     @Override
-    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, String notifyFormat) {
+    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, boolean isRowFirst, String notifyFormat) {
         this.mIsDrawSeletedRowColumnNotification = isDrawNotification;
+        this.mIsRowFirst = isRowFirst;
         this.mNotificationFormat = notifyFormat;
-    }
-
-    @Override
-    public String createNotificationFormat(boolean isRowFirst, String... params) {
-        if (params != null) {
-            this.mIsRowFirst = isRowFirst;
-            String format = "";
-            for (String str : params) {
-                format += str;
-            }
-            return format;
-        } else {
-            return null;
-        }
     }
 
     @Override

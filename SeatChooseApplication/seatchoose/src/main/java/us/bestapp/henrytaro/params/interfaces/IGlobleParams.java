@@ -11,20 +11,6 @@ public interface IGlobleParams {
 
     public static final String FORMAT_STR = "%s";
 
-//    /**
-//     * 设置是否自动计算最小缩放(仅限缩小时)界面是否自动适应屏幕大小
-//     *
-//     * @param isAutoScale
-//     */
-//    public void setIsAutoScaleToScreen(boolean isAutoScale);
-//
-//    /**
-//     * 获取是否自动计算最小缩放界面自动适应屏幕大小(仅限缩小时)
-//     *
-//     * @return
-//     */
-//    public boolean isAutoScaleToScreen();
-
     /**
      * 设置是否绘制缩略图
      *
@@ -222,23 +208,11 @@ public interface IGlobleParams {
     /**
      * 设置是否显示选中某行某列时的提醒
      *
-     * @param isDrawNotification
+     * @param isDrawNotification 是否绘制选中时行列号通知,当此参数为false时,后面的参数没有实际意义将被忽略
+     * @param isRowFirst         通知中是否行在前,列在后.默认为是
      * @param notifyFormat       用于格式化的通知文字内容,例:%1$s行/%2$s列,参数一将被替换为行号,参数二将被替换为列号,
-     *                           若不知道格式化规则可使用{@link #createNotificationFormat(boolean, String...)}创建格式化字符串
      */
-    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, String notifyFormat);
-
-    /**
-     * 创建用于通知的格式化字符串,创建规则如下:<br/>
-     * 将需要显示的字符串依次传入,在需要显示行/列号时分别使用{@link #FORMAT_STR}代替即可.如:<br/>
-     * 创建:createNotification(false,FORMAT_STR,"列/",FORMAT_STR,"行");
-     * 显示:2列/3行
-     *
-     * @param isRowFirst 是否行显示在前
-     * @param params     可变String参数
-     * @return
-     */
-    public String createNotificationFormat(boolean isRowFirst, String... params);
+    public void setIsDrawSeletedRowColumnNotification(boolean isDrawNotification, boolean isRowFirst, String notifyFormat);
 
     /**
      * 是否行显示在前
@@ -263,7 +237,8 @@ public interface IGlobleParams {
 
     /**
      * 设置是否允许双击同一地方放大或者缩小界面
-     *  @param isEnabled
+     *
+     * @param isEnabled
      * @param largeFixScale
      * @param smallFixScale
      */
