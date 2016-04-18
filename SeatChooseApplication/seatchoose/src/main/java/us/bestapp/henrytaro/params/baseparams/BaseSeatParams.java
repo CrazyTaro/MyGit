@@ -43,7 +43,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
     /**
      * 默认座位列表中座位间的水平间隔宽度
      */
-    public static final float DEFAULT_SEAT_HORIZONTAL_INTERVAL = DEFAULT_SEAT_HEIGHT * 0.1f;
+    public static final float DEFAULT_SEAT_HORIZONTAL_INTERVAL = DEFAULT_SEAT_WIDTH * 0.1f;
     /**
      * 默认座位列表中座位间的垂直间隔宽度
      */

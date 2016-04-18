@@ -658,8 +658,6 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         if (!mSeatParams.isDrawThumbnail()) {
             //记录界面高度值
             mCanvasHeight = beginDrawY - this.getCanvasDrawBeginY(mGlobalParams.getSeatTypeRowCount());
-//                    //附加部分,用于边界的空白
-//                    + mSeatParams.getDrawHeight();
         }
     }
 

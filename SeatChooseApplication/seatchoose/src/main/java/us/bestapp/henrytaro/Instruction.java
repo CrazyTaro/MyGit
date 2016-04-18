@@ -1,5 +1,7 @@
 package us.bestapp.henrytaro;
 
+import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
+
 /**
  * Created by xuhaolin on 15/9/15.
  * 程序结构说明
@@ -19,7 +21,7 @@ public interface Instruction {
      * BaseSeatParams是绘制所需要的座位参数,这是不可变的,除非不使用AbsDrawUtils;<br/>
      * 使用BaseSeatParams需要注意的是,继承此类实现其子类可以实现自定义的一些参数处理;比如更新默认绘制的座位形状等;<br/>
      * 继承此类的子类必须存在默认的构造函数,否则会导致内部的创建失败!;<br/>
-     * 继承此类的子类需要注意{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams#getClone(Object)}方法,对于此复制自身的方法来说,
+     * 继承此类的子类需要注意{@link BaseSeatParams#clone()}方法,对于此复制自身的方法来说,
      * 如果不需要的复制的话可以忽略不处理,若需要请注意是否需要处理某些特别的情况(比如重新初始化一些数据等),请参考{@link us.bestapp.henrytaro.params.SeatParams}<br/>
      */
     public void aboutSeatParams();
