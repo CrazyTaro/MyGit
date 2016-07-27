@@ -1,1 +1,1 @@
-include ':seatchooseapk', ':areachoose', ':areachoosesapk', ':seatchoose'
+include ':seatchooseapk', ':seatchoose'

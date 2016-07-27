@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SeatChooseApplication.iml" filepath="$PROJECT_DIR$/SeatChooseApplication.iml" />
-      <module fileurl="file://$PROJECT_DIR$/areachoose/areachoose.iml" filepath="$PROJECT_DIR$/areachoose/areachoose.iml" />
-      <module fileurl="file://$PROJECT_DIR$/areachoosesapk/areachoosesapk.iml" filepath="$PROJECT_DIR$/areachoosesapk/areachoosesapk.iml" />
       <module fileurl="file://$PROJECT_DIR$/seatchoose/seatchoose.iml" filepath="$PROJECT_DIR$/seatchoose/seatchoose.iml" />
       <module fileurl="file://$PROJECT_DIR$/seatchooseapk/seatchooseapk.iml" filepath="$PROJECT_DIR$/seatchooseapk/seatchooseapk.iml" />
     </modules>
