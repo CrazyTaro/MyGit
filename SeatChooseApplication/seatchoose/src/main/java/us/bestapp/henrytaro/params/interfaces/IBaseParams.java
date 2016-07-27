@@ -1,6 +1,10 @@
 package us.bestapp.henrytaro.params.interfaces;
 
 import android.graphics.PointF;
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by xuhaolin on 2015/8/24.
@@ -8,6 +12,12 @@ import android.graphics.PointF;
  * <br/>{@since 一般不继承此接口, 通过继承其子接口 {@link ISeatParams}/{@link IStageParams}实现需要的方法}
  */
 public interface IBaseParams {
+
+    @IntDef(flag = false, value = {DRAW_TYPE_DEFAULT, DRAW_TYPE_IMAGE})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface DrawType {
+    }
+
     /**
      * 默认整数值:-1
      */
@@ -125,7 +135,7 @@ public interface IBaseParams {
      *                 {@link #DRAW_TYPE_IMAGE},图片绘制方式<br/>
      *                 </p>
      */
-    public void setDrawType(int drawType);
+    public void setDrawType(@DrawType int drawType);
 
     /**
      * 获取绘制的方式

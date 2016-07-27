@@ -1,5 +1,9 @@
 package us.bestapp.henrytaro.params.interfaces;
 
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
@@ -10,39 +14,44 @@ import us.bestapp.henrytaro.params.baseparams.BaseDrawStyle;
  * <br/>
  * <font color="#ff9900"><b>关于标签及样式的设定,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
  * 其中包括<br/>
- * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
- * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
- * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
- * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+ * {@link #DRAW_STYLE_OPTIONAL_SEAT} 可选标签样式<br/>
+ * {@link #DRAW_STYLE_SELECTED_SEAT} 已选标签样式<br/>
+ * {@link #DRAW_STYLE_LOCK_SEAT} 锁定标签样式<br/>
+ * {@link #DRAW_STYLE_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
  * <br/>
- * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+ * 其余的样式并没有预存,但是一样可以使用{@link #DRAW_STYLE_ERROR_SEAT}/{@link #DRAW_STYLE_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
  * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
  */
 public interface ISeatParams extends IBaseParams {
+    @StringDef(value = {DRAW_STYLE_LOCK_SEAT, DRAW_STYLE_OPTIONAL_SEAT, DRAW_STYLE_SELECTED_SEAT, DRAW_STYLE_COUPLE_OPTIONAL_SEAT, DRAW_STYLE_ERROR_SEAT, DRAW_STYLE_UNSHOW_SEAT})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface DrawStyle {
+    }
+
     /**
      * 锁定座位标签(即不可选)
      */
-    public static final String TAG_LOCK_SEAT = "tag_lock_seat";
+    public static final String DRAW_STYLE_LOCK_SEAT = "tag_lock_seat";
     /**
      * 可选座位标签
      */
-    public static final String TAG_OPTIONAL_SEAT = "tag_optional_seat";
+    public static final String DRAW_STYLE_OPTIONAL_SEAT = "tag_optional_seat";
     /**
      * 已选座位标签
      */
-    public static final String TAG_SELECTE_SEAT = "tag_selecte_seat";
+    public static final String DRAW_STYLE_SELECTED_SEAT = "tag_selecte_seat";
     /**
      * 情侣座位标签(未选中前的样式,选中样式同已选)
      */
-    public static final String TAG_COUPLE_OPTIONAL_SEAT = "tag_couple_seat";
+    public static final String DRAW_STYLE_COUPLE_OPTIONAL_SEAT = "tag_couple_seat";
     /**
      * 错误座位标签
      */
-    public static final String TAG_ERROR_SEAT = "tag_error_seat";
+    public static final String DRAW_STYLE_ERROR_SEAT = "tag_error_seat";
     /**
      * 不显示座位标签
      */
-    public static final String TAG_UNSHOW_SEAT = "tag_unshow_seat";
+    public static final String DRAW_STYLE_UNSHOW_SEAT = "tag_unshow_seat";
 
     /**
      * 获取普通座位绘制之间的水平间隔
@@ -135,7 +144,14 @@ public interface ISeatParams extends IBaseParams {
     public List<String> getDrawStyleTags();
 
     /**
-     * 获取指定标签的座位类型样式,若不存在返回null
+     * 获取指定标签的座位类型样式,若不存在返回null<br/>
+     * 默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
+     * 其中包括<br/>
+     * {@link #DRAW_STYLE_OPTIONAL_SEAT} 可选标签样式<br/>
+     * {@link #DRAW_STYLE_SELECTED_SEAT} 已选标签样式<br/>
+     * {@link #DRAW_STYLE_LOCK_SEAT} 锁定标签样式<br/>
+     * {@link #DRAW_STYLE_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+     * <br/>
      *
      * @param typeTag
      * @return
@@ -146,12 +162,12 @@ public interface ISeatParams extends IBaseParams {
      * 新增一个座位类型样式及其标签,标签不可与其它标签重复，否则原有的样式会被替换<br/>
      * <font color="#ff9900"><b>此处要注意的是,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
      * 其中包括<br/>
-     * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
-     * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
-     * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
-     * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+     * {@link #DRAW_STYLE_OPTIONAL_SEAT} 可选标签样式<br/>
+     * {@link #DRAW_STYLE_SELECTED_SEAT} 已选标签样式<br/>
+     * {@link #DRAW_STYLE_LOCK_SEAT} 锁定标签样式<br/>
+     * {@link #DRAW_STYLE_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
      * <br/>
-     * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+     * 其余的样式并没有预存,但是一样可以使用{@link #DRAW_STYLE_ERROR_SEAT}/{@link #DRAW_STYLE_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
      * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
      *
      * @param typeTag  标签

@@ -35,18 +35,18 @@ public class EgSeat extends AbsSeatEntity {
     public String getDrawStyleTag() {
         switch (mType) {
             case 1:
-                return BaseSeatParams.TAG_OPTIONAL_SEAT;
+                return BaseSeatParams.DRAW_STYLE_OPTIONAL_SEAT;
             case -4:
             case -5:
             case 2:
-                return BaseSeatParams.TAG_SELECTE_SEAT;
+                return BaseSeatParams.DRAW_STYLE_SELECTED_SEAT;
             case 3:
-                return BaseSeatParams.TAG_LOCK_SEAT;
+                return BaseSeatParams.DRAW_STYLE_LOCK_SEAT;
             case 4:
             case 5:
-                return BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT;
+                return BaseSeatParams.DRAW_STYLE_COUPLE_OPTIONAL_SEAT;
             default:
-                return BaseSeatParams.TAG_ERROR_SEAT;
+                return BaseSeatParams.DRAW_STYLE_ERROR_SEAT;
         }
     }
 

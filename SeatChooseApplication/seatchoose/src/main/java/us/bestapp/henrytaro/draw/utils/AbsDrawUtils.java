@@ -5,6 +5,7 @@ import android.graphics.*;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
 import us.bestapp.henrytaro.draw.interfaces.ISeatDrawInterface;
 import us.bestapp.henrytaro.draw.interfaces.ISeatInformationListener;
 import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
@@ -28,7 +29,7 @@ import java.util.List;
  * <p/>
  * <p>座位绘制抽象工具类,用于处理各种座位/舞台绘制的方法,并实现View默认的触摸处理事件.<b>此抽象类已经做好基本的绘制处理,通过继承此类,
  * 实现对普通座位与舞台的自定义绘制即可;若不需要特别的处理或者只需要少量的修改,可以考虑使用默认绘制类{@link SimpleDrawUtils}</b>,
- * 此抽象类已继承触摸事件并实现所有方法(包括空方法),若需要自定义处理某些事件请直接重写,事件详见{@link AbsTouchEventHandle}</p>
+ * 此抽象类已继承触摸事件并实现所有方法(包括空方法),若需要自定义处理某些事件请直接重写,事件详见{@link TouchEventHelper}</p>
  * <p>
  * <p><font color="#ff9900"><b>此抽象类已经做好基本的绘制处理,通过继承此类,通过组合提供的{@code protected}绘制方法可以更加灵活地处理</b></font>,
  * 如果通过继承此类完成定制的绘制时,需要注意重写部分方法以达到正确的绘制结果;建议重写{@link #drawNormalCanvas(Canvas, Paint, float)}</p>
@@ -43,7 +44,7 @@ import java.util.List;
  * @author xuhaolin
  * @version 7.2
  */
-public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatDrawInterface, TouchUtils.IMoveEvent, TouchUtils.IScaleEvent {
+public abstract class AbsDrawUtils implements ISeatDrawInterface, TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IMoveEvent, MoveAndScaleTouchHelper.IScaleEvent {
     /**
      * 全局参数,所需要用到的全局性参数均来自此接口,如背景色/是否绘制缩略图/是否绘制行列号等
      */
@@ -82,7 +83,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     protected float mOriginalOffsetX = 0f;
     protected float mOriginalOffsetY = 0f;
     protected Context mContext = null;
-    protected TouchUtils mTouchUtils = null;
+    protected TouchEventHelper mTouchHelper = null;
+    protected MoveAndScaleTouchHelper mMSActionHelper = null;
     /**
      * 绑定的用于绘制界面的View
      */
@@ -118,16 +120,16 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 //
 ////                    //存放移动前的偏移数据
 ////                    //相对当前屏幕中心的X轴偏移量
-////                    mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
+////                    mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
 ////                    //相对当前屏幕中心的Y轴偏移量
 ////                    //原来的偏移量是以Y轴顶端为偏移值
-////                    mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+////                    mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
 //
 //
 //                    //根据缩放比计算新的偏移值
-//                    mTouchUtils.getDrawOffsetX() = newScaleRate * mOffsetPoint.x;
+//                    mMSActionHelper.getDrawOffsetX() = newScaleRate * mOffsetPoint.x;
 //                    //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-//                    mTouchUtils.getDrawOffsetY() = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
+//                    mMSActionHelper.getDrawOffsetY() = newScaleRate * mOffsetPoint.y + mWHPoint.y / 2;
 //
 //                    if ((unitRate > 0 && newScaleRate <= targetRate) || (unitRate < 0 && newScaleRate >= targetRate)) {
 //                        mSeatParams.setScaleRate(newScaleRate, false);
@@ -143,8 +145,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 //                        mUpdateScaleHandle.sendMessageDelayed(msg, 20);
 //                    } else {
 //                        //是否进行up事件,是保存数据当前计算的最后数据
-//                        mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
-//                        mOffsetPoint.y = mTouchUtils.getDrawOffsetY();
+//                        mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
+//                        mOffsetPoint.y = mMSActionHelper.getDrawOffsetY();
 //
 //                        mSeatParams.setScaleRate(newScaleRate, true);
 //                        mStageParams.setScaleRate(newScaleRate, true);
@@ -180,11 +182,14 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mImageRectf = new RectF();
-        mTouchUtils = new TouchUtils(this, this);
-        this.setIsShowLog(false, null);
-        mTouchUtils.setIsShowLog(false);
+        mTouchHelper = new TouchEventHelper(this);
+        mMSActionHelper = new MoveAndScaleTouchHelper(this, this);
+//        //启用基于距离的单击检测可用;基于时间的单击检测不可用
+//        mTouchHelper.setIsEnableSingleClick(TouchEventHelper.EVENT_SINGLE_CLICK_BY_DISTANCE);
+//        //增大单击响应的距离
+//        mTouchHelper.setSingleClickOffsetDistance(20);
         //设置监听事件,实际事件分配来自于抽象父类
-        mDrawView.setOnTouchListener(this);
+        mDrawView.setOnTouchListener(mTouchHelper);
 
         this.setParams(seat, stage, globle);
         this.initial(seat, stage, globle);
@@ -252,8 +257,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
     @Override
     public void setIsShowLog(boolean isShowLog, String tag) {
-        super.setIsShowLog(isShowLog, tag);
-        mTouchUtils.setIsShowLog(isShowLog);
+        mTouchHelper.setIsShowLog(isShowLog, tag);
+        mMSActionHelper.setIsShowLog(isShowLog);
     }
 
     /**
@@ -1057,7 +1062,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
-                + mTouchUtils.getDrawOffsetY();
+                + mMSActionHelper.getDrawOffsetY();
         if (mSeatParams.isDrawThumbnail()) {
             beginDrawCenterY = 0f;
         }
@@ -1089,7 +1094,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
-                + mTouchUtils.getDrawOffsetY();
+                + mMSActionHelper.getDrawOffsetY();
 
         if (isBaseOriginal) {
             beginDrawCenterY = 0f;
@@ -1121,7 +1126,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //初始偏移量
         float beginDrawCenterY = mOriginalOffsetY
                 //用户可能进行移动的偏移量
-                + mTouchUtils.getDrawOffsetY();
+                + mMSActionHelper.getDrawOffsetY();
         //当绘制缩略图时,由于缩略图固定在左上角
         //所以不需要任何的原始偏移量或者是用户产生的偏移量
         //用户的偏移量影响不在缩略图上表现出来
@@ -1200,7 +1205,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
     protected float getShowRectfBeginY(float originalCanvasWidth) {
         //用户可能进行移动的偏移量
         //取绝对值是在缩略图中垂直方向的偏移量必须是正数
-        return Math.abs(mTouchUtils.getDrawOffsetY() * (this.getThumbnailWidth() / originalCanvasWidth));
+        return Math.abs(mMSActionHelper.getDrawOffsetY() * (this.getThumbnailWidth() / originalCanvasWidth));
     }
 
     /**
@@ -1334,7 +1339,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         if (mSeatParams.isDrawThumbnail()) {
             return this.getThumbnailWidth() / 2;
         } else {
-            return mOriginalOffsetX + mTouchUtils.getDrawOffsetX() + viewWidth / 2;
+            return mOriginalOffsetX + mMSActionHelper.getDrawOffsetX() + viewWidth / 2;
         }
     }
 
@@ -1450,7 +1455,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             //因此不会出现不平滑的移动现象
             drawCenterY = mSeatParams.getDrawHeight();
         } else {
-            showMsg("draw", "列数第三种情况......");
+            mTouchHelper.showMsg("draw", "列数第三种情况......");
         }
 
 
@@ -1474,7 +1479,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             //因此不会出现不平滑的移动现象
             drawCenterX = fixRowDrawCenterX;
         } else {
-            showMsg("draw", "行数第三种情况");
+            mTouchHelper.showMsg("draw", "行数第三种情况");
         }
 
         //行数绘制的左边界值,防止行列的叠加
@@ -1488,7 +1493,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             this.drawFloatTitleColumnNumber(canvas, paint, this.getDrawCenterX(mWHPoint.x), drawCenterY, edgeX, columnCount, 0);
         }
         if (mGlobalParams.isDrawRowNumber()) {
-            showMsg("draw", "开始绘制行号");
+            mTouchHelper.showMsg("draw", "开始绘制行号");
             //绘制行数
             this.drawFloatTitleRowNumber(canvas, paint, drawCenterX, this.getFirstSellSeatDrawCenterY(mGlobalParams.getSeatTypeRowCount()), edgeY, rowIDs);
         }
@@ -1690,7 +1695,7 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         int clickRow = calculateRowIndex(clickPositionY, beginDrawPositionY, seatRowCount);
         //计算列的索引
         int clickColumn = calculateColumnIndex(clickPositionX, seatColumnCount);
-        showMsg("draw", "单击座位结果:row = " + clickRow + "/column = " + clickColumn);
+        mTouchHelper.showMsg("draw", "单击座位结果:row = " + clickRow + "/column = " + clickColumn);
         //座位有效则进行处理
         if (clickColumn != -1 && clickRow != -1) {
             //返回的座位对应的索引值点
@@ -1877,139 +1882,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         }
     }
 
-//    /**
-//     * 多点触摸的重绘,是否重绘由实际缩放的比例决定
-//     *
-//     * @param newScaleRate     新的缩放比例,该比例可能为1(通常情况下比例为1不缩放,没有意义)
-//     * @param invalidateAction 重绘的动作标志
-//     */
-//    private void invalidateInMultiPoint(float newScaleRate, int invalidateAction) {
-//        //当前后的缩放比与上一次缩放比相同时不进行重绘,防止反复多次地重绘..
-//        //如果是最后一次(up事件),除非是不能绘制,否则必定重绘并记录缩放比
-//        boolean isCanScale = false;
-//        boolean isTrueSetValue = invalidateAction == MotionEvent.ACTION_POINTER_UP;
-//        if (newScaleRate == 1 && !isTrueSetValue) {
-//            return;
-//        }
-//
-//
-//        if (mSeatParams.isCanScale(newScaleRate) && mStageParams.isCanScale(newScaleRate)) {
-//            mLastScaleRate = newScaleRate;
-//            isCanScale = true;
-//        }
-//
-//        if (isTrueSetValue) {
-//            //若缩放比不合法且当前缩放为最后一次缩放(up事件),则将上一次的缩放比作为此次的缩放比,用于记录数据
-//            //且将最后的缩放比设为1(因为已经达到缩放的上限,再缩放也不会改变,所以比例使用1)
-//            //此处不作此操作会导致在缩放的时候达到最大值后放手,再次缩放会在最开始的时候复用上一次缩放的结果(有闪屏的效果...)
-//            newScaleRate = mLastScaleRate;
-//            mLastScaleRate = 1;
-//            isCanScale = true;
-//        }
-//
-//        if (!isCanScale) {
-//            //若为抬起缩放事件,则不管是否已经通知过,必定再通知一次
-//            if (mISeatInformationListener != null && (!mIsNotifyScaleMaxnium || invalidateAction == MotionEvent.ACTION_UP)) {
-//                mISeatInformationListener.scaleMaximum();
-//                //标志已通知缩放到极限
-//                //此处是为了防止反复地回调此函数
-//                mIsNotifyScaleMaxnium = true;
-//            }
-//            return;
-//        }
-//
-//        //设置缩放的数据
-//        //最后一次缩放比为1时,其实与原界面是相同的
-//        mSeatParams.setScaleRate(newScaleRate, isTrueSetValue);
-//        mStageParams.setScaleRate(newScaleRate, isTrueSetValue);
-//
-//        //判断是否已经存放了移动前的偏移数据
-//        if (!mIsFirstStorePoint) {
-//            //相对当前屏幕中心的X轴偏移量
-//            mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
-//            //相对当前屏幕中心的Y轴偏移量
-//            //原来的偏移量是以Y轴顶端为偏移值
-//            mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
-//            mIsFirstStorePoint = true;
-//        }
-//        //根据缩放比计算新的偏移值
-//        mTouchUtils.setOffsetX(newScaleRate * mOffsetPoint.x);
-//        //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-//        mTouchUtils.setOffsetY(newScaleRate * mOffsetPoint.y + mWHPoint.y / 2);
-//        //是否进行up事件,是保存数据当前计算的最后数据
-//        if (isTrueSetValue) {
-//            mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
-//            mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
-//            //重置记录标志亦是
-//            mIsFirstStorePoint = false;
-//        }
-//        //重绘工作
-//        mDrawView.post(new InvalidateRunnable(mDrawView, invalidateAction));
-//
-//        //取消通知缩放到极限的标志
-//        mIsNotifyScaleMaxnium = false;
-//    }
-
-//    /**
-//     * 根据移动的距离计算是否重新绘制
-//     *
-//     * @param moveDistanceX    X轴方向的移动距离(可负值)
-//     * @param moveDistanceY    Y轴方向的移动距离(可负值)
-//     * @param invalidateAction 重绘的行为标志
-//     */
-//
-//    private boolean invalidateInSinglePoint(float moveDistanceX, float moveDistanceY, int invalidateAction) {
-//        //此处处理的是按是否进行移动过(默认移动范围为5像素)来确认是否是单击事件
-//        //而不是按单击事件来确定
-//        if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5) {
-//            //判断当前重绘时是否由move事件触发,若非move事件触发则将移动标志设置为false
-//            mIsMoved = invalidateAction == MotionEvent.ACTION_MOVE;
-//        }
-//        //此处做大于5的判断是为了避免在检测单击事件时
-//        //有可能会有很微小的变动,避免这种情况下依然会造成移动的效果
-//        if (Math.abs(moveDistanceX) > 5 || Math.abs(moveDistanceY) > 5 || invalidateAction == MotionEvent.ACTION_UP) {
-//
-//            //新的偏移量
-//            float newDrawPositionX = mTouchUtils.getDrawOffsetX() + moveDistanceX;
-//            float newDrawPositionY = mTouchUtils.getDrawOffsetY() + moveDistanceY;
-//            //新的开始绘制的界面中心X轴坐标
-//            float newStartDrawCenterX = newDrawPositionX + mOriginalOffsetX + mWHPoint.x / 2;
-//            //新的开始绘制的界面最顶端
-//            float newStartDrawY = newDrawPositionY + mOriginalOffsetY;
-//
-//            //当前绘制的最左边边界坐标大于0(即边界已经显示在屏幕上时),且移动方向为向右移动
-//            if (((newStartDrawCenterX - mCanvasWidth / 2) > 0 && moveDistanceX > 0)
-//                    //当前绘制的最右边边界坐标小于view宽度(即边界已经显示在屏幕上),且移动方向 为向左移动
-//                    || ((newStartDrawCenterX + mCanvasWidth / 2) < mWHPoint.x && moveDistanceX < 0)) {
-//                //保持原来的偏移量不变
-//                newDrawPositionX = mTouchUtils.getDrawOffsetX();
-//            }
-//            //当前绘制的顶端坐标大于0且移动方向为向下移动
-//            if ((newStartDrawY > 0 && moveDistanceY > 0)
-//                    //当前绘制的最底端坐标大于view高度且移动方向向上移动时
-//                    || ((newStartDrawY + mCanvasHeight) < mWHPoint.y && moveDistanceY < 0)) {
-//                //保持原来的Y轴偏移量
-//                newDrawPositionY = mTouchUtils.getDrawOffsetY();
-//            }
-//
-//            //其它情况正常移动重绘
-//            //当距离确实有效地改变了再进行重绘制,否则原界面不变,减少重绘的次数
-//            if (newDrawPositionX != mTouchUtils.getDrawOffsetX() || newDrawPositionY != mTouchUtils.getDrawOffsetY() || invalidateAction == MotionEvent.ACTION_UP) {
-//                mTouchUtils.setOffsetX(newDrawPositionX);
-//                mTouchUtils.setOffsetY(newDrawPositionY);
-//                mDrawView.post(new InvalidateRunnable(mDrawView, invalidateAction));
-//                if (mISeatInformationListener != null) {
-//                    mISeatInformationListener.seatStatus(ISeatInformationListener.STATUS_MOVE);
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
-        mTouchUtils.singleTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.singleTouchEvent(event, extraMotionEvent);
     }
 
     /**
@@ -2050,19 +1925,19 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
         //存放移动前的偏移数据
         //相对当前屏幕中心的X轴偏移量
-        mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
+        mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
         //相对当前屏幕中心的Y轴偏移量
         //原来的偏移量是以Y轴顶端为偏移值
-        mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+        mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
 
 
         //根据缩放比计算新的偏移值
-        mTouchUtils.setOffsetX(newScaleRate * mOffsetPoint.x);
+        mMSActionHelper.setOffsetX(newScaleRate * mOffsetPoint.x);
         //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-        mTouchUtils.setOffsetY(newScaleRate * mOffsetPoint.y + mWHPoint.y / 2);
+        mMSActionHelper.setOffsetY(newScaleRate * mOffsetPoint.y + mWHPoint.y / 2);
         //是否进行up事件,是保存数据当前计算的最后数据
-        mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
-        mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+        mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
+        mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
 
         //重绘工作
         mDrawView.post(new InvalidateRunnable(mDrawView, MotionEvent.ACTION_UP));
@@ -2088,10 +1963,10 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 //
 //        //存放移动前的偏移数据
 //        //相对当前屏幕中心的X轴偏移量
-//        mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
+//        mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
 //        //相对当前屏幕中心的Y轴偏移量
 //        //原来的偏移量是以Y轴顶端为偏移值
-//        mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+//        mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
 //
 //        Message msg = new Message();
 //        Bundle data = new Bundle();
@@ -2195,8 +2070,8 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             float offsetXInCanvas = offsetXInThumbnail / thumbnailRate;
             //增加X/Y轴的偏移量
             //偏移量是反方向的，所以当前的偏移值应该增加为其负值
-            mTouchUtils.setOffsetX(mTouchUtils.getDrawOffsetX() - offsetXInCanvas);
-            mTouchUtils.setOffsetY(mTouchUtils.getDrawOffsetY() - offsetYInCanvas);
+            mMSActionHelper.setOffsetX(mMSActionHelper.getDrawOffsetX() - offsetXInCanvas);
+            mMSActionHelper.setOffsetY(mMSActionHelper.getDrawOffsetY() - offsetYInCanvas);
 
             //尝试重绘
             mDrawView.postInvalidate();
@@ -2293,9 +2168,9 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
             boolean isHandle = false;
             isHandle = singleClickPointHandle(clickPoint);
             if (isHandle) {
-                showMsg("单击有效座位,消费双击标识");
+                mTouchHelper.showMsg("单击有效座位,消费双击标识");
                 //单击事件处理了取消双击事件(单击到有效的座位位置)
-                this.cancelDoubleClickEvent(EVENT_DOUBLE_CLICK_BY_TIME);
+                mTouchHelper.cancelDoubleClickEvent(TouchEventHelper.EVENT_DOUBLE_CLICK_BY_TIME);
             }
             return isHandle;
         } else {
@@ -2310,18 +2185,11 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
 
     @Override
     public void onMultiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
-        mTouchUtils.multiTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.multiTouchEvent(event, extraMotionEvent);
     }
 
     @Override
     public void onSingleClickByTime(MotionEvent event) {
-    }
-
-    /**
-     * 单击某个区域选择座位
-     */
-    @Override
-    public void onSingleClickByDistance(MotionEvent event) {
         boolean isQuickClickThumbnail = false;
         //判断是否启用快速显示区域功能
         if (mGlobalParams.isEnabledQuickShowByClickOnThumbnail()) {
@@ -2335,6 +2203,13 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         if (!isQuickClickThumbnail) {
             this.singleClickChooseSeat(event);
         }
+    }
+
+    /**
+     * 单击某个区域选择座位
+     */
+    @Override
+    public void onSingleClickByDistance(MotionEvent event) {
     }
 
     /**
@@ -2397,20 +2272,20 @@ public abstract class AbsDrawUtils extends AbsTouchEventHandle implements ISeatD
         //判断是否已经存放了移动前的偏移数据
         if (!mIsFirstStorePoint) {
             //相对当前屏幕中心的X轴偏移量
-            mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
+            mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
             //相对当前屏幕中心的Y轴偏移量
             //原来的偏移量是以Y轴顶端为偏移值
-            mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+            mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
             mIsFirstStorePoint = true;
         }
         //根据缩放比计算新的偏移值
-        mTouchUtils.setOffsetX(newScaleRate * mOffsetPoint.x);
+        mMSActionHelper.setOffsetX(newScaleRate * mOffsetPoint.x);
         //绘制使用的偏移值是相对Y轴顶端而言,所以必须减去半个屏幕的高度(此部分在保存offsetPoint的时候添加了)
-        mTouchUtils.setOffsetY(newScaleRate * mOffsetPoint.y + mWHPoint.y / 2);
+        mMSActionHelper.setOffsetY(newScaleRate * mOffsetPoint.y + mWHPoint.y / 2);
         //是否进行up事件,是保存数据当前计算的最后数据
         if (isNeedStoreValue) {
-            mOffsetPoint.x = mTouchUtils.getDrawOffsetX();
-            mOffsetPoint.y = mTouchUtils.getDrawOffsetY() - mWHPoint.y / 2;
+            mOffsetPoint.x = mMSActionHelper.getDrawOffsetX();
+            mOffsetPoint.y = mMSActionHelper.getDrawOffsetY() - mWHPoint.y / 2;
             //重置记录标志亦是
             mIsFirstStorePoint = false;
         }

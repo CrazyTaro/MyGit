@@ -3,12 +3,14 @@ package us.bestapp.henrytaro.params.baseparams;/**
  */
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.util.Log;
 
 import java.io.InputStream;
+import java.util.Calendar;
 
 /**
  * Created by xuhaolin on 15/9/16.
@@ -144,23 +146,78 @@ public class BaseDrawStyle implements Cloneable {
      * @return
      */
     public static Bitmap getScaleBitmap(Context context, int imageID, int targetWidth, int targetHeight) {
+        if (imageID == 0 || imageID == -1) {
+            return null;
+        } else {
+            try {
+                String resName = context.getResources().getResourceName(imageID);
+            } catch (Resources.NotFoundException ex) {
+                return null;
+            }
+        }
         try {
             //以流的形式加载比直接使用ID加载到消耗内存会少一些,并且可以指定宽高进行加载
             //加载资源文件到流
             InputStream in = context.getResources().openRawResource(imageID);
             //设置加载选项
             BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(in, null, options);
+            Log.i("bitmap", "width=" + options.outWidth + "/height=" + options.outHeight);
+            in.close();
+            options.inSampleSize = calculateInSampleSize(options, targetHeight > targetWidth ? targetHeight : targetWidth);
             options.inJustDecodeBounds = false;
-            //设置目标宽高
-            options.outWidth = targetWidth;
-            options.outHeight = targetHeight;
+            in = context.getResources().openRawResource(imageID);
             //加载图片
-            return BitmapFactory.decodeStream(in, null, options);
+            Bitmap bmp = BitmapFactory.decodeStream(in, null, options);
+            Log.i("bitmap", "width=" + options.outWidth + "/height=" + options.outHeight);
+            return bmp;
         } catch (Exception ex) {
             ex.printStackTrace();
             Log.i("error", ex.getMessage());
             return null;
         }
+    }
+
+    /**
+     * 计算图片缩放比
+     *
+     * @param options
+     * @param reqSize
+     * @return
+     */
+    private static int calculateInSampleSize(BitmapFactory.Options options, float reqSize) {
+        if (reqSize <= 0) {
+            throw new RuntimeException("预期边长不可小于0");
+        }
+        float bmpWidth = options.outWidth;
+        float bmpHeight = options.outHeight;
+        float largeSizeInBmp = 0;
+        int sampleSize = 1;
+        //记录最大的边
+        if (bmpWidth > bmpHeight) {
+            largeSizeInBmp = bmpWidth;
+        } else {
+            largeSizeInBmp = bmpHeight;
+        }
+        //将最大边与预期的边大小进行比较计算缩放比
+        if (largeSizeInBmp < reqSize) {
+            //最大边小于预期,则sampleSize为1
+            sampleSize = 1;
+        } else {
+            //最大边大于预期边
+            sampleSize = (int) (largeSizeInBmp / reqSize + 0.5);
+            //计算所得缩放值为2的几倍指数,即求 log2(sampleSize)
+            double powerNum = Math.log(sampleSize) / Math.log(2);
+            int tempPowerNum = (int) powerNum;
+            //将所得指数+1,确保尽可能小于指定值
+            if (powerNum > tempPowerNum) {
+                tempPowerNum += 1;
+            }
+            //反求sampleSize=2^tempPowerNum
+            sampleSize = (int) Math.pow(2, tempPowerNum);
+        }
+        return sampleSize;
     }
 
     @Override

@@ -60,7 +60,7 @@ public class SimpleDrawUtils extends AbsDrawUtils {
         mMinorSeatRectf = extendSeatParams.getSeatDrawDefaultRectf(mMinorSeatRectf, drawPositionX, drawPositionY, false);
 
         //绘制情侣座
-        if (drawStyle.tag.equals(BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT)) {
+        if (drawStyle.tag.equals(BaseSeatParams.DRAW_STYLE_COUPLE_OPTIONAL_SEAT)) {
             //绘制单个座位的情侣座位
             //只绘制边
             paint.setStyle(Paint.Style.STROKE);

@@ -1,6 +1,7 @@
 package us.bestapp.henrytaro.params.baseparams;
 
 import android.graphics.Color;
+
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ import java.util.Map;
  * <br/>
  * <font color="#ff9900"><b>关于标签及样式的设定,默认情况下{@link us.bestapp.henrytaro.params.baseparams.BaseSeatParams}预存了4个样式,
  * 其中包括<br/>
- * {@link #TAG_OPTIONAL_SEAT} 可选标签样式<br/>
- * {@link #TAG_SELECTE_SEAT} 已选标签样式<br/>
- * {@link #TAG_LOCK_SEAT} 锁定标签样式<br/>
- * {@link #TAG_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
+ * {@link #DRAW_STYLE_OPTIONAL_SEAT} 可选标签样式<br/>
+ * {@link #DRAW_STYLE_SELECTED_SEAT} 已选标签样式<br/>
+ * {@link #DRAW_STYLE_LOCK_SEAT} 锁定标签样式<br/>
+ * {@link #DRAW_STYLE_COUPLE_OPTIONAL_SEAT} 情侣标签样式<br/></b></font>
  * <br/>
- * 其余的样式并没有预存,但是一样可以使用{@link #TAG_ERROR_SEAT}/{@link #TAG_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
+ * 其余的样式并没有预存,但是一样可以使用{@link #DRAW_STYLE_ERROR_SEAT}/{@link #DRAW_STYLE_UNSHOW_SEAT}两个标签,因为这两个样式默认是不进行绘制的,
  * 获取某个标签对象的样式若不存在的情况下,并不会做任何的绘制,所以需要绘制的样式请确保提供的样式及标签是有效的<br/>
  */
 public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
@@ -89,7 +90,7 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
      * 创建并初始化参数
      */
     public BaseSeatParams() {
-        this(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR, 3f, 0.5f);
+        this(DEFAULT_SEAT_WIDTH, DEFAULT_SEAT_HEIGHT, DEFAULT_SEAT_RADIUS, DEFAULT_SEAT_COLOR, DEFAULT_SEAT_LARGE_SCALE, DEFAULT_SEAT_SMALL_SCALE);
     }
 
     /**
@@ -115,15 +116,15 @@ public class BaseSeatParams extends AbsBaseParams implements ISeatParams {
         int coupleColor = Color.rgb(243, 115, 162);
 
         mDrawStyles = new HashMap<>();
-        BaseDrawStyle selectInfo = new BaseDrawStyle(TAG_SELECTE_SEAT, true, selectColor, selectColor, Color.BLACK, "已选", DEFAULT_INT, null);
-        BaseDrawStyle optionalInfo = new BaseDrawStyle(TAG_OPTIONAL_SEAT, true, optionalColor, optionalColor, Color.BLACK, "可选", DEFAULT_INT, null);
-        BaseDrawStyle lockInfo = new BaseDrawStyle(TAG_LOCK_SEAT, true, lockColor, lockColor, Color.BLACK, "已售", DEFAULT_INT, null);
-        BaseDrawStyle coupleInfo = new BaseDrawStyle(TAG_COUPLE_OPTIONAL_SEAT, true, coupleColor, coupleColor, Color.BLACK, "情侣", DEFAULT_INT, null);
+        BaseDrawStyle selectInfo = new BaseDrawStyle(DRAW_STYLE_SELECTED_SEAT, true, selectColor, selectColor, Color.BLACK, "已选", DEFAULT_INT, null);
+        BaseDrawStyle optionalInfo = new BaseDrawStyle(DRAW_STYLE_OPTIONAL_SEAT, true, optionalColor, optionalColor, Color.BLACK, "可选", DEFAULT_INT, null);
+        BaseDrawStyle lockInfo = new BaseDrawStyle(DRAW_STYLE_LOCK_SEAT, true, lockColor, lockColor, Color.BLACK, "已售", DEFAULT_INT, null);
+        BaseDrawStyle coupleInfo = new BaseDrawStyle(DRAW_STYLE_COUPLE_OPTIONAL_SEAT, true, coupleColor, coupleColor, Color.BLACK, "情侣", DEFAULT_INT, null);
 
-        mDrawStyles.put(TAG_SELECTE_SEAT, selectInfo);
-        mDrawStyles.put(TAG_OPTIONAL_SEAT, optionalInfo);
-        mDrawStyles.put(TAG_LOCK_SEAT, lockInfo);
-        mDrawStyles.put(TAG_COUPLE_OPTIONAL_SEAT, coupleInfo);
+        mDrawStyles.put(DRAW_STYLE_SELECTED_SEAT, selectInfo);
+        mDrawStyles.put(DRAW_STYLE_OPTIONAL_SEAT, optionalInfo);
+        mDrawStyles.put(DRAW_STYLE_LOCK_SEAT, lockInfo);
+        mDrawStyles.put(DRAW_STYLE_COUPLE_OPTIONAL_SEAT, coupleInfo);
     }
 
     /**

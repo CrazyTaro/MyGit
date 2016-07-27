@@ -9,17 +9,18 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle;
-import us.bestapp.henrytaro.draw.utils.TouchUtils;
+import us.bestapp.henrytaro.draw.utils.MoveAndScaleTouchHelper;
+import us.bestapp.henrytaro.draw.utils.TouchEventHelper;
 
 
 /**
  * Created by xuhaolin on 15/9/25.
  * 绘制工具类
  */
-public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IScaleEvent, TouchUtils.IMoveEvent {
+public class TestCircleDraw implements TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IScaleEvent, MoveAndScaleTouchHelper.IMoveEvent {
     //创建工具类
-    TouchUtils mTouch = new TouchUtils();
+    TouchEventHelper mTouchHelper = new TouchEventHelper(this);
+    MoveAndScaleTouchHelper mMSActionHelper = new MoveAndScaleTouchHelper();
     View mDrawView = null;
     Context mContext = null;
     Paint mPaint = new Paint();
@@ -35,10 +36,10 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
         this.mDrawView = drawView;
         this.mContext = context;
         //设置工具类的监听事件
-        mTouch.setMoveEvent(this);
-        mTouch.setScaleEvent(this);
+        mMSActionHelper.setMoveEvent(this);
+        mMSActionHelper.setScaleEvent(this);
         //绑定view与触摸事件
-        this.mDrawView.setOnTouchListener(this);
+        this.mDrawView.setOnTouchListener(mTouchHelper);
     }
 
     public void onDraw(Canvas canvas) {
@@ -46,19 +47,19 @@ public class TestCircleDraw extends AbsTouchEventHandle implements TouchUtils.IS
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.FILL);
         //模拟绘制的界面
-        canvas.drawCircle(mTouch.getDrawOffsetX() + 300, mTouch.getDrawOffsetY() + 300, mRadius, mPaint);
+        canvas.drawCircle(mMSActionHelper.getDrawOffsetX() + 300, mMSActionHelper.getDrawOffsetY() + 300, mRadius, mPaint);
     }
 
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的单点触摸事件
-        mTouch.singleTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.singleTouchEvent(event, extraMotionEvent);
     }
 
     @Override
     public void onMultiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的多点(实际只处理了两点事件)触摸事件
-        mTouch.multiTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.multiTouchEvent(event, extraMotionEvent);
     }
 
     @Override

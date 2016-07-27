@@ -13,6 +13,7 @@ import us.bestapp.henrytaro.entity.absentity.AbsMapEntity;
 import us.bestapp.henrytaro.entity.absentity.AbsSeatEntity;
 import us.bestapp.henrytaro.entity.example.EgSeatMap;
 import us.bestapp.henrytaro.params.baseparams.BaseSeatParams;
+import us.bestapp.henrytaro.params.interfaces.IBaseParams;
 import us.bestapp.henrytaro.params.interfaces.IGlobleParams;
 import us.bestapp.henrytaro.params.interfaces.ISeatParams;
 import us.bestapp.henrytaro.params.interfaces.IStageParams;
@@ -83,7 +84,7 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         EgSeatMap egMap = new EgSeatMap(mSeatMap);
         mChooseview.setISeatChooseEvent(this);
         mSeatDataHandle = mChooseview.getSeatDrawInterface();
-        mSeatDataHandle.setIsShowLog(false, null);
+        mSeatDataHandle.setIsShowLog(true, null);
 
 
         IGlobleParams globleParams = mSeatDataHandle.getGlobleParams();
@@ -105,10 +106,12 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
         ISeatParams seatParams = mSeatDataHandle.getSeatParams();
         //设置是否绘制样本类型
         seatParams.setIsDrawSampleStyle(true);
+        seatParams.setDrawType(IBaseParams.DRAW_TYPE_IMAGE);
         //设置单个座位宽度
         seatParams.seDrawWidth(40f);
         //设置单个座位高度
         seatParams.seDrawHeight(40f);
+        seatParams.getDrawStyle(ISeatParams.DRAW_STYLE_OPTIONAL_SEAT).imageID = R.drawable.icon_logo_pkq;
 
         IStageParams stageParams = mSeatDataHandle.getStageParams();
         stageParams.setStageDescription("CrazyTaro的舞台 6号厅");
@@ -121,8 +124,8 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
                                           public void onClick(View v) {
                                               if (mChooseview.getVisibility() == View.VISIBLE) {
                                                   List<AbsSeatEntity> selectSeats = mChooseview.getSeletedSeats();
-                                                  String[] edgeTags = new String[]{BaseSeatParams.TAG_UNSHOW_SEAT, BaseSeatParams.TAG_ERROR_SEAT, BaseSeatParams.TAG_LOCK_SEAT};
-                                                  String[] enabledTags = new String[]{BaseSeatParams.TAG_OPTIONAL_SEAT, BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT};
+                                                  String[] edgeTags = new String[]{BaseSeatParams.DRAW_STYLE_UNSHOW_SEAT, BaseSeatParams.DRAW_STYLE_ERROR_SEAT, BaseSeatParams.DRAW_STYLE_LOCK_SEAT};
+                                                  String[] enabledTags = new String[]{BaseSeatParams.DRAW_STYLE_OPTIONAL_SEAT, BaseSeatParams.DRAW_STYLE_COUPLE_OPTIONAL_SEAT};
                                                   if (SeatCheckRuleUtils.isIllegalSeatList(selectSeats, mMap, edgeTags, enabledTags)) {
                                                       Toast.makeText(MainActivity.this, "不能留下单个座位!", Toast.LENGTH_SHORT).show();
                                                   } else {
@@ -138,10 +141,10 @@ public class MainActivity extends Activity implements ISeatChooseEvent {
     }
 
     private void setImage(ISeatParams params) {
-        params.getDrawStyle(BaseSeatParams.TAG_LOCK_SEAT).imageID = R.drawable.zuowei_disabled;
-        params.getDrawStyle(BaseSeatParams.TAG_COUPLE_OPTIONAL_SEAT).imageID = R.drawable.zuowei_lovers;
-        params.getDrawStyle(BaseSeatParams.TAG_OPTIONAL_SEAT).imageID = R.drawable.zuowei_optional;
-        params.getDrawStyle(BaseSeatParams.TAG_SELECTE_SEAT).imageID = R.drawable.zuowei_selected;
+        params.getDrawStyle(BaseSeatParams.DRAW_STYLE_LOCK_SEAT).imageID = R.drawable.zuowei_disabled;
+        params.getDrawStyle(BaseSeatParams.DRAW_STYLE_COUPLE_OPTIONAL_SEAT).imageID = R.drawable.zuowei_lovers;
+        params.getDrawStyle(BaseSeatParams.DRAW_STYLE_OPTIONAL_SEAT).imageID = R.drawable.zuowei_optional;
+        params.getDrawStyle(BaseSeatParams.DRAW_STYLE_SELECTED_SEAT).imageID = R.drawable.zuowei_selected;
 
         params.setDrawType(ISeatParams.DRAW_TYPE_IMAGE);
     }

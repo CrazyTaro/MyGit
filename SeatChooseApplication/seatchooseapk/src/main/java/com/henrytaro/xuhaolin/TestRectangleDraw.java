@@ -7,15 +7,16 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.View;
 
-import us.bestapp.henrytaro.draw.utils.AbsTouchEventHandle;
-import us.bestapp.henrytaro.draw.utils.TouchUtils;
+import us.bestapp.henrytaro.draw.utils.MoveAndScaleTouchHelper;
+import us.bestapp.henrytaro.draw.utils.TouchEventHelper;
 
 /**
  * Created by taro on 16/3/24.
  */
-public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils.IMoveEvent, TouchUtils.IScaleEvent {
+public class TestRectangleDraw implements TouchEventHelper.OnToucheEventListener, MoveAndScaleTouchHelper.IMoveEvent, MoveAndScaleTouchHelper.IScaleEvent {
     //创建工具
-    private TouchUtils mTouch = null;
+    private TouchEventHelper mTouchHelper = null;
+    private MoveAndScaleTouchHelper mMSActionHelper = null;
     //保存显示的View
     private View mDrawView = null;
     //画笔
@@ -27,11 +28,12 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
     private RectF mTempRectf = null;
 
     public TestRectangleDraw(View drawView) {
-        mTouch = new TouchUtils();
-        mTouch.setMoveEvent(this);
-        mTouch.setScaleEvent(this);
+        mTouchHelper = new TouchEventHelper(this);
+        mMSActionHelper = new MoveAndScaleTouchHelper();
+        mMSActionHelper.setMoveEvent(this);
+        mMSActionHelper.setScaleEvent(this);
         mDrawView = drawView;
-        mDrawView.setOnTouchListener(this);
+        mDrawView.setOnTouchListener(mTouchHelper);
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -48,8 +50,8 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
         mTempRectf = new RectF(mDrawRectf);
     }
 
-    public void rollback(){
-        mTouch.rollbackToLastOffset();
+    public void rollback() {
+        mMSActionHelper.rollbackToLastOffset();
     }
 
     public void onDraw(Canvas canvas) {
@@ -57,21 +59,21 @@ public class TestRectangleDraw extends AbsTouchEventHandle implements TouchUtils
         mPaint.setStyle(Paint.Style.FILL);
         //此处是实际的绘制界面+偏移量,偏移量切记不能保存到实际绘制的数据中!!!!
         //不可以使用 mDrawRectf.offset(x,y)
-        canvas.drawRect(mDrawRectf.left + mTouch.getDrawOffsetX(), mDrawRectf.top + mTouch.getDrawOffsetY(),
-                mDrawRectf.right + mTouch.getDrawOffsetX(), mDrawRectf.bottom + mTouch.getDrawOffsetY(),
+        canvas.drawRect(mDrawRectf.left + mMSActionHelper.getDrawOffsetX(), mDrawRectf.top + mMSActionHelper.getDrawOffsetY(),
+                mDrawRectf.right + mMSActionHelper.getDrawOffsetX(), mDrawRectf.bottom + mMSActionHelper.getDrawOffsetY(),
                 mPaint);
     }
 
     @Override
     public void onSingleTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的单点触摸事件
-        mTouch.singleTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.singleTouchEvent(event, extraMotionEvent);
     }
 
     @Override
     public void onMultiTouchEventHandle(MotionEvent event, int extraMotionEvent) {
         //工具类默认处理的多点(实际只处理了两点事件)触摸事件
-        mTouch.multiTouchEvent(event, extraMotionEvent);
+        mMSActionHelper.multiTouchEvent(event, extraMotionEvent);
     }
 
     @Override

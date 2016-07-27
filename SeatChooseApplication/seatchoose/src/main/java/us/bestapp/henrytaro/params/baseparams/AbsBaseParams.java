@@ -22,22 +22,14 @@ public abstract class AbsBaseParams implements IBaseParams, Cloneable {
      * 默认文字颜色
      */
     public static final int DEFAULT_DESCRIPTION_COLOR = Color.BLACK;
-//    /**
-//     * 默认的宽度，此值不为定值，由子类实现具体默认宽度
-//     */
-//    private float DEFAULT_WIDTH = 0f;
-//    /**
-//     * 默认的高度，此值不为定值，由子类实现具体的默认高宽
-//     */
-//    private float DEFAULT_HEIGHT = 0f;
-//    /**
-//     * 默认圆角度，此值不为定值，由子类实现具体的默认值
-//     */
-//    private float DEFAULT_RADIUS = 0f;
-//    /**
-//     * 默认颜色，此值不为定值，由子类实现具体的默认值
-//     */
-//    private int DEFAULT_COLOR = Color.GRAY;
+    /**
+     * 默认界面缩放比例最大值(比较基准为设置的初始值,最大缩放不超过其值*此值)
+     */
+    public static final float DEFAULT_SEAT_LARGE_SCALE = 3f;
+    /**
+     * 默认界面缩放比例最小值(比较基准为设置的初始值,最小缩放不小于其值*此值)
+     */
+    public static final float DEFAULT_SEAT_SMALL_SCALE = 0.5f;
 
     private DefaultValuesHolder mDefaulHolder = null;
 
